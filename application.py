@@ -15,12 +15,12 @@ def health_check():
     logger.debug('<health-check>')
     return "OK"
 
-@application.route('/upload_message', methods=['POST'])
-def post_message():
+@application.route('/upload_text', methods=['POST'])
+def upload_text():
     return 1
 
 @application.route('/upload_image', methods=['POST'])
-def post_image():
+def upload_image():
     data = requests.get_json(force=True)
     return 1
 
