@@ -24,3 +24,5 @@ def upload_image():
     data = requests.get_json(force=True)
     return 1
 
+if __name__ == "__main__":
+    application.run(host="0.0.0.0", port=5000)
