@@ -7,14 +7,8 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /app
 
-RUN pip3 install -U pip3
-
 WORKDIR /app
 
-COPY pip-conf/pip.conf /root/.pip/
-COPY pip-conf/.pypirc /root
-
-RUN pip-compile requirements.in
 RUN pip3 install -r requirements.txt
 
 #RUN mkdir -p /var/data/models
