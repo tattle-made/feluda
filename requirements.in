@@ -4,3 +4,4 @@ google-cloud==0.34.0
 google-cloud-vision==0.34.0
 scikit-image==0.15.0
 torchvision
+pymongo

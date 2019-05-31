@@ -31,6 +31,7 @@ pillow==6.0.0             # via imageio, scikit-image, torchvision
 protobuf==3.7.1           # via google-api-core, googleapis-common-protos
 pyasn1-modules==0.2.5     # via google-auth
 pyasn1==0.4.5             # via pyasn1-modules, rsa
+pymongo==3.8.0
 pyparsing==2.4.0          # via matplotlib
 python-dateutil==2.8.0    # via matplotlib
 pytz==2019.1              # via google-api-core
