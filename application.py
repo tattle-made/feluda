@@ -41,6 +41,23 @@ def upload_text():
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
 
+@application.route('/find_duplicate', methods=['POST'])
+def find_duplicate():
+    data = request.get_json(force=True)
+    text = data.get('text', None)
+    image_url = data.get('image_url', None)
+    if text is None and image_url is None:
+        ret = {'failed' : 1, 'error' : 'No text or image_url found'}
+        return jsonify(ret)
+
+    duplicate_doc = db.docs.find_one({"text" : text})
+    if duplicate_doc is None:
+        ret = {'failed' : 0, 'duplicate' : 0}
+    else:
+        ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
+
+    return jsonify(ret)
+
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
     data = requests.get_json(force=True)
