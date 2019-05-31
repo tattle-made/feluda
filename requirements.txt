@@ -10,6 +10,7 @@ chardet==3.0.4            # via requests
 click==7.0                # via flask
 cycler==0.10.0            # via matplotlib
 decorator==4.4.0          # via networkx
+dnspython==1.16.0
 flask==1.0
 flask_cors==3.0.0
 google-api-core[grpc]==1.10.0  # via google-cloud-vision
