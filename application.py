@@ -1,14 +1,20 @@
-import logging
-from flask import Flask, request
-from flask_cors import CORS
 import os, sys, json
-import requests
+import datetime
 import copy
+import uuid
+import logging
+from flask import Flask, request, jsonify 
+from flask_cors import CORS
+from pymongo import MongoClient
 
 application = Flask(__name__)
 CORS(application)
 
 logger = logging.getLogger("tattle-api")
+
+mongo_url = os.environ['MONGO_URL']
+cli = MongoClient(mongo_url)
+db = cli.documents
 
 @application.route('/health')
 def health_check():
@@ -17,7 +23,23 @@ def health_check():
 
 @application.route('/upload_text', methods=['POST'])
 def upload_text():
-    return 1
+    data = request.get_json(force=True)
+    text = data.get('text',None)
+    if text is None:
+        ret = {'failed' : 1, 'error' : 'No text field in json'}
+        return jsonify(ret)
+    
+    date = datetime.datetime.now()
+    doc_id = uuid.uuid4().hex
+    db.docs.insert_one({"doc_id" : doc_id, 
+                   "has_image" : False, 
+                   "has_text" : True, 
+                   "date_added" : date,
+                   "date_updated" : date,
+                   "text" : text})
+
+    ret = {'failed' : 0, 'doc_id' : doc_id}
+    return jsonify(ret)
 
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
