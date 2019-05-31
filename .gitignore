@@ -33,6 +33,8 @@ lib64/
 parts/
 sdist/
 var/
+etc/
+share/
 *.egg-info/
 .installed.cfg
 *.egg
