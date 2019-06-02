@@ -7,6 +7,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 import skimage
+import PIL
 
 from analyzer import ResNet18
 resnet18 = ResNet18()
@@ -19,8 +20,6 @@ logger = logging.getLogger("tattle-api")
 mongo_url = os.environ['MONGO_URL']
 cli = MongoClient(mongo_url)
 db = cli.documents
-
-
 
 @application.route('/health')
 def health_check():
@@ -69,12 +68,14 @@ def upload_image():
     data = request.get_json(force=True)
     image_url = data.get('image_url')
     if image_url is None:
-        return {'failed' : 1, 'error' : 'No image_url found'}
+        ret = {'failed' : 1, 'error' : 'No image_url found'}
     else:
         img = skimage.io.imread(image_url)
-
+        img = PIL.Image.fromarray(img)
         embedding = get_image_embedding(img)
-        return {'failed' : 0, 'embedding' : embedding}
+        ret = {'failed' : 0, 'embedding' : embedding.tolist()}
+
+    return jsonify(ret)
 
 def get_image_embedding(img):
     return resnet18.extract_feature(img)
