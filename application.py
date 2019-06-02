@@ -6,6 +6,10 @@ import logging
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
 from pymongo import MongoClient
+import skimage
+
+from analyzer import ResNet18
+resnet18 = ResNet18()
 
 application = Flask(__name__)
 CORS(application)
@@ -15,6 +19,8 @@ logger = logging.getLogger("tattle-api")
 mongo_url = os.environ['MONGO_URL']
 cli = MongoClient(mongo_url)
 db = cli.documents
+
+
 
 @application.route('/health')
 def health_check():
@@ -60,8 +66,18 @@ def find_duplicate():
 
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
-    data = requests.get_json(force=True)
-    return 1
+    data = request.get_json(force=True)
+    image_url = data.get('image_url')
+    if image_url is None:
+        return {'failed' : 1, 'error' : 'No image_url found'}
+    else:
+        img = skimage.io.imread(image_url)
+
+        embedding = get_image_embedding(img)
+        return {'failed' : 0, 'embedding' : embedding}
+
+def get_image_embedding(img):
+    return resnet18.extract_feature(img)
 
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=5000)
