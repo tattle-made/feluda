@@ -1,6 +1,7 @@
 import io 
-import sys,os
+import sys,os,json
 from google.cloud import vision
+from google.protobuf.json_format import MessageToJson
 import torchvision.models as models
 import torch 
 import torch.nn as nn
@@ -35,15 +36,11 @@ class ResNet18():
         embedding_fp16 = np.array(embedding.numpy(), dtype=np.float16)
         return embedding_fp16
 
-def detect_text(path):
+def detect_text(img_bytes):
     client = vision.ImageAnnotatorClient()
-    with io.open(path, 'rb') as image_file:
-        content = image_file.read()
-    image = vision.types.Image(content=content)
-
-    response = client.text_detection(image=image)
-    texts = response.text_annotations
-    return texts
+    image_data = vision.types.Image(content=img_bytes)
+    response = client.text_detection(image=image_data)
+    return json.loads(MessageToJson(response))
 #    for text in texts:
 #        print('\n"{}"'.format(text.description))
 #
@@ -71,8 +68,9 @@ if __name__ == "__main__":
     for f in features[1:]:
         print(np.linalg.norm(f - features[0]))
 
+    #resp = detect_text('tests/images/6f6de48ffce515c6dd75d162634b9177d693c8ef.jpg')
     import IPython
     IPython.embed()
+    resp = detect_text(skimage.io.imread(url))
 
     #fname = 'data/test.jpeg'
-    #detect_text(fname)

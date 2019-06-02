@@ -6,10 +6,13 @@ import logging
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
 from pymongo import MongoClient
+import requests
+from io import BytesIO
 import skimage
 import PIL
+import numpy as np
 
-from analyzer import ResNet18
+from analyzer import ResNet18, detect_text
 resnet18 = ResNet18()
 
 application = Flask(__name__)
@@ -70,15 +73,36 @@ def upload_image():
     if image_url is None:
         ret = {'failed' : 1, 'error' : 'No image_url found'}
     else:
-        img = skimage.io.imread(image_url)
-        img = PIL.Image.fromarray(img)
-        embedding = get_image_embedding(img)
-        ret = {'failed' : 0, 'embedding' : embedding.tolist()}
+        image_dict = image_from_url(image_url)
+        image = image_dict['image']
 
+        embedding = resnet18.extract_feature(image)
+        detected_text = detect_text(image_dict['image_bytes'])
+
+        date = datetime.datetime.now()
+        doc_id = uuid.uuid4().hex
+        #db.docs.insert_one({"doc_id" : doc_id, 
+        #               "has_image" : True, 
+        #               "has_text" : True, 
+        #               "date_added" : date,
+        #               "date_updated" : date,
+        #               "text" : text})
+
+        ret = {'failed' : 0, 'embedding' : embedding.tolist()}
     return jsonify(ret)
 
-def get_image_embedding(img):
-    return resnet18.extract_feature(img)
+def image_from_url(image_url):
+    resp = requests.get(image_url)
+    image_bytes = resp.content
+    image = PIL.Image.open(BytesIO(image_bytes))
+    image_array = np.array(image)
+    return {'image' : image, 'image_array' : image_array, 'image_bytes' : image_bytes}
+
+def analyze_image(image_url):
+    image = skimage.io.imread(image_url)
+    image = PIL.Image.fromarray(image)
+    embedding = get_image_embedding(image)
+
 
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=5000)
