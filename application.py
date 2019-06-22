@@ -92,6 +92,7 @@ def upload_image():
                        "has_text" : True, 
                        "date_added" : date,
                        "date_updated" : date,
+                       "fingerprint" : embedding.tolist(),
                        })
         ret = {'doc_id': doc_id, 'failed' : 0}
     return jsonify(ret)
