@@ -114,6 +114,27 @@ def upload_image():
 
     return jsonify(ret)
 
+@application.route('/update_tags', methods=['POST'])
+def update_tags():
+    data = request.get_json(force=True)
+    doc_id = data.get('doc_id')
+    tags = data.get('tags')
+    if doc_id is None:
+        ret = {'failed' : 1, 'error' : 'no doc_id provided'}
+    elif tags is None:
+        ret = {'failed' : 1, 'error' : 'no tags provided'}
+    else:
+        doc = db.docs.find_one({"doc_id" : doc_id})
+        if doc is None:
+            ret = {'failed' : 1, 'error' : 'doc not found'}
+        else:
+            updated_tags = list(set(doc.get('tags',[]) + tags))
+            date = datetime.datetime.now()
+            db.docs.update_one({"doc_id" : doc_id}, {"$set" : 
+                {"tags" : updated_tags, "date_updated" : date}})
+            ret = {'failed' : 0}
+    return jsonify(ret)
+
 def image_from_url(image_url):
     resp = requests.get(image_url)
     image_bytes = resp.content
