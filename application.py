@@ -91,7 +91,7 @@ def upload_image():
     else:
         image_dict = image_from_url(image_url)
         image = image_dict['image']
-        embedding = resnet18.extract_feature(image)
+        vec = resnet18.extract_feature(image)
         #detected_text = detect_text(image_dict['image_bytes'])
 
         date = datetime.datetime.now()
@@ -103,9 +103,13 @@ def upload_image():
                        "has_text" : True, 
                        "date_added" : date,
                        "date_updated" : date,
-                       "fingerprint" : embedding.tolist(),
+                       "fingerprint" : vec.tolist(),
                        })
         ret = {'doc_id': doc_id, 'failed' : 0}
+
+        #update the search index
+        imagesearch.update(doc_id, vec)
+
     return jsonify(ret)
 
 def image_from_url(image_url):
