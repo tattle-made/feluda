@@ -101,7 +101,7 @@ def upload_image():
         db.docs.insert_one({
                        "doc_id" : doc_id, 
                        "has_image" : True, 
-                       "has_text" : True, 
+                       "has_text" : False, 
                        "tags" : [],
                        "date_added" : date,
                        "date_updated" : date,
