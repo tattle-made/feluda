@@ -1,18 +1,16 @@
-import os, sys, json
-import datetime
-import copy
-import uuid
+import os, sys, json, datetime, copy, uuid, requests
 import logging
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
 from pymongo import MongoClient
-import requests
 from io import BytesIO
-import skimage
-import PIL
+import skimage, PIL
 import numpy as np
 
 from analyzer import ResNet18, detect_text
+from search import ImageSearch
+
+imagesearch = ImageSearch()
 resnet18 = ResNet18()
 
 application = Flask(__name__)
@@ -60,13 +58,26 @@ def find_duplicate():
     image_url = data.get('image_url', None)
     if text is None and image_url is None:
         ret = {'failed' : 1, 'error' : 'No text or image_url found'}
-        return jsonify(ret)
 
-    duplicate_doc = db.docs.find_one({"text" : text})
-    if duplicate_doc is None:
-        ret = {'failed' : 0, 'duplicate' : 0}
+    elif image_url is not None:
+        image_dict = image_from_url(image_url)
+        image = image_dict['image']
+        vec = resnet18.extract_feature(image)
+        doc_id, dist = imagesearch.search(vec)
+        if doc_id is not None:
+            ret = {'failed' : 0, 'duplicate' : True, 'doc_id' : doc_id, 'distance' : dist}
+        else:
+            ret = {'failed' : 0, 'duplicate' : False}
+
+    elif text is not None:
+        duplicate_doc = db.docs.find_one({"text" : text})
+        if duplicate_doc is None:
+            ret = {'failed' : 0, 'duplicate' : 0}
+        else:
+            ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
+
     else:
-        ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
+        ret = {'failed' : 1, 'error' : 'something went wrong'}
 
     return jsonify(ret)
 
@@ -108,7 +119,6 @@ def analyze_image(image_url):
     image = skimage.io.imread(image_url)
     image = PIL.Image.fromarray(image)
     embedding = get_image_embedding(image)
-
 
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=7000)
