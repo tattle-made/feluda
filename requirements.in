@@ -6,3 +6,4 @@ scikit-image==0.15.0
 torchvision
 pymongo
 dnspython
+tqdm
