@@ -45,6 +45,7 @@ def upload_text():
                    "has_text" : True, 
                    "date_added" : date,
                    "date_updated" : date,
+                   "tags" : [],
                    "text" : text
                    })
 
@@ -101,6 +102,7 @@ def upload_image():
                        "doc_id" : doc_id, 
                        "has_image" : True, 
                        "has_text" : True, 
+                       "tags" : [],
                        "date_added" : date,
                        "date_updated" : date,
                        "fingerprint" : vec.tolist(),
