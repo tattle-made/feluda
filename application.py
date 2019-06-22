@@ -33,18 +33,22 @@ def health_check():
 def upload_text():
     data = request.get_json(force=True)
     text = data.get('text',None)
+    doc_id = data.get('doc_id',None)
     if text is None:
         ret = {'failed' : 1, 'error' : 'No text field in json'}
         return jsonify(ret)
     
     date = datetime.datetime.now()
-    doc_id = uuid.uuid4().hex
-    db.docs.insert_one({"doc_id" : doc_id, 
+    if doc_id is None:
+        doc_id = uuid.uuid4().hex
+    db.docs.insert_one({
+                   "doc_id" : doc_id, 
                    "has_image" : False, 
                    "has_text" : True, 
                    "date_added" : date,
                    "date_updated" : date,
-                   "text" : text})
+                   "text" : text
+                   })
 
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
@@ -70,25 +74,26 @@ def find_duplicate():
 def upload_image():
     data = request.get_json(force=True)
     image_url = data.get('image_url')
+    doc_id = data.get('doc_id',None)
     if image_url is None:
         ret = {'failed' : 1, 'error' : 'No image_url found'}
     else:
         image_dict = image_from_url(image_url)
         image = image_dict['image']
-
         embedding = resnet18.extract_feature(image)
-        detected_text = detect_text(image_dict['image_bytes'])
+        #detected_text = detect_text(image_dict['image_bytes'])
 
         date = datetime.datetime.now()
-        doc_id = uuid.uuid4().hex
-        #db.docs.insert_one({"doc_id" : doc_id, 
-        #               "has_image" : True, 
-        #               "has_text" : True, 
-        #               "date_added" : date,
-        #               "date_updated" : date,
-        #               "text" : text})
-
-        ret = {'failed' : 0, 'embedding' : embedding.tolist()}
+        if doc_id is None:
+            doc_id = uuid.uuid4().hex
+        db.docs.insert_one({
+                       "doc_id" : doc_id, 
+                       "has_image" : True, 
+                       "has_text" : True, 
+                       "date_added" : date,
+                       "date_updated" : date,
+                       })
+        ret = {'doc_id': doc_id, 'failed' : 0}
     return jsonify(ret)
 
 def image_from_url(image_url):
@@ -105,4 +110,4 @@ def analyze_image(image_url):
 
 
 if __name__ == "__main__":
-    application.run(host="0.0.0.0", port=5000)
+    application.run(host="0.0.0.0", port=7000)
