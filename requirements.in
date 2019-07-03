@@ -7,3 +7,5 @@ torchvision
 pymongo
 dnspython
 tqdm
+langdetect
+fasttext
