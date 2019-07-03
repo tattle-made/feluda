@@ -9,6 +9,7 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
+import langdetect
 
 GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
 
@@ -55,6 +56,14 @@ def detect_text(img_bytes):
 #                    for vertex in text.bounding_poly.vertices])
 #
 #        print('bounds: {}'.format(','.join(vertices)))
+
+def detect_lang(text):
+    supported = ['en','hi','gu']
+    lang_id = langdetect.detect(text)
+    if lang_id not in supported:
+        return None
+    else:
+        return lang_id
 
 if __name__ == "__main__":
     from PIL import Image
