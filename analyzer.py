@@ -18,6 +18,13 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
 scaler = transforms.Resize((224, 224))
 to_tensor = transforms.ToTensor()
 
+def image_from_url(image_url):
+    resp = requests.get(image_url)
+    image_bytes = resp.content
+    image = PIL.Image.open(BytesIO(image_bytes))
+    image_array = np.array(image)
+    return {'image' : image, 'image_array' : image_array, 'image_bytes' : image_bytes}
+
 class ResNet18():
     def __init__(self):
         self.model = models.resnet18(pretrained=True)

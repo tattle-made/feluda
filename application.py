@@ -7,7 +7,7 @@ from io import BytesIO
 import skimage, PIL
 import numpy as np
 
-from analyzer import ResNet18, detect_text
+from analyzer import ResNet18, detect_text, image_from_url
 from search import ImageSearch
 
 imagesearch = ImageSearch()
@@ -134,13 +134,6 @@ def update_tags():
                 {"tags" : updated_tags, "date_updated" : date}})
             ret = {'failed' : 0}
     return jsonify(ret)
-
-def image_from_url(image_url):
-    resp = requests.get(image_url)
-    image_bytes = resp.content
-    image = PIL.Image.open(BytesIO(image_bytes))
-    image_array = np.array(image)
-    return {'image' : image, 'image_array' : image_array, 'image_bytes' : image_bytes}
 
 def analyze_image(image_url):
     image = skimage.io.imread(image_url)
