@@ -42,7 +42,7 @@ class DocSearch:
     def __init__(self):
         self.ids = []
         self.vecs = []
-        self.thresh = 0.5
+        self.thresh = 0.6
         self.build()
 
     def build(self):
@@ -65,6 +65,10 @@ class DocSearch:
     def search(self, vec):
         if type(vec) == list:
             vec = np.array(vec)
+
+        if vec is None:
+            print('vec is None')
+            return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
         if dists[idx[0]] < self.thresh:
