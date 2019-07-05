@@ -12,6 +12,7 @@ def setup_tables():
     cur.execute("CREATE TABLE wordvecs (word text, lang_id int REFERENCES lang_ids(lang_id), vec text)")
     cur.execute("CREATE INDEX word_index ON wordvecs (word);")
     cur.execute("CREATE INDEX lang_index ON wordvecs (lang_id);")
+    cur.execute("CREATE INDEX full_index ON wordvecs (word, lang_id);")
     conn.commit()
     conn.close()
 
