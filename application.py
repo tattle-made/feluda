@@ -7,10 +7,11 @@ from io import BytesIO
 import skimage, PIL
 import numpy as np
 
-from analyzer import ResNet18, detect_text, image_from_url
-from search import ImageSearch
+from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
+from search import ImageSearch, DocSearch
 
 imagesearch = ImageSearch()
+docsearch = DocSearch()
 resnet18 = ResNet18()
 
 application = Flask(__name__)
@@ -39,16 +40,23 @@ def upload_text():
     date = datetime.datetime.now()
     if doc_id is None:
         doc_id = uuid.uuid4().hex
-    db.docs.insert_one({
-                   "doc_id" : doc_id, 
-                   "has_image" : False, 
-                   "has_text" : True, 
-                   "date_added" : date,
-                   "date_updated" : date,
-                   "tags" : [],
-                   "text" : text
-                   })
 
+    lang = detect_lang(text)
+    vec = doc2vec(text)
+    doc =  {
+           "doc_id" : doc_id, 
+           "has_image" : False, 
+           "has_text" : True, 
+           "date_added" : date,
+           "date_updated" : date,
+           "tags" : [],
+           "text" : text,
+           "lang" : lang,
+           }
+    if vec is not None:
+        doc["vec"] = vec
+
+    db.docs.insert_one(doc)
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
 
@@ -105,7 +113,7 @@ def upload_image():
                        "tags" : [],
                        "date_added" : date,
                        "date_updated" : date,
-                       "fingerprint" : vec.tolist(),
+                       "vec" : vec.tolist(),
                        })
         ret = {'doc_id': doc_id, 'failed' : 0}
 
