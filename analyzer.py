@@ -10,6 +10,7 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 import langdetect
+import sqlite3
 
 GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
 
@@ -57,15 +58,60 @@ def detect_text(img_bytes):
 #
 #        print('bounds: {}'.format(','.join(vertices)))
 
+def doc2vec(text):
+    """
+    avg the word vectors for each word in the doc, 
+    ignore the words not found in the db
+    """
+    conn = sqlite3.connect('word2vec/word2vec.db')
+    cur = conn.cursor()
+
+    # get lang_id
+    lang = detect_lang(text)
+    if lang is None:
+        return None
+
+    resp = cur.execute("select * from lang_ids where lang='hi'").fetchone()
+    if resp is None:
+        return None
+    lang_id = resp[0]
+
+    #query wordvecs for each word in text for that lang_id
+    words = text.split(' ')
+    query = f"SELECT * from wordvecs where lang_id={lang_id} and word in "+\
+                '('+','.join(['\''+i+'\'' for i in words])+')'
+    resp = cur.execute(query)
+    if resp is None:
+        return None
+   
+    vecs = []
+    for word,_,vec in resp.fetchall():
+        vec = json.loads(vec)
+        vec = np.array(vec)
+        vecs.append(vec)
+
+    mean_vec = np.mean(vecs, axis=0)
+    return mean_vec.tolist()
+
 def detect_lang(text):
     supported = ['en','hi','gu']
-    lang_id = langdetect.detect(text)
-    if lang_id not in supported:
+    lang = langdetect.detect(text)
+    if lang not in supported:
         return None
     else:
-        return lang_id
+        return lang
 
 if __name__ == "__main__":
+    text = "what is this"
+    vec = doc2vec(text)
+    print(vec)
+
+    text="बिल्कुल सोच समझ कर "
+    vec = doc2vec(text)
+    print(vec)
+    sys.exit()
+
+ 
     from PIL import Image
     import skimage.io
 
