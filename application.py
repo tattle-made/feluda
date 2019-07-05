@@ -74,16 +74,20 @@ def find_duplicate():
         vec = resnet18.extract_feature(image)
         doc_id, dist = imagesearch.search(vec)
         if doc_id is not None:
-            ret = {'failed' : 0, 'duplicate' : True, 'doc_id' : doc_id, 'distance' : dist}
+            ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : doc_id, 'distance' : dist}
         else:
-            ret = {'failed' : 0, 'duplicate' : False}
+            ret = {'failed' : 0, 'duplicate' : 0}
 
     elif text is not None:
         duplicate_doc = db.docs.find_one({"text" : text})
-        if duplicate_doc is None:
-            ret = {'failed' : 0, 'duplicate' : 0}
-        else:
+        vec = doc2vec(text)
+        doc_id, dist = docsearch.search(vec)
+        if duplicate_doc is not None:
             ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
+        elif doc_id is not None:
+            ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : doc_id, 'distance': dist}
+        else:
+            ret = {'failed' : 0, 'duplicate' : 0}
 
     else:
         ret = {'failed' : 1, 'error' : 'something went wrong'}
