@@ -10,6 +10,7 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 import langdetect
+import requests
 import sqlite3
 
 GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
