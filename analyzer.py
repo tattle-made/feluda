@@ -1,4 +1,5 @@
 import io 
+from io import BytesIO
 import sys,os,json
 from google.cloud import vision
 from google.protobuf.json_format import MessageToJson
@@ -10,6 +11,8 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 import langdetect
+import requests
+import skimage, PIL
 import sqlite3
 
 GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
