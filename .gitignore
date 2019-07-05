@@ -99,8 +99,11 @@ venv/
 ENV/
 
 
-
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# datafiles
+word2vec/*.vec
+word2vec/*.db
