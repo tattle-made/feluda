@@ -51,8 +51,9 @@ class ResNet18():
 def detect_text(img_bytes):
     client = vision.ImageAnnotatorClient()
     image_data = vision.types.Image(content=img_bytes)
-    response = client.text_detection(image=image_data)
-    return json.loads(MessageToJson(response))
+    resp = client.text_detection(image=image_data)
+    resp = json.loads(MessageToJson(resp))
+    return {'text' : resp['fullTextAnnotation']['text'], 'full' : resp}
 #    for text in texts:
 #        print('\n"{}"'.format(text.description))
 #
@@ -135,7 +136,11 @@ if __name__ == "__main__":
 
     #resp = detect_text('tests/images/6f6de48ffce515c6dd75d162634b9177d693c8ef.jpg')
     import IPython
-    IPython.embed()
-    resp = detect_text(skimage.io.imread(url))
 
+    img_dict = image_from_url(url)
+    resp = detect_text(img_dict['image_bytes'])
+    print(resp)
+
+    IPython.embed()
+    sys.exit()
     #fname = 'data/test.jpeg'
