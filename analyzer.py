@@ -53,7 +53,8 @@ def detect_text(img_bytes):
     image_data = vision.types.Image(content=img_bytes)
     resp = client.text_detection(image=image_data)
     resp = json.loads(MessageToJson(resp))
-    return {'text' : resp['fullTextAnnotation']['text'], 'full' : resp}
+    text = resp.get('fullTextAnnotation',{}).get('text','')
+    return {'text' : text, 'full' : resp}
 #    for text in texts:
 #        print('\n"{}"'.format(text.description))
 #
@@ -113,7 +114,6 @@ if __name__ == "__main__":
     text="बिल्कुल सोच समझ कर "
     vec = doc2vec(text)
     print(vec)
-    sys.exit()
 
  
     from PIL import Image
