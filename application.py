@@ -94,6 +94,13 @@ def find_duplicate():
 
     return jsonify(ret)
 
+@application.route('/find_text', methods=['POST'])
+def find_text():
+    data = request.get_json(force=True)
+    image_url = data.get('image_url')
+    image_dict = image_from_url(image_url)
+    return jsonify(detect_text(image_dict['image_bytes']))
+
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
     data = request.get_json(force=True)
