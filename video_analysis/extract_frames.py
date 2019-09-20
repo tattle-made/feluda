@@ -6,11 +6,12 @@ success,image = vidcap.read()
 count = 0
 
 def video_length(v):
-    v.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+    # Relative position of the video file: 0=start of the film, 1=end of the film.
+    v.set(cv2.CAP_PROP_POS_AVI_RATIO,1)  # end of film
     # duration in seconds
     duration = v.get(cv2.CAP_PROP_POS_MSEC)/1000.0
     frames = v.get(cv2.CAP_PROP_FRAME_COUNT)
-    v.set(cv2.CAP_PROP_POS_AVI_RATIO,0)
+    v.set(cv2.CAP_PROP_POS_AVI_RATIO,0)  # beginning of film
     return duration, int(frames)
 
 duration, frames = video_length(vidcap)

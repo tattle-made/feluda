@@ -105,5 +105,7 @@ ENV/
 !.elasticbeanstalk/*.global.yml
 
 # datafiles
-word2vec/*.vec
-word2vec/*.db
+**/**.vec
+**/**.db
+.vec
+.db

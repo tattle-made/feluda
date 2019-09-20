@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import sys, os
 from PIL import Image
-sys.path.append('..')
+sys.path.append('..')  # causes problems to extension
 from analyzer import *
 
 model = ResNet18()
