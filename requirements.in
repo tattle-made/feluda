@@ -9,3 +9,5 @@ dnspython
 tqdm
 langdetect
 fasttext
+dotenv
+boto3

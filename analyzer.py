@@ -2,8 +2,8 @@ from io import BytesIO
 import sys
 import os
 import json
-# from google.cloud import vision
-# from google.protobuf.json_format import MessageToJson
+from google.cloud import vision
+from google.protobuf.json_format import MessageToJson
 import torchvision.models as models
 import torch
 import torch.nn as nn

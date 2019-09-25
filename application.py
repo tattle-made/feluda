@@ -17,11 +17,11 @@ from os import listdir
 
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 from search import ImageSearch, DocSearch
-from db import sqlDatabase
+from db import sqlDatabase, mongoDB, default_db_doc
 
 # TODO: write unittests!!!
 
-db_type = 'sqlite'
+db_type = 'mongo'
 db_filename = 'docs_sqlite_db.db'
 imagesearch = ImageSearch(db_type=db_type, db_filename=db_filename)
 docsearch = DocSearch(db_type=db_type, db_filename=db_filename)
@@ -32,22 +32,22 @@ CORS(application)
 
 logger = logging.getLogger("tattle-api")
 
-""" 
+"""
 MongoDB schema: {
-    "doc_id" : doc_id, 
-    "has_image" : False, 
-    "has_text" : True, 
+    "doc_id" : doc_id,
+    "has_image" : False,
+    "has_text" : True,
     "date_added" : date,
     "date_updated" : date,
     "tags" : [],
     "text" : text,
     "lang" : lang,
-    "vec": vec 
+    "vec": vec
 }
 SQLite schema: {
     "doc_id: doc_id,
-    "has_image" : False, 
-    "has_text" : True, 
+    "has_image" : False,
+    "has_text" : True,
     "date_added" : date,
     "date_updated" : date,
     "tags" : [],
@@ -59,10 +59,9 @@ SQLite schema: {
     "imagevec": embedding
 }
 """
-# mongo_url = os.environ['MONGO_URL']
-# cli = MongoClient(mongo_url)
-# db = cli.documents
-# db = sqlDatabase(db_filename)
+if db_type == 'mongo':
+    db = mongoDB()
+    docs = db.docs
 
 
 @application.route('/health')
@@ -82,7 +81,8 @@ def upload_text():
     """
     data = request.get_json(force=True)
     text = data.get('text', None)
-    doc_id = data.get('doc_id', None)
+
+    doc_id = data.get('doc_id', None)  # why would they give an id?
     if text is None:
         ret = {'failed': 1, 'error': 'No text field in json'}
         return jsonify(ret)
@@ -95,28 +95,17 @@ def upload_text():
         date = datetime.date.today()
         doc_id = None
 
-    # lang = detect_lang(text)
-    vec, lang = doc2vec(text)
-    doc = {
-        "doc_id": doc_id,
-        "has_image": False,
-        "has_text": True,
-        "date_added": date,
-        "date_updated": date,
-        "tags": [],
-        "text": text,
-        "lang": lang,
-    }
-    if vec is not None:
-        doc["vec"] = vec
+    textvec, lang = doc2vec(text)
+    doc = default_db_doc(doc_id=doc_id, has_text=True, text=text, lang=lang)
+    if textvec is not None:
+        doc["text_vec"] = textvec.tolist()
 
-    if db_type == 'mongoDB':
-        db.docs.insert_one(doc)
+    if db_type == 'mongo':
+        docs.insert_one(doc)
     elif db_type == 'sqlite':
         with sqlDatabase(db_filename) as db:
             db.execute(
-                "INSERT into documents(has_image, has_text, date_added, date_updated, textdata, lang, vec) values(?,?,?,?,?,?,?)", (0, 1, date, date, text, lang, vec))
-
+                "INSERT into documents(has_image, has_text, date_added, date_updated, textdata, lang, vec) values(?,?,?,?,?,?,?)", (0, 1, date, date, text, lang, textvec))
     ret = {'failed': 0, 'doc_id': doc_id}
     return jsonify(ret)
 
@@ -143,7 +132,8 @@ def find_duplicate():
 
     elif text is not None:
         if db_type == 'mongo':
-            duplicate_doc = db.docs.find_one({"text": text})
+
+            duplicate_doc = docs.find_one({"text": text})
             # *is this just an exact match?
         elif db_type == 'sqlite':
             with sqlDatabase(db_filename) as db:
@@ -155,11 +145,11 @@ def find_duplicate():
                 duplicate_doc = {
                     'doc_id': temp[0][0], 'textdata': temp[0][1]}
 
-        vec, _ = doc2vec(text)
+        textvec, _ = doc2vec(text)
         if _ == None:
-            return jsonify({'failed': 1, 'error': vec})
+            return jsonify({'failed': 1, 'error': textvec})
 
-        doc_id, dist = docsearch.search(vec)
+        doc_id, dist = docsearch.search(textvec.tolist())
         if duplicate_doc is not None:
             ret = {'failed': 0, 'duplicate': 1,
                    'doc_id': duplicate_doc.get('doc_id')}
@@ -186,36 +176,43 @@ def find_text():
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
     """
-    uploads image to mongodb
-    input: json with keys {'image_url', 'text'}
+    uploads image to mongodb, sqlite
+    input: json with keys {'doc_id', 'image_url', 'text'}
     """
     data = request.get_json(force=True)
     image_url = data.get('image_url')
-    doc_id = data.get('doc_id', None)
+    doc_id = data.get('doc_id', None)  # why would they give an id?
     if image_url is None:
         ret = {'failed': 1, 'error': 'No image_url found'}
     else:
         image_dict = image_from_url(image_url)
         image = image_dict['image']
-        vec = resnet18.extract_feature(image)
-        #detected_text = detect_text(image_dict['image_bytes'])
+        image_vec = resnet18.extract_feature(image)
+        # detected_text = detect_text(image_dict['image_bytes'])
 
+    if db_type == 'mongo':
         date = datetime.datetime.now()
         if doc_id is None:
             doc_id = uuid.uuid4().hex
-        db.docs.insert_one({
-            "doc_id": doc_id,
-            "has_image": True,
-            "has_text": False,
-            "tags": [],
-            "date_added": date,
-            "date_updated": date,
-            "vec": vec.tolist(),
-        })
+        doc = default_db_doc(doc_id=doc_id, has_image=True,
+                             image_vec=image_vec.tolist())
+        docs.insert_one(doc)
+
         ret = {'doc_id': doc_id, 'failed': 0}
+    elif db_type == 'sqlite':
+        date = datetime.date.today()
+        doc_id = None
+        imagedata = image.tobytes()
+        imagemetadata = str({'mode': image.mode, 'size': image.size})
+        imagevec = image_vec
+
+        with sqlDatabase(db_filename) as db:
+            doc_id = db.query("SELECT COUNT(doc_id) from documents")
+            db.execute(
+                "INSERT into documents(has_image, has_text, date_added, date_updated, imagedata, imagemetadata, imagevec) values(?,?,?,?,?,?,?)", (1, 0, date, date, imagedata, imagemetadata, imagevec))
 
         # update the search index
-        imagesearch.update(doc_id, vec)
+        imagesearch.update(doc_id, image_vec)
 
     return jsonify(ret)
 
@@ -234,22 +231,16 @@ def update_tags():
     elif tags is None:
         ret = {'failed': 1, 'error': 'no tags provided'}
     else:
-        doc = db.docs.find_one({"doc_id": doc_id})
+        doc = docs.find_one({"doc_id": doc_id})
         if doc is None:
             ret = {'failed': 1, 'error': 'doc not found'}
         else:
             updated_tags = list(set(doc.get('tags', []) + tags))
             date = datetime.datetime.now()
-            db.docs.update_one({"doc_id": doc_id}, {"$set":
-                                                    {"tags": updated_tags, "date_updated": date}})
+            docs.update_one({"doc_id": doc_id}, {"$set":
+                                                 {"tags": updated_tags, "date_updated": date}})
             ret = {'failed': 0}
     return jsonify(ret)
-
-
-def analyze_image(image_url):
-    image = skimage.io.imread(image_url)
-    image = PIL.Image.fromarray(image)
-    embedding = get_image_embedding(image)
 
 
 if __name__ == "__main__":

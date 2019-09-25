@@ -1,11 +1,16 @@
 from pymongo import MongoClient
 from os.path import isfile
-from os import listdir
-from datetime import date
+from os import listdir, environ
+from datetime import date, datetime
+import uuid
 import sqlite3
 import numpy as np
+import requests
 from io import BytesIO
 # https://stackoverflow.com/questions/38076220/python-mysqldb-connection-in-a-class
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # TODO: is a db agnostic wrapper worth it?
 
@@ -31,12 +36,15 @@ class sqlDatabase:
             out = BytesIO()
             np.save(out, arr)
             out.seek(0)
+            print(arr, out.read())
             return sqlite3.Binary(out.read())
 
         def convert_array(text):
             out = BytesIO(text)
             out.seek(0)
-            return np.load(out)
+            out = BytesIO(out.read())
+            # ValueError: Cannot load file containing pickled data when allow_pickle=False
+            return np.load(out, allow_pickle=True)
 
         def im2bin(img):
             stream = BytesIO()
@@ -71,6 +79,9 @@ class sqlDatabase:
     def get_table_schema(self, table_name):
         return self.query(
             'SELECT sql FROM sqlite_master WHERE type="table" and name="' + table_name + '"')
+
+    def get_tablesize(self, table_name):
+        return self.query("SELECT COUNT(*) from " + table_name)
 
     @property
     def connection(self):
@@ -118,65 +129,132 @@ class sqlDatabase:
 
 class mongoDB:
     def __init__(self):
-        mongo_url = os.environ['MONGO_URL']
+        mongo_url = environ['MONGO_URL']
         cli = MongoClient(mongo_url)
-        self.db = cli.documents
+        self.cli = cli
+        self.documents = self.cli.documents
+        self.docs = self.documents.docs
 
 
-class jsonDB:
-    def __init__(self, filename):
-        self.filename = filename
-        self.schema = {
-            "doc_id": int,
-            "has_image": bool,
-            "has_text": bool,
-            "date_added": str,
-            "date_updated": str,
-            "tags": list(str),
-            "text": str,
-            "lang": str
-        }
+# class jsonDB:
+#     def __init__(self, filename):
+#         self.filename = filename
+#         self.schema = {
+#             "doc_id": int,
+#             "has_image": bool,
+#             "has_text": bool,
+#             "date_added": str,
+#             "date_updated": str,
+#             "tags": list(str),
+#             "text": str,
+#             "lang": str
+#         }
 
-        self.exists = isfile(self.filename)
+#         self.exists = isfile(self.filename)
 
-    def build_db(folder, filetype='.txt'):
-        if self.exists:
-            with open(self.filename, 'w') as f:
-                db = json.load(f)
+#     def build_db(self, folder, filetype='.txt'):
+#         if self.exists:
+#             with open(self.filename, 'w') as f:
+#                 db = json.load(f)
 
-        files = listdir(folder)
-        files = [f for f in files if filetype in f]
+#         files = listdir(folder)
+#         files = [f for f in files if filetype in f]
 
-        for file in files:
-            with open(file, 'r') as d:
-                vec = a.get_vec(f.read())
-                doc_id = 10
+#         for file in files:
+#             with open(file, 'r') as d:
+#                 vec = a.get_vec(f.read())
+#                 doc_id = 10
 
-        return
+#         return
+
+
+def aws_connection():
+    import boto3
+    ACCESS_ID = environ['ACCESS_ID']
+    ACCESS_KEY = environ['ACCESS_KEY']
+
+    s3 = boto3.client('s3', region_name='ap-south-1',
+                      aws_access_key_id=ACCESS_ID, aws_secret_access_key=ACCESS_KEY)
+
+    return s3
+
+
+def default_db_doc(doc_id=uuid.uuid4().hex, has_image=False, has_text=False, date_added=datetime.now(), date_updated=datetime.now(), tags=[], text=None, lang=None, text_vec=None, image_vec=None):
+    doc = {
+        "doc_id": doc_id,
+        "has_image": has_image,
+        "has_text": has_text,
+        "date_added": date_added,
+        "date_updated": date_updated,
+        "tags": tags,
+        "text": text,
+        "lang": lang,
+        "text_vec": text_vec,
+        "image_vec": image_vec
+    }
+
+    return doc
 
 
 def create_mongo_db():
-    client = MongoClient('localhost', 27017)
-    db = client['db']
+    from analyzer import image_from_url, ResNet18, doc2vec
 
-    return None
+    db = mongoDB()
+    docs = db.docs
 
+    img_model = ResNet18()
 
-def detect_lang(text):
-    import langdetect
+    s3 = aws_connection()
+    objs = s3.list_objects(Bucket='tattle-services')
 
-    supported = ['en', 'hi', 'gu']
-    lang = langdetect.detect(text)
-    if lang not in supported:
-        return None
-    else:
-        return lang
+    doc = default_db_doc(has_image=True)
+
+    urls = []
+    url_prefix = 'https://tattle-services.s3.ap-south-1.amazonaws.com/'
+    for f in objs['Contents']:
+        url = url_prefix + f['Key']
+        urls += [url]
+
+        content_type = requests.get(url).headers['Content-Type']
+        print(f['Key'], content_type)
+        # better check for content-type
+        if content_type[:5] == 'image':
+            try:
+                # fails with pngs
+                img = image_from_url(url)
+                img_bytes = img['image']
+                image_vec = img_model.extract_feature(img_bytes)
+
+                doc = default_db_doc(
+                    has_image=True, image_vec=image_vec.tolist())
+                docs.insert_one(doc)
+            except Exception as e:
+                print(e)
+                continue
+
+            print('added image: ', doc['doc_id'])
+
+        elif content_type[:4] == 'text':
+            text = requests.get(url).text
+            if len(text) == 0:
+                continue
+
+            textvec, lang = doc2vec(text)
+
+            doc = default_db_doc(has_text=True, text=text,
+                                 lang=lang, text_vec=textvec.tolist())
+            docs.insert_one(doc)
+
+            print('added text: ', doc['doc_id'])
+
+        # else: handle text+image case
+
+    print('mongo db setup complete')
 
 
 def create_sql_db(filename='docs_sqlite_db.db'):
-    from analyzer_no_google import doc2vec
+    from analyzer import doc2vec, ResNet18
     from PIL import Image
-    from analyzer_no_google import ResNet18
 
     db = sqlDatabase(filename)
 

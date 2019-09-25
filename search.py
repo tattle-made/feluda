@@ -27,16 +27,18 @@ class ImageSearch:
         """
         if self.db_type == 'mongo':
             db = mongoDB()
-            cur = db.docs.find({"has_image": True})
+            docs = db.docs
+
+            cur = docs.find({"has_image": True})
             total_docs = cur.count()
             # TODO: mongo schema is much simpler
             # vec holds both imagevec and textvec
             for doc in tqdm(cur, total=cur.count()):
-                if doc.get('vec') is None:
+                if doc.get('image_vec') is None:
                     continue
                 # print(len(doc.get('vec')))
                 self.ids.append(doc.get('doc_id'))
-                self.vecs.append(doc.get('vec'))
+                self.vecs.append(doc.get('image_vec'))
         elif self.db_type == 'json':
             db = json.load(self.db_filename)
             cur = db.keys()
@@ -85,13 +87,16 @@ class DocSearch:
     def build(self):
         if self.db_type == 'mongo':
             db = mongoDB()
-            cur = db.docs.find({"has_text": True})
+            docs = db.docs
+
+            cur = docs.find({"has_text": True})
             total_docs = cur.count()
             for doc in tqdm(cur, total=total_docs):
-                if doc.get('vec') is None:
+                if doc.get('text_vec') is None:
                     continue
                 self.ids.append(doc.get('doc_id'))
-                self.vecs.append(doc.get('vec'))
+                self.vecs.append(doc.get('text_vec'))
+            # print('len', total_docs, len(self.ids))
         elif self.db_type == 'json':
             db = json.load(self.db_filename)
             cur = db.keys()
@@ -117,6 +122,7 @@ class DocSearch:
         if type(vec) == list:
             vec = np.array(vec)
 
+        print('len-vecs', len(self.vecs), len(vec))
         if vec is None:
             print('vec is None')
             return (None, None)

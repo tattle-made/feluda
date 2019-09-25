@@ -69,12 +69,15 @@ if __name__ == "__main__":
 
     # params
     db = 'word2vec.db'
-    eng_file = 'fasttext/en/crawl-300d-2M.vec'
-    hindi_file = 'fasttext/hi/hi.vec'  # 'word2vec/hi.bin'
+
+    eng_file = 'cc.en.300.vec.gz'
+    hindi_file = 'cc.hi.300.vec.gz'
+    guj_file = 'cc.gu.300.vec.gz'
 
     # create database
     setup_tables(db)
 
     # insert word_vectors
     insert_words(eng_file, 0, db)
-    # insert_words(hindi_file, 1, db)
+    insert_words(hindi_file, 1, db)
+    insert_words(guj_file, 2, db)
