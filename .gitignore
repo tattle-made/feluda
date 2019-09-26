@@ -83,6 +83,8 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+# random notebooks
+*.ipynb
 
 # pyenv
 .python-version
@@ -105,5 +107,13 @@ ENV/
 !.elasticbeanstalk/*.global.yml
 
 # datafiles
-word2vec/*.vec
-word2vec/*.db
+**/**.vec
+**/**.db
+.vec
+.db
+
+# logging
+tests/*.out
+tests/*.err
+.out
+.err
