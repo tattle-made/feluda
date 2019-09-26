@@ -111,6 +111,7 @@ def upload_image():
     else:
         image_dict = image_from_url(image_url)
         image = image_dict['image']
+        image = image.convert('RGB') #take care of png(RGBA) issue
         vec = resnet18.extract_feature(image)
         #detected_text = detect_text(image_dict['image_bytes'])
 
