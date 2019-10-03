@@ -3,13 +3,7 @@ from tqdm import tqdm
 import os
 from pymongo import MongoClient
 from db import mongoDB, sqlDatabase
-import json
-
-# TODO: pass db params as python variables or env variables?
-# TODO: add mongo db url
-# TODO: add json support
-# ~TODO: abstract over both ImageSearch and DocSearch
-
+from analyzer import doc2vec, img2vec
 
 class ImageSearch:
     def __init__(self, db_type, db_filename):
@@ -30,35 +24,39 @@ class ImageSearch:
             docs = db.docs
 
             cur = docs.find({"has_image": True})
-            total_docs = cur.count()
-            # TODO: mongo schema is much simpler
-            # vec holds both imagevec and textvec
-            for doc in tqdm(cur, total=cur.count()):
+            total_docs = docs.count_documents({"has_image": True})
+            for doc in tqdm(cur, total=total_docs):
                 if doc.get('image_vec') is None:
                     continue
-                # print(len(doc.get('vec')))
                 self.ids.append(doc.get('doc_id'))
                 self.vecs.append(doc.get('image_vec'))
-        elif self.db_type == 'json':
-            db = json.load(self.db_filename)
-            cur = db.keys()
-            total_docs = len(db)
         elif self.db_type == 'sqlite':
             db = sqlDatabase(self.db_filename)
             # TODO: a nicer way to get count
             total_docs = db.query("SELECT COUNT(doc_id) from documents")[0][0]
-            # TODO: adapter for sqlite to return dicts
             cur = db.query(
                 "SELECT doc_id, imagevec from documents where imagevec != 'null'")
             for doc in tqdm(cur, total=total_docs):
                 self.ids.append(doc[0])
                 self.vecs.append(doc[1])
+        elif self.db_type == 'testing':
+            """setup up local testing dataset
+
+            db_filename {list(tuple)}: [(doc_id, vec),...]
+            """
+            for i, img in self.db_filename:
+                vec = img2vec(img)
+
+                # insert template doc into search set
+                self.ids.append(i)
+                self.vecs.append(vec.tolist())
 
         self.vecs = np.array(self.vecs)
 
     def update(self, doc_id, vec):  # add image to vec db
         self.ids.append(doc_id)
         self.vecs = np.vstack((self.vecs, vec))
+        print('updated')
 
     def search(self, vec):
         """
@@ -90,31 +88,46 @@ class DocSearch:
             docs = db.docs
 
             cur = docs.find({"has_text": True})
-            total_docs = cur.count()
+            total_docs = docs.count_documents({"has_text": True})
             for doc in tqdm(cur, total=total_docs):
                 if doc.get('text_vec') is None:
                     continue
                 self.ids.append(doc.get('doc_id'))
                 self.vecs.append(doc.get('text_vec'))
-            # print('len', total_docs, len(self.ids))
-        elif self.db_type == 'json':
-            db = json.load(self.db_filename)
-            cur = db.keys()
-            total_docs = len(db)
         elif self.db_type == 'sqlite':
             db = sqlDatabase(self.db_filename)
             # TODO: a nicer way to get count
             total_docs = db.query("SELECT COUNT(doc_id) from documents")[0][0]
-            # TODO: adapter for sqlite to return dicts
             cur = db.query(
                 "SELECT doc_id, vec from documents where vec != 'null'")
             for doc in tqdm(cur, total=total_docs):
                 self.ids.append(doc[0])
                 self.vecs.append(doc[1])
+        elif self.db_type == 'testing':
+            """setup up local testing dataset
+
+            db_filename {list(tuple)}: [(doc_id, vec),...]
+            """
+            for i, doc in self.db_filename:
+                vec, lang = doc2vec(doc)
+                if lang is None:
+                    # bad example doc
+                    print(f'{vec}: doc no. {i}')
+                    continue
+
+                # insert template doc into search set
+                self.ids.append(i)
+                self.vecs.append(vec.tolist())
 
         self.vecs = np.array(self.vecs)
 
     def update(self, doc_id, vec):
+        """update class variable self.vecs with new doc
+
+        Arguments:
+            doc_id {int} -- unique id for mongodb
+            vec {list} -- embedding from doc2vec
+        """
         self.ids.append(doc_id)
         self.vecs = np.vstack((self.vecs, vec))
 
@@ -122,7 +135,6 @@ class DocSearch:
         if type(vec) == list:
             vec = np.array(vec)
 
-        print('len-vecs', len(self.vecs), len(vec))
         if vec is None:
             print('vec is None')
             return (None, None)
@@ -135,8 +147,9 @@ class DocSearch:
 
 
 if __name__ == "__main__":
-    search = ImageSearch()
-    print(search.search(np.zeros(512).tolist()))
+    # search = ImageSearch()
+    # print(search.search(np.zeros(512).tolist()))
 
-    search = DocSearch()
-    print(search.search(np.zeros(300).tolist()))
+    # search = DocSearch()
+    # print(search.search(np.zeros(300).tolist()))
+    pass

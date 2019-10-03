@@ -1,25 +1,13 @@
-import os
-import sys
-import json
-import datetime
-import copy
-import uuid
-import requests
-import logging
-from flask import Flask, request, jsonify
+from search import DocSearch, ImageSearch
 from flask_cors import CORS
-# from pymongo import MongoClient
-from io import BytesIO
-import skimage
-import PIL
-import numpy as np
-from os import listdir
+from db import default_db_doc, mongoDB, sqlDatabase
+import datetime
+import logging
+from os import environ
 
-from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
-from search import ImageSearch, DocSearch
-from db import sqlDatabase, mongoDB, default_db_doc
+from flask import Flask, jsonify, render_template, request
 
-# TODO: write unittests!!!
+from analyzer import ResNet18, detect_text, doc2vec, image_from_url
 
 db_type = 'mongo'
 db_filename = 'docs_sqlite_db.db'
@@ -30,19 +18,21 @@ resnet18 = ResNet18()
 application = Flask(__name__)
 CORS(application)
 
+# ?
 logger = logging.getLogger("tattle-api")
 
 """
 MongoDB schema: {
-    "doc_id" : doc_id,
-    "has_image" : False,
-    "has_text" : True,
-    "date_added" : date,
-    "date_updated" : date,
-    "tags" : [],
-    "text" : text,
-    "lang" : lang,
-    "vec": vec
+    "doc_id": doc_id,
+    "has_image": has_image,
+    "has_text": has_text,
+    "date_added": date_added,
+    "date_updated": date_updated,
+    "tags": tags,
+    "text": text,
+    "lang": lang,
+    "text_vec": text_vec,
+    "image_vec": image_vec
 }
 SQLite schema: {
     "doc_id: doc_id,
@@ -64,6 +54,11 @@ if db_type == 'mongo':
     docs = db.docs
 
 
+@application.route('/')
+def home():
+    return render_template('application_template.html')
+
+
 @application.route('/health')
 def health_check():
     """
@@ -79,8 +74,16 @@ def upload_text():
     uploads text to mongodb
     input: json with keys {'doc_id', 'image_url', 'text'}
     """
-    data = request.get_json(force=True)
-    text = data.get('text', None)
+    if request.form:
+        data = request.form
+        text = data.get('media', None)
+    else:
+        data = request.get_json(force=True)
+        text = data.get('text', None)
+
+    if type(text) != str:
+        ret = {'failed': 1, 'error': 'no text found'}
+        return jsonify(ret)
 
     doc_id = data.get('doc_id', None)  # why would they give an id?
     if text is None:
@@ -89,33 +92,61 @@ def upload_text():
 
     if db_type == 'mongo':
         date = datetime.datetime.now()
-        if doc_id is None:
-            doc_id = uuid.uuid4().hex
     elif db_type == 'sqlite':
         date = datetime.date.today()
         doc_id = None
 
     textvec, lang = doc2vec(text)
-    doc = default_db_doc(doc_id=doc_id, has_text=True, text=text, lang=lang)
-    if textvec is not None:
-        doc["text_vec"] = textvec.tolist()
+    if lang == None:
+        return jsonify({'failed': 1, 'error': textvec})
 
     if db_type == 'mongo':
+        doc = default_db_doc(doc_id=doc_id, has_text=True, text=text, lang=lang)
+        doc_id = doc['doc_id']
+        if textvec is not None:
+            doc["text_vec"] = textvec.tolist()
         docs.insert_one(doc)
     elif db_type == 'sqlite':
         with sqlDatabase(db_filename) as db:
             db.execute(
                 "INSERT into documents(has_image, has_text, date_added, date_updated, textdata, lang, vec) values(?,?,?,?,?,?,?)", (0, 1, date, date, text, lang, textvec))
+
+    # update the search index
+    docsearch.update(doc_id, textvec)
+
     ret = {'failed': 0, 'doc_id': doc_id}
     return jsonify(ret)
+
+
+@application.route('/remove_doc', methods=['POST'])
+def remove_doc():
+    """
+    remove doc with doc_id from mongo server
+    input: json with keys {'doc_id', 'pass'}
+    """
+    data = request.get_json(force=True)
+    doc_id = data.get('doc_id', None)
+    pwd = data.get('pass', None)
+
+    if pwd == environ['DELETE_API_PASS']:
+        if db_type == 'mongo':
+            db.delete_one({'doc_id': doc_id})
+        return True
+    else:
+        return False
 
 
 @application.route('/find_duplicate', methods=['POST'])
 def find_duplicate():
     # force=true: ignore mimetype (media type) https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
-    data = request.get_json(force=True)
-    text = data.get('text', None)
-    image_url = data.get('image_url', None)
+    if request.form:
+        data = request.form
+        text = data.get('text', None)
+        image_url = data.get('image', None)
+    else:
+        data = request.get_json(force=True)
+        text = data.get('text', None)
+        image_url = data.get('image_url', None)
     if text is None and image_url is None:
         ret = {'failed': 1, 'error': 'No text or image_url found'}
 
@@ -132,9 +163,7 @@ def find_duplicate():
 
     elif text is not None:
         if db_type == 'mongo':
-
             duplicate_doc = docs.find_one({"text": text})
-            # *is this just an exact match?
         elif db_type == 'sqlite':
             with sqlDatabase(db_filename) as db:
                 temp = db.query(
@@ -179,25 +208,28 @@ def upload_image():
     uploads image to mongodb, sqlite
     input: json with keys {'doc_id', 'image_url', 'text'}
     """
-    data = request.get_json(force=True)
-    image_url = data.get('image_url')
-    doc_id = data.get('doc_id', None)  # why would they give an id?
+    if request.form:
+        data = request.form
+        image_url = data.get('media', None)
+    else:
+        data = request.get_json(force=True)
+        image_url = data.get('image_url', None)
+    doc_id = data.get('doc_id', None)
+
     if image_url is None:
         ret = {'failed': 1, 'error': 'No image_url found'}
     else:
         image_dict = image_from_url(image_url)
         image = image_dict['image']
-        image = image.convert('RGB')  # take care of png(RGBA) issue
         image_vec = resnet18.extract_feature(image)
         # detected_text = detect_text(image_dict['image_bytes'])
 
     if db_type == 'mongo':
         date = datetime.datetime.now()
-        if doc_id is None:
-            doc_id = uuid.uuid4().hex
         doc = default_db_doc(doc_id=doc_id, has_image=True,
                              image_vec=image_vec.tolist())
         docs.insert_one(doc)
+        doc_id = doc['doc_id']
 
         ret = {'doc_id': doc_id, 'failed': 0}
     elif db_type == 'sqlite':
@@ -212,8 +244,8 @@ def upload_image():
             db.execute(
                 "INSERT into documents(has_image, has_text, date_added, date_updated, imagedata, imagemetadata, imagevec) values(?,?,?,?,?,?,?)", (1, 0, date, date, imagedata, imagemetadata, imagevec))
 
-        # update the search index
-        imagesearch.update(doc_id, image_vec)
+    # update the search index
+    imagesearch.update(doc_id, image_vec)
 
     return jsonify(ret)
 
@@ -245,7 +277,5 @@ def update_tags():
 
 
 if __name__ == "__main__":
-    # application would not with 'x' permissions
-    # chmod 644 application.py
     application.run(debug=True)
     # application.run(host="0.0.0.0", port=7000)

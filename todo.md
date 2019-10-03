@@ -1,19 +1,15 @@
 # TODO
-- dataset for testing on S3
-    - 50 images with text: hindi, guj, eng, tam, mal, tel, pun, bang
-        - diff image formats
-        - diff image preprocessing
-    - diff formats/scripts/encoding of text
+- scraping online content
 - test on server/AWS
 - add video support
 - add audio support
 
 # Questions/not immediate thoughts
-- How to display approximate matches, what is the threshold?
-- What schema to use? Store original files as backup on S3? Which backend to use?
+- types of preprocessing for text/image/media/audio that does not change them for a user?
+- what is the similarity threshold?
+- What schema to use? Store original files as backup on S3?
 - supporting various formats of media
 - multilingual text extraction / open-source OCR?
-- approximate match resistant to small changes in input file
 
 # mongo
 - install mongo on wsl:
@@ -30,3 +26,7 @@
 
 # firebase
 - hook to firebase: https://stackoverflow.com/questions/40799258/where-can-i-get-serviceaccountcredentials-json-for-firebase-admin
+
+# testing
+python -m applicationTests
+python -m dbTests

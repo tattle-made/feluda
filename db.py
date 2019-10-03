@@ -12,7 +12,7 @@ from io import BytesIO
 from dotenv import load_dotenv
 load_dotenv()
 
-# TODO: is a db agnostic wrapper worth it?
+# TODO: is a db agnostic wrapper worth it? prob not
 
 
 class sqlDatabase:
@@ -179,7 +179,9 @@ def aws_connection():
     return s3
 
 
-def default_db_doc(doc_id=uuid.uuid4().hex, has_image=False, has_text=False, date_added=datetime.now(), date_updated=datetime.now(), tags=[], text=None, lang=None, text_vec=None, image_vec=None):
+def default_db_doc(doc_id=None, has_image=False, has_text=False, date_added=datetime.now(), date_updated=datetime.now(), tags=[], text=None, lang=None, text_vec=None, image_vec=None):
+    if doc_id == None:
+        doc_id = uuid.uuid4().hex
     doc = {
         "doc_id": doc_id,
         "has_image": has_image,
@@ -196,24 +198,12 @@ def default_db_doc(doc_id=uuid.uuid4().hex, has_image=False, has_text=False, dat
     return doc
 
 
-def create_mongo_db():
-    from analyzer import image_from_url, ResNet18, doc2vec
+def s3ToDB(objs, url_prefix, img_model, docs):
+    from analyzer import image_from_url, doc2vec
 
-    db = mongoDB()
-    docs = db.docs
-
-    img_model = ResNet18()
-
-    s3 = aws_connection()
-    objs = s3.list_objects(Bucket='tattle-services')
-
-    doc = default_db_doc(has_image=True)
-
-    urls = []
-    url_prefix = 'https://tattle-services.s3.ap-south-1.amazonaws.com/'
     for f in objs['Contents']:
         url = url_prefix + f['Key']
-        urls += [url]
+        # urls += [url]
 
         content_type = requests.get(url).headers['Content-Type']
         print(f['Key'], content_type)
@@ -229,7 +219,7 @@ def create_mongo_db():
                     has_image=True, image_vec=image_vec.tolist())
                 docs.insert_one(doc)
             except Exception as e:
-                print(e)
+                print('error', e)
                 continue
 
             print('added image: ', doc['doc_id'])
@@ -249,6 +239,24 @@ def create_mongo_db():
 
         # else: handle text+image case
 
+def create_mongo_db():
+    from analyzer import ResNet18
+
+    db = mongoDB()
+    docs = db.docs
+
+    img_model = ResNet18()
+
+    s3 = aws_connection()
+    
+    buckets = ['tattle-services', 'tattle-priors']
+    for bucket in buckets:
+        objs = s3.list_objects(Bucket=bucket)
+
+        url_prefix = f'https://{bucket}.s3.ap-south-1.amazonaws.com/'
+
+        s3ToDB(objs, url_prefix, img_model, docs)
+    
     print('mongo db setup complete')
 
 

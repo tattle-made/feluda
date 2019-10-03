@@ -117,3 +117,6 @@ tests/*.out
 tests/*.err
 .out
 .err
+
+# subfolders
+scraping/**

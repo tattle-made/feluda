@@ -1,20 +1,13 @@
 from io import BytesIO
-import sys
-import os
 import json
-from google.cloud import vision
-from google.protobuf.json_format import MessageToJson
-import torchvision.models as models
 import torch
-import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 from langdetect import detect, DetectorFactory
 import requests
-import skimage
-import PIL
+from PIL import Image
 import sqlite3
 
 """
@@ -31,10 +24,23 @@ DetectorFactory.seed = 7
 def image_from_url(image_url):
     resp = requests.get(image_url)
     image_bytes = resp.content
-    image = PIL.Image.open(BytesIO(image_bytes))
+    image = Image.open(BytesIO(image_bytes))
     image_array = np.array(image)
     return {'image': image, 'image_array': image_array, 'image_bytes': image_bytes}
 
+def img2vec(img, type='url'):
+    model = ResNet18()
+
+    if type == 'url':
+        image = image_from_url(img)
+        vec = model.extract_feature(image['image'])
+    elif type == 'image':
+        # PIL.Image.Image
+        vec = model.extract_feature(img)
+    else:
+        vec = None
+
+    return vec
 
 class ResNet18():
     """Get ResNet18 embeddings for images
@@ -86,6 +92,10 @@ def detect_text(img_bytes):
     Returns:
         [dict] -- {'text': text, 'full': resp}
     """
+    # should not have imports here
+    from google.cloud import vision
+    from google.protobuf.json_format import MessageToJson
+
     client = vision.ImageAnnotatorClient()
     image_data = vision.types.Image(content=img_bytes)
     resp = client.text_detection(image=image_data)
@@ -168,6 +178,9 @@ def detect_lang(text):
 
 
 def main():
+    import sys
+    import skimage
+
     text = "what is this"
     vec = doc2vec(text)
     print(vec)
