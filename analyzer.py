@@ -82,7 +82,7 @@ def doc2vec(text):
     lang_id = resp[0]
 
     #query wordvecs for each word in text for that lang_id
-    words = text.replace('\n',' ').split(' ')
+    words = text.replace('\n',' ').replace("'","").split(' ')
     query = f"SELECT * from wordvecs where lang_id={lang_id} and word in "+\
                 '('+','.join(['\''+i+'\'' for i in words])+')'
     resp = cur.execute(query)
