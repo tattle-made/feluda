@@ -72,6 +72,7 @@ def find_duplicate():
     elif image_url is not None:
         image_dict = image_from_url(image_url)
         image = image_dict['image']
+        image = image.convert('RGB') #take care of png(RGBA) issue
         vec = resnet18.extract_feature(image)
         doc_id, dist = imagesearch.search(vec)
         if doc_id is not None:
