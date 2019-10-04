@@ -83,7 +83,7 @@ def find_duplicate():
     elif text is not None:
         duplicate_doc = db.docs.find_one({"text" : text})
         vec = doc2vec(text)
-        doc_id, dist = docsearch.search(vec)
+        doc_id, dist = textsearch.search(vec)
         if duplicate_doc is not None:
             ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
         elif doc_id is not None:
