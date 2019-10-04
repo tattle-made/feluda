@@ -8,10 +8,11 @@ import skimage, PIL
 import numpy as np
 
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
-from search import ImageSearch, DocSearch
+from search import ImageSearch, TextSearch, DocSearch
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
+textsearch = TextSearch()
 resnet18 = ResNet18()
 
 application = Flask(__name__)
@@ -112,25 +113,48 @@ def upload_image():
         image_dict = image_from_url(image_url)
         image = image_dict['image']
         image = image.convert('RGB') #take care of png(RGBA) issue
-        vec = resnet18.extract_feature(image)
-        #detected_text = detect_text(image_dict['image_bytes'])
+        image_vec = resnet18.extract_feature(image)
+
+        detected_text = detect_text(image_dict['image_bytes']).get('text','')
+        lang = detect_lang(detected_text)
+
+        #import ipdb; ipdb.set_trace()
+        if detected_text == '' or None:
+            text_vec = np.zeros(300).tolist()
+            has_text = False
+        else:
+            text_vec = doc2vec(detected_text)
+            has_text = True
+
+        if lang is None:
+            text_vec = np.zeros(300).tolist()
+            has_text = True
+
+        vec = np.hstack((image_vec, text_vec)).tolist()
 
         date = datetime.datetime.now()
         if doc_id is None:
             doc_id = uuid.uuid4().hex
         db.docs.insert_one({
                        "doc_id" : doc_id, 
+                       "version": "1.1",
                        "has_image" : True, 
-                       "has_text" : False, 
+                       "has_text" : has_text, 
+                       "text" : detected_text,
                        "tags" : [],
                        "date_added" : date,
                        "date_updated" : date,
-                       "vec" : vec.tolist(),
+                       "image_vec" : image_vec.tolist(),
+                       "text_vec" : text_vec,
+                       "vec" : vec,
                        })
         ret = {'doc_id': doc_id, 'failed' : 0}
 
         #update the search index
-        imagesearch.update(doc_id, vec)
+        imagesearch.update(doc_id, image_vec)
+        docsearch.update(doc_id, vec)
+        if has_text:
+            textsearch.update(doc_id, text_vec)
 
     return jsonify(ret)
 
