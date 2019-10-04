@@ -76,7 +76,7 @@ def doc2vec(text):
     if lang is None:
         return None
 
-    resp = cur.execute("select * from lang_ids where lang='hi'").fetchone()
+    resp = cur.execute("select * from lang_ids where lang='"+lang+"'").fetchone()
     if resp is None:
         return None
     lang_id = resp[0]
