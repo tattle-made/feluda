@@ -1,7 +1,7 @@
 import json, io
 from tqdm import tqdm
 sample = 500
-fin = io.open('/data/word2vec/cc.hi.300.vec', 'r', encoding='utf-8', newline='\n', errors='ignore')
+fin = io.open('cc.hi.300.vec', 'r', encoding='utf-8', newline='\n', errors='ignore')
 n, d = map(int, fin.readline().split())
 
 data = {}

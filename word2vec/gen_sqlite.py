@@ -20,7 +20,7 @@ def setup_tables():
 def insert_words():
     conn = sqlite3.connect('word2vec.db')
     cur = conn.cursor()
-    fin = io.open('/data/word2vec/cc.en.300.vec', 'r', encoding='utf-8', newline='\n', errors='ignore')
+    fin = io.open('cc.en.300.vec', 'r', encoding='utf-8', newline='\n', errors='ignore')
     n, d = map(int, fin.readline().split())
     for line in tqdm(fin,total=n):
         tokens = line.rstrip().split(' ')
@@ -35,4 +35,5 @@ def insert_words():
     conn.commit()
     conn.close()
 
+#setup_tables()
 insert_words()
