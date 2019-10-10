@@ -20,6 +20,12 @@
     - sudo mongod --dbpath ~/data/db
     - run create_mongo_db()  
 
+# tesseract ocr
+[install](https://github.com/tesseract-ocr/tesseract): 
+- sudo apt-get install tesseract-ocr  
+or 
+- pip install tesseract-ocr
+
 # environment files
 - .env
 - env_template

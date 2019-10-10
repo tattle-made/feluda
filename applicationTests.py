@@ -1,13 +1,16 @@
 import unittest
 from os import environ
 import numpy as np
-
+import matplotlib.pyplot as plt
+from PIL import Image
 
 class imageSearchTests(unittest.TestCase):
     def setUp(self):
         from transforms import imageTransforms
         from search import ImageSearch
         from analyzer import img2vec, image_from_url
+
+        self.verbose = False
 
         self.db_type = 'testing'
         self.images = [(1, 'https://picsum.photos/id/448/1024/768')]
@@ -22,9 +25,7 @@ class imageSearchTests(unittest.TestCase):
         self.assertTrue(len(self.ImageSearch.vecs) > 0)
 
     def testApproxImage(self):
-        # transforms = ['crop', 'rotate', 'noise', 'b/w',
-                    #   'saturation', 'add_noise_to_embedding']
-        transforms = ['crop', 'rotate']
+        transforms = ['crop', 'rotate', 'invert', 'mirror', 'BLUR', 'CONTOUR', 'DETAIL', 'EDGE_ENHANCE', 'EDGE_ENHANCE', 'EDGE_ENHANCE_MORE', 'EMBOSS', 'FIND_EDGES', 'SMOOTH', 'SMOOTH_MORE', 'SHARPEN', 'GaussianBlur', 'UnsharpMask', 'MedianFilter', 'MinFilter', 'MaxFilter', 'ModeFilter']
 
         for i, image in self.images:
             image = self.image_from_url(image)['image']
@@ -33,11 +34,22 @@ class imageSearchTests(unittest.TestCase):
                 for tf in transforms:
                     with self.subTest(transform=tf):
                         imageTransformed = self.imageTransforms(image, type=tf)
-                        imageTransformed = self.img2vec(imageTransformed, type='image')
+                        imageTransformedVec = self.img2vec(imageTransformed, type='image')
 
-                        ret = self.ImageSearch.search(imageTransformed)
+                        ret = self.ImageSearch.search(imageTransformedVec)
                         self.assertEqual(ret[0], i)
+                        
                         print(f'{i}, {tf}: {ret[1]}')
+                        
+                        ret_image = self.image_from_url(self.images[ret[0]-1][1])['image']
+                        if self.verbose:
+                            f, ax = plt.subplots(nrows=3, ncols=1)
+
+                            ax[0].imshow(image)
+                            ax[1].imshow(imageTransformed)
+                            ax[2].imshow(ret_image)
+
+                            plt.show(block=True)
 
 
 class docSearchTests(unittest.TestCase):
@@ -85,6 +97,7 @@ class docSearchTests(unittest.TestCase):
 class applicationAPITests(unittest.TestCase):
     def setUp(self):
         from requests import post
+        from json import dumps
         from dotenv import load_dotenv
         load_dotenv()
         
@@ -99,9 +112,9 @@ class applicationAPITests(unittest.TestCase):
         for image_url, image_text in self.image_with_texts:
             postData = {'image_url': image_url}
             response = self.post(
-                f'http://{self.SERVER}/find_text', data=postData)
+                f'http://{self.SERVER}/find_text', data=dumps(postData))
             with self.subTest():
-                self.assertEqual(response.content, image_text)
+                self.assertEqual(response.text, image_text)
 
     def testUploadAndFindDuplicateText(self):
         text = ""

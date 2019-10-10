@@ -83,33 +83,41 @@ class ResNet18():
         return embedding_fp16
 
 
-def detect_text(img_bytes):
+def detect_text(image_dict, GOOGLE_VISION=False):
     """detect and return text in image using Google Vision API
 
     Arguments:
-        img_bytes {image in binary} -- image_bytes?
+        image_dict {dict} -- 'image': PIL.Image.Image, 'image_array': np.ndarray, 'image_bytes': bytes
 
     Returns:
         [dict] -- {'text': text, 'full': resp}
     """
-    # should not have imports here
-    from google.cloud import vision
-    from google.protobuf.json_format import MessageToJson
 
-    client = vision.ImageAnnotatorClient()
-    image_data = vision.types.Image(content=img_bytes)
-    resp = client.text_detection(image=image_data)
-    resp = json.loads(MessageToJson(resp))
-    text = resp.get('fullTextAnnotation', {}).get('text', '')
-    return {'text': text, 'full': resp}
-#    for text in texts:
-#        print('\n"{}"'.format(text.description))
-#
-#        vertices = (['({},{})'.format(vertex.x, vertex.y)
-#                    for vertex in text.bounding_poly.vertices])
-#
-#        print('bounds: {}'.format(','.join(vertices)))
+    if GOOGLE_VISION:
+        # should not have imports here
+        from google.cloud import vision
+        from google.protobuf.json_format import MessageToJson
 
+        client = vision.ImageAnnotatorClient()
+        image_data = vision.types.Image(content=image_dict['image_bytes'])
+        resp = client.text_detection(image=image_data)
+        resp = json.loads(MessageToJson(resp))
+        text = resp.get('fullTextAnnotation', {}).get('text', '')
+        return {'text': text, 'full': resp}
+    #    for text in texts:
+    #        print('\n"{}"'.format(text.description))
+    #
+    #        vertices = (['({},{})'.format(vertex.x, vertex.y)
+    #                    for vertex in text.bounding_poly.vertices])
+    #
+    #        print('bounds: {}'.format(','.join(vertices)))
+
+    else:
+        # TODO: preprocess image for better performance: threshold + blur
+        from pytesseract import image_to_string
+
+        text = image_to_string(image_dict['image'])
+        return {'text': text, 'full': None}
 
 def doc2vec(text, db_filename='word2vec/word2vec.db'):
     """

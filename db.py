@@ -128,6 +128,12 @@ class sqlDatabase:
 
 
 class mongoDB:
+    # ~TODO: mongo best practices
+    # https://arkusnexus.com/2016/09/12/coding-guidelines-mongodb/
+    # https://docs.mongodb.com/manual/core/schema-validation/
+    # https://www.infoq.com/articles/Starting-With-MongoDB/
+    # https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1
+    # https://www.digitalocean.com/community/tutorials/how-to-back-up-restore-and-migrate-a-mongodb-database-on-ubuntu-14-04
     def __init__(self):
         mongo_url = environ['MONGO_URL']
         cli = MongoClient(mongo_url)
