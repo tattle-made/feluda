@@ -33,6 +33,10 @@ or
 # firebase
 - hook to firebase: https://stackoverflow.com/questions/40799258/where-can-i-get-serviceaccountcredentials-json-for-firebase-admin
 
+# widgets
+pip install ipywidgets  
+jupyter nbextension enable --py widgetsnbextension
+
 # testing
 python -m applicationTests
 python -m dbTests
