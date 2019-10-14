@@ -17,7 +17,7 @@ def setup_tables(db):
     # if table already exists, exit function
     # https://stackoverflow.com/questions/6190776/what-is-the-best-way-to-exit-a-function-which-has-no-return-value-in-python-be
     exist = cur.fetchone()
-    if exist:
+    if not exist:
         conn.close()
         return
 
@@ -54,9 +54,8 @@ def insert_words(filename, lang_id, db):
         try:
             cur.execute("insert into wordvecs values ('%s','%s','%s')" %
                         (word, lang_id, vec))
-        except Exception as e:
-            print(e)
-            # print('hello', tokens[0])
+        except:
+            print(tokens[0])
             continue
     conn.commit()
     conn.close()
@@ -71,9 +70,9 @@ if __name__ == "__main__":
     # params
     db = 'word2vec.db'
 
-    eng_file = 'cc.en.300.vec'
-    hindi_file = 'cc.hi.300.vec'
-    guj_file = 'cc.gu.300.vec'
+    eng_file = 'cc.en.300.vec.gz'
+    hindi_file = 'cc.hi.300.vec.gz'
+    guj_file = 'cc.gu.300.vec.gz'
 
     # create database
     setup_tables(db)

@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>
+            Tattle Duplicate Detection
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet" media="screen">
+        <style type="text/css">
+            .container {
+                max-width: 500px;
+                padding-top: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- https://getbootstrap.com/docs/4.3/components/forms/ -->
+        <div class="container">
+            <form action="/upload_text" method="POST" class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="upload_text">Upload Text: </label>
+                </div>
+                <div class="form-group mx-sm-3 mb-2">
+                    <input type="text" class="form-control" id="upload_text" name="media" placeholder="Place text here">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Upload</button>
+            </form>
+        </div>
+        <div class="container">
+            <form action="/upload_image" method="POST" class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="upload_image">Upload Image: </label>
+                </div>
+                <div class="form-group mx-sm-3 mb-2">
+                    <input type="text" accept="image/*|text" class="form-control" name="media" id="upload_image" placeholder="Place image/url here">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Upload</button>
+            </form>
+        </div>
+        <div class="container">
+            <form action="/find_duplicate" method="POST" class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="duplicate">Find Duplicate (text): </label>
+                </div>
+                <div class="form-group mx-sm-3 mb-2">
+                    <input type="text" accept="image/*|text" class="form-control" name="text" id="duplicate"
+                        placeholder="Place text/image here">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Find</button>
+            </form>
+        </div>
+        <div class="container">
+            <form action="/find_duplicate" method="POST" class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="duplicate">Find Duplicate (image): </label>
+                </div>
+                <div class="form-group mx-sm-3 mb-2">
+                    <input type="text" accept="image/*|text" class="form-control" name="image" id="duplicate"
+                        placeholder="Place text/image here">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2">Find</button>
+            </form>
+        </div>    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </body>
+</html>

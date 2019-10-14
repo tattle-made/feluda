@@ -1,0 +1,9 @@
+# db
+MONGO_URL=
+
+# aws
+ACCESS_ID=
+ACCESS_KEY=
+
+# application server
+LIVE_SERVER=
