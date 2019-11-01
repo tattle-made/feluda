@@ -180,9 +180,19 @@ def upload_image():
 
 @application.route('/update_tags', methods=['POST'])
 def update_tags():
+    """
+    tags are stored as follows:
+    'tags' : [{'value' : 'politics' , 'source' : 'tattle'},
+              {'value' : 'election' , 'source' : 'TOI'   },
+              {'value' : 'politics' , 'source' : 'altnews'}]
+
+    update_tags will only have a list of tags ['election','politics'] and a source : 'tattle'
+    it'll create two tags: [{'value' : 'election' , 'source' : 'tattle'}, {'value' : 'politics', 'source' : 'tattle'}]
+    """
     data = request.get_json(force=True)
     doc_id = data.get('doc_id')
-    tags = data.get('tags')
+    tags = data.get('tags') # e.g. [{'tag' : 'politics', 'source' : 'tattle'}, {'tag' : 'election', 'source' : 'TOI'}
+    source = data.get('source') or 'tattle'
     if doc_id is None:
         ret = {'failed' : 1, 'error' : 'no doc_id provided'}
     elif tags is None:
@@ -192,11 +202,44 @@ def update_tags():
         if doc is None:
             ret = {'failed' : 1, 'error' : 'doc not found'}
         else:
-            updated_tags = list(set(doc.get('tags',[]) + tags))
+            new_tags = [{'value' : t, 'source':source} for t in tags]
+            all_tags = new_tags + doc.get('tags', [])
+            updated_tags = list({(t['value'],t['source']):t for t in all_tags}.values())
+
             date = datetime.datetime.now()
             db.docs.update_one({"doc_id" : doc_id}, {"$set" : 
                 {"tags" : updated_tags, "date_updated" : date}})
             ret = {'failed' : 0}
+    return jsonify(ret)
+
+@application.route('/remove_tags', methods=['POST'])
+def remove_tags():
+    data = request.get_json(force=True)
+    doc_id = data.get('doc_id')
+    tags = data.get('tags')
+    source = data.get('source')
+    if doc_id is None:
+        ret = {'failed' : 1, 'error' : 'no doc_id provided'}
+    elif tags is None:
+        ret = {'failed' : 1, 'error' : 'no tags provided'}
+    elif source is None:
+        ret = {'failed' : 1, 'error' : 'no source provided'}
+    else:
+        doc = db.docs.find_one({"doc_id" : doc_id})
+        if doc is None:
+            ret = {'failed' : 1, 'error' : 'doc not found'}
+        else:
+            to_remove_tags = [{'value' : t, 'source':source} for t in tags]
+            updated_tags = doc.get('tags',[])
+            removed = []
+            for tag in to_remove_tags:
+                if tag in updated_tags:
+                    updated_tags.remove(tag)
+                    removed.append(tag)
+            date = datetime.datetime.now()
+            db.docs.update_one({"doc_id" : doc_id}, {"$set" : 
+                {"tags" : updated_tags, "date_updated" : date}})
+            ret = {'failed' : 0, 'removed_tags':removed}
     return jsonify(ret)
 
 def analyze_image(image_url):
