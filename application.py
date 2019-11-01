@@ -103,6 +103,25 @@ def find_text():
     image_dict = image_from_url(image_url)
     return jsonify(detect_text(image_dict['image_bytes']))
 
+@application.route('/delete_doc', methods=['POST'])
+def delete_doc():
+    data = request.get_json(force=True)
+    doc_id = data.get('doc_id')
+    ret = {}
+    if not doc_id:
+        ret['failed'] = 1
+        ret['error'] = 'no doc id provided'
+        return jsonify(ret)
+
+    result = db.docs.delete_one({"doc_id" : doc_id})
+    if result.deleted_count == 1:
+        ret['failed'] = 0
+    else:
+        ret['failed'] = 1
+        ret['error'] = 'no matching document'
+    return jsonify(ret)
+
+
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
     data = request.get_json(force=True)
