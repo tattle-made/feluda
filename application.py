@@ -65,6 +65,7 @@ def upload_text():
 def find_duplicate():
     data = request.get_json(force=True)
     text = data.get('text', None)
+    thresh = data.get('threshold')
     image_url = data.get('image_url', None)
     if text is None and image_url is None:
         ret = {'failed' : 1, 'error' : 'No text or image_url found'}
@@ -74,7 +75,11 @@ def find_duplicate():
         image = image_dict['image']
         image = image.convert('RGB') #take care of png(RGBA) issue
         vec = resnet18.extract_feature(image)
-        doc_id, dist = imagesearch.search(vec)
+        if thresh:
+            doc_id, dist = imagesearch.search(vec, thresh)
+        else:
+            doc_id, dist = imagesearch.search(vec)
+
         if doc_id is not None:
             ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : doc_id, 'distance' : dist}
         else:
@@ -83,7 +88,10 @@ def find_duplicate():
     elif text is not None:
         duplicate_doc = db.docs.find_one({"text" : text})
         vec = doc2vec(text)
-        doc_id, dist = textsearch.search(vec)
+        if thresh:
+            doc_id, dist = textsearch.search(vec, thresh)
+        else:
+            doc_id, dist = textsearch.search(vec)
         if duplicate_doc is not None:
             ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
         elif doc_id is not None:

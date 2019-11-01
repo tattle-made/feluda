@@ -31,12 +31,14 @@ class ImageSearch:
         else:
             self.vecs = np.vstack((self.vecs,vec))
 
-    def search(self, vec):
+    def search(self, vec, thresh=None):
+        if not thresh:
+            thresh=self.thresh
         if type(vec) == list:
             vec = np.array(vec)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        if dists[idx[0]] < self.thresh:
+        if dists[idx[0]] < thresh:
             return (self.ids[idx[0]], dists[idx[0]])
         else:
             return (None, None)
@@ -68,7 +70,9 @@ class TextSearch:
         else:
             self.vecs = np.vstack((self.vecs,vec))
 
-    def search(self, vec):
+    def search(self, vec, thresh=None):
+        if not thresh:
+            thresh=self.thresh
         if type(vec) == list:
             vec = np.array(vec)
 
@@ -77,7 +81,7 @@ class TextSearch:
             return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        if dists[idx[0]] < self.thresh:
+        if dists[idx[0]] < thresh:
             return (self.ids[idx[0]], dists[idx[0]])
         else:
             return (None, None)
@@ -109,7 +113,9 @@ class DocSearch:
         else:
             self.vecs = np.vstack((self.vecs,vec))
 
-    def search(self, vec):
+    def search(self, vec, thresh=None):
+        if not thresh:
+            thresh=self.thresh
         if type(vec) == list:
             vec = np.array(vec)
 
@@ -118,7 +124,7 @@ class DocSearch:
             return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        if dists[idx[0]] < self.thresh:
+        if dists[idx[0]] < thresh:
             return (self.ids[idx[0]], dists[idx[0]])
         else:
             return (None, None)
