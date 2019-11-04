@@ -186,6 +186,30 @@ def upload_image():
 
     return jsonify(ret)
 
+@application.route('/search_tags', methods=['POST'])
+def search_tags():
+    ret = {}
+    data = request.get_json(force=True)
+    tags = data.get('tags')
+    if not tags:
+        ret['failed'] = 1
+        ret['error'] = 'no tags provided'
+        return jsonify(ret)
+
+    sources = data.get('sources')
+    if sources:
+        query = {"tags.value" : {"$in" : tags}, "tags.source" : {"$in" : sources}}
+    else:
+        query = {"tags.value" : {"$in" : tags}}
+
+    docs = []
+    for doc in db.docs.find(query):
+        docs.append(doc.get('doc_id'))
+
+    ret['docs'] = docs
+    ret['failed'] = 0
+    return jsonify(ret)
+
 @application.route('/update_tags', methods=['POST'])
 def update_tags():
     """
