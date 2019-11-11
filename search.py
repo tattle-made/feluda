@@ -38,10 +38,13 @@ class ImageSearch:
             vec = np.array(vec)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        if dists[idx[0]] < thresh:
-            return (self.ids[idx[0]], dists[idx[0]])
-        else:
-            return (None, None)
+        
+        return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())
+        #return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
+        #if dists[idx[0]] < thresh:
+        #    return (self.ids[idx[0]], dists[idx[0]])
+        #else:
+        #    return (None, None)
 
 class TextSearch:
     def __init__(self):
@@ -81,10 +84,13 @@ class TextSearch:
             return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        if dists[idx[0]] < thresh:
-            return (self.ids[idx[0]], dists[idx[0]])
-        else:
-            return (None, None)
+        #return (self.ids[idx[0]], dists[idx[0]])
+        #return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
+        return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())
+        #if dists[idx[0]] < thresh:
+        #    return (self.ids[idx[0]], dists[idx[0]])
+        #else:
+        #    return (None, None)
 
 class DocSearch:
     def __init__(self):
@@ -124,10 +130,12 @@ class DocSearch:
             return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        if dists[idx[0]] < thresh:
-            return (self.ids[idx[0]], dists[idx[0]])
-        else:
-            return (None, None)
+        #return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
+        return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())
+        #if dists[idx[0]] < thresh:
+        #    return (self.ids[idx[0]], dists[idx[0]])
+        #else:
+        #    return (None, None)
 
 if __name__ == "__main__":
     search = ImageSearch()

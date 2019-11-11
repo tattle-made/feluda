@@ -63,11 +63,13 @@ def upload_text():
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
 
+
 @application.route('/find_duplicate', methods=['POST'])
 def find_duplicate():
     data = request.get_json(force=True)
     text = data.get('text', None)
     thresh = data.get('threshold')
+    sources = data.get('sources', [])
     image_url = data.get('image_url', None)
     if text is None and image_url is None:
         ret = {'failed' : 1, 'error' : 'No text or image_url found'}
@@ -78,28 +80,33 @@ def find_duplicate():
         image = image.convert('RGB') #take care of png(RGBA) issue
         vec = resnet18.extract_feature(image)
         if thresh:
-            doc_id, dist = imagesearch.search(vec, thresh)
+            doc_ids, dists = imagesearch.search(vec, thresh)
         else:
-            doc_id, dist = imagesearch.search(vec)
+            doc_ids, dists = imagesearch.search(vec)
 
-        if doc_id is not None:
-            ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : doc_id, 'distance' : dist}
+        sources = [d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})]
+
+        if doc_ids is not None:
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[i]} for i in range(len(doc_ids))]
+            ret = {'failed' : 0, 'result' : result}
         else:
-            ret = {'failed' : 0, 'duplicate' : 0}
+            ret = {'failed' : 0, 'result' : []}
 
     elif text is not None:
         duplicate_doc = db.docs.find_one({"text" : text})
         vec = doc2vec(text)
-        if thresh:
-            doc_id, dist = textsearch.search(vec, thresh)
+        doc_ids, dists = textsearch.search(vec)
+        sources = [d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})]
+
+        if doc_ids is not None:
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[i]} for i in range(len(doc_ids))]
         else:
-            doc_id, dist = textsearch.search(vec)
+            result = []
+
         if duplicate_doc is not None:
-            ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : duplicate_doc.get('doc_id')}
-        elif doc_id is not None:
-            ret = {'failed' : 0, 'duplicate' : 1, 'doc_id' : doc_id, 'distance': dist}
-        else:
-            ret = {'failed' : 0, 'duplicate' : 0}
+            result = [{'doc_id' : duplicate_doc.get('doc_id') , 'dist' : 0.0, 'source' : duplicate_doc.get('source')}] + result
+
+        ret = {'failed' : 0, 'duplicate' : 1, 'result' : result}
 
     else:
         ret = {'failed' : 1, 'error' : 'something went wrong'}
