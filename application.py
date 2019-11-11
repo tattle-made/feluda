@@ -34,6 +34,7 @@ def upload_text():
     data = request.get_json(force=True)
     text = data.get('text',None)
     doc_id = data.get('doc_id',None)
+    source = data.get('source', 'tattle-admin')
     if text is None:
         ret = {'failed' : 1, 'error' : 'No text field in json'}
         return jsonify(ret)
@@ -46,6 +47,7 @@ def upload_text():
     vec = doc2vec(text)
     doc =  {
            "doc_id" : doc_id, 
+           "source" : source,
            "has_image" : False, 
            "has_text" : True, 
            "date_added" : date,
@@ -135,6 +137,7 @@ def upload_image():
     data = request.get_json(force=True)
     image_url = data.get('image_url')
     doc_id = data.get('doc_id',None)
+    source = data.get('source', 'tattle-admin')
     if image_url is None:
         ret = {'failed' : 1, 'error' : 'No image_url found'}
     else:
@@ -165,6 +168,7 @@ def upload_image():
             doc_id = uuid.uuid4().hex
         db.docs.insert_one({
                        "doc_id" : doc_id, 
+                       "source" : source,
                        "version": "1.1",
                        "has_image" : True, 
                        "has_text" : has_text, 
