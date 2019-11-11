@@ -41,7 +41,7 @@ def upload_text():
     
     date = datetime.datetime.now()
     if doc_id is None:
-        doc_id = uuid.uuid4().hex
+        doc_id = uuid.uuid4().int
 
     lang = detect_lang(text)
     vec = doc2vec(text)
@@ -165,7 +165,7 @@ def upload_image():
 
         date = datetime.datetime.now()
         if doc_id is None:
-            doc_id = uuid.uuid4().hex
+            doc_id = uuid.uuid4().int
         db.docs.insert_one({
                        "doc_id" : doc_id, 
                        "source" : source,
