@@ -86,7 +86,7 @@ def find_duplicate():
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10, len(doc_ids)))]
             ret = {'failed' : 0, 'result' : result}
         else:
             ret = {'failed' : 0, 'result' : []}
@@ -98,7 +98,7 @@ def find_duplicate():
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
         else:
             result = []
 
