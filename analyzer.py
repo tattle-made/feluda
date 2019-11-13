@@ -11,6 +11,7 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 import langdetect
+from textblob import TextBlob
 import requests
 import skimage, PIL
 import sqlite3
@@ -100,7 +101,9 @@ def doc2vec(text):
 
 def detect_lang(text):
     supported = ['en','hi','gu']
-    lang = langdetect.detect(text)
+    #lang = langdetect.detect(text)
+    blob = TextBlob(text)
+    lang = blob.detect_language()
     if lang not in supported:
         return None
     else:
