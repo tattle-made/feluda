@@ -94,6 +94,8 @@ def find_duplicate():
     elif text is not None:
         duplicate_doc = db.docs.find_one({"text" : text})
         vec = doc2vec(text)
+        if vec is None:
+            ret = {'failed' : 1, 'error' : 'query words not found in db'}
         doc_ids, dists = textsearch.search(vec)
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
@@ -164,6 +166,10 @@ def upload_image():
             has_text = True
 
         if lang is None:
+            text_vec = np.zeros(300).tolist()
+            has_text = True
+
+        if text_vec is None:
             text_vec = np.zeros(300).tolist()
             has_text = True
 

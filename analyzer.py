@@ -91,13 +91,18 @@ def doc2vec(text):
         return None
    
     vecs = []
-    for word,_,vec in resp.fetchall():
-        vec = json.loads(vec)
-        vec = np.array(vec)
-        vecs.append(vec)
+    word_vecs = resp.fetchall()
+    if len(word_vecs) == 0:
+        return None
+        #return np.zeros(300).tolist()
+    else:
+        for word,_,vec in word_vecs:
+            vec = json.loads(vec)
+            vec = np.array(vec)
+            vecs.append(vec)
 
-    mean_vec = np.mean(vecs, axis=0)
-    return mean_vec.tolist()
+        mean_vec = np.mean(vecs, axis=0)
+        return mean_vec.tolist()
 
 def detect_lang(text):
     supported = ['en','hi','gu']
