@@ -15,6 +15,7 @@ from textblob import TextBlob
 import requests
 import skimage, PIL
 import sqlite3
+from monitor import timeit
 
 GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
 
@@ -24,6 +25,7 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
 scaler = transforms.Resize((224, 224))
 to_tensor = transforms.ToTensor()
 
+@timeit
 def image_from_url(image_url):
     resp = requests.get(image_url)
     image_bytes = resp.content

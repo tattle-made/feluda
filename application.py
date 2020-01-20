@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from io import BytesIO
 import skimage, PIL
 import numpy as np
+from monitor import timeit
 
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 from search import ImageSearch, TextSearch, DocSearch
@@ -63,7 +64,7 @@ def upload_text():
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
 
-
+@timeit
 @application.route('/find_duplicate', methods=['POST'])
 def find_duplicate():
     data = request.get_json(force=True)
