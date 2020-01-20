@@ -32,7 +32,6 @@ class ImageSearch:
         else:
             self.vecs = np.vstack((self.vecs,vec))
 
-    @timeit
     def search(self, vec, thresh=None):
         if not thresh:
             thresh=self.thresh
@@ -75,7 +74,6 @@ class TextSearch:
         else:
             self.vecs = np.vstack((self.vecs,vec))
 
-    @timeit
     def search(self, vec, thresh=None):
         if not thresh:
             thresh=self.thresh
