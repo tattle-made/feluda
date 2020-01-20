@@ -84,6 +84,10 @@ def find_duplicate():
             doc_ids, dists = imagesearch.search(vec, thresh)
         else:
             doc_ids, dists = imagesearch.search(vec)
+
+        # only get first 10
+        doc_ids, dists = doc_ids[:10], dists[:10]
+
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
