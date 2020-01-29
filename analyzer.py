@@ -107,6 +107,8 @@ def doc2vec(text):
         return mean_vec.tolist()
 
 def detect_lang(text):
+    if text == "" or text == " ":
+        return None
     supported = ['en','hi','gu']
     #lang = langdetect.detect(text)
     blob = TextBlob(text)
