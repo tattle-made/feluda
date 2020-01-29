@@ -42,7 +42,8 @@ def upload_text():
     
     date = datetime.datetime.now()
     if doc_id is None:
-        doc_id = uuid.uuid4().int
+        # hack: since mongo can only handle int8
+        doc_id = uuid.uuid4().int // 10**20
 
     lang = detect_lang(text)
     vec = doc2vec(text)
@@ -182,7 +183,8 @@ def upload_image():
 
         date = datetime.datetime.now()
         if doc_id is None:
-            doc_id = uuid.uuid4().int
+            # hack: since mongo can only handle int8
+            doc_id = uuid.uuid4().int // 10**20
         db.docs.insert_one({
                        "doc_id" : doc_id, 
                        "source" : source,
