@@ -107,3 +107,6 @@ ENV/
 # datafiles
 word2vec/*.vec
 word2vec/*.db
+
+# Pycharm
+*.idea/
