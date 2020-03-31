@@ -107,7 +107,7 @@ def doc2vec(text):
         return mean_vec.tolist()
 
 def detect_lang(text):
-    if text == "" or text == " ":
+    if text == "" or text == " " or len(text) < 3:
         return None
     supported = ['en','hi','gu']
     #lang = langdetect.detect(text)
