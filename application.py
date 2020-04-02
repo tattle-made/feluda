@@ -7,6 +7,8 @@ from io import BytesIO
 import skimage, PIL
 import numpy as np
 from monitor import timeit
+from elasticsearch import Elasticsearch
+from elasticsearch import helpers as eshelpers
 
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 from search import ImageSearch, TextSearch, DocSearch
@@ -24,6 +26,8 @@ logger = logging.getLogger("tattle-api")
 mongo_url = os.environ['MONGO_URL']
 cli = MongoClient(mongo_url)
 db = cli.documents
+es_host = os.environ['ES_HOST']
+es_index = os.environ['ES_INDEX']
 
 @application.route('/health')
 def health_check():
@@ -65,6 +69,36 @@ def upload_text():
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
 
+def query_es(vec):
+    if type(vec) == np.ndarray:
+        vec = vec.tolist()
+    config = {'host': es_host}
+    es = Elasticsearch([config,])
+    q = {
+	"size": 10,
+        "query": {
+	    "script_score": {
+	      "query" : {
+		"match_all" : {}
+	      },
+	      "script": {
+		"source": "1 / (1 + l2norm(params.query_vector, 'image_vector'))", 
+		"params": {
+		  "query_vector": vec
+		}
+	      }
+	    }
+	  }
+        }
+
+    resp = es.search(index=es_index, body = q)
+    doc_ids, dists = [], []
+    for h in resp['hits']['hits']:
+        doc_ids.append(h['_id'])
+        dists.append(h['_score'])
+
+    return doc_ids, dists
+
 @timeit
 @application.route('/find_duplicate', methods=['POST'])
 def find_duplicate():
@@ -73,6 +107,7 @@ def find_duplicate():
     thresh = data.get('threshold')
     sources = data.get('sources', [])
     image_url = data.get('image_url', None)
+    es_flag = data.get('es_flag', 0)
     if text is None and image_url is None:
         ret = {'failed' : 1, 'error' : 'No text or image_url found'}
 
@@ -81,7 +116,10 @@ def find_duplicate():
         image = image_dict['image']
         image = image.convert('RGB') #take care of png(RGBA) issue
         vec = resnet18.extract_feature(image)
-        if thresh:
+
+        if int(es_flag) == 1:
+            doc_ids, dists = query_es(vec)
+        elif thresh:
             doc_ids, dists = imagesearch.search(vec, thresh)
         else:
             doc_ids, dists = imagesearch.search(vec)
@@ -92,7 +130,7 @@ def find_duplicate():
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10, len(doc_ids)))]
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
             ret = {'failed' : 0, 'result' : result}
         else:
             ret = {'failed' : 0, 'result' : []}
