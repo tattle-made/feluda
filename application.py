@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from io import BytesIO
 import skimage, PIL
 import numpy as np
+import cv2
 from monitor import timeit
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers as eshelpers
@@ -182,6 +183,19 @@ def delete_doc():
         ret['failed'] = 1
         ret['error'] = 'no matching document'
     return jsonify(ret)
+
+@application.route('/upload_video', methods=['POST'])
+def upload_video():
+    import ipdb; ipdb.set_trace()
+    f = request.files['file']
+    fname = '/tmp/vid.mp4'
+    f.save(fname)
+    video = cv2.VideoCapture(fname)
+    from VideoAnalyzer import VideoAnalyzer
+    vid_analyzer = VideoAnalyzer(video)
+
+    #data = BytesIO(f.read())
+    #video = cv2.VideoCapture(data)
 
 
 @application.route('/upload_image', methods=['POST'])
