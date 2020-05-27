@@ -9,7 +9,31 @@ from pymongo import MongoClient
 from tqdm import tqdm
 import datetime
 
-def create_index(host, index):
+def create_vid_index(host, index):
+    url = 'http://'+host+':9200/'+index
+    payload = {
+	      "mappings": {
+		"properties": {
+		  "video_vector": {
+		    "type": "dense_vector",
+		    "dims": 512
+		  },
+                  "duration" : {
+                    "type" : "float"
+                  },
+                  "description" : {
+                    "type" : "text"
+                  },
+
+		}
+	      }
+	    }
+    res = requests.put(url, json = payload)
+    if res.status_code != 200:
+        print(res.content)
+    return res
+ 
+def create_img_index(host, index):
     url = 'http://'+host+':9200/'+index
     #payload = {
     #          "mappings": {
@@ -40,6 +64,8 @@ def create_index(host, index):
 	    }
  
     res = requests.put(url, json = payload)
+    if res.status_code != 200:
+        print(res.content)
     return res
 
 def upload_dummy_data(host, index):
@@ -90,9 +116,9 @@ def upload_mongo_data(host, index):
             #    continue
             yield {
                 '_id' : doc['doc_id'],
-                'image_vector' : doc.get('image_vec')
-                    'image_vector' : doc.get('image_vec'),
-                    'text_vector'  : doc.get('text_vec'),
+                'image_vector' : doc.get('image_vec'),
+                'image_vector' : doc.get('image_vec'),
+                'text_vector'  : doc.get('text_vec'),
             }
 
     res = eshelpers.bulk(es, gendata())
@@ -124,7 +150,11 @@ def query(host, index, vec):
 
 if __name__ == "__main__":
     host = os.environ['ES_HOST']
-    index = os.environ['ES_INDEX']
-    create_index(host, index)
-    upload_data(host, index)
-    #query(vec)
+    img_index = os.environ['ES_IMG_INDEX']
+    vid_index = os.environ['ES_VID_INDEX']
+    txt_index = os.environ['ES_TXT_INDEX']
+    #create_img_index(host, img_index)
+    create_vid_index(host, vid_index)
+    #upload_dummy_data(host, index)
+    #vec = np.random.randn(512)
+    #query(host, index, vec)
