@@ -98,7 +98,7 @@ class VideoAnalyzer:
         return embedding.numpy()
 
     def find_keyframes(self, feature_matrix):
-        Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=True)
+        Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=False)
         idx = P[:self.n_keyframes]
         return idx
 
