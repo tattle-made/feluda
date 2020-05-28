@@ -1,3 +1,4 @@
+import os, sys
 import numpy as np
 import cv2
 from scipy.linalg import qr
@@ -103,7 +104,9 @@ class VideoAnalyzer:
         return idx
 
 if __name__ == "__main__":
-    import os
-    DATA_DIR = os.environ.get('DATA_DIR','.')
-    vid = cv2.VideoCapture(DATA_DIR+'/1.mp4')
+    if len(sys.argv) > 1:
+        vid = cv2.VideoCapture(sys.argv[1])
+    else:
+        DATA_DIR = os.environ.get('DATA_DIR','.')
+        vid = cv2.VideoCapture(DATA_DIR+'/1.mp4')
     analyzer = VideoAnalyzer(vid)
