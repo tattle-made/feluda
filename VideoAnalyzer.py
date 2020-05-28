@@ -1,20 +1,67 @@
 import numpy as np
 import cv2
+from scipy.linalg import qr
+import torch 
+import torch.nn as nn
+from torch.autograd import Variable
+from torch.utils import data
+import torchvision.models as models
+import torchvision.transforms as transforms
+from PIL import Image
+
+imagenet_transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
+class ImageListDataset(data.Dataset):
+    def __init__(self, image_list, transform=imagenet_transform):
+        super().__init__()
+        self.image_list = image_list
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.image_list)
+
+    def __getitem__(self, index):
+        x = self.image_list[index]
+        return self.transform(x)
 
 class VideoAnalyzer:
     def __init__(self, video, sampling_rate=10, n_keyframes=5):
         """
         video: cv2.VideoCapture object
         sampling_rate: ratio of total frames to samples
+        n_keyframes: number of keyframes whose features 
+                     we want to keep for search
         """
         self.video = video
-        self.length, self.n_frames = self._length(self.video)
+        self.length, self.n_frames = self.video_length(video)
         self.sampling_rate = sampling_rate
         self.n_samples = self.n_frames/sampling_rate
         self.n_keyframes = n_keyframes
-        self.images = self._extract_fames(video)
+        self.model = models.resnet18(pretrained=True)
 
-    def _length(self, v):
+        # list of individual PIL Images 
+        self.frame_images = [] 
+
+        # np.array of indices where the key frames are
+        self.keyframe_indices = [] 
+
+        # np.array of features corresponding to those key frames 
+        # should be a 512 x n_keyframes array
+        self.keyframe_features = [] 
+
+        self.analyze(video)
+
+    def analyze(self, video):
+        self.frame_images = self.extract_fames(video)
+        feature_matrix = self.extract_features(self.frame_images)
+        self.keyframe_indices = self.find_keyframes(feature_matrix)
+        self.keyframe_features = feature_matrix[:,self.keyframe_indices]
+
+    def video_length(self, v):
         v.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
         # duration in seconds
         duration = v.get(cv2.CAP_PROP_POS_MSEC)/1000.0
@@ -22,17 +69,41 @@ class VideoAnalyzer:
         v.set(cv2.CAP_PROP_POS_AVI_RATIO,0)
         return duration, int(frames)
 
-    def _extract_fames(self, v):
+    def extract_fames(self, v):
+        images = []
         for i in range(self.n_frames):
             success, image = v.read()
             if image is None:
                 continue
             else:
                 if i % self.sampling_rate == 0:
-                    self.images.append(image)
+                   images.append(Image.fromarray(image))
+        return images
 
-   def extract_feature(self, v): 
-       #TODO: call Resnet18 extracter on all the images
-       # do pivoted QR on the matrix of features
-       # return the average of first n_keyframes features
-       pass
+    def extract_features(self, images): 
+        dset = ImageListDataset(images)
+        dloader = data.DataLoader(dset, batch_size=len(images))
+
+        embedding = torch.zeros(512, len(images))
+        def hook(m, i, o):
+            feature_data = o.data.reshape((512, len(images)))
+            embedding.copy_(feature_data)
+
+        feature_layer = self.model._modules.get('avgpool')
+        h = feature_layer.register_forward_hook(hook)
+
+        self.model.eval()
+        self.model(next(iter(dloader)))
+        h.remove()
+        return embedding.numpy()
+
+    def find_keyframes(self, feature_matrix):
+        Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=True)
+        idx = P[:self.n_keyframes]
+        return idx
+
+if __name__ == "__main__":
+    import os
+    DATA_DIR = os.environ.get('DATA_DIR','.')
+    vid = cv2.VideoCapture(DATA_DIR+'/1.mp4')
+    analyzer = VideoAnalyzer(vid)
