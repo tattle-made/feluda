@@ -56,6 +56,9 @@ class VideoAnalyzer:
 
         self.analyze(video)
 
+    def get_mean_feature(self):
+        return self.keyframe_features.mean(axis=1)
+
     def analyze(self, video):
         self.frame_images = self.extract_fames(video)
         feature_matrix = self.extract_features(self.frame_images)

@@ -10,6 +10,7 @@ import cv2
 from monitor import timeit
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers as eshelpers
+from VideoAnalyzer import VideoAnalyzer
 
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 from search import ImageSearch, TextSearch, DocSearch
@@ -28,7 +29,9 @@ mongo_url = os.environ['MONGO_URL']
 cli = MongoClient(mongo_url)
 db = cli.documents
 es_host = os.environ['ES_HOST']
-es_index = os.environ['ES_INDEX']
+es_vid_index = os.environ['ES_VID_INDEX']
+es_img_index = os.environ['ES_IMG_INDEX']
+es_txt_index = os.environ['ES_TXT_INDEX']
 
 @application.route('/health')
 def health_check():
@@ -92,7 +95,7 @@ def query_es(vec):
 	  }
         }
 
-    resp = es.search(index=es_index, body = q)
+    resp = es.search(index=es_img_index, body = q)
     doc_ids, dists = [], []
     for h in resp['hits']['hits']:
         doc_ids.append(h['_id'])
@@ -186,17 +189,29 @@ def delete_doc():
 
 @application.route('/upload_video', methods=['POST'])
 def upload_video():
-    import ipdb; ipdb.set_trace()
     f = request.files['file']
     fname = '/tmp/vid.mp4'
     f.save(fname)
     video = cv2.VideoCapture(fname)
-    from VideoAnalyzer import VideoAnalyzer
     vid_analyzer = VideoAnalyzer(video)
+    feature = vid_analyzer.get_mean_feature()
+    duration = vid_analyzer.length
+    doc_id = uuid.uuid4().int // 10**20
 
-    #data = BytesIO(f.read())
-    #video = cv2.VideoCapture(data)
-
+    # upload to es
+    config = {'host': es_host}
+    es = Elasticsearch([config,])
+    def gendata():
+        yield {
+            "_index": es_vid_index,
+            "_id" : doc_id,
+            "video_vector" : feature.tolist(),
+            "duration" : vid_analyzer.length,
+            "description": ""
+        }
+    res = eshelpers.bulk(es, gendata())
+    ret = {'failed' : 0}
+    return jsonify(ret)
 
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
