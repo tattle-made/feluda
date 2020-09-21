@@ -92,6 +92,7 @@ celerybeat-schedule
 
 # dotenv
 .env
+.env.local
 
 # virtualenv
 .venv/
@@ -110,3 +111,6 @@ word2vec/*.db
 
 # Pycharm
 *.idea/
+
+# Local development Related Files
+tattle-api-google.json

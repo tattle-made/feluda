@@ -4,6 +4,7 @@ import os
 from pymongo import MongoClient
 from monitor import timeit
 
+
 class ImageSearch:
     def __init__(self):
         self.ids = []
@@ -12,40 +13,42 @@ class ImageSearch:
         self.build()
 
     def build(self):
+        print(os.environ['MONGO_URL'])
         mongo_url = os.environ['MONGO_URL']
         cli = MongoClient(mongo_url)
         db = cli.documents
-        cur = db.docs.find({"has_image" : True})
+        cur = db.docs.find({"has_image": True})
         for doc in tqdm(cur, total=cur.count()):
             if doc.get('vec') is None:
                 continue
-            #print(len(doc.get('vec')))
+            # print(len(doc.get('vec')))
             self.ids.append(doc.get('doc_id'))
             self.vecs.append(doc.get('image_vec'))
 
         self.vecs = np.array(self.vecs)
-        
+
     def update(self, doc_id, vec):
         self.ids.append(doc_id)
         if len(self.vecs) == 0:
             self.vecs = np.array([vec])
         else:
-            self.vecs = np.vstack((self.vecs,vec))
+            self.vecs = np.vstack((self.vecs, vec))
 
     def search(self, vec, thresh=None):
         if not thresh:
-            thresh=self.thresh
+            thresh = self.thresh
         if type(vec) == list:
             vec = np.array(vec)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        
+
         return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())
-        #return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
-        #if dists[idx[0]] < thresh:
+        # return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
+        # if dists[idx[0]] < thresh:
         #    return (self.ids[idx[0]], dists[idx[0]])
-        #else:
+        # else:
         #    return (None, None)
+
 
 class TextSearch:
     def __init__(self):
@@ -58,7 +61,7 @@ class TextSearch:
         mongo_url = os.environ['MONGO_URL']
         cli = MongoClient(mongo_url)
         db = cli.documents
-        cur = db.docs.find({"has_text" : True})
+        cur = db.docs.find({"has_text": True})
         for doc in tqdm(cur, total=cur.count()):
             if doc.get('vec') is None:
                 continue
@@ -66,17 +69,17 @@ class TextSearch:
             self.vecs.append(doc.get('text_vec'))
 
         self.vecs = np.array(self.vecs)
-        
+
     def update(self, doc_id, vec):
         self.ids.append(doc_id)
         if len(self.vecs) == 0:
             self.vecs = np.array([vec])
         else:
-            self.vecs = np.vstack((self.vecs,vec))
+            self.vecs = np.vstack((self.vecs, vec))
 
     def search(self, vec, thresh=None):
         if not thresh:
-            thresh=self.thresh
+            thresh = self.thresh
         if type(vec) == list:
             vec = np.array(vec)
 
@@ -85,13 +88,14 @@ class TextSearch:
             return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        #return (self.ids[idx[0]], dists[idx[0]])
-        #return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
+        # return (self.ids[idx[0]], dists[idx[0]])
+        # return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
         return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())
-        #if dists[idx[0]] < thresh:
+        # if dists[idx[0]] < thresh:
         #    return (self.ids[idx[0]], dists[idx[0]])
-        #else:
+        # else:
         #    return (None, None)
+
 
 class DocSearch:
     def __init__(self):
@@ -104,7 +108,7 @@ class DocSearch:
         mongo_url = os.environ['MONGO_URL']
         cli = MongoClient(mongo_url)
         db = cli.documents
-        cur = db.docs.find({"has_text" : True, "has_image" : True})
+        cur = db.docs.find({"has_text": True, "has_image": True})
         for doc in tqdm(cur, total=cur.count()):
             if doc.get('vec') is None:
                 continue
@@ -112,17 +116,17 @@ class DocSearch:
             self.vecs.append(doc.get('vec'))
 
         self.vecs = np.array(self.vecs)
-        
+
     def update(self, doc_id, vec):
         self.ids.append(doc_id)
         if len(self.vecs) == 0:
             self.vecs = np.array([vec])
         else:
-            self.vecs = np.vstack((self.vecs,vec))
+            self.vecs = np.vstack((self.vecs, vec))
 
     def search(self, vec, thresh=None):
         if not thresh:
-            thresh=self.thresh
+            thresh = self.thresh
         if type(vec) == list:
             vec = np.array(vec)
 
@@ -131,12 +135,13 @@ class DocSearch:
             return (None, None)
         dists = np.linalg.norm(self.vecs - vec, axis=1)
         idx = np.argsort(dists)
-        #return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
+        # return list(zip(np.array(self.ids)[idx].tolist(), dists[idx].tolist()))
         return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())
-        #if dists[idx[0]] < thresh:
+        # if dists[idx[0]] < thresh:
         #    return (self.ids[idx[0]], dists[idx[0]])
-        #else:
+        # else:
         #    return (None, None)
+
 
 if __name__ == "__main__":
     search = ImageSearch()
