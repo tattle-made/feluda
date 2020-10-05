@@ -191,24 +191,48 @@ def delete_doc():
 def upload_video():
     f = request.files['file']
     fname = '/tmp/vid.mp4'
+    # fsize in MB
+    fsize = os.path.getsize('/tmp/vid.mp4')/1e6
     f.save(fname)
     video = cv2.VideoCapture(fname)
     vid_analyzer = VideoAnalyzer(video)
+    vid_analyzer.set_fsize(fsize)
+
+    doable, error_msg = vid_analyzer.check_constraints()
+    if not doable:
+        return jsonify({'failed' : 1, 'error' : error_msg})
+
     feature = vid_analyzer.get_mean_feature()
-    duration = vid_analyzer.length
+    duration = vid_analyzer.duration
     doc_id = uuid.uuid4().int // 10**20
 
     # upload to es
     config = {'host': es_host}
     es = Elasticsearch([config,])
-    def gendata():
+    def gendata(vid_analyzer):
+        for i in range(vid_analyzer.n_keyframes):
+            yield {
+                "_index": es_vid_index,
+                "doc_id" : doc_id,
+                "source" : "test",
+                "metadata" : {},
+                "vec" : vid_analyzer.keyframe_features[i],
+                "is_avg" : False,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                }
+
         yield {
-            "_index": es_vid_index,
-            "_id" : doc_id,
-            "video_vector" : feature.tolist(),
-            "duration" : vid_analyzer.length,
-            "description": ""
-        }
+                "_index": es_vid_index,
+                "doc_id" : doc_id,
+                "source" : "test",
+                "metadata" : {},
+                "vec" : vid_analyzer.get_mean_feature()
+                "is_avg" : True,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                }
+
     res = eshelpers.bulk(es, gendata())
     ret = {'failed' : 0}
     return jsonify(ret)
