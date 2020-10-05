@@ -213,10 +213,10 @@ def upload_video():
         for i in range(vid_analyzer.n_keyframes):
             yield {
                 "_index": es_vid_index,
-                "doc_id" : doc_id,
+                "doc_id" : str(doc_id),
                 "source" : "test",
                 "metadata" : {},
-                "vec" : vid_analyzer.keyframe_features[i],
+                "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
                 "is_avg" : False,
                 "duration" : vid_analyzer.duration,
                 "n_keyframes" : vid_analyzer.n_keyframes,
@@ -224,16 +224,16 @@ def upload_video():
 
         yield {
                 "_index": es_vid_index,
-                "doc_id" : doc_id,
+                "doc_id" : str(doc_id),
                 "source" : "test",
                 "metadata" : {},
-                "vec" : vid_analyzer.get_mean_feature()
+                "vec" : vid_analyzer.get_mean_feature().tolist(),
                 "is_avg" : True,
                 "duration" : vid_analyzer.duration,
                 "n_keyframes" : vid_analyzer.n_keyframes,
                 }
 
-    res = eshelpers.bulk(es, gendata())
+    res = eshelpers.bulk(es, gendata(vid_analyzer))
     ret = {'failed' : 0}
     return jsonify(ret)
 

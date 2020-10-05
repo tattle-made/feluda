@@ -83,7 +83,7 @@ class VideoAnalyzer:
     def get_video_attributes(self, v):
         if self.duration is not None:
             return {'duration' : self.duration,
-                    'frames' : self.frames,
+                    'n_frames' : self.n_frames,
                     'width'  : self.width,
                     'height' : self.height}
         width  = v.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -93,12 +93,12 @@ class VideoAnalyzer:
         fps = v.get(cv2.CAP_PROP_FPS)
         frame_count = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
         self.duration = frame_count/fps
-        self.frames = frame_count
+        self.n_frames = frame_count
         self.width = width
         self.height = height
         v.set(cv2.CAP_PROP_POS_AVI_RATIO,0)
         return {'duration' : self.duration,
-                'frames' : self.frames,
+                'n_frames' : self.n_frames,
                 'width'  : self.width,
                 'height' : self.height}	
 
