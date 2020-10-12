@@ -1,6 +1,6 @@
 import os, sys, json, datetime, copy, uuid, requests
 import logging
-from flask import Flask, request, jsonify 
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from io import BytesIO
@@ -189,18 +189,36 @@ def delete_doc():
 
 @application.route('/upload_video', methods=['POST'])
 def upload_video():
+    print(request)
+    print(request.files)
+    if 'file' not in request.files:
+        print("file missing")
+    else:
+        print("file present")
     f = request.files['file']
+    print(f)
     fname = '/tmp/vid.mp4'
     f.save(fname)
+    print("file saved")
+
+    # import ipdb; ipdb.set_trace()
+
     video = cv2.VideoCapture(fname)
+    print("created video")
+    print("type: ",type(video))
     vid_analyzer = VideoAnalyzer(video)
+    print("analysed video")
     feature = vid_analyzer.get_mean_feature()
+    print("got mean feature")
     duration = vid_analyzer.length
+    print(duration)
     doc_id = uuid.uuid4().int // 10**20
+    print(doc_id)
 
     # upload to es
     config = {'host': es_host}
     es = Elasticsearch([config,])
+    print(es)
     def gendata():
         yield {
             "_index": es_vid_index,
@@ -210,6 +228,7 @@ def upload_video():
             "description": ""
         }
     res = eshelpers.bulk(es, gendata())
+    print(res)
     ret = {'failed' : 0}
     return jsonify(ret)
 
@@ -226,7 +245,6 @@ def upload_image():
         image = image_dict['image']
         image = image.convert('RGB') #take care of png(RGBA) issue
         image_vec = resnet18.extract_feature(image)
-
         detected_text = detect_text(image_dict['image_bytes']).get('text','')
         lang = detect_lang(detected_text)
 
