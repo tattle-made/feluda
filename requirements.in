@@ -15,3 +15,4 @@ textblob
 Pillow==6.1
 opencv-contrib-python==4.4.0.42
 elasticsearch
+wget==3.2
