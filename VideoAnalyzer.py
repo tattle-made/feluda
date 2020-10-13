@@ -38,7 +38,9 @@ class VideoAnalyzer:
                      we want to keep for search
         """
         self.video = video
-        self.length, self.n_frames = self.video_length(video)
+        self.duration = self.frames = self.width = self.height = None
+        _ = self.get_video_attributes(video)
+        # check_sanity
         self.sampling_rate = sampling_rate
         self.n_samples = self.n_frames/sampling_rate
         self.n_keyframes = n_keyframes
@@ -56,24 +58,51 @@ class VideoAnalyzer:
 
         self.analyze(video)
 
+    def set_fsize(self, fsize):
+        self.fsize = fsize
+
+    def check_constraints(self):
+        """
+        check if video is too big/unsupported.
+        return fail=1, set appropriate error
+        """
+        if self.fsize > 20:
+            return False, 'file size larger than 20 MB not supported'
+        #TODO : based on data statistics, how long it takes to process a video decide thresholds based on  w x h, frames
+        return True, None
+
     def get_mean_feature(self):
         return self.keyframe_features.mean(axis=1)
 
     def analyze(self, video):
-        self.frame_images = self.extract_fames(video)
+        self.frame_images = self.extract_frames(video)
         feature_matrix = self.extract_features(self.frame_images)
         self.keyframe_indices = self.find_keyframes(feature_matrix)
         self.keyframe_features = feature_matrix[:,self.keyframe_indices]
 
-    def video_length(self, v):
-        v.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+    def get_video_attributes(self, v):
+        if self.duration is not None:
+            return {'duration' : self.duration,
+                    'n_frames' : self.n_frames,
+                    'width'  : self.width,
+                    'height' : self.height}
+        width  = v.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = v.get(cv2.CAP_PROP_FRAME_HEIGHT)
         # duration in seconds
-        duration = v.get(cv2.CAP_PROP_POS_MSEC)/1000.0
-        frames = v.get(cv2.CAP_PROP_FRAME_COUNT)
+        v.set(cv2.CAP_PROP_POS_AVI_RATIO,1)
+        fps = v.get(cv2.CAP_PROP_FPS)
+        frame_count = int(v.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.duration = frame_count/fps
+        self.n_frames = frame_count
+        self.width = width
+        self.height = height
         v.set(cv2.CAP_PROP_POS_AVI_RATIO,0)
-        return duration, int(frames)
+        return {'duration' : self.duration,
+                'n_frames' : self.n_frames,
+                'width'  : self.width,
+                'height' : self.height}	
 
-    def extract_fames(self, v):
+    def extract_frames(self, v):
         images = []
         for i in range(self.n_frames):
             success, image = v.read()

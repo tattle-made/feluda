@@ -1,6 +1,6 @@
 import os, sys, json, datetime, copy, uuid, requests
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify 
 from flask_cors import CORS
 from pymongo import MongoClient
 from io import BytesIO
@@ -189,46 +189,51 @@ def delete_doc():
 
 @application.route('/upload_video', methods=['POST'])
 def upload_video():
-    print(request)
-    print(request.files)
-    if 'file' not in request.files:
-        print("file missing")
-    else:
-        print("file present")
     f = request.files['file']
-    print(f)
     fname = '/tmp/vid.mp4'
+    # fsize in MB
+    fsize = os.path.getsize('/tmp/vid.mp4')/1e6
     f.save(fname)
-    print("file saved")
-
-    # import ipdb; ipdb.set_trace()
-
     video = cv2.VideoCapture(fname)
-    print("created video")
-    print("type: ",type(video))
     vid_analyzer = VideoAnalyzer(video)
-    print("analysed video")
+    vid_analyzer.set_fsize(fsize)
+
+    doable, error_msg = vid_analyzer.check_constraints()
+    if not doable:
+        return jsonify({'failed' : 1, 'error' : error_msg})
+
     feature = vid_analyzer.get_mean_feature()
-    print("got mean feature")
-    duration = vid_analyzer.length
-    print(duration)
+    duration = vid_analyzer.duration
     doc_id = uuid.uuid4().int // 10**20
-    print(doc_id)
 
     # upload to es
     config = {'host': es_host}
     es = Elasticsearch([config,])
-    print(es)
-    def gendata():
+    def gendata(vid_analyzer):
+        for i in range(vid_analyzer.n_keyframes):
+            yield {
+                "_index": es_vid_index,
+                "doc_id" : str(doc_id),
+                "source" : "test",
+                "metadata" : {},
+                "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
+                "is_avg" : False,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                }
+
         yield {
-            "_index": es_vid_index,
-            "_id" : doc_id,
-            "video_vector" : feature.tolist(),
-            "duration" : vid_analyzer.length,
-            "description": ""
-        }
-    res = eshelpers.bulk(es, gendata())
-    print(res)
+                "_index": es_vid_index,
+                "doc_id" : str(doc_id),
+                "source" : "test",
+                "metadata" : {},
+                "vec" : vid_analyzer.get_mean_feature().tolist(),
+                "is_avg" : True,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                }
+
+    res = eshelpers.bulk(es, gendata(vid_analyzer))
     ret = {'failed' : 0}
     return jsonify(ret)
 
@@ -245,6 +250,7 @@ def upload_image():
         image = image_dict['image']
         image = image.convert('RGB') #take care of png(RGBA) issue
         image_vec = resnet18.extract_feature(image)
+
         detected_text = detect_text(image_dict['image_bytes']).get('text','')
         lang = detect_lang(detected_text)
 
