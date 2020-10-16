@@ -1,6 +1,6 @@
 import sqlite3, json, io
 from tqdm import tqdm
-
+from time import perf_counter
 
 def setup_tables():
     conn = sqlite3.connect('word2vec.db')
@@ -71,11 +71,14 @@ def insert_words():
     conn.close()
 
 if __name__ == "__main__":
-    #setup_aligned_tables()
+    print("Setting up word vector databases")
+    start = perf_counter()
+    setup_aligned_tables()
     insert_aligned_wordvecs(lang='en')
     insert_aligned_wordvecs(lang='bn')
     insert_aligned_wordvecs(lang='hi')
     insert_aligned_wordvecs(lang='ta')
-
-    #setup_tables()
-    #insert_words()
+    setup_tables()
+    insert_words()
+    delta = (perf_counter() - start)/60
+    print("Time taken: ", delta, " minutes")
