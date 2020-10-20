@@ -31,7 +31,7 @@ matplotlib==3.2.1         # via scikit-image
 networkx==2.4             # via scikit-image
 nltk==3.4.5               # via textblob
 numpy==1.18.2             # via fasttext, imageio, matplotlib, pywavelets, scipy, torch, torchvision
-pillow==7.0.0             # via imageio, scikit-image, torchvision
+pillow==7.1.0            # via imageio, scikit-image, torchvision
 protobuf==3.11.3          # via google-api-core, googleapis-common-protos
 pyasn1-modules==0.2.8     # via google-auth
 pyasn1==0.4.8             # via pyasn1-modules, rsa
@@ -52,6 +52,10 @@ torchvision==0.4.0        # via -r requirements.in
 tqdm==4.44.0              # via -r requirements.in
 urllib3==1.25.8           # via requests
 werkzeug==1.0.0           # via flask
+wget==3.2
+pika==1.1.0
+opencv-contrib-python==4.4.0.42
+elasticsearch
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

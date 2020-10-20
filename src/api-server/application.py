@@ -6,15 +6,12 @@ from pymongo import MongoClient
 from io import BytesIO
 import skimage, PIL
 import numpy as np
-import cv2
 from monitor import timeit
 from elasticsearch import Elasticsearch
-from elasticsearch import helpers as eshelpers
 from VideoAnalyzer import VideoAnalyzer
-
-from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
+from analyzer import ResNet18, detect_text, image_from_url, doc2vec
 from search import ImageSearch, TextSearch, DocSearch
-import wget
+from send import add_job_to_queue
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
@@ -41,163 +38,15 @@ def health_check():
 
 @application.route('/media', methods=['POST'])
 def media():
-    data = request.get_json(force=True)
-    print(data)
-    doc_id = data.get('source_id',None)
-    source = data.get('source', 'tattle-admin')
-
-    if data["media_type"] == "text":
-        text = data.get('text',None)
-        if text is None:
-            ret = {'failed' : 1, 'error' : 'No text field in json'}
-            return jsonify(ret)
-        
-        date = datetime.datetime.now()
-        if doc_id is None:
-            # hack: since mongo can only handle int8
-            doc_id = uuid.uuid4().int // 10**20
-
-        lang = detect_lang(text)
-        vec = doc2vec(text)
-        doc =  {
-            "doc_id" : doc_id, 
-            "source" : source,
-            "has_image" : False, 
-            "has_text" : True, 
-            "date_added" : date,
-            "date_updated" : date,
-            "tags" : [],
-            "text" : text,
-            "lang" : lang,
-            }
-        if vec is not None:
-            doc["vec"] = vec
-
-        db.docs.insert_one(doc)
-        ret = {'failed' : 0, 'doc_id' : doc_id}
-        return jsonify(ret)
-
-    elif data["media_type"] == "image":
-        image_url = data.get('file_url', None)
-        print(image_url)
-        if image_url is None:
-            ret = {'failed' : 1, 'error' : 'No image_url found'}
-        else:
-            image_dict = image_from_url(image_url)
-            image = image_dict['image']
-            image = image.convert('RGB') #take care of png(RGBA) issue
-            image_vec = resnet18.extract_feature(image)
-            print(image_vec)
-            detected_text = detect_text(image_dict['image_bytes']).get('text','')
-            lang = detect_lang(detected_text)
-            print(lang)
-            #import ipdb; ipdb.set_trace()
-            if detected_text == '' or None:
-                text_vec = np.zeros(300).tolist()
-                has_text = False
-            else:
-                text_vec = doc2vec(detected_text)
-                has_text = True
-
-            if lang is None:
-                text_vec = np.zeros(300).tolist()
-                has_text = True
-
-            if text_vec is None:
-                text_vec = np.zeros(300).tolist()
-                has_text = True
-
-            vec = np.hstack((image_vec, text_vec)).tolist()
-
-            date = datetime.datetime.now()
-            if doc_id is None:
-                # hack: since mongo can only handle int8
-                doc_id = uuid.uuid4().int // 10**20
-            db.docs.insert_one({
-                        "doc_id" : doc_id, 
-                        "source" : source,
-                        "version": "1.1",
-                        "has_image" : True, 
-                        "has_text" : has_text, 
-                        "text" : detected_text,
-                        "tags" : [],
-                        "date_added" : date,
-                        "date_updated" : date,
-                        "image_vec" : image_vec.tolist(),
-                        "text_vec" : text_vec,
-                        "vec" : vec,
-                        })
-            ret = {'doc_id': doc_id, 'failed' : 0}
-            print(ret)
-            #update the search index
-            imagesearch.update(doc_id, image_vec)
-            docsearch.update(doc_id, vec)
-            if has_text:
-                textsearch.update(doc_id, text_vec)
-
-        return jsonify(ret)
-
-    elif data["media_type"] == "video":
-        fname = '/tmp/vid.mp4'
-        video_url = data.get("file_url", None)
-        print(video_url)
-        if video_url is None:
-            ret = {'failed' : 1, 'error' : 'No video_url found'}
-
-        wget.download(video_url, out=fname)
-        # fsize in MB
-        fsize = os.path.getsize('/tmp/vid.mp4')/1e6
-        print(fsize)
-        video = cv2.VideoCapture(fname)
-        print(type(video))
-        print(video)
-        vid_analyzer = VideoAnalyzer(video)
-        vid_analyzer.set_fsize(fsize)
-
-        doable, error_msg = vid_analyzer.check_constraints()
-        print(doable)
-        print(error_msg)
-        if not doable:
-            print(jsonify({'failed' : 1, 'error' : error_msg}))
-            return jsonify({'failed' : 1, 'error' : error_msg})
-
-        if doc_id is None:
-            # hack: since mongo can only handle int8
-            doc_id = uuid.uuid4().int // 10**20
-
-        # upload to es
-        config = {'host': es_host}
-        es = Elasticsearch([config,])
-        def gendata(vid_analyzer):
-            for i in range(vid_analyzer.n_keyframes):
-                yield {
-                    "_index": es_vid_index,
-                    "doc_id" : str(doc_id),
-                    "source" : data.get("source", "tattle-admin"),
-                    "metadata" : data.get("metadata", {}),
-                    "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
-                    "is_avg" : False,
-                    "duration" : vid_analyzer.duration,
-                    "n_keyframes" : vid_analyzer.n_keyframes,
-                    }
-
-            yield {
-                    "_index": es_vid_index,
-                    "doc_id" : str(doc_id),
-                    "source" : data.get("source", "tattle-admin"),
-                    "metadata" : data.get("metadata", {}),
-                    "vec" : vid_analyzer.get_mean_feature().tolist(),
-                    "is_avg" : True,
-                    "duration" : vid_analyzer.duration,
-                    "n_keyframes" : vid_analyzer.n_keyframes,
-                    }
-
-        res = eshelpers.bulk(es, gendata(vid_analyzer))
-        ret = {'failed' : 0}
-        print(ret)
-        os.remove(fname)
-        return jsonify(ret)
-
+    try:
+        data = request.get_json(force=True)
+        print(data)
+        print("Adding requested job to indexing queue ...")
+        add_job_to_queue(data)
+        print("Job added")
+        return 'media enqueued', 200
+    except Exception as e:
+        return 'Error indexing media : '+str(e), 500
 
 def query_es(vec):
     if type(vec) == np.ndarray:
@@ -311,56 +160,6 @@ def delete_doc():
     else:
         ret['failed'] = 1
         ret['error'] = 'no matching document'
-    return jsonify(ret)
-
-@application.route('/upload_video', methods=['POST'])
-def upload_video():
-    f = request.files['file']
-    fname = '/tmp/vid.mp4'
-    # fsize in MB
-    fsize = os.path.getsize('/tmp/vid.mp4')/1e6
-    f.save(fname)
-    video = cv2.VideoCapture(fname)
-    vid_analyzer = VideoAnalyzer(video)
-    vid_analyzer.set_fsize(fsize)
-
-    doable, error_msg = vid_analyzer.check_constraints()
-    if not doable:
-        return jsonify({'failed' : 1, 'error' : error_msg})
-
-    feature = vid_analyzer.get_mean_feature()
-    duration = vid_analyzer.duration
-    doc_id = uuid.uuid4().int // 10**20
-
-    # upload to es
-    config = {'host': es_host}
-    es = Elasticsearch([config,])
-    def gendata(vid_analyzer):
-        for i in range(vid_analyzer.n_keyframes):
-            yield {
-                "_index": es_vid_index,
-                "doc_id" : str(doc_id),
-                "source" : "test",
-                "metadata" : {},
-                "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
-                "is_avg" : False,
-                "duration" : vid_analyzer.duration,
-                "n_keyframes" : vid_analyzer.n_keyframes,
-                }
-
-        yield {
-                "_index": es_vid_index,
-                "doc_id" : str(doc_id),
-                "source" : "test",
-                "metadata" : {},
-                "vec" : vid_analyzer.get_mean_feature().tolist(),
-                "is_avg" : True,
-                "duration" : vid_analyzer.duration,
-                "n_keyframes" : vid_analyzer.n_keyframes,
-                }
-
-    res = eshelpers.bulk(es, gendata(vid_analyzer))
-    ret = {'failed' : 0}
     return jsonify(ret)
 
 @application.route('/search_tags', methods=['POST'])

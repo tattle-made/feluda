@@ -72,8 +72,12 @@ def doc2vec(text):
     ignore the words not found in the db
     """
     conn = sqlite3.connect('word2vec/word2vec.db')
+    print(conn)
     cur = conn.cursor()
+    print(cur)
 
+    cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    print(cur.fetchall())
     # get lang_id
     lang = detect_lang(text)
     if lang is None:

@@ -1,14 +1,23 @@
 version: "3.5"
 
 services:
+  indexer:
+    build:
+      context: ./src/indexer
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/indexer/:/app
+    env_file: ./src/indexer/.env
+    command: tail -f /dev/null
+
   search_api:
     container_name: search_api
     build:
-      context: .
+      context: ./src/api-server
       dockerfile: Dockerfile
     volumes:
-      - ./:/app
-    env_file: .env.local
+      - ./src/api-server:/app
+    env_file: ./src/api-server/.env.local
     ports:
       - 7000:7000
     command: tail -f /dev/null
@@ -42,3 +51,19 @@ services:
         hard: 65536
     cap_add:
       - IPC_LOCK
+
+  rabbitmq:
+    image: rabbitmq:3.8.7-management
+    container_name: rabbitmq
+    hostname: rabbit
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "Admin123"
+    ports:
+      - 5672:5672
+      - 15672:15672
