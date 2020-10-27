@@ -47,7 +47,7 @@ def index_data(data):
         index_id = uuid.uuid4().int // 10**20
         print("index_id generated")
         doc = {
-            "doc_id": doc_id,
+            "source_id": doc_id,
             "source": data['source'],
             "has_image": False,
             "has_text": True,
@@ -98,7 +98,7 @@ def index_data(data):
         index_id = uuid.uuid4().int // 10**20
         print("index_id generated")
         db.docs.insert_one({
-                    "doc_id" : doc_id, 
+                    "source_id" : doc_id, 
                     "source" : data["source"],
                     "version": "1.1",
                     "has_image" : True, 
@@ -149,7 +149,7 @@ def index_data(data):
             for i in range(vid_analyzer.n_keyframes):
                 yield {
                     "_index": es_vid_index,
-                    "doc_id" : str(doc_id),
+                    "source_id" : str(doc_id),
                     "source" : data.get("source", "tattle-admin"),
                     "metadata" : data.get("metadata", {}),
                     "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
@@ -161,7 +161,7 @@ def index_data(data):
 
             yield {
                     "_index": es_vid_index,
-                    "doc_id" : str(doc_id),
+                    "source_id" : str(doc_id),
                     "source" : data.get("source", "tattle-admin"),
                     "metadata" : data.get("metadata", {}),
                     "vec" : vid_analyzer.get_mean_feature().tolist(),
