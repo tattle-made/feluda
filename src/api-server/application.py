@@ -255,5 +255,153 @@ def analyze_image(image_url):
     image = PIL.Image.fromarray(image)
     embedding = get_image_embedding(image)
 
+@application.route('/upload_text', methods=['POST'])
+def upload_text():
+    data = request.get_json(force=True)
+    text = data.get('text',None)
+    doc_id = data.get('doc_id',None)
+    source = data.get('source', 'tattle-admin')
+    if text is None:
+        ret = {'failed' : 1, 'error' : 'No text field in json'}
+        return jsonify(ret)
+    
+    date = datetime.datetime.now()
+    if doc_id is None:
+        # hack: since mongo can only handle int8
+        doc_id = uuid.uuid4().int // 10**20
+
+    lang = detect_lang(text)
+    vec = doc2vec(text)
+    doc =  {
+           "doc_id" : doc_id, 
+           "source" : source,
+           "has_image" : False, 
+           "has_text" : True, 
+           "date_added" : date,
+           "date_updated" : date,
+           "tags" : [],
+           "text" : text,
+           "lang" : lang,
+           }
+    if vec is not None:
+        doc["vec"] = vec
+
+    db.docs.insert_one(doc)
+    ret = {'failed' : 0, 'doc_id' : doc_id}
+    return jsonify(ret)
+
+@application.route('/upload_video', methods=['POST'])
+def upload_video():
+    f = request.files['file']
+    fname = '/tmp/vid.mp4'
+    # fsize in MB
+    fsize = os.path.getsize('/tmp/vid.mp4')/1e6
+    f.save(fname)
+    video = cv2.VideoCapture(fname)
+    vid_analyzer = VideoAnalyzer(video)
+    vid_analyzer.set_fsize(fsize)
+
+    doable, error_msg = vid_analyzer.check_constraints()
+    if not doable:
+        return jsonify({'failed' : 1, 'error' : error_msg})
+
+    feature = vid_analyzer.get_mean_feature()
+    duration = vid_analyzer.duration
+    doc_id = uuid.uuid4().int // 10**20
+
+    # upload to es
+    config = {'host': es_host}
+    es = Elasticsearch([config,])
+    def gendata(vid_analyzer):
+        for i in range(vid_analyzer.n_keyframes):
+            yield {
+                "_index": es_vid_index,
+                "doc_id" : str(doc_id),
+                "source" : "test",
+                "metadata" : {},
+                "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
+                "is_avg" : False,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                }
+
+        yield {
+                "_index": es_vid_index,
+                "doc_id" : str(doc_id),
+                "source" : "test",
+                "metadata" : {},
+                "vec" : vid_analyzer.get_mean_feature().tolist(),
+                "is_avg" : True,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                }
+
+    res = eshelpers.bulk(es, gendata(vid_analyzer))
+    ret = {'failed' : 0}
+    return jsonify(ret)
+
+@application.route('/upload_image', methods=['POST'])
+def upload_image():
+    data = request.get_json(force=True)
+    image_url = data.get('image_url')
+    doc_id = data.get('doc_id',None)
+    source = data.get('source', 'tattle-admin')
+    if image_url is None:
+        ret = {'failed' : 1, 'error' : 'No image_url found'}
+    else:
+        image_dict = image_from_url(image_url)
+        image = image_dict['image']
+        image = image.convert('RGB') #take care of png(RGBA) issue
+        image_vec = resnet18.extract_feature(image)
+
+        detected_text = detect_text(image_dict['image_bytes']).get('text','')
+        lang = detect_lang(detected_text)
+
+        #import ipdb; ipdb.set_trace()
+        if detected_text == '' or None:
+            text_vec = np.zeros(300).tolist()
+            has_text = False
+        else:
+            text_vec = doc2vec(detected_text)
+            has_text = True
+
+        if lang is None:
+            text_vec = np.zeros(300).tolist()
+            has_text = True
+
+        if text_vec is None:
+            text_vec = np.zeros(300).tolist()
+            has_text = True
+
+        vec = np.hstack((image_vec, text_vec)).tolist()
+
+        date = datetime.datetime.now()
+        if doc_id is None:
+            # hack: since mongo can only handle int8
+            doc_id = uuid.uuid4().int // 10**20
+        db.docs.insert_one({
+                       "doc_id" : doc_id, 
+                       "source" : source,
+                       "version": "1.1",
+                       "has_image" : True, 
+                       "has_text" : has_text, 
+                       "text" : detected_text,
+                       "tags" : [],
+                       "date_added" : date,
+                       "date_updated" : date,
+                       "image_vec" : image_vec.tolist(),
+                       "text_vec" : text_vec,
+                       "vec" : vec,
+                       })
+        ret = {'doc_id': doc_id, 'failed' : 0}
+
+        #update the search index
+        imagesearch.update(doc_id, image_vec)
+        docsearch.update(doc_id, vec)
+        if has_text:
+            textsearch.update(doc_id, text_vec)
+
+    return jsonify(ret)
+
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=7000)
