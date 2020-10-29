@@ -44,8 +44,6 @@ def index_data(data):
         print("Generating document vector")
         vec = doc2vec(text)
         print("Document vector generated")
-        index_id = uuid.uuid4().int // 10**20
-        print("index_id generated")
         doc = {
             "source_id": doc_id,
             "source": data['source'],
@@ -55,13 +53,13 @@ def index_data(data):
             "date_updated": date,
             "tags": [],
             "text": text,
-            "lang": lang,
-            "index_id": index_id
+            "lang": lang
         }
         if vec is not None:
             doc["vec"] = vec
-        db.docs.insert_one(doc)
+        index_id = db.docs.insert_one(doc).inserted_id
         print("Document vector indexed")
+        return index_id
             
     elif data["media_type"] == "image":
         image_url = data["file_url"]
@@ -95,9 +93,7 @@ def index_data(data):
         vec = np.hstack((image_vec, text_vec)).tolist()
 
         date = datetime.utcnow()
-        index_id = uuid.uuid4().int // 10**20
-        print("index_id generated")
-        db.docs.insert_one({
+        index_id = db.docs.insert_one({
                     "source_id" : doc_id, 
                     "source" : data["source"],
                     "version": "1.1",
@@ -109,15 +105,15 @@ def index_data(data):
                     "date_updated" : date,
                     "image_vec" : image_vec.tolist(),
                     "text_vec" : text_vec,
-                    "vec" : vec,
-                    "index_id": index_id
-                    })
+                    "vec" : vec
+                    }).inserted_id
         print("Image vector indexed")
 
         imagesearch.update(doc_id, image_vec)
         docsearch.update(doc_id, vec)
         if has_text:
             textsearch.update(doc_id, text_vec)
+        return index_id
 
 
     elif data["media_type"] == "video":
@@ -144,8 +140,6 @@ def index_data(data):
         config = {'host': es_host}
         es = Elasticsearch([config,])
         def gendata(vid_analyzer):
-            index_id = uuid.uuid4().int // 10**20
-            print("index_id generated")
             for i in range(vid_analyzer.n_keyframes):
                 yield {
                     "_index": es_vid_index,
@@ -156,7 +150,6 @@ def index_data(data):
                     "is_avg" : False,
                     "duration" : vid_analyzer.duration,
                     "n_keyframes" : vid_analyzer.n_keyframes,
-                    "index_id": index_id
                     }
 
             yield {
@@ -168,12 +161,11 @@ def index_data(data):
                     "is_avg" : True,
                     "duration" : vid_analyzer.duration,
                     "n_keyframes" : vid_analyzer.n_keyframes,
-                    "index_id": index_id
                     }
         
         print("Generating video vectors")
         res = eshelpers.bulk(es, gendata(vid_analyzer))
         print("Video vectors indexed")
         os.remove(fname)
-        return index_id
+        return res
 
