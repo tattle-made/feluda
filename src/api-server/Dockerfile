@@ -7,6 +7,7 @@ RUN apt-get update
 RUN apt-get -y upgrade
 RUN apt-get install -y --no-install-recommends gcc build-essential 
 RUN apt-get install -y libgl1-mesa-glx libglib2.0-0
+RUN apt-get install -y ffmpeg
 
 # This is only for debugging in dev mode. Uncomment in production
 RUN apt-get install -y vim

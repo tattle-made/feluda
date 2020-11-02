@@ -3,6 +3,8 @@ from tqdm import tqdm
 import os
 from pymongo import MongoClient
 from monitor import timeit
+import logging
+logger = logging.getLogger('search-logs')
 
 
 class ImageSearch:
@@ -39,7 +41,9 @@ class ImageSearch:
             thresh = self.thresh
         if type(vec) == list:
             vec = np.array(vec)
+        logger.info(type(vec))
         dists = np.linalg.norm(self.vecs - vec, axis=1)
+        logger.info(type(dists))
         idx = np.argsort(dists)
 
         return (np.array(self.ids)[idx].tolist(), dists[idx].tolist())

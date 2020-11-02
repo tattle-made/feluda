@@ -9,12 +9,13 @@ import wget
 from search import ImageSearch, TextSearch, DocSearch
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 import cv2
-from VideoAnalyzer import VideoAnalyzer
+from VideoAnalyzer import VideoAnalyzer, compress_video
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers as eshelpers
 from datetime import datetime
 from flask import jsonify 
 import uuid
+from contextlib import contextmanager,redirect_stderr,redirect_stdout
 
 try:
     mongo_url = os.environ['MONGO_URL']
@@ -35,9 +36,9 @@ textsearch = TextSearch()
 resnet18 = ResNet18()
 
 def index_data(data):
+    print("data to index: ", data)
     date = datetime.utcnow()
     doc_id = data['source_id']
-
     if data["media_type"] == "text":
         text = data["text"]
         lang = detect_lang(text)
@@ -117,15 +118,24 @@ def index_data(data):
 
 
     elif data["media_type"] == "video":
+        print("data is video")
         fname = '/tmp/vid.mp4'
+        print("Downloading video from url")
         video_url = data["file_url"]
         print(video_url)
         wget.download(video_url, out=fname)
+        print("video downloaded")
         # fsize in MB
-        fsize = os.path.getsize('/tmp/vid.mp4')/1e6
-        print(fsize)
+        fsize = os.path.getsize(fname)/1e6
+        print("original size: ", fsize)
+        if fsize > 10:
+            print("compressing video")
+            fname = compress_video(fname)
+            fsize = os.path.getsize(fname)/1e6
+            print("compressed video size: ", fsize)
+        if fsize > 10:
+            raise Exception("Video too large")
         video = cv2.VideoCapture(fname)
-        print(type(video))
         vid_analyzer = VideoAnalyzer(video)
         vid_analyzer.set_fsize(fsize)
 

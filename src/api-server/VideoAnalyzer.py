@@ -9,6 +9,7 @@ from torch.utils import data
 import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
+from ffmpy import FFmpeg
 
 imagenet_transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -134,6 +135,19 @@ class VideoAnalyzer:
         Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=False)
         idx = P[:self.n_keyframes]
         return idx
+
+def compress_video(fname):
+    newname = "/tmp/compressed.mp4"
+    FNULL = open(os.devnull, 'w')
+    ff = FFmpeg(
+        global_options='-y',
+        inputs={fname: None},
+        outputs={newname: '-vcodec libx265 -crf 28'}
+    )
+    print(ff.cmd)
+    ff.run(stdout=FNULL, stderr=FNULL)
+    os.remove(fname)
+    return newname
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

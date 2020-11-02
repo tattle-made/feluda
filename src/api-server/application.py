@@ -8,10 +8,11 @@ import skimage, PIL
 import numpy as np
 from monitor import timeit
 from elasticsearch import Elasticsearch
-from VideoAnalyzer import VideoAnalyzer
-from analyzer import ResNet18, detect_text, image_from_url, doc2vec
+from VideoAnalyzer import VideoAnalyzer, compress_video
+from analyzer import ResNet18, detect_text, image_from_url, doc2vec, detect_lang
 from search import ImageSearch, TextSearch, DocSearch
 from send import add_job_to_queue
+import cv2
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
@@ -104,12 +105,13 @@ def find_duplicate():
             doc_ids, dists = imagesearch.search(vec)
 
         # only get first 10
-        doc_ids, dists = doc_ids[:10], dists[:10]
+        # doc_ids, dists = doc_ids[:10], dists[:10]
 
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
+            # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(len(doc_ids))]
             ret = {'failed' : 0, 'result' : result}
         else:
             ret = {'failed' : 0, 'result' : []}
@@ -123,7 +125,8 @@ def find_duplicate():
         sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
+            # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
         else:
             result = []
 
@@ -297,6 +300,11 @@ def upload_video():
     # fsize in MB
     fsize = os.path.getsize('/tmp/vid.mp4')/1e6
     f.save(fname)
+    if fsize > 20:
+        print("compressing video")
+        fname = compress_video(fname)
+        fsize = os.path.getsize('/tmp/vid.mp4')/1e6
+        print("compressed video size: ", fsize)
     video = cv2.VideoCapture(fname)
     vid_analyzer = VideoAnalyzer(video)
     vid_analyzer.set_fsize(fsize)
@@ -343,6 +351,7 @@ def upload_video():
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
     data = request.get_json(force=True)
+    print(data)
     image_url = data.get('image_url')
     doc_id = data.get('doc_id',None)
     source = data.get('source', 'tattle-admin')

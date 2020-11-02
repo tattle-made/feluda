@@ -45,8 +45,9 @@ def callback(ch, method, properties, body):
         print("Indexing success report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    except Exception as e:
-        print('Error indexing media ', e)
+    except Exception:
+        print('Error indexing media ')
+        print(logging.traceback.format_exc())
         print("Sending report to queue ...")
         report["status"] = "failed"
         report["failure_timestamp"] = str(datetime.utcnow())
@@ -58,6 +59,10 @@ def callback(ch, method, properties, body):
                 delivery_mode=2), # make message persistent
             body=json.dumps(report))
         print("Indexing failure report sent to report queue")
+        try:
+            os.remove('/tmp/vid.mp4')
+        except:
+            pass
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
 

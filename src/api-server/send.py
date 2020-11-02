@@ -14,6 +14,7 @@ channel.queue_declare(queue='tattle-search-index-queue', durable=True)
 channel.queue_declare(queue='tattle-search-report-queue', durable=True)
 
 def add_job_to_queue(payload):
+    print(payload)
     channel.basic_publish(
         exchange='', 
         routing_key='tattle-search-index-queue', 

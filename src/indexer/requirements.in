@@ -13,7 +13,8 @@ torch==1.2.0
 torchvision==0.4.0
 textblob
 Pillow==7.1.0
-opencv-contrib-python==4.4.0.42
+opencv-python-headless
 elasticsearch
 wget==3.2
 pika==1.1.0
+ffmpy==0.2.3
