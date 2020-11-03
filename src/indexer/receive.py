@@ -12,11 +12,15 @@ from helper import index_data
 credentials = pika.PlainCredentials(environ.get(
     'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
+    pika.ConnectionParameters(
+        host=environ.get('MQ_HOST'), 
+        credentials=credentials,
+        heartbeat=600,
+        blocked_connection_timeout=300))
 channel = connection.channel()
 channel.queue_declare(queue='tattle-search-index-queue', durable=True)
 channel.queue_declare(queue='tattle-search-report-queue', durable=True)
-
+channel.confirm_delivery()
 
 def callback(ch, method, properties, body):
     print("MESSAGE RECEIVED %r" % body)
@@ -46,7 +50,7 @@ def callback(ch, method, properties, body):
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception:
-        print('Error indexing media ')
+        print('Error indexing medias ')
         print(logging.traceback.format_exc())
         print("Sending report to queue ...")
         report["status"] = "failed"
