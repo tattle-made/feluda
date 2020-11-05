@@ -1,37 +1,33 @@
-## setup:
+## Setup for Developing Locally
 
-1.  Setup virtual env
+1. Set environment variables by replacing the credentials in /src/indexer/.env-template and /src/api-server/.env-template.local with your credentials.
 
-    `virtualenv --no-site-packages -p python3.6 .`
+2. Run `docker-compose up` . This will bring up the following containers:
 
-2.  Activate the env
 
-    `source bin/activate`
+Mongo DB : Used to store media hash and any associated metadata with the media.
+RabbitMQ : Used as a Job Queue to queue up long media indexing jobs.
+Search Indexer : A RabbitMQ consumer that receives any new jobs that are added to the queue and processes them.
+Search Server : A public REST API to index new media and provide additional public APIs to interact with this service.
 
-3.  Install pip-tools.
+The first time you run docker-compose up it will take several minutes for all services to come up. Its usually instantaneous after that, as long as you don't make changes to the Dockerfile associated with each service. 
 
-    `pip install pip-tools`
+3. To verify if every service is up, visit the following URLs:
 
-4.  `requirements.in` should contain the high level packages that we want e.g.
-    flask, numpy etc. `pip-compile` will generate `requirements.txt` which will
-    have all the dependencies.
+mongo : visit http://localhost:27017
 
-    `pip-compile requirements.in`
+rabbitmq UI : visit http://localhost:15672
 
-    `pip install -r requirements.txt`
+search server : visit http://localhost:5000
 
-5.  Run local server
-
-    `python application.py`
-
-## Developing Locally
+4. Then start the server and indexer with:
 
 ```
-docker-compose up
 docker exec -it search_api python application.py
+docker exec -it search_indexer python receive.py
 ```
 
-## Test API calls
+#### Test API calls (for direct, queue-less media indexing and search)
 
 ```
 # Index an Image
