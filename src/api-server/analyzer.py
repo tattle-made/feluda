@@ -10,7 +10,6 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
-import langdetect
 from textblob import TextBlob
 import requests
 import skimage, PIL
