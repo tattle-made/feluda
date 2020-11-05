@@ -8,6 +8,7 @@ import json
 # from dotenv import load_dotenv
 # load_dotenv()
 from helper import index_data
+from time import perf_counter
 
 credentials = pika.PlainCredentials(environ.get(
     'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
@@ -23,9 +24,11 @@ channel.queue_declare(queue='tattle-search-report-queue', durable=True)
 channel.confirm_delivery()
 
 def callback(ch, method, properties, body):
-    print("MESSAGE RECEIVED %r" % body)
+    # print("MESSAGE RECEIVED %r" % body)
+    print("MESSAGE RECEIVED")
+    start = perf_counter()
     data = json.loads(body)
-    print(data)
+    # print(data)
     report = {}
     report["source_id"] = data["source_id"]
     report["source"] = data["source"]
@@ -45,12 +48,13 @@ def callback(ch, method, properties, body):
                                     content_type='application/json',
                                     delivery_mode=2),  # make message persistent
                                 body=json.dumps(report))
-
+        delta = perf_counter() - start
+        print("Time taken: ", delta)
         print("Indexing success report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception:
-        print('Error indexing medias ')
+        print('Error indexing media')
         print(logging.traceback.format_exc())
         print("Sending report to queue ...")
         report["status"] = "failed"
