@@ -15,7 +15,6 @@ from elasticsearch import helpers as eshelpers
 from datetime import datetime
 from flask import jsonify 
 import uuid
-from contextlib import contextmanager,redirect_stderr,redirect_stdout
 
 try:
     mongo_url = os.environ['MONGO_URL']
@@ -36,7 +35,7 @@ textsearch = TextSearch()
 resnet18 = ResNet18()
 
 def index_data(data):
-    print("data to index: ", data)
+    # print("data to index: ", data)
     date = datetime.utcnow()
     doc_id = data['source_id']
     if data["media_type"] == "text":
@@ -118,13 +117,13 @@ def index_data(data):
 
 
     elif data["media_type"] == "video":
-        print("data is video")
+        # print("data is video")
         fname = '/tmp/vid.mp4'
-        print("Downloading video from url")
+        # print("Downloading video from url")
         video_url = data["file_url"]
-        print(video_url)
+        # print(video_url)
         wget.download(video_url, out=fname)
-        print("video downloaded")
+        # print("video downloaded")
         # fsize in MB
         fsize = os.path.getsize(fname)/1e6
         print("original size: ", fsize)
@@ -136,12 +135,14 @@ def index_data(data):
         if fsize > 10:
             raise Exception("Video too large")
         video = cv2.VideoCapture(fname)
+        # print(type(video))
         vid_analyzer = VideoAnalyzer(video)
+        # print(vid_analyzer)
         vid_analyzer.set_fsize(fsize)
 
         doable, error_msg = vid_analyzer.check_constraints()
-        print(doable)
-        print(error_msg)
+        # print(doable)
+        # print(error_msg)
         if not doable:
             print(jsonify({'failed' : 1, 'error' : error_msg}))
             return jsonify({'failed' : 1, 'error' : error_msg})
