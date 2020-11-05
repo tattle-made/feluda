@@ -10,6 +10,7 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
 from ffmpy import FFmpeg
+import logging
 
 imagenet_transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -45,8 +46,9 @@ class VideoAnalyzer:
         self.sampling_rate = sampling_rate
         self.n_samples = self.n_frames/sampling_rate
         self.n_keyframes = n_keyframes
+        # print("init model")
         self.model = models.resnet18(pretrained=True)
-
+        # print(type(self.model))
         # list of individual PIL Images 
         self.frame_images = [] 
 
@@ -76,12 +78,15 @@ class VideoAnalyzer:
         return self.keyframe_features.mean(axis=1)
 
     def analyze(self, video):
+        # print("analyzing video")
         self.frame_images = self.extract_frames(video)
         feature_matrix = self.extract_features(self.frame_images)
         self.keyframe_indices = self.find_keyframes(feature_matrix)
         self.keyframe_features = feature_matrix[:,self.keyframe_indices]
+        # print("analysed video")
 
     def get_video_attributes(self, v):
+        # print("getting video attributes")
         if self.duration is not None:
             return {'duration' : self.duration,
                     'n_frames' : self.n_frames,
@@ -98,12 +103,14 @@ class VideoAnalyzer:
         self.width = width
         self.height = height
         v.set(cv2.CAP_PROP_POS_AVI_RATIO,0)
+        # print("got video attributes")
         return {'duration' : self.duration,
                 'n_frames' : self.n_frames,
                 'width'  : self.width,
                 'height' : self.height}	
 
     def extract_frames(self, v):
+        # print("extracting frames")
         images = []
         for i in range(self.n_frames):
             success, image = v.read()
@@ -112,28 +119,52 @@ class VideoAnalyzer:
             else:
                 if i % self.sampling_rate == 0:
                    images.append(Image.fromarray(image))
+        # print("extracted frames")
         return images
 
     def extract_features(self, images): 
-        dset = ImageListDataset(images)
-        dloader = data.DataLoader(dset, batch_size=len(images))
-
-        embedding = torch.zeros(512, len(images))
-        def hook(m, i, o):
-            feature_data = o.data.reshape((512, len(images)))
-            embedding.copy_(feature_data)
-
-        feature_layer = self.model._modules.get('avgpool')
-        h = feature_layer.register_forward_hook(hook)
-
-        self.model.eval()
-        self.model(next(iter(dloader)))
-        h.remove()
-        return embedding.numpy()
+        try:
+            # print('extracting features')
+            # print("init dataset")
+            dset = ImageListDataset(images)
+            # print("done")
+            # print("init dataloader")
+            # dloader = data.DataLoader(dset, batch_size=len(images), num_workers=1)
+            dloader = data.DataLoader(dset, batch_size=1, num_workers=1)
+            # print(len(images))
+            # print("done")
+            # print("do embedding")
+            embedding = torch.zeros(512, len(images))
+            def hook(m, i, o):
+                # feature_data = o.data.reshape((512, len(images)))
+                feature_data = o.data.reshape((512, 1))
+                embedding.copy_(feature_data)
+            # print("get feature layer")
+            feature_layer = self.model._modules.get('avgpool')
+            # print("feature layer:", feature_layer)
+            # print("done")
+            # print("register hook")
+            h = feature_layer.register_forward_hook(hook)
+            # print("done")
+            # print("feature layer:", feature_layer)
+            # print("h:", h)
+            # print("calling model.eval()")
+            self.model.eval()
+            # print("done")
+            print("iterate through dataloader")
+            self.model(next(iter(dloader)))
+            print("done")
+            h.remove()
+            # print("extracted features")
+            return embedding.numpy()
+        except Exception:
+            print(logging.traceback.format_exc())
 
     def find_keyframes(self, feature_matrix):
+        # print("finding keyframes")
         Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=False)
         idx = P[:self.n_keyframes]
+        # print("found keyframes")
         return idx
 
 def compress_video(fname):
