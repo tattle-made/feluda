@@ -3,12 +3,9 @@ flask_cors==3.0.0
 google-cloud==0.34.0
 google-cloud-vision==0.34.0
 scikit-image==0.15.0
-torchvision
 pymongo
 dnspython
 tqdm
-langdetect
-fasttext
 torch==1.2.0
 torchvision==0.4.0
 textblob
