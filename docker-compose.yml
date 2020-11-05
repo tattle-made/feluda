@@ -2,9 +2,13 @@ version: "3.5"
 
 services:
   indexer:
+    container_name: search_indexer
     build:
       context: ./src/indexer
       dockerfile: Dockerfile
+      target: indexer_prod
+    shm_size: '8gb'
+    # ipc: host
     volumes:
       - ./src/indexer/:/app
     env_file: ./src/indexer/.env
@@ -15,6 +19,9 @@ services:
     build:
       context: ./src/api-server
       dockerfile: Dockerfile
+      target: server_prod
+    shm_size: '8gb'
+    # ipc: host
     volumes:
       - ./src/api-server:/app
     env_file: ./src/api-server/.env.local
