@@ -1,6 +1,6 @@
 ## Setup for Developing Locally
 
-1. Set environment variables by replacing the credentials in `/src/indexer/.env-template` and `/src/api-server/.env-template.local` with your credentials.
+1. Set environment variables by replacing the credentials in `/src/indexer/.env-template` and `/src/api-server/.env-template.local` with your credentials. Rename the files to `.env` and `.env.local` respectively.
 
 2. Run `docker-compose up` . This will bring up the following containers:
 
