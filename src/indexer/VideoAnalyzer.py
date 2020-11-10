@@ -122,47 +122,36 @@ class VideoAnalyzer:
         # print("extracted frames")
         return images
 
-    def extract_features(self, images): 
+    def extract_features(self, images, batch_size=1): 
         try:
-            # print('extracting features')
-            # print("init dataset")
             dset = ImageListDataset(images)
-            # print("done")
-            # print("init dataloader")
-            dloader = data.DataLoader(dset, batch_size=len(images), num_workers=1)
-            # dloader = data.DataLoader(dset, batch_size=1, num_workers=1)
-            # print(len(images))
-            # print("done")
-            # print("do embedding")
-            embedding = torch.zeros(512, len(images))
-            def hook(m, i, o):
-                feature_data = o.data.reshape((512, len(images)))
-                # feature_data = o.data.reshape((512, 1))
-                embedding.copy_(feature_data)
-            # print("get feature layer")
+            dloader = data.DataLoader(dset, batch_size=batch_size, shuffle=False)
+            res =[]
             feature_layer = self.model._modules.get('avgpool')
-            # print("feature layer:", feature_layer)
-            # print("done")
-            # print("register hook")
-            h = feature_layer.register_forward_hook(hook)
-            # print("done")
-            # print("feature layer:", feature_layer)
-            # print("h:", h)
-            # print("calling model.eval()")
+            def hook(m, i, o):
+                feature_data = o.data.reshape((512, batch_size))
+                embedding.copy_(feature_data)
             self.model.eval()
-            # print("done")
-            print("iterate through dataloader")
-            self.model(next(iter(dloader)))
-            print("done")
-            h.remove()
-            # print("extracted features")
-            return embedding.numpy()
+            for i, image in enumerate(dloader):
+                embedding = torch.zeros(512, batch_size)
+                h = feature_layer.register_forward_hook(hook)
+                self.model(image)
+                h.remove()
+                res.append(embedding.numpy())
+            res = np.hstack(res)
+            assert (res.shape == (512,len(images)))
+            return res
+            
         except Exception:
             print(logging.traceback.format_exc())
 
     def find_keyframes(self, feature_matrix):
         # print("finding keyframes")
-        Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=False)
+        Q, R, P = qr(feature_matrix, pivoting=True,overwrite_a=False) 
+        # Q is the orthogonal matrix that is an approximation of the featue matrix
+        # P is a pivot matrix containing indices of the original (feature matrix) image vectors that have the largest vector norms 
+        # We select the first n indices from P to get the n keyframes
+        print(P)
         idx = P[:self.n_keyframes]
         # print("found keyframes")
         return idx
