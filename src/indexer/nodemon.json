@@ -1,0 +1,3 @@
+{   
+    "ignore": ["*.mp4", "*.txt", "*.jpg", "*.jpeg", "*.png", "*.tmp/", "README"] 
+}
