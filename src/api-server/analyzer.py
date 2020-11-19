@@ -15,8 +15,18 @@ import requests
 import skimage, PIL
 import sqlite3
 from monitor import timeit
+import boto3
 
-GOOGLE_API_KEY=os.environ.get('GOOGLE_API_KEY')
+def get_credentials():
+    aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY_ID")
+    bucket = os.environ.get("AWS_BUCKET")
+    obj = os.environ.get("S3_CREDENTIALS_PATH")
+    s3 = boto3.client("s3", aws_access_key_id = aws_access_key_id,
+                          aws_secret_access_key= aws_secret_access_key) 
+    s3.download_file(bucket, obj, "credentials.json")
+
+GOOGLE_API_KEY=get_credentials()
 
 #imagenet normalize
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
