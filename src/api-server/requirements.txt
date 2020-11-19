@@ -1,3 +1,4 @@
+boto3==1.14.60
 cachetools==4.1.1         # via google-auth
 certifi==2020.6.20        # via elasticsearch, matplotlib, requests
 chardet==3.0.4            # via requests
