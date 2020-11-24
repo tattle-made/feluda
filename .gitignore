@@ -114,6 +114,7 @@ word2vec/*.db
 
 # Local development Related Files
 tattle-api-google.json
+credentials.json
 
 # Mac files
 .DS_Store
