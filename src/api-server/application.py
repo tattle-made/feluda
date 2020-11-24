@@ -26,7 +26,9 @@ logger = logging.getLogger("tattle-api")
 
 mongo_url = os.environ['MONGO_URL']
 cli = MongoClient(mongo_url)
-db = cli.documents
+db = cli[os.environ.get("DB_NAME")]
+coll = db[os.environ.get("DB_COLLECTION")]
+
 es_host = os.environ['ES_HOST']
 es_vid_index = os.environ['ES_VID_INDEX']
 es_img_index = os.environ['ES_IMG_INDEX']
@@ -107,7 +109,7 @@ def find_duplicate():
         # only get first 10
         # doc_ids, dists = doc_ids[:10], dists[:10]
 
-        sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
+        sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
 
         if doc_ids is not None:
             # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
@@ -117,13 +119,12 @@ def find_duplicate():
             ret = {'failed' : 0, 'result' : []}
 
     elif text is not None:
-        duplicate_doc = db.docs.find_one({"text" : text})
+        duplicate_doc = coll.find_one({"text" : text})
         vec = doc2vec(text)
         if vec is None:
             ret = {'failed' : 1, 'error' : 'query words not found in db'}
         doc_ids, dists = textsearch.search(vec)
-        sources = {d.get('doc_id') : d.get('source') for d in db.docs.find({"doc_id" : {"$in" : doc_ids}})}
-
+        sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
         if doc_ids is not None:
             # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
             result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
@@ -157,7 +158,7 @@ def delete_doc():
         ret['error'] = 'no doc id provided'
         return jsonify(ret)
 
-    result = db.docs.delete_one({"doc_id" : doc_id})
+    result = coll.delete_one({"doc_id" : doc_id})
     if result.deleted_count == 1:
         ret['failed'] = 0
     else:
@@ -182,7 +183,7 @@ def search_tags():
         query = {"tags.value" : {"$in" : tags}}
 
     docs = []
-    for doc in db.docs.find(query):
+    for doc in coll.find(query):
         docs.append(doc.get('doc_id'))
 
     ret['docs'] = docs
@@ -209,7 +210,7 @@ def update_tags():
     elif tags is None:
         ret = {'failed' : 1, 'error' : 'no tags provided'}
     else:
-        doc = db.docs.find_one({"doc_id" : doc_id})
+        doc = coll.find_one({"doc_id" : doc_id})
         if doc is None:
             ret = {'failed' : 1, 'error' : 'doc not found'}
         else:
@@ -218,7 +219,7 @@ def update_tags():
             updated_tags = list({(t['value'],t['source']):t for t in all_tags}.values())
 
             date = datetime.datetime.now()
-            db.docs.update_one({"doc_id" : doc_id}, {"$set" : 
+            coll.update_one({"doc_id" : doc_id}, {"$set" : 
                 {"tags" : updated_tags, "date_updated" : date}})
             ret = {'failed' : 0}
     return jsonify(ret)
@@ -236,7 +237,7 @@ def remove_tags():
     elif source is None:
         ret = {'failed' : 1, 'error' : 'no source provided'}
     else:
-        doc = db.docs.find_one({"doc_id" : doc_id})
+        doc = coll.find_one({"doc_id" : doc_id})
         if doc is None:
             ret = {'failed' : 1, 'error' : 'doc not found'}
         else:
@@ -248,7 +249,7 @@ def remove_tags():
                     updated_tags.remove(tag)
                     removed.append(tag)
             date = datetime.datetime.now()
-            db.docs.update_one({"doc_id" : doc_id}, {"$set" : 
+            coll.update_one({"doc_id" : doc_id}, {"$set" : 
                 {"tags" : updated_tags, "date_updated" : date}})
             ret = {'failed' : 0, 'removed_tags':removed}
     return jsonify(ret)
@@ -289,7 +290,7 @@ def upload_text():
     if vec is not None:
         doc["vec"] = vec
 
-    db.docs.insert_one(doc)
+    coll.insert_one(doc)
     ret = {'failed' : 0, 'doc_id' : doc_id}
     return jsonify(ret)
 
@@ -388,7 +389,7 @@ def upload_image():
         if doc_id is None:
             # hack: since mongo can only handle int8
             doc_id = uuid.uuid4().int // 10**20
-        db.docs.insert_one({
+        coll.insert_one({
                        "doc_id" : doc_id, 
                        "source" : source,
                        "version": "1.1",

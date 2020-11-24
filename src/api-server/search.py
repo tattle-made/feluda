@@ -18,8 +18,9 @@ class ImageSearch:
         print(os.environ['MONGO_URL'])
         mongo_url = os.environ['MONGO_URL']
         cli = MongoClient(mongo_url)
-        db = cli.documents
-        cur = db.docs.find({"has_image": True})
+        db = cli[os.environ.get("DB_NAME")]
+        coll = db[os.environ.get("DB_COLLECTION")]
+        cur = coll.find({"has_image": True})
         for doc in tqdm(cur, total=cur.count()):
             if doc.get('vec') is None:
                 continue
@@ -64,8 +65,9 @@ class TextSearch:
     def build(self):
         mongo_url = os.environ['MONGO_URL']
         cli = MongoClient(mongo_url)
-        db = cli.documents
-        cur = db.docs.find({"has_text": True})
+        db = cli[os.environ.get("DB_NAME")]
+        coll = db[os.environ.get("DB_COLLECTION")]
+        cur = coll.find({"has_text": True})
         for doc in tqdm(cur, total=cur.count()):
             if doc.get('vec') is None:
                 continue
@@ -111,8 +113,9 @@ class DocSearch:
     def build(self):
         mongo_url = os.environ['MONGO_URL']
         cli = MongoClient(mongo_url)
-        db = cli.documents
-        cur = db.docs.find({"has_text": True, "has_image": True})
+        db = cli[os.environ.get("DB_NAME")]
+        coll = db[os.environ.get("DB_COLLECTION")]
+        cur = coll.find({"has_text": True, "has_image": True})
         for doc in tqdm(cur, total=cur.count()):
             if doc.get('vec') is None:
                 continue

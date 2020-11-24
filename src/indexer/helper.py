@@ -19,7 +19,8 @@ import uuid
 try:
     mongo_url = os.environ['MONGO_URL']
     cli = MongoClient(mongo_url)
-    db = cli.documents
+    db = cli[os.environ.get("DB_NAME")]
+    coll = db[os.environ.get("DB_COLLECTION")]
     es_host = os.environ['ES_HOST']
     es_vid_index = os.environ['ES_VID_INDEX']
     es_img_index = os.environ['ES_IMG_INDEX']
@@ -57,7 +58,7 @@ def index_data(data):
         }
         if vec is not None:
             doc["vec"] = vec
-        index_id = db.docs.insert_one(doc).inserted_id
+        index_id = coll.insert_one(doc).inserted_id
         print("Document vector indexed")
         return index_id
             
@@ -93,7 +94,7 @@ def index_data(data):
         vec = np.hstack((image_vec, text_vec)).tolist()
 
         date = datetime.utcnow()
-        index_id = db.docs.insert_one({
+        index_id = coll.insert_one({
                     "source_id" : doc_id, 
                     "source" : data["source"],
                     "version": "1.1",
