@@ -21,7 +21,7 @@ zipped_files = [
 # "cc.gu.300.vec.gz", 
 "cc.hi.300.vec.gz", 
 "cc.en.300.vec.gz",
-"cc.mr.300.vec.gz"
+"cc.mr.300.vec.gz",
 "cc.bn.300.vec.gz"
 ]
 
