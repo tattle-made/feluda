@@ -52,10 +52,11 @@ def insert_aligned_wordvecs(lang):
     conn.commit()
     conn.close()
 
-def insert_words():
+def insert_words(lang):
     conn = sqlite3.connect('word2vec.db')
     cur = conn.cursor()
-    fin = io.open('cc.en.300.vec', 'r', encoding='utf-8', newline='\n', errors='ignore')
+    fname = 'cc.'+lang+'.300.vec'
+    fin = io.open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
     n, d = map(int, fin.readline().split())
     for line in tqdm(fin,total=n):
         tokens = line.rstrip().split(' ')
@@ -73,12 +74,15 @@ def insert_words():
 if __name__ == "__main__":
     print("Setting up word vector databases")
     start = perf_counter()
-    setup_aligned_tables()
-    insert_aligned_wordvecs(lang='en')
-    insert_aligned_wordvecs(lang='bn')
-    insert_aligned_wordvecs(lang='hi')
-    insert_aligned_wordvecs(lang='ta')
+    # setup_aligned_tables()
+    # insert_aligned_wordvecs(lang='en')
+    # insert_aligned_wordvecs(lang='bn')
+    # insert_aligned_wordvecs(lang='hi')
+    # insert_aligned_wordvecs(lang='ta')
     setup_tables()
-    insert_words()
+    insert_words(lang='en')
+    insert_words(lang='hi')
+    insert_words(lang='mr')
+    insert_words(lang='bn')
     delta = (perf_counter() - start)/60
     print("Time taken: ", delta, " minutes")

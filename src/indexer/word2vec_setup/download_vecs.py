@@ -6,19 +6,23 @@ import os
 from time import perf_counter
 
 download_links = [
-"https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.en.align.vec",
-"https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.ta.align.vec",
-"https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.bn.align.vec",
-"https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.hi.align.vec",
+# "https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.en.align.vec",
+# "https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.ta.align.vec",
+# "https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.bn.align.vec",
+# "https://dl.fbaipublicfiles.com/fasttext/vectors-aligned/wiki.hi.align.vec",
 "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.vec.gz",
 "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.hi.300.vec.gz",
-"https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.gu.300.vec.gz"
+# "https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.gu.300.vec.gz",
+"https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.mr.300.vec.gz",
+"https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.bn.300.vec.gz"
 ]
 
 zipped_files = [
-"cc.gu.300.vec.gz", 
+# "cc.gu.300.vec.gz", 
 "cc.hi.300.vec.gz", 
-"cc.en.300.vec.gz"
+"cc.en.300.vec.gz",
+"cc.mr.300.vec.gz"
+"cc.bn.300.vec.gz"
 ]
 
 def download():
@@ -76,9 +80,9 @@ def download_vecs():
         if unzip_success == len(zipped_files):
             print("Unzipped all zipped files")
         else:
-            print("Unzipped {} out of 3 files. Please debug and try again, or unzip manually.".format(unzip_success))
+            print("Unzipped {} out of {} files. Please debug and try again, or unzip manually.".format(unzip_success, len(zipped_files)))
     else:
-        print("Downloaded {} out of 7 files. Please debug and try again, or unzip manually.".format(download_success))
+        print("Downloaded {} out of {} files. Please debug and try again, or unzip manually.".format(download_success, len(download_links)))
 
 
 if __name__ ==  "__main__":
