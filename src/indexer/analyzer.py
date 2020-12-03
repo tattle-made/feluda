@@ -80,7 +80,7 @@ def doc2vec(text):
     avg the word vectors for each word in the doc, 
     ignore the words not found in the db
     """
-    conn = sqlite3.connect('word2vec/word2vec.db')
+    conn = sqlite3.connect('data/word2vec/word2vec.db')
     print(conn)
     cur = conn.cursor()
     print(cur)
