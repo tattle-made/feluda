@@ -119,6 +119,5 @@ credentials.json
 # Mac files
 .DS_Store
 
-# Word2Vec files
-src/indexer/word2vec
-src/api-server/word2vec
+# Docker logs
+.docker/*
