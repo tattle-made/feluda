@@ -1,0 +1,70 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api-server: ${{ steps.filter.outputs.api-server }}
+      indexer: ${{ steps.filter.outputs.indexer }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: development
+      - uses: dorny/paths-filter@v2.2.0
+        id: filter
+        with:
+          filters: |
+            api-server:
+                - 'src/api-server/**/*'
+            indexer:
+                - 'src/indexer/**/*'
+
+  api-server:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.api-server == 'true' }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: development
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "setting variables"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/tattle-search-api-rest
+          tags: ${{ steps.vars.outputs.sha_short }}
+          workdir: src/api-server/
+
+  indexer:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.output.indexer }}
+    steps:
+      - name: Run a one-line script
+        run: echo Deploying UI Web Community
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [api-server, indexer]
+    if: ${{ always() }}
+    steps:
+      - name: Notify on Slack
+        uses: rtCamp/action-slack-notify@v2.0.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: "Deployed Tattle API to Staging"
+          SLACK_TITLE: "Tattle API staging-deploy workflow complete"
+          SLACK_COLOR: "#020637"
+          SLACK_ICON: https://tattle-media.s3.amazonaws.com/monogram-dark.svg
