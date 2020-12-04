@@ -7,7 +7,7 @@ services:
       context: ./src/indexer
       dockerfile: Dockerfile
       target: indexer_prod
-    shm_size: '8gb'
+    shm_size: "8gb"
     # ipc: host
     volumes:
       - ./src/indexer/:/app
@@ -20,11 +20,11 @@ services:
       context: ./src/api-server
       dockerfile: Dockerfile
       target: server_prod
-    shm_size: '8gb'
+    shm_size: "8gb"
     # ipc: host
     volumes:
       - ./src/api-server:/app
-    env_file: ./src/api-server/.env.local
+    env_file: ./src/api-server/.env
     ports:
       - 7000:7000
     command: tail -f /dev/null

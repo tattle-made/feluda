@@ -1,16 +1,16 @@
 FROM python:3.7-slim AS builder
 
 RUN apt-get update \
-&& apt-get -y upgrade \
-&& apt-get install -y \
+    && apt-get -y upgrade \
+    && apt-get install -y \
     --no-install-recommends gcc build-essential \
     libgl1-mesa-glx libglib2.0-0 \
     # Vim is only for debugging in dev mode. Uncomment in production
     vim \
-&& apt-get purge -y --auto-remove \
+    && apt-get purge -y --auto-remove \
     gcc build-essential \
     libgl1-mesa-glx libglib2.0-0 \
-&& rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/* 
 
 RUN pip install --upgrade pip
 
