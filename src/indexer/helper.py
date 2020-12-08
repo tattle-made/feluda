@@ -61,7 +61,7 @@ def index_data(data):
                 "vec" : vec,
                     }
 
-        # es.indices.delete(index=es_txt_index, ignore=[400,404])
+        es.indices.delete(index=es_txt_index, ignore=[400,404])
 
         if not es.indices.exists(index=es_txt_index):
             print("Index does not exist, creating index")
@@ -78,7 +78,8 @@ def index_data(data):
                             "type": "object"
                         },
                         "text": {
-                            "type": "text"
+                            "type": "text",
+                            "analyzer": "standard"
                         },
                         "lang": {
                             "type": "keyword"
