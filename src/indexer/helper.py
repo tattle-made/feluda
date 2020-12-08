@@ -1,12 +1,12 @@
 import os
 import sys
 import numpy as np
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import pymongo
 from pymongo import MongoClient
-# load_dotenv()
+load_dotenv()
 import wget
-from search import ImageSearch, TextSearch, DocSearch
+# from search import ImageSearch, TextSearch, DocSearch
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 import cv2
 from VideoAnalyzer import VideoAnalyzer, compress_video
@@ -30,10 +30,10 @@ except Exception as e:
     print('Error Connecting to Mongo ', e)
 
 
-imagesearch = ImageSearch()
-docsearch = DocSearch()
-textsearch = TextSearch()
-resnet18 = ResNet18()
+# imagesearch = ImageSearch()
+# docsearch = DocSearch()
+# textsearch = TextSearch()
+# resnet18 = ResNet18()
 
 def index_data(data):
     # print("data to index: ", data)
@@ -45,22 +45,27 @@ def index_data(data):
         print("Generating document vector")
         vec = doc2vec(text)
         print("Document vector generated")
+
+        if vec is None:
+            vec = np.zeros(300).tolist()
+        # upload to es
+        config = {'host': es_host}
+        es = Elasticsearch([config,])
+
         doc = {
-            "source_id": doc_id,
-            "source": data['source'],
-            "has_image": False,
-            "has_text": True,
-            "date_added": date,
-            "date_updated": date,
-            "tags": [],
-            "text": text,
-            "lang": lang
-        }
-        if vec is not None:
-            doc["vec"] = vec
-        index_id = coll.insert_one(doc).inserted_id
+                "source_id" : str(doc_id),
+                "source" : data.get("source", "tattle-admin"),
+                "metadata" : data.get("metadata", {}),
+                "text": text,
+                "lang": lang,
+                "vec" : vec,
+                    }
+        
+        res = es.index(index=es_txt_index, body=doc)
         print("Document vector indexed")
-        return index_id
+        # res2 = es.search(index=es_txt_index, body={"query":{"match": {"source_id": str(doc_id)}}})
+        # print(res2["hits"]["hits"])
+        return res
             
     elif data["media_type"] == "image":
         image_url = data["file_url"]
@@ -110,10 +115,10 @@ def index_data(data):
                     }).inserted_id
         print("Image vector indexed")
 
-        imagesearch.update(doc_id, image_vec)
-        docsearch.update(doc_id, vec)
-        if has_text:
-            textsearch.update(doc_id, text_vec)
+        # imagesearch.update(doc_id, image_vec)
+        # docsearch.update(doc_id, vec)
+        # if has_text:
+        #     textsearch.update(doc_id, text_vec)
         return index_id
 
 
@@ -181,3 +186,11 @@ def index_data(data):
         os.remove(fname)
         return res
 
+if __name__ == "__main__":
+    data = {
+        "source_id": "123",
+        "media_type": "text",
+        "text": "This is a drill",
+        "metadata": {"test": "text indexing"}
+    }
+    index_data(data)
