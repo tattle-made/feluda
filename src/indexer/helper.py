@@ -60,9 +60,42 @@ def index_data(data):
                 "lang": lang,
                 "vec" : vec,
                     }
-        
+
+        # es.indices.delete(index=es_txt_index, ignore=[400,404])
+
+        if not es.indices.exists(index=es_txt_index):
+            print("Index does not exist, creating index")
+            mapping = '''{
+                "mappings": {
+                    "properties":{
+                        "source_id": {
+                            "type": "keyword"
+                        },
+                        "source": {
+                            "type": "keyword"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        },
+                        "text": {
+                            "type": "text"
+                        },
+                        "lang": {
+                            "type": "keyword"
+                        },
+                        "vec": {
+                            "type":"dense_vector",
+                            "dims": 300
+                        }
+                    }
+                }
+            }'''
+
+            es.indices.create(index=es_txt_index, body=mapping)
+
         res = es.index(index=es_txt_index, body=doc)
         print("Document vector indexed")
+
         # res2 = es.search(index=es_txt_index, body={"query":{"match": {"source_id": str(doc_id)}}})
         # print(res2["hits"]["hits"])
         return res
