@@ -6,7 +6,7 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 import wget
-# from search import ImageSearch, TextSearch, DocSearch
+from search import ImageSearch, TextSearch, DocSearch
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 import cv2
 from VideoAnalyzer import VideoAnalyzer, compress_video
@@ -30,10 +30,10 @@ except Exception as e:
     print('Error Connecting to Mongo ', e)
 
 
-# imagesearch = ImageSearch()
-# docsearch = DocSearch()
+imagesearch = ImageSearch()
+docsearch = DocSearch()
 # textsearch = TextSearch()
-# resnet18 = ResNet18()
+resnet18 = ResNet18()
 
 def index_data(data):
     # print("data to index: ", data)
@@ -43,29 +43,31 @@ def index_data(data):
         text = data["text"]
         lang = detect_lang(text)
         print("Generating document vector")
-        vec = doc2vec(text)
+        text_vec = doc2vec(text)
         print("Document vector generated")
 
-        if vec is None:
-            vec = np.zeros(300).tolist()
+        if text_vec is None:
+            text_vec = np.zeros(300).tolist()
         # upload to es
         config = {'host': es_host}
         es = Elasticsearch([config,])
-
+        print(datetime.utcnow().strftime("%d%m%Y"))
         doc = {
                 "source_id" : str(doc_id),
                 "source" : data.get("source", "tattle-admin"),
                 "metadata" : data.get("metadata", {}),
                 "text": text,
                 "lang": lang,
-                "vec" : vec,
+                "text_vec" : text_vec,
+                "date_added": datetime.utcnow().strftime("%d%m%Y")
                     }
 
+        # The next line is only for testing index creation AND SHOULD BE REMOVED
         es.indices.delete(index=es_txt_index, ignore=[400,404])
 
         if not es.indices.exists(index=es_txt_index):
             print("Index does not exist, creating index")
-            mapping = '''{
+            body = '''{
                 "mappings": {
                     "properties":{
                         "source_id": {
@@ -84,21 +86,31 @@ def index_data(data):
                         "lang": {
                             "type": "keyword"
                         },
-                        "vec": {
+                        "text_vec": {
                             "type":"dense_vector",
                             "dims": 300
+                        },
+                        "date_added": {
+                            "type": "date"
                         }
                     }
                 }
             }'''
 
-            es.indices.create(index=es_txt_index, body=mapping)
+            es.indices.create(index=es_txt_index, body=body)
 
         res = es.index(index=es_txt_index, body=doc)
         print("Document vector indexed")
 
-        # res2 = es.search(index=es_txt_index, body={"query":{"match": {"source_id": str(doc_id)}}})
-        # print(res2["hits"]["hits"])
+        # print(es.get(index=es_txt_index, id=res["_id"]))
+        es.indices.refresh(es_txt_index)
+        res2 = es.search(
+            index=es_txt_index, 
+            body={"query": {
+                    "match": {
+                        "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
+        print(res2["hits"]["hits"])
+
         return res
             
     elif data["media_type"] == "image":
