@@ -14,12 +14,9 @@ RUN apt-get update \
 
 RUN pip install --upgrade pip
 
-# RUN pip install --no-cache-dir -r requirements.txt
-# RUN pip install pip-tools
-# COPY requirements.in /app/requirements.in
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
-# RUN pip-compile requirements.in
+
 RUN pip install --user -r requirements.txt
 
 FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
