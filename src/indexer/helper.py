@@ -51,7 +51,7 @@ def index_data(data):
         # upload to es
         config = {'host': es_host}
         es = Elasticsearch([config,])
-        print(datetime.utcnow().strftime("%d%m%Y"))
+
         doc = {
                 "source_id" : str(doc_id),
                 "source" : data.get("source", "tattle-admin"),
@@ -62,54 +62,16 @@ def index_data(data):
                 "date_added": datetime.utcnow().strftime("%d%m%Y")
                     }
 
-        # The next line is only for testing index creation AND SHOULD BE REMOVED
-        es.indices.delete(index=es_txt_index, ignore=[400,404])
-
-        if not es.indices.exists(index=es_txt_index):
-            print("Index does not exist, creating index")
-            body = '''{
-                "mappings": {
-                    "properties":{
-                        "source_id": {
-                            "type": "keyword"
-                        },
-                        "source": {
-                            "type": "keyword"
-                        },
-                        "metadata": {
-                            "type": "object"
-                        },
-                        "text": {
-                            "type": "text",
-                            "analyzer": "standard"
-                        },
-                        "lang": {
-                            "type": "keyword"
-                        },
-                        "text_vec": {
-                            "type":"dense_vector",
-                            "dims": 300
-                        },
-                        "date_added": {
-                            "type": "date"
-                        }
-                    }
-                }
-            }'''
-
-            es.indices.create(index=es_txt_index, body=body)
-
         res = es.index(index=es_txt_index, body=doc)
         print("Document vector indexed")
 
-        # print(es.get(index=es_txt_index, id=res["_id"]))
-        es.indices.refresh(es_txt_index)
-        res2 = es.search(
-            index=es_txt_index, 
-            body={"query": {
-                    "match": {
-                        "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
-        print(res2["hits"]["hits"])
+        # es.indices.refresh(es_txt_index)
+        # res2 = es.search(
+        #     index=es_txt_index, 
+        #     body={"query": {
+        #             "match": {
+        #                 "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
+        # print(res2["hits"]["hits"])
 
         return res
             
