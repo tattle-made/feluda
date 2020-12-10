@@ -1,4 +1,6 @@
 import os, sys, json, datetime, copy, uuid, requests
+from dotenv import load_dotenv
+load_dotenv()
 import logging
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
@@ -11,8 +13,9 @@ from elasticsearch import Elasticsearch
 from VideoAnalyzer import VideoAnalyzer, compress_video
 from analyzer import ResNet18, detect_text, image_from_url, doc2vec, detect_lang
 from search import ImageSearch, TextSearch, DocSearch
-from send import add_job_to_queue
+# from send import add_job_to_queue
 import cv2
+from indices import check_index
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
@@ -34,6 +37,13 @@ es_vid_index = os.environ['ES_VID_INDEX']
 es_img_index = os.environ['ES_IMG_INDEX']
 es_txt_index = os.environ['ES_TXT_INDEX']
 
+# Create ES indices if they don't exist
+config = {'host': es_host}
+es = Elasticsearch([config,])
+# check_index(es, es_vid_index, index_type="video")
+# check_index(es, es_img_index, index_type="image")
+check_index(es, es_txt_index, index_type="text")
+
 @application.route('/health')
 def health_check():
     logger.debug('<health-check>')
@@ -51,39 +61,40 @@ def media():
     except Exception as e:
         return 'Error indexing media : '+str(e), 500
 
-def query_es(vec):
-    if type(vec) == np.ndarray:
-        vec = vec.tolist()
-    config = {'host': es_host}
-    es = Elasticsearch([config,])
-    q = {
-	"size": 10,
-        "query": {
-	    "script_score": {
-	      "query" : {
-		"match_all" : {}
-	      },
-	      "script": {
-		"source": "1 / (1 + l2norm(params.query_vector, 'image_vector'))", 
-		"params": {
-		  "query_vector": vec
-		}
-	      }
-	    }
-	  }
-        }
-
-    resp = es.search(index=es_img_index, body = q)
-    doc_ids, dists = [], []
-    for h in resp['hits']['hits']:
-        doc_ids.append(h['_id'])
-        dists.append(h['_score'])
-
-    return doc_ids, dists
 
 @timeit
 @application.route('/find_duplicate', methods=['POST'])
 def find_duplicate():
+
+    def query_es(vec):
+        if type(vec) == np.ndarray:
+            vec = vec.tolist()
+
+        q = {
+        "size": 10,
+            "query": {
+            "script_score": {
+            "query" : {
+            "match_all" : {}
+            },
+            "script": {
+            "source": "1 / (1 + l2norm(params.query_vector, 'image_vector'))", 
+            "params": {
+            "query_vector": vec
+            }
+            }
+            }
+        }
+            }
+
+        resp = es.search(index=es_img_index, body = q)
+        doc_ids, dists = [], []
+        for h in resp['hits']['hits']:
+            doc_ids.append(h['_id'])
+            dists.append(h['_score'])
+
+        return doc_ids, dists
+
     data = request.get_json(force=True)
     text = data.get('text', None)
     thresh = data.get('threshold') # What is thresh?
@@ -319,8 +330,7 @@ def upload_video():
     doc_id = uuid.uuid4().int // 10**20
 
     # upload to es
-    config = {'host': es_host}
-    es = Elasticsearch([config,])
+
     def gendata(vid_analyzer):
         for i in range(vid_analyzer.n_keyframes):
             yield {
@@ -414,4 +424,4 @@ def upload_image():
     return jsonify(ret)
 
 if __name__ == "__main__":
-    application.run(host="0.0.0.0", port=7000)
+    application.run(host="0.0.0.0", port=7000, debug=True)
