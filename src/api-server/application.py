@@ -16,6 +16,7 @@ from search import ImageSearch, TextSearch, DocSearch
 # from send import add_job_to_queue
 import cv2
 from indices import check_index
+from datetime import datetime
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
@@ -73,18 +74,16 @@ def find_duplicate():
         q = {
         "size": 10,
             "query": {
-            "script_score": {
-            "query" : {
-            "match_all" : {}
-            },
-            "script": {
-            "source": "1 / (1 + l2norm(params.query_vector, 'image_vector'))", 
-            "params": {
-            "query_vector": vec
-            }
-            }
-            }
-        }
+                "script_score": {
+                    "query" : {
+                        "match_all" : {}
+                        },
+                    "script": {
+                        "source": "1 / (1 + l2norm(params.query_vector, 'image_vector'))", 
+                        "params": {"query_vector": vec}
+                        }
+                    }
+                }
             }
 
         resp = es.search(index=es_img_index, body = q)
@@ -272,38 +271,10 @@ def analyze_image(image_url):
 
 @application.route('/upload_text', methods=['POST'])
 def upload_text():
+    print(request.get_data())
     data = request.get_json(force=True)
-    text = data.get('text',None)
-    doc_id = data.get('doc_id',None)
-    source = data.get('source', 'tattle-admin')
-    if text is None:
-        ret = {'failed' : 1, 'error' : 'No text field in json'}
-        return jsonify(ret)
-    
-    date = datetime.datetime.now()
-    if doc_id is None:
-        # hack: since mongo can only handle int8
-        doc_id = uuid.uuid4().int // 10**20
-
-    lang = detect_lang(text)
-    vec = doc2vec(text)
-    doc =  {
-           "doc_id" : doc_id, 
-           "source" : source,
-           "has_image" : False, 
-           "has_text" : True, 
-           "date_added" : date,
-           "date_updated" : date,
-           "tags" : [],
-           "text" : text,
-           "lang" : lang,
-           }
-    if vec is not None:
-        doc["vec"] = vec
-
-    coll.insert_one(doc)
-    ret = {'failed' : 0, 'doc_id' : doc_id}
-    return jsonify(ret)
+    res = index_data(es, data)
+    return jsonify(res)
 
 @application.route('/upload_video', methods=['POST'])
 def upload_video():
@@ -422,6 +393,46 @@ def upload_image():
             textsearch.update(doc_id, text_vec)
 
     return jsonify(ret)
+
+def index_data(es, data):
+        # print("data to index: ", data)
+    date = datetime.utcnow().strftime("%d%m%Y")
+    doc_id = data['source_id']
+    if data["media_type"] == "text":
+        text = data["text"]
+        lang = detect_lang(text)
+        print("Generating document vector")
+        text_vec = doc2vec(text)
+        print("Document vector generated")
+
+        if text_vec is None:
+            text_vec = np.zeros(300).tolist()
+        # upload to es
+        doc = {
+                "source_id" : str(doc_id),
+                "source" : data.get("source", "tattle-admin"),
+                "metadata" : data.get("metadata", {}),
+                "text": text,
+                "lang": lang,
+                "text_vec" : text_vec,
+                "date_added": date
+                    }
+
+        res = es.index(index=es_txt_index, body=doc)
+        print("Document vector indexed")
+
+        # es.indices.refresh(es_txt_index)
+        # res2 = es.search(
+        #     index=es_txt_index, 
+        #     body={"query": {
+        #             "match": {
+        #                 "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
+        # print(res2["hits"]["hits"])
+        print(res)
+        return res
+    else: 
+        # to do: add code for indexing images and videos
+        return None
 
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=7000, debug=True)
