@@ -64,12 +64,17 @@ def media():
 
 
 @timeit
-@application.route('/find_duplicate', methods=['POST'])
-def find_duplicate():
+@application.route('/search', methods=['POST'])
+def search():
+    data = request.get_json(force=True)
 
-    def query_es(vec):
+    def query_es(index, vec):
         if type(vec) == np.ndarray:
             vec = vec.tolist()
+        if index == es_txt_index:
+            calculation = "1 / (1 + l2norm(params.query_vector, 'text_vec'))"
+        else:
+            calculation = None
 
         q = {
         "size": 10,
@@ -79,77 +84,97 @@ def find_duplicate():
                         "match_all" : {}
                         },
                     "script": {
-                        "source": "1 / (1 + l2norm(params.query_vector, 'image_vector'))", 
+                        "source": calculation, 
                         "params": {"query_vector": vec}
                         }
                     }
                 }
             }
+            
+        resp = es.search(index=index, body = q)
 
-        resp = es.search(index=es_img_index, body = q)
-        doc_ids, dists = [], []
+        # For simple text search
+        # resp = es.search(
+        #     index=index, 
+        #     body = {"query": {
+        #                 "match": {
+        #                     "text": data["text"]}}})
+
+        doc_ids, dists, source_ids, sources, texts = [], [], [], [], [] 
+
         for h in resp['hits']['hits']:
             doc_ids.append(h['_id'])
             dists.append(h['_score'])
+            source_ids.append(h["_source"]["source_id"])
+            sources.append(h["_source"]["source"])
+            texts.append(h["_source"]["text"])
 
-        return doc_ids, dists
+        return doc_ids, dists, source_ids, sources, texts # for development only. return only required info in production
 
-    data = request.get_json(force=True)
-    text = data.get('text', None)
-    thresh = data.get('threshold') # What is thresh?
-    sources = data.get('source', [])
-    image_url = data.get('image_url', None)
-    es_flag = data.get('es_flag', 0)
-    if text is None and image_url is None:
-        ret = {'failed' : 1, 'error' : 'No text or image_url found'}
+    if data["media_type"] == "text": # add error handling
+        text = data["text"]
+        lang = detect_lang(text)
+        print("Generating document vector")
+        query_vec = doc2vec(text)
+        print("Document vector generated")
+        doc_ids, dists, source_ids, sources, texts = query_es(index=es_txt_index, vec=query_vec)
+        return jsonify(doc_ids, dists, source_ids, sources, texts)
 
-    elif image_url is not None:
-        image_dict = image_from_url(image_url)
-        image = image_dict['image']
-        image = image.convert('RGB') #take care of png(RGBA) issue
-        vec = resnet18.extract_feature(image)
+    # text = data.get('text', None)
+    # thresh = data.get('threshold') # What is thresh?
+    # sources = data.get('source', [])
+    # image_url = data.get('image_url', None)
+    # es_flag = data.get('es_flag', 0)
+    # if text is None and image_url is None:
+    #     ret = {'failed' : 1, 'error' : 'No text or image_url found'}
 
-        if int(es_flag) == 1:
-            doc_ids, dists = query_es(vec)
-        elif thresh:
-            doc_ids, dists = imagesearch.search(vec, thresh)
-        else:
-            doc_ids, dists = imagesearch.search(vec)
+    # elif image_url is not None:
+    #     image_dict = image_from_url(image_url)
+    #     image = image_dict['image']
+    #     image = image.convert('RGB') #take care of png(RGBA) issue
+    #     vec = resnet18.extract_feature(image)
 
-        # only get first 10
-        # doc_ids, dists = doc_ids[:10], dists[:10]
+    #     if int(es_flag) == 1:
+    #         doc_ids, dists = query_es(vec)
+    #     elif thresh:
+    #         doc_ids, dists = imagesearch.search(vec, thresh)
+    #     else:
+    #         doc_ids, dists = imagesearch.search(vec)
 
-        sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
+    #     # only get first 10
+    #     # doc_ids, dists = doc_ids[:10], dists[:10]
 
-        if doc_ids is not None:
-            # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(len(doc_ids))]
-            ret = {'failed' : 0, 'result' : result}
-        else:
-            ret = {'failed' : 0, 'result' : []}
+    #     sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
 
-    elif text is not None:
-        duplicate_doc = coll.find_one({"text" : text})
-        vec = doc2vec(text)
-        if vec is None:
-            ret = {'failed' : 1, 'error' : 'query words not found in db'}
-        doc_ids, dists = textsearch.search(vec)
-        sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
-        if doc_ids is not None:
-            # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
-            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
-        else:
-            result = []
+    #     if doc_ids is not None:
+    #         # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
+    #         result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(len(doc_ids))]
+    #         ret = {'failed' : 0, 'result' : result}
+    #     else:
+    #         ret = {'failed' : 0, 'result' : []}
 
-        if duplicate_doc is not None:
-            result = [{'doc_id' : duplicate_doc.get('doc_id') , 'dist' : 0.0, 'source' : duplicate_doc.get('source')}] + result
+    # elif text is not None:
+    #     duplicate_doc = coll.find_one({"text" : text})
+    #     vec = doc2vec(text)
+    #     if vec is None:
+    #         ret = {'failed' : 1, 'error' : 'query words not found in db'}
+    #     doc_ids, dists = textsearch.search(vec)
+    #     sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
+    #     if doc_ids is not None:
+    #         # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
+    #         result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
+    #     else:
+    #         result = []
 
-        ret = {'failed' : 0, 'duplicate' : 1, 'result' : result}
+    #     if duplicate_doc is not None:
+    #         result = [{'doc_id' : duplicate_doc.get('doc_id') , 'dist' : 0.0, 'source' : duplicate_doc.get('source')}] + result
 
-    else:
-        ret = {'failed' : 1, 'error' : 'something went wrong'}
+    #     ret = {'failed' : 0, 'duplicate' : 1, 'result' : result}
 
-    return jsonify(ret)
+    # else:
+    #     ret = {'failed' : 1, 'error' : 'something went wrong'}
+
+    # return jsonify(ret)
 
 @application.route('/find_text', methods=['POST'])
 def find_text():
