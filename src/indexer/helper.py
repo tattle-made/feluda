@@ -6,7 +6,7 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 import wget
-from search import ImageSearch, TextSearch, DocSearch
+# from search import ImageSearch, TextSearch, DocSearch
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 import cv2
 from VideoAnalyzer import VideoAnalyzer, compress_video
@@ -15,28 +15,32 @@ from elasticsearch import helpers as eshelpers
 from datetime import datetime
 from flask import jsonify 
 import uuid
+import logging
 
 try:
-    mongo_url = os.environ['MONGO_URL']
-    cli = MongoClient(mongo_url)
-    db = cli[os.environ.get("DB_NAME")]
-    coll = db[os.environ.get("DB_COLLECTION")]
+    # mongo_url = os.environ['MONGO_URL']
+    # cli = MongoClient(mongo_url)
+    # db = cli[os.environ.get("DB_NAME")]
+    # coll = db[os.environ.get("DB_COLLECTION")]
     es_host = os.environ['ES_HOST']
     es_vid_index = os.environ['ES_VID_INDEX']
     es_img_index = os.environ['ES_IMG_INDEX']
     es_txt_index = os.environ['ES_TXT_INDEX']
     
-except Exception as e:
-    print('Error Connecting to Mongo ', e)
+except Exception:
+    print(logging.traceback.format_exc())
 
 
-imagesearch = ImageSearch()
-docsearch = DocSearch()
+# imagesearch = ImageSearch()
+# docsearch = DocSearch()
 # textsearch = TextSearch()
 resnet18 = ResNet18()
 
-def index_data(data):
-    # print("data to index: ", data)
+config = {'host': es_host}
+es = Elasticsearch([config,])
+
+def index_data(es, data):
+
     date = datetime.utcnow()
     doc_id = data['source_id']
     if data["media_type"] == "text":
@@ -48,9 +52,6 @@ def index_data(data):
 
         if text_vec is None:
             text_vec = np.zeros(300).tolist()
-        # upload to es
-        config = {'host': es_host}
-        es = Elasticsearch([config,])
 
         doc = {
                 "source_id" : str(doc_id),
@@ -65,6 +66,7 @@ def index_data(data):
         res = es.index(index=es_txt_index, body=doc)
         print("Document vector indexed")
 
+        # Code for verifying that data is indexed
         # es.indices.refresh(es_txt_index)
         # res2 = es.search(
         #     index=es_txt_index, 
@@ -76,6 +78,7 @@ def index_data(data):
         return res
             
     elif data["media_type"] == "image":
+        print("data is image")
         image_url = data["file_url"]
         image_dict = image_from_url(image_url)
         image = image_dict['image']
@@ -104,40 +107,34 @@ def index_data(data):
             text_vec = np.zeros(300).tolist()
             has_text = True
 
-        vec = np.hstack((image_vec, text_vec)).tolist()
+        combined_vec = np.hstack((image_vec, text_vec)).tolist()
 
-        date = datetime.utcnow()
-        index_id = coll.insert_one({
-                    "source_id" : doc_id, 
-                    "source" : data["source"],
-                    "version": "1.1",
-                    "has_image" : True, 
-                    "has_text" : has_text, 
-                    "text" : detected_text,
-                    "tags" : [],
-                    "date_added" : date,
-                    "date_updated" : date,
-                    "image_vec" : image_vec.tolist(),
-                    "text_vec" : text_vec,
-                    "vec" : vec
-                    }).inserted_id
+        doc = {
+        "source_id" : str(doc_id),
+        "source" : data.get("source", "tattle-admin"),
+        "metadata" : data.get("metadata", {}),
+        "has_text" : has_text,
+        "text": detected_text,
+        "text_vec" : text_vec,
+        "lang": lang,
+        "image_vec": image_vec,
+        "combined_vec": combined_vec,
+        "date_added": date
+            }
+
+        res = es.index(index=es_img_index, body=doc)
         print("Image vector indexed")
-
-        # imagesearch.update(doc_id, image_vec)
-        # docsearch.update(doc_id, vec)
-        # if has_text:
-        #     textsearch.update(doc_id, text_vec)
-        return index_id
+        return res
 
 
     elif data["media_type"] == "video":
-        # print("data is video")
+        print("data is video")
         fname = '/tmp/vid.mp4'
-        # print("Downloading video from url")
+        print("Downloading video from url")
         video_url = data["file_url"]
-        # print(video_url)
+
         wget.download(video_url, out=fname)
-        # print("video downloaded")
+        print("video downloaded")
         # fsize in MB
         fsize = os.path.getsize(fname)/1e6
         print("original size: ", fsize)
@@ -161,9 +158,6 @@ def index_data(data):
             print(jsonify({'failed' : 1, 'error' : error_msg}))
             return jsonify({'failed' : 1, 'error' : error_msg})
 
-        # upload to es
-        config = {'host': es_host}
-        es = Elasticsearch([config,])
         def gendata(vid_analyzer):
             for i in range(vid_analyzer.n_keyframes):
                 yield {
@@ -171,8 +165,9 @@ def index_data(data):
                     "source_id" : str(doc_id),
                     "source" : data.get("source", "tattle-admin"),
                     "metadata" : data.get("metadata", {}),
-                    "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
+                    "vid_vec" : vid_analyzer.keyframe_features[:,i].tolist(),
                     "is_avg" : False,
+                    "date_added": date,
                     "duration" : vid_analyzer.duration,
                     "n_keyframes" : vid_analyzer.n_keyframes,
                     }
@@ -182,8 +177,9 @@ def index_data(data):
                     "source_id" : str(doc_id),
                     "source" : data.get("source", "tattle-admin"),
                     "metadata" : data.get("metadata", {}),
-                    "vec" : vid_analyzer.get_mean_feature().tolist(),
+                    "vid_vec" : vid_analyzer.get_mean_feature().tolist(),
                     "is_avg" : True,
+                    "date_added": date,
                     "duration" : vid_analyzer.duration,
                     "n_keyframes" : vid_analyzer.n_keyframes,
                     }
@@ -197,8 +193,8 @@ def index_data(data):
 if __name__ == "__main__":
     data = {
         "source_id": "123",
-        "media_type": "text",
-        "text": "This is a drill",
-        "metadata": {"test": "text indexing"}
+        "media_type": "image",
+        "file_url": "https://s3.ap-south-1.amazonaws.com/sharechat-scraper.tattle.co.in/000021a7-905b-4e0a-a48e-b58b8fc305bc.jpg",
+        "metadata": {"test": "image indexing"}
     }
-    index_data(data)
+    index_data(es, data)
