@@ -10,13 +10,16 @@ import skimage, PIL
 import numpy as np
 from monitor import timeit
 from elasticsearch import Elasticsearch
+from elasticsearch import helpers as eshelpers
 from VideoAnalyzer import VideoAnalyzer, compress_video
 from analyzer import ResNet18, detect_text, image_from_url, doc2vec, detect_lang
 from search import ImageSearch, TextSearch, DocSearch
+from helper import index_data
 # from send import add_job_to_queue
 import cv2
 from indices import check_index
 from datetime import datetime
+import wget
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
@@ -41,7 +44,7 @@ es_txt_index = os.environ['ES_TXT_INDEX']
 # Create ES indices if they don't exist
 config = {'host': es_host}
 es = Elasticsearch([config,])
-# check_index(es, es_vid_index, index_type="video")
+check_index(es, es_vid_index, index_type="video")
 # check_index(es, es_img_index, index_type="image")
 check_index(es, es_txt_index, index_type="text")
 
@@ -303,161 +306,17 @@ def upload_text():
 
 @application.route('/upload_video', methods=['POST'])
 def upload_video():
-    f = request.files['file']
-    fname = '/tmp/vid.mp4'
-    # fsize in MB
-    fsize = os.path.getsize('/tmp/vid.mp4')/1e6
-    f.save(fname)
-    if fsize > 20:
-        print("compressing video")
-        fname = compress_video(fname)
-        fsize = os.path.getsize('/tmp/vid.mp4')/1e6
-        print("compressed video size: ", fsize)
-    video = cv2.VideoCapture(fname)
-    vid_analyzer = VideoAnalyzer(video)
-    vid_analyzer.set_fsize(fsize)
-
-    doable, error_msg = vid_analyzer.check_constraints()
-    if not doable:
-        return jsonify({'failed' : 1, 'error' : error_msg})
-
-    feature = vid_analyzer.get_mean_feature()
-    duration = vid_analyzer.duration
-    doc_id = uuid.uuid4().int // 10**20
-
-    # upload to es
-
-    def gendata(vid_analyzer):
-        for i in range(vid_analyzer.n_keyframes):
-            yield {
-                "_index": es_vid_index,
-                "doc_id" : str(doc_id),
-                "source" : "test",
-                "metadata" : {},
-                "vec" : vid_analyzer.keyframe_features[:,i].tolist(),
-                "is_avg" : False,
-                "duration" : vid_analyzer.duration,
-                "n_keyframes" : vid_analyzer.n_keyframes,
-                }
-
-        yield {
-                "_index": es_vid_index,
-                "doc_id" : str(doc_id),
-                "source" : "test",
-                "metadata" : {},
-                "vec" : vid_analyzer.get_mean_feature().tolist(),
-                "is_avg" : True,
-                "duration" : vid_analyzer.duration,
-                "n_keyframes" : vid_analyzer.n_keyframes,
-                }
-
-    res = eshelpers.bulk(es, gendata(vid_analyzer))
-    ret = {'failed' : 0}
-    return jsonify(ret)
+    print(request.get_data())
+    data = request.get_json(force=True)
+    res = index_data(es, data)
+    return jsonify(res)
 
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
+    print(request.get_data())
     data = request.get_json(force=True)
-    print(data)
-    image_url = data.get('image_url')
-    doc_id = data.get('doc_id',None)
-    source = data.get('source', 'tattle-admin')
-    if image_url is None:
-        ret = {'failed' : 1, 'error' : 'No image_url found'}
-    else:
-        image_dict = image_from_url(image_url)
-        image = image_dict['image']
-        image = image.convert('RGB') #take care of png(RGBA) issue
-        image_vec = resnet18.extract_feature(image)
-
-        detected_text = detect_text(image_dict['image_bytes']).get('text','')
-        lang = detect_lang(detected_text)
-
-        #import ipdb; ipdb.set_trace()
-        if detected_text == '' or None:
-            text_vec = np.zeros(300).tolist()
-            has_text = False
-        else:
-            text_vec = doc2vec(detected_text)
-            has_text = True
-
-        if lang is None:
-            text_vec = np.zeros(300).tolist()
-            has_text = True
-
-        if text_vec is None:
-            text_vec = np.zeros(300).tolist()
-            has_text = True
-
-        vec = np.hstack((image_vec, text_vec)).tolist()
-
-        date = datetime.datetime.now()
-        if doc_id is None:
-            # hack: since mongo can only handle int8
-            doc_id = uuid.uuid4().int // 10**20
-        coll.insert_one({
-                       "doc_id" : doc_id, 
-                       "source" : source,
-                       "version": "1.1",
-                       "has_image" : True, 
-                       "has_text" : has_text, 
-                       "text" : detected_text,
-                       "tags" : [],
-                       "date_added" : date,
-                       "date_updated" : date,
-                       "image_vec" : image_vec.tolist(),
-                       "text_vec" : text_vec,
-                       "vec" : vec,
-                       })
-        ret = {'doc_id': doc_id, 'failed' : 0}
-
-        #update the search index
-        imagesearch.update(doc_id, image_vec)
-        docsearch.update(doc_id, vec)
-        if has_text:
-            textsearch.update(doc_id, text_vec)
-
-    return jsonify(ret)
-
-def index_data(es, data):
-        # print("data to index: ", data)
-    date = datetime.utcnow().strftime("%d%m%Y")
-    doc_id = data['source_id']
-    if data["media_type"] == "text":
-        text = data["text"]
-        lang = detect_lang(text)
-        print("Generating document vector")
-        text_vec = doc2vec(text)
-        print("Document vector generated")
-
-        if text_vec is None:
-            text_vec = np.zeros(300).tolist()
-        # upload to es
-        doc = {
-                "source_id" : str(doc_id),
-                "source" : data.get("source", "tattle-admin"),
-                "metadata" : data.get("metadata", {}),
-                "text": text,
-                "lang": lang,
-                "text_vec" : text_vec,
-                "date_added": date
-                    }
-
-        res = es.index(index=es_txt_index, body=doc)
-        print("Document vector indexed")
-
-        # es.indices.refresh(es_txt_index)
-        # res2 = es.search(
-        #     index=es_txt_index, 
-        #     body={"query": {
-        #             "match": {
-        #                 "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
-        # print(res2["hits"]["hits"])
-        print(res)
-        return res
-    else: 
-        # to do: add code for indexing images and videos
-        return None
-
+    res = index_data(es, data)
+    return(jsonify(res))
+ 
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=7000, debug=True)
