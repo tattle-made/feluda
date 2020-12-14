@@ -83,9 +83,13 @@ def get_mapping(index_type):
                         "lang": {
                             "type": "keyword"
                         },
-                        "img_vec": {
+                        "image_vec": {
                             "type":"dense_vector",
                             "dims": 512
+                        },
+                        "combined_vec": {
+                            "type":"dense_vector",
+                            "dims": 812
                         },
                         "date_added": {
                             "type": "date"
@@ -104,20 +108,6 @@ def get_mapping(index_type):
                         },
                         "metadata": {
                             "type": "object"
-                        },
-                        "has_text": {
-                            "type": "boolean"
-                        },
-                        "text": {
-                            "type": "text",
-                            "analyzer": "standard",
-                        },
-                        "text_vec": {
-                            "type":"dense_vector",
-                            "dims": 300
-                        },
-                        "lang": {
-                            "type": "keyword"
                         },
                         "vid_vec": {
                             "type":"dense_vector",
