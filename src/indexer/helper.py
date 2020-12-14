@@ -185,7 +185,7 @@ def index_data(es, data):
                     }
         
         print("Generating video vectors")
-        res = eshelpers.bulk(es, gendata(vid_analyzer))
+        res = eshelpers.bulk(es, gendata(vid_analyzer)) # Returns a tuple of number of indexed docs & number of errors
         print("Video vectors indexed")
         os.remove(fname)
         return res
