@@ -45,7 +45,7 @@ es_txt_index = os.environ['ES_TXT_INDEX']
 config = {'host': es_host}
 es = Elasticsearch([config,])
 check_index(es, es_vid_index, index_type="video")
-# check_index(es, es_img_index, index_type="image")
+check_index(es, es_img_index, index_type="image")
 check_index(es, es_txt_index, index_type="text")
 
 @application.route('/health')
@@ -76,8 +76,10 @@ def search():
             vec = vec.tolist()
         if index == es_txt_index:
             calculation = "1 / (1 + l2norm(params.query_vector, 'text_vec'))"
-        else:
-            calculation = None
+        elif index == es_img_index:
+            calculation = "1 / (1 + l2norm(params.query_vector, 'image_vec'))"
+        elif index == es_vid_index:
+            calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
         q = {
         "size": 10,
@@ -93,7 +95,7 @@ def search():
                     }
                 }
             }
-            
+
         resp = es.search(index=index, body = q)
 
         # For simple text search
@@ -110,51 +112,53 @@ def search():
             dists.append(h['_score'])
             source_ids.append(h["_source"]["source_id"])
             sources.append(h["_source"]["source"])
-            texts.append(h["_source"]["text"])
+            texts.append(h["_source"].get("text", None))
 
-        return doc_ids, dists, source_ids, sources, texts # for development only. return only required info in production
+        result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[i], 'source_id': source_ids[i], 'text': texts[i]} for i in range(len(doc_ids))]
+        return result
 
     if data["media_type"] == "text": # add error handling
         text = data["text"]
-        lang = detect_lang(text)
         print("Generating document vector")
         query_vec = doc2vec(text)
         print("Document vector generated")
-        doc_ids, dists, source_ids, sources, texts = query_es(index=es_txt_index, vec=query_vec)
-        return jsonify(doc_ids, dists, source_ids, sources, texts)
+        result = query_es(index=es_txt_index, vec=query_vec)
+        return jsonify(result)
 
-    # text = data.get('text', None)
-    # thresh = data.get('threshold') # What is thresh?
-    # sources = data.get('source', [])
-    # image_url = data.get('image_url', None)
-    # es_flag = data.get('es_flag', 0)
-    # if text is None and image_url is None:
-    #     ret = {'failed' : 1, 'error' : 'No text or image_url found'}
+    elif data["media_type"] == "image":
+        print(data)
+        image_url = data['file_url']
+        image_dict = image_from_url(image_url)
+        image = image_dict['image']
+        image = image.convert('RGB') #take care of png(RGBA) issue
+        query_vec = resnet18.extract_feature(image)
 
-    # elif image_url is not None:
-    #     image_dict = image_from_url(image_url)
-    #     image = image_dict['image']
-    #     image = image.convert('RGB') #take care of png(RGBA) issue
-    #     vec = resnet18.extract_feature(image)
+        result = query_es(index=es_img_index, vec=query_vec)
+        return jsonify(result)
 
-    #     if int(es_flag) == 1:
-    #         doc_ids, dists = query_es(vec)
-    #     elif thresh:
-    #         doc_ids, dists = imagesearch.search(vec, thresh)
-    #     else:
-    #         doc_ids, dists = imagesearch.search(vec)
+    elif data["media_type"] == "video":
+        fname = '/tmp/vid.mp4'
+        video_url = data["file_url"]
+        wget.download(video_url, out=fname)
+        fsize = os.path.getsize(fname)/1e6
+        if fsize > 10:
+            print("compressing video")
+            fname = compress_video(fname)
+            fsize = os.path.getsize(fname)/1e6
+            print("compressed video size: ", fsize)
+        if fsize > 10:
+            raise Exception("Video too large")
+        video = cv2.VideoCapture(fname)
+        vid_analyzer = VideoAnalyzer(video)
+        vid_analyzer.set_fsize(fsize)
+        doable, error_msg = vid_analyzer.check_constraints()
+        if not doable:
+            print(jsonify({'failed' : 1, 'error' : error_msg}))
+            return jsonify({'failed' : 1, 'error' : error_msg})
+        query_vec = vid_analyzer.get_mean_feature().tolist()
+        result = query_es(index=es_vid_index, vec=query_vec)
+        return jsonify(result)
 
-    #     # only get first 10
-    #     # doc_ids, dists = doc_ids[:10], dists[:10]
-
-    #     sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
-
-    #     if doc_ids is not None:
-    #         # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(min(10, len(doc_ids)))]
-    #         result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources.get(doc_ids[i], None)} for i in range(len(doc_ids))]
-    #         ret = {'failed' : 0, 'result' : result}
-    #     else:
-    #         ret = {'failed' : 0, 'result' : []}
 
     # elif text is not None:
     #     duplicate_doc = coll.find_one({"text" : text})
