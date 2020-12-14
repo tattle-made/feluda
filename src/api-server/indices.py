@@ -74,7 +74,7 @@ def get_mapping(index_type):
                         },
                         "text": {
                             "type": "text",
-                            "analyzer": "standard",
+                            "analyzer": "standard"
                         },
                         "text_vec": {
                             "type":"dense_vector",
