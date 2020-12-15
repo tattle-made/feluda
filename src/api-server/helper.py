@@ -164,7 +164,22 @@ def index_data(es, data):
     elif data["media_type"] == "video":
         video_url = data["file_url"]
         vid_analyzer = get_vid_vec(video_url)
+        
+        # Indexing average vector
+        doc = {
+            "source_id" : str(doc_id),
+            "source" : data.get("source", "tattle-admin"),
+            "metadata" : data.get("metadata", {}),
+            "vid_vec" : vid_analyzer.get_mean_feature().tolist(),
+            "is_avg" : True,
+            "duration" : vid_analyzer.duration,
+            "n_keyframes" : vid_analyzer.n_keyframes,
+            "date_added": date
+                }
 
+        res = es.index(index=es_vid_index, body=doc)
+
+        # Indexing keyframe vectors
         def gendata(vid_analyzer):
             for i in range(vid_analyzer.n_keyframes):
                 yield {
@@ -178,23 +193,16 @@ def index_data(es, data):
                     "duration" : vid_analyzer.duration,
                     "n_keyframes" : vid_analyzer.n_keyframes,
                     }
-
-            yield {
-                    "_index": es_vid_index,
-                    "source_id" : str(doc_id),
-                    "source" : data.get("source", "tattle-admin"),
-                    "metadata" : data.get("metadata", {}),
-                    "vid_vec" : vid_analyzer.get_mean_feature().tolist(),
-                    "is_avg" : True,
-                    "date_added": date,
-                    "duration" : vid_analyzer.duration,
-                    "n_keyframes" : vid_analyzer.n_keyframes,
-                    }
         
-        print("Generating video vectors")
-        res = eshelpers.bulk(es, gendata(vid_analyzer)) # Returns a tuple of number of indexed docs & number of errors
+        bulk_res = eshelpers.bulk(es, gendata(vid_analyzer)) # Returns a tuple of number of indexed docs & number of errors
+
         print("Video vectors indexed")
+        print("Bulk indexing result: ", bulk_res) 
         return res
+
+def es_indexer(data):
+    res = index_data(es, data)
+    return res
 
 if __name__ == "__main__":
     data = {
