@@ -97,14 +97,19 @@ def search():
             }
 
         resp = es.search(index=index, body = q)
+        res = parse_response(resp)
+        return res
+        
+    def find_similar_text(index, text):
+        resp = es.search(
+            index=index, 
+            body = {"query": {
+                        "match": {
+                            "text": text}}})
+        res = parse_response(resp)
+        return res
 
-        # For simple text search
-        # resp = es.search(
-        #     index=index, 
-        #     body = {"query": {
-        #                 "match": {
-        #                     "text": data["text"]}}})
-
+    def parse_response(resp):
         doc_ids, dists, source_ids, sources, texts = [], [], [], [], [] 
 
         for h in resp['hits']['hits']:
@@ -120,8 +125,9 @@ def search():
     if data["media_type"] == "text": # add error handling
         text = data["text"]
         query_vec = get_text_vec(text)
-        result = query_es(index=es_txt_index, vec=query_vec)
-        return jsonify(result)
+        vec_search_result = query_es(index=es_txt_index, vec=query_vec)
+        text_search_result = find_similar_text(index=es_txt_index, text=text)
+        return jsonify(vec_search_result, text_search_result)
 
     elif data["media_type"] == "image":
         image_url = data['file_url']
@@ -135,30 +141,6 @@ def search():
         query_vec = vid_analyzer.get_mean_feature().tolist()
         result = query_es(index=es_vid_index, vec=query_vec)
         return jsonify(result)
-
-
-    # elif text is not None:
-    #     duplicate_doc = coll.find_one({"text" : text})
-    #     vec = doc2vec(text)
-    #     if vec is None:
-    #         ret = {'failed' : 1, 'error' : 'query words not found in db'}
-    #     doc_ids, dists = textsearch.search(vec)
-    #     sources = {d.get('doc_id') : d.get('source') for d in coll.find({"doc_id" : {"$in" : doc_ids}})}
-    #     if doc_ids is not None:
-    #         # result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(min(10,len(doc_ids)))]
-    #         result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[doc_ids[i]]} for i in range(len(doc_ids))]
-    #     else:
-    #         result = []
-
-    #     if duplicate_doc is not None:
-    #         result = [{'doc_id' : duplicate_doc.get('doc_id') , 'dist' : 0.0, 'source' : duplicate_doc.get('source')}] + result
-
-    #     ret = {'failed' : 0, 'duplicate' : 1, 'result' : result}
-
-    # else:
-    #     ret = {'failed' : 1, 'error' : 'something went wrong'}
-
-    # return jsonify(ret)
 
 @application.route('/find_text', methods=['POST'])
 def find_text():
