@@ -7,7 +7,7 @@ import pika
 import json
 # from dotenv import load_dotenv
 # load_dotenv()
-from helper import index_data
+from helper import es_indexer
 from time import perf_counter
 
 credentials = pika.PlainCredentials(environ.get(
@@ -35,7 +35,7 @@ def callback(ch, method, properties, body):
 
     try:
         print("Indexing data ...")
-        index_id = index_data(data)
+        index_id = es_indexer(data)
 
         print("Sending report to queue ...")
         report["index_timestamp"] = str(datetime.utcnow())
