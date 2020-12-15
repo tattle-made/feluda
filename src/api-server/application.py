@@ -14,7 +14,7 @@ from elasticsearch import helpers as eshelpers
 from VideoAnalyzer import VideoAnalyzer, compress_video
 from analyzer import ResNet18, detect_text, image_from_url, doc2vec, detect_lang
 from search import ImageSearch, TextSearch, DocSearch
-from helper import index_data
+from helper import index_data, get_text_vec, get_image_vec, get_vid_vec
 # from send import add_job_to_queue
 import cv2
 from indices import check_index
@@ -119,42 +119,19 @@ def search():
 
     if data["media_type"] == "text": # add error handling
         text = data["text"]
-        print("Generating document vector")
-        query_vec = doc2vec(text)
-        print("Document vector generated")
+        query_vec = get_text_vec(text)
         result = query_es(index=es_txt_index, vec=query_vec)
         return jsonify(result)
 
     elif data["media_type"] == "image":
-        print(data)
         image_url = data['file_url']
-        image_dict = image_from_url(image_url)
-        image = image_dict['image']
-        image = image.convert('RGB') #take care of png(RGBA) issue
-        query_vec = resnet18.extract_feature(image)
-
+        query_vec = get_image_vec(image_url)
         result = query_es(index=es_img_index, vec=query_vec)
         return jsonify(result)
 
     elif data["media_type"] == "video":
-        fname = '/tmp/vid.mp4'
         video_url = data["file_url"]
-        wget.download(video_url, out=fname)
-        fsize = os.path.getsize(fname)/1e6
-        if fsize > 10:
-            print("compressing video")
-            fname = compress_video(fname)
-            fsize = os.path.getsize(fname)/1e6
-            print("compressed video size: ", fsize)
-        if fsize > 10:
-            raise Exception("Video too large")
-        video = cv2.VideoCapture(fname)
-        vid_analyzer = VideoAnalyzer(video)
-        vid_analyzer.set_fsize(fsize)
-        doable, error_msg = vid_analyzer.check_constraints()
-        if not doable:
-            print(jsonify({'failed' : 1, 'error' : error_msg}))
-            return jsonify({'failed' : 1, 'error' : error_msg})
+        vid_analyzer = get_vid_vec(video_url)
         query_vec = vid_analyzer.get_mean_feature().tolist()
         result = query_es(index=es_vid_index, vec=query_vec)
         return jsonify(result)
