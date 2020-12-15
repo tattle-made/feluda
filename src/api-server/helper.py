@@ -39,19 +39,60 @@ resnet18 = ResNet18()
 config = {'host': es_host}
 es = Elasticsearch([config,])
 
+def get_text_vec(text):
+    print("Generating document vector")
+    text_vec = doc2vec(text)
+    print("Document vector generated")
+
+    if text_vec is None:
+        text_vec = np.zeros(300).tolist()
+    
+    return text_vec
+
+def get_image_vec(file_url):
+    image_dict = image_from_url(file_url)
+    image = image_dict['image']
+    image = image.convert('RGB') #take care of png(RGBA) issue
+    print("Generating image vector")
+    image_vec = resnet18.extract_feature(image)
+    print("Image vector generated")
+    return image_vec
+
+def get_vid_vec(file_url):
+    fname = '/tmp/vid.mp4'
+    print("Downloading video from url")
+    wget.download(file_url, out=fname)
+    print("video downloaded")
+    fsize = os.path.getsize(fname)/1e6
+    print("original size: ", fsize)
+    if fsize > 10:
+        print("compressing video")
+        fname = compress_video(fname)
+        fsize = os.path.getsize(fname)/1e6
+        print("compressed video size: ", fsize)
+    if fsize > 10:
+        raise Exception("Video too large")
+    video = cv2.VideoCapture(fname)
+    vid_analyzer = VideoAnalyzer(video)
+    vid_analyzer.set_fsize(fsize)
+
+    doable, error_msg = vid_analyzer.check_constraints()
+    os.remove(fname)
+
+    if not doable:
+        print(jsonify({'failed' : 1, 'error' : error_msg}))
+        return jsonify({'failed' : 1, 'error' : error_msg})
+    else:
+        return vid_analyzer
+
 def index_data(es, data):
 
     date = datetime.utcnow()
     doc_id = data['source_id']
     if data["media_type"] == "text":
         text = data["text"]
+        text_vec = get_text_vec(text)
         lang = detect_lang(text)
-        print("Generating document vector")
-        text_vec = doc2vec(text)
-        print("Document vector generated")
-
-        if text_vec is None:
-            text_vec = np.zeros(300).tolist()
 
         doc = {
                 "source_id" : str(doc_id),
@@ -78,17 +119,10 @@ def index_data(es, data):
         return res
             
     elif data["media_type"] == "image":
-        print("data is image")
         image_url = data["file_url"]
-        image_dict = image_from_url(image_url)
-        image = image_dict['image']
-        image = image.convert('RGB') #take care of png(RGBA) issue
-        print("Generating image vector")
-        image_vec = resnet18.extract_feature(image)
-        print("Image vector generated")
+        image_vec = get_image_vec(image_url)
         detected_text = detect_text(image_dict['image_bytes']).get('text','')
         lang = detect_lang(detected_text)
-        print(lang)
         #import ipdb; ipdb.set_trace()
         if detected_text == '' or None:
             text_vec = np.zeros(300).tolist()
@@ -128,35 +162,8 @@ def index_data(es, data):
 
 
     elif data["media_type"] == "video":
-        print("data is video")
-        fname = '/tmp/vid.mp4'
-        print("Downloading video from url")
         video_url = data["file_url"]
-
-        wget.download(video_url, out=fname)
-        print("video downloaded")
-        # fsize in MB
-        fsize = os.path.getsize(fname)/1e6
-        print("original size: ", fsize)
-        if fsize > 10:
-            print("compressing video")
-            fname = compress_video(fname)
-            fsize = os.path.getsize(fname)/1e6
-            print("compressed video size: ", fsize)
-        if fsize > 10:
-            raise Exception("Video too large")
-        video = cv2.VideoCapture(fname)
-        # print(type(video))
-        vid_analyzer = VideoAnalyzer(video)
-        # print(vid_analyzer)
-        vid_analyzer.set_fsize(fsize)
-
-        doable, error_msg = vid_analyzer.check_constraints()
-        # print(doable)
-        # print(error_msg)
-        if not doable:
-            print(jsonify({'failed' : 1, 'error' : error_msg}))
-            return jsonify({'failed' : 1, 'error' : error_msg})
+        vid_analyzer = get_vid_vec(video_url)
 
         def gendata(vid_analyzer):
             for i in range(vid_analyzer.n_keyframes):
@@ -187,7 +194,6 @@ def index_data(es, data):
         print("Generating video vectors")
         res = eshelpers.bulk(es, gendata(vid_analyzer)) # Returns a tuple of number of indexed docs & number of errors
         print("Video vectors indexed")
-        os.remove(fname)
         return res
 
 if __name__ == "__main__":
