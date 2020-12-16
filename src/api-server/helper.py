@@ -6,7 +6,6 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 import wget
-# from search import ImageSearch, TextSearch, DocSearch
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
 import cv2
 from VideoAnalyzer import VideoAnalyzer, compress_video
@@ -18,11 +17,6 @@ import uuid
 import logging
 
 try:
-    # mongo_url = os.environ['MONGO_URL']
-    # cli = MongoClient(mongo_url)
-    # db = cli[os.environ.get("DB_NAME")]
-    # coll = db[os.environ.get("DB_COLLECTION")]
-    es_host = os.environ['ES_HOST']
     es_vid_index = os.environ['ES_VID_INDEX']
     es_img_index = os.environ['ES_IMG_INDEX']
     es_txt_index = os.environ['ES_TXT_INDEX']
@@ -30,14 +24,7 @@ try:
 except Exception:
     print(logging.traceback.format_exc())
 
-
-# imagesearch = ImageSearch()
-# docsearch = DocSearch()
-# textsearch = TextSearch()
 resnet18 = ResNet18()
-
-config = {'host': es_host}
-es = Elasticsearch([config,])
 
 def get_text_vec(text):
     print("Generating document vector")
@@ -199,10 +186,6 @@ def index_data(es, data):
         print("Video vectors indexed")
         print("Bulk indexing result: ", bulk_res) 
         return res
-
-def es_indexer(data):
-    res = index_data(es, data)
-    return res
 
 if __name__ == "__main__":
     data = {

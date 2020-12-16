@@ -20,6 +20,7 @@ import cv2
 from indices import check_index
 from datetime import datetime
 import wget
+from services.es import get_es_instance
 
 imagesearch = ImageSearch()
 docsearch = DocSearch()
@@ -36,14 +37,13 @@ cli = MongoClient(mongo_url)
 db = cli[os.environ.get("DB_NAME")]
 coll = db[os.environ.get("DB_COLLECTION")]
 
-es_host = os.environ['ES_HOST']
+es = get_es_instance()
+
 es_vid_index = os.environ['ES_VID_INDEX']
 es_img_index = os.environ['ES_IMG_INDEX']
 es_txt_index = os.environ['ES_TXT_INDEX']
 
 # Create ES indices if they don't exist
-config = {'host': es_host}
-es = Elasticsearch([config,])
 check_index(es, es_vid_index, index_type="video")
 check_index(es, es_img_index, index_type="image")
 check_index(es, es_txt_index, index_type="text")

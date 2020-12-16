@@ -5,10 +5,13 @@ import os
 from os import environ
 import pika
 import json
-# from dotenv import load_dotenv
-# load_dotenv()
-from helper import es_indexer
+from dotenv import load_dotenv
+load_dotenv()
+from helper import index_data
 from time import perf_counter
+from services.es import get_es_instance
+
+es = get_es_instance()
 
 credentials = pika.PlainCredentials(environ.get(
     'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
@@ -35,7 +38,7 @@ def callback(ch, method, properties, body):
 
     try:
         print("Indexing data ...")
-        index_id = es_indexer(data)
+        index_id = index_data(es, data)
 
         print("Sending report to queue ...")
         report["index_timestamp"] = str(datetime.utcnow())
