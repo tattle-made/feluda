@@ -16,13 +16,15 @@ from flask import jsonify
 import uuid
 import logging
 
+logger = logging.getLogger('tattle-api')
+
 try:
     es_vid_index = os.environ['ES_VID_INDEX']
     es_img_index = os.environ['ES_IMG_INDEX']
     es_txt_index = os.environ['ES_TXT_INDEX']
     
 except Exception:
-    print(logging.traceback.format_exc())
+    logger.info(logging.traceback.format_exc())
 
 resnet18 = ResNet18()
 
@@ -73,121 +75,128 @@ def get_vid_vec(file_url):
         return vid_analyzer
 
 def index_data(es, data):
+    try: 
+        date = datetime.utcnow()
+        doc_id = data['source_id']
+        if data["media_type"] == "text":
+            text = data["text"]
+            text_vec = get_text_vec(text)
+            lang = detect_lang(text)
 
-    date = datetime.utcnow()
-    doc_id = data['source_id']
-    if data["media_type"] == "text":
-        text = data["text"]
-        text_vec = get_text_vec(text)
-        lang = detect_lang(text)
-
-        doc = {
-                "source_id" : str(doc_id),
-                "source" : data.get("source", "tattle-admin"),
-                "metadata" : data.get("metadata", {}),
-                "text": text,
-                "lang": lang,
-                "text_vec" : text_vec,
-                "date_added": datetime.utcnow().strftime("%d%m%Y")
-                    }
-
-        res = es.index(index=es_txt_index, body=doc)
-        print("Document vector indexed")
-
-        # Code for verifying that data is indexed
-        # es.indices.refresh(es_txt_index)
-        # res2 = es.search(
-        #     index=es_txt_index, 
-        #     body={"query": {
-        #             "match": {
-        #                 "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
-        # print(res2["hits"]["hits"])
-
-        return res
-            
-    elif data["media_type"] == "image":
-        image_url = data["file_url"]
-        image_vec = get_image_vec(image_url)
-        detected_text = detect_text(image_dict['image_bytes']).get('text','')
-        lang = detect_lang(detected_text)
-        #import ipdb; ipdb.set_trace()
-        if detected_text == '' or None:
-            text_vec = np.zeros(300).tolist()
-            has_text = False
-        else:
-            print("Generating image text vector")
-            text_vec = doc2vec(detected_text)
-            print("Image text vector generated ")
-            has_text = True
-
-        if lang is None:
-            text_vec = np.zeros(300).tolist()
-            has_text = True
-
-        if text_vec is None:
-            text_vec = np.zeros(300).tolist()
-            has_text = True
-
-        combined_vec = np.hstack((image_vec, text_vec)).tolist()
-
-        doc = {
-        "source_id" : str(doc_id),
-        "source" : data.get("source", "tattle-admin"),
-        "metadata" : data.get("metadata", {}),
-        "has_text" : has_text,
-        "text": detected_text,
-        "text_vec" : text_vec,
-        "lang": lang,
-        "image_vec": image_vec,
-        "combined_vec": combined_vec,
-        "date_added": date
-            }
-
-        res = es.index(index=es_img_index, body=doc)
-        print("Image vector indexed")
-        return res
-
-
-    elif data["media_type"] == "video":
-        video_url = data["file_url"]
-        vid_analyzer = get_vid_vec(video_url)
-        
-        # Indexing average vector
-        doc = {
-            "source_id" : str(doc_id),
-            "source" : data.get("source", "tattle-admin"),
-            "metadata" : data.get("metadata", {}),
-            "vid_vec" : vid_analyzer.get_mean_feature().tolist(),
-            "is_avg" : True,
-            "duration" : vid_analyzer.duration,
-            "n_keyframes" : vid_analyzer.n_keyframes,
-            "date_added": date
-                }
-
-        res = es.index(index=es_vid_index, body=doc)
-
-        # Indexing keyframe vectors
-        def gendata(vid_analyzer):
-            for i in range(vid_analyzer.n_keyframes):
-                yield {
-                    "_index": es_vid_index,
+            doc = {
                     "source_id" : str(doc_id),
                     "source" : data.get("source", "tattle-admin"),
                     "metadata" : data.get("metadata", {}),
-                    "vid_vec" : vid_analyzer.keyframe_features[:,i].tolist(),
-                    "is_avg" : False,
-                    "date_added": date,
-                    "duration" : vid_analyzer.duration,
-                    "n_keyframes" : vid_analyzer.n_keyframes,
+                    "text": text,
+                    "lang": lang,
+                    "text_vec" : text_vec,
+                    "date_added": datetime.utcnow().strftime("%d%m%Y")
+                        }
+
+            res = es.index(index=es_txt_index, body=doc)
+            print("Document vector indexed")
+
+            # Code for verifying that data is indexed
+            # es.indices.refresh(es_txt_index)
+            # res2 = es.search(
+            #     index=es_txt_index, 
+            #     body={"query": {
+            #             "match": {
+            #                 "date_added": datetime.utcnow().strftime("%d%m%Y")}}})
+            # print(res2["hits"]["hits"])
+
+            return res
+                
+        elif data["media_type"] == "image":
+            image_url = data["file_url"]
+            image_vec = get_image_vec(image_url)
+            detected_text = detect_text(image_dict['image_bytes']).get('text','')
+            lang = detect_lang(detected_text)
+            #import ipdb; ipdb.set_trace()
+            if detected_text == '' or None:
+                text_vec = np.zeros(300).tolist()
+                has_text = False
+            else:
+                print("Generating image text vector")
+                text_vec = doc2vec(detected_text)
+                print("Image text vector generated ")
+                has_text = True
+
+            if lang is None:
+                text_vec = np.zeros(300).tolist()
+                has_text = True
+
+            if text_vec is None:
+                text_vec = np.zeros(300).tolist()
+                has_text = True
+
+            combined_vec = np.hstack((image_vec, text_vec)).tolist()
+
+            doc = {
+            "source_id" : str(doc_id),
+            "source" : data.get("source", "tattle-admin"),
+            "metadata" : data.get("metadata", {}),
+            "has_text" : has_text,
+            "text": detected_text,
+            "text_vec" : text_vec,
+            "lang": lang,
+            "image_vec": image_vec,
+            "combined_vec": combined_vec,
+            "date_added": date
+                }
+
+            res = es.index(index=es_img_index, body=doc)
+            print("Image vector indexed")
+            return res
+
+
+        elif data["media_type"] == "video":
+            video_url = data["file_url"]
+            vid_analyzer = get_vid_vec(video_url)
+            
+            # Indexing average vector
+            doc = {
+                "source_id" : str(doc_id),
+                "source" : data.get("source", "tattle-admin"),
+                "metadata" : data.get("metadata", {}),
+                "vid_vec" : vid_analyzer.get_mean_feature().tolist(),
+                "is_avg" : True,
+                "duration" : vid_analyzer.duration,
+                "n_keyframes" : vid_analyzer.n_keyframes,
+                "date_added": date
                     }
-        
-        bulk_res = eshelpers.bulk(es, gendata(vid_analyzer)) # Returns a tuple of number of indexed docs & number of errors
 
-        print("Video vectors indexed")
-        print("Bulk indexing result: ", bulk_res) 
-        return res
+            res = es.index(index=es_vid_index, body=doc)
 
+            # Indexing keyframe vectors
+            def gendata(vid_analyzer):
+                for i in range(vid_analyzer.n_keyframes):
+                    yield {
+                        "_index": es_vid_index,
+                        "source_id" : str(doc_id),
+                        "source" : data.get("source", "tattle-admin"),
+                        "metadata" : data.get("metadata", {}),
+                        "vid_vec" : vid_analyzer.keyframe_features[:,i].tolist(),
+                        "is_avg" : False,
+                        "date_added": date,
+                        "duration" : vid_analyzer.duration,
+                        "n_keyframes" : vid_analyzer.n_keyframes,
+                        }
+            
+            bulk_res = eshelpers.bulk(es, gendata(vid_analyzer)) # Returns a tuple of number of indexed docs & number of errors
+
+            print("Video vectors indexed")
+            print("Bulk indexing result: ", bulk_res) 
+            return res
+    except Exception:
+        logger.info('Error while indexing: ')
+        logger.info(logging.traceback.format_exc())
+
+# Code below is for local testing
 if __name__ == "__main__":
+    es_host = os.environ.get('ES_HOST')
+    config = {'host': es_host}
+    es = Elasticsearch([config,])
     data = {
         "source_id": "123",
         "media_type": "video",

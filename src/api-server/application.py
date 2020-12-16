@@ -64,78 +64,83 @@ def media():
 @timeit
 @application.route('/search', methods=['POST'])
 def search():
-    data = request.get_json(force=True)
+    try:
+        data = request.get_json(force=True)
 
-    def query_es(index, vec):
-        if type(vec) == np.ndarray:
-            vec = vec.tolist()
-        if index == es_txt_index:
-            calculation = "1 / (1 + l2norm(params.query_vector, 'text_vec'))"
-        elif index == es_img_index:
-            calculation = "1 / (1 + l2norm(params.query_vector, 'image_vec'))"
-        elif index == es_vid_index:
-            calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
+        def query_es(index, vec):
+            if type(vec) == np.ndarray:
+                vec = vec.tolist()
+            if index == es_txt_index:
+                calculation = "1 / (1 + l2norm(params.query_vector, 'text_vec'))"
+            elif index == es_img_index:
+                calculation = "1 / (1 + l2norm(params.query_vector, 'image_vec'))"
+            elif index == es_vid_index:
+                calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
-        q = {
-        "size": 10,
-            "query": {
-                "script_score": {
-                    "query" : {
-                        "match_all" : {}
-                        },
-                    "script": {
-                        "source": calculation, 
-                        "params": {"query_vector": vec}
+            q = {
+            "size": 10,
+                "query": {
+                    "script_score": {
+                        "query" : {
+                            "match_all" : {}
+                            },
+                        "script": {
+                            "source": calculation, 
+                            "params": {"query_vector": vec}
+                            }
                         }
                     }
                 }
-            }
 
-        resp = es.search(index=index, body = q)
-        res = parse_response(resp)
-        return res
-        
-    def find_similar_text(index, text):
-        resp = es.search(
-            index=index, 
-            body = {"query": {
-                        "match": {
-                            "text": text}}})
-        res = parse_response(resp)
-        return res
+            resp = es.search(index=index, body = q)
+            res = parse_response(resp)
+            return res
+            
+        def find_similar_text(index, text):
+            resp = es.search(
+                index=index, 
+                body = {"query": {
+                            "match": {
+                                "text": text}}})
+            res = parse_response(resp)
+            return res
 
-    def parse_response(resp):
-        doc_ids, dists, source_ids, sources, texts = [], [], [], [], [] 
+        def parse_response(resp):
+            doc_ids, dists, source_ids, sources, texts = [], [], [], [], [] 
 
-        for h in resp['hits']['hits']:
-            doc_ids.append(h['_id'])
-            dists.append(h['_score'])
-            source_ids.append(h["_source"]["source_id"])
-            sources.append(h["_source"]["source"])
-            texts.append(h["_source"].get("text", None))
+            for h in resp['hits']['hits']:
+                doc_ids.append(h['_id'])
+                dists.append(h['_score'])
+                source_ids.append(h["_source"]["source_id"])
+                sources.append(h["_source"]["source"])
+                texts.append(h["_source"].get("text", None))
 
-        result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[i], 'source_id': source_ids[i], 'text': texts[i]} for i in range(len(doc_ids))]
-        return result
+            result = [{'doc_id' : doc_ids[i], 'dist' : dists[i], 'source' : sources[i], 'source_id': source_ids[i], 'text': texts[i]} for i in range(len(doc_ids))]
+            return result
 
-    if data["media_type"] == "text": # add error handling
-        text = data["text"]
-        query_vec = get_text_vec(text)
-        vec_search_result = query_es(index=es_txt_index, vec=query_vec)
-        text_search_result = find_similar_text(index=es_txt_index, text=text)
-        return jsonify(vec_search_result, text_search_result)
+        if data["media_type"] == "text": # add error handling
+            text = data["text"]
+            query_vec = get_text_vec(text)
+            vec_search_result = query_es(index=es_txt_index, vec=query_vec)
+            text_search_result = find_similar_text(index=es_txt_index, text=text)
+            return jsonify(vec_search_result, text_search_result)
 
-    elif data["media_type"] == "image":
-        image_url = data['file_url']
-        query_vec = get_image_vec(image_url)
-        result = query_es(index=es_img_index, vec=query_vec)
-        return jsonify(result)
+        elif data["media_type"] == "image":
+            image_url = data['file_url']
+            query_vec = get_image_vec(image_url)
+            result = query_es(index=es_img_index, vec=query_vec)
+            return jsonify(result)
 
-    elif data["media_type"] == "video":
-        video_url = data["file_url"]
-        vid_analyzer = get_vid_vec(video_url)
-        query_vec = vid_analyzer.get_mean_feature().tolist()
-        result = query_es(index=es_vid_index, vec=query_vec)
-        return jsonify(result)
+        elif data["media_type"] == "video":
+            video_url = data["file_url"]
+            vid_analyzer = get_vid_vec(video_url)
+            query_vec = vid_analyzer.get_mean_feature().tolist()
+            result = query_es(index=es_vid_index, vec=query_vec)
+            return jsonify(result)
+
+    except Exception:
+        print("Error while searching: ")
+        print(logging.traceback.format_exc())
 
 @application.route('/find_text', methods=['POST'])
 def find_text():
@@ -257,24 +262,36 @@ def analyze_image(image_url):
 
 @application.route('/upload_text', methods=['POST'])
 def upload_text():
-    print(request.get_data())
-    data = request.get_json(force=True)
-    res = index_data(es, data)
-    return jsonify(res)
+    try:
+        print(request.get_data())
+        data = request.get_json(force=True)
+        res = index_data(es, data)
+        return jsonify(res)
+    except Exception:
+        logger.info("Error while indexing: ")
+        logger.info(logging.traceback.format_exc())
 
 @application.route('/upload_video', methods=['POST'])
 def upload_video():
-    print(request.get_data())
-    data = request.get_json(force=True)
-    res = index_data(es, data)
-    return jsonify(res)
+    try:
+        print(request.get_data())
+        data = request.get_json(force=True)
+        res = index_data(es, data)
+        return jsonify(res)
+    except Exception:
+        logger.info("Error while indexing: ")
+        logger.info(logging.traceback.format_exc())
 
 @application.route('/upload_image', methods=['POST'])
 def upload_image():
-    print(request.get_data())
-    data = request.get_json(force=True)
-    res = index_data(es, data)
-    return(jsonify(res))
+    try:
+        print(request.get_data())
+        data = request.get_json(force=True)
+        res = index_data(es, data)
+        return(jsonify(res))
+    except Exception:
+        logger.info("Error while indexing: ")
+        logger.info(logging.traceback.format_exc())
  
 if __name__ == "__main__":
     application.run(host="0.0.0.0", port=7000, debug=True)
