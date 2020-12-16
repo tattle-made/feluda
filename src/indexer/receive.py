@@ -11,31 +11,20 @@ from helper import index_data
 from time import perf_counter
 from services.es import get_es_instance
 from controllers.queue_controller import queue_controller
+import logging
+
+logger = logging.getLogger('tattle-api')
 
 try:
     queue_controller.connect()
     queue_controller.declare_queues()
 except Exception:
-    print(logging.traceback.format_exc())
+    logging.info(logging.traceback.format_exc())
     exit()
 
 es = get_es_instance()
 
-# credentials = pika.PlainCredentials(environ.get(
-#     'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
-# connection = pika.BlockingConnection(
-#     pika.ConnectionParameters(
-#         host=environ.get('MQ_HOST'), 
-#         credentials=credentials,
-#         heartbeat=600,
-#         blocked_connection_timeout=300))
-# channel = connection.channel()
-# channel.queue_declare(queue='tattle-search-index-queue', durable=True)
-# channel.queue_declare(queue='tattle-search-report-queue', durable=True)
-# channel.confirm_delivery()
-
 def callback(ch, method, properties, body):
-    # print("MESSAGE RECEIVED %r" % body)
     print("MESSAGE RECEIVED")
     start = perf_counter()
     data = json.loads(body)
@@ -53,31 +42,21 @@ def callback(ch, method, properties, body):
         report["index_id"] = index_id
         report["status"] = "indexed"
 
-        # channel.basic_publish(exchange='',
-        #                         routing_key='tattle-search-report-queue',
-        #                         properties=pika.BasicProperties(
-        #                             content_type='application/json',
-        #                             delivery_mode=2),  # make message persistent
-        #                         body=json.dumps(report))
         queue_controller.add_data_to_report_queue(json.dumps(report))
         delta = perf_counter() - start
         print("Time taken: ", delta)
         print("Indexing success report sent to report queue")
+        print("")
+        print("")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     except Exception:
-        print('Error indexing media')
-        print(logging.traceback.format_exc())
+        logging.info('Error indexing media')
+        logging.info(logging.traceback.format_exc())
         print("Sending report to queue ...")
         report["status"] = "failed"
         report["failure_timestamp"] = str(datetime.utcnow())
         
-        # channel.basic_publish(exchange='',
-        #     routing_key='tattle-search-report-queue',
-        #     properties=pika.BasicProperties(
-        #         content_type='application/json',
-        #         delivery_mode=2), # make message persistent
-        #     body=json.dumps(report))
         queue_controller.add_data_to_report_queue(json.dumps(report))
         print("Indexing failure report sent to report queue")
         try:
@@ -85,12 +64,5 @@ def callback(ch, method, properties, body):
         except:
             pass
         ch.basic_ack(delivery_tag=method.delivery_tag)
-
-
-# channel.basic_consume(queue='tattle-search-index-queue',
-#                       on_message_callback=callback)
-
-# print(' [*] Waiting for messages. To exit press CTRL+C ')
-# channel.start_consuming()
 
 queue_controller.start_consuming('tattle-search-index-queue', callback)
