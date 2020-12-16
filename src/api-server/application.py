@@ -13,29 +13,24 @@ from elasticsearch import Elasticsearch
 from elasticsearch import helpers as eshelpers
 from VideoAnalyzer import VideoAnalyzer, compress_video
 from analyzer import ResNet18, detect_text, image_from_url, doc2vec, detect_lang
-from search import ImageSearch, TextSearch, DocSearch
 from helper import index_data, get_text_vec, get_image_vec, get_vid_vec
-# from send import add_job_to_queue
+from controllers.queue_controller import queue_controller
+from send import add_job_to_queue
 import cv2
 from indices import check_index
 from datetime import datetime
 import wget
 from services.es import get_es_instance
 
-imagesearch = ImageSearch()
-docsearch = DocSearch()
-textsearch = TextSearch()
-resnet18 = ResNet18()
-
 application = Flask(__name__)
 CORS(application)
 
+resnet18 = ResNet18()
+
 logger = logging.getLogger("tattle-api")
 
-mongo_url = os.environ['MONGO_URL']
-cli = MongoClient(mongo_url)
-db = cli[os.environ.get("DB_NAME")]
-coll = db[os.environ.get("DB_COLLECTION")]
+queue_controller.connect()
+queue_controller.declare_queues()
 
 es = get_es_instance()
 
