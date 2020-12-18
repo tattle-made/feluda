@@ -1,1 +1,2 @@
-data/word2vec/*
+data/word2vec/*.db
+data/word2vec/*.vec

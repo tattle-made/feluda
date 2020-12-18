@@ -5,7 +5,6 @@
 [Ll]ib64
 [Ll]ocal
 [Ss]cripts
-data
 pyvenv.cfg
 .venv
 pip-selfcheck.json
@@ -106,8 +105,8 @@ ENV/
 !.elasticbeanstalk/*.global.yml
 
 # datafiles
-word2vec/*.vec
-word2vec/*.db
+*.vec
+*.db
 
 # Pycharm
 *.idea/
