@@ -30,7 +30,10 @@ resnet18 = ResNet18()
 
 def get_text_vec(text):
     print("Generating document vector")
+    # import ipdb
+    # ipdb.set_trace()
     text_vec = doc2vec(text)
+    print(text_vec)
     print("Document vector generated")
 
     if text_vec is None:
