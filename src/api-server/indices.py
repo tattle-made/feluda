@@ -14,7 +14,7 @@ def check_index(es, index, index_type):
 
     """
     # The next line is only for testing index creation AND SHOULD BE REMOVED
-    # es.indices.delete(index=index, ignore=[400,404])
+    es.indices.delete(index=index, ignore=[400,404])
 
     if es.indices.exists(index=index):
         print("Verified that {} exists".format(index))
