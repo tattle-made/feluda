@@ -2,8 +2,6 @@ import os
 import sys
 import numpy as np
 from dotenv import load_dotenv
-import pymongo
-from pymongo import MongoClient
 load_dotenv()
 import wget
 from analyzer import ResNet18, detect_text, image_from_url, detect_lang, transform_text

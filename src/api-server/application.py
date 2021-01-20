@@ -4,7 +4,6 @@ load_dotenv()
 import logging
 from flask import Flask, request, jsonify 
 from flask_cors import CORS
-from pymongo import MongoClient
 from io import BytesIO
 import skimage, PIL
 import numpy as np
