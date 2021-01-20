@@ -77,7 +77,8 @@ def detect_text(img_bytes):
 
 def transform_text(text, sent_model):
     """
-    New method for generating text document vectors.
+    New, transformer model-based method for generating text document vectors. 
+    Returns a 768-dimensional vector representation of the input text in any language.
     """
     vec = sent_model.encode(text)
     return vec
