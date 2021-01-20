@@ -13,8 +13,8 @@ def check_index(es, index, index_type):
     type - (str) Allowed options are "text", "image" or "video"
 
     """
-    # The next line is only for testing index creation AND SHOULD BE REMOVED
-    es.indices.delete(index=index, ignore=[400,404])
+    # WARNING: The next line is only for testing index creation and will delete existing indices!
+    # es.indices.delete(index=index, ignore=[400,404])
 
     if es.indices.exists(index=index):
         print("Verified that {} exists".format(index))
