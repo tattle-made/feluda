@@ -75,16 +75,26 @@ def detect_text(img_bytes):
 #
 #        print('bounds: {}'.format(','.join(vertices)))
 
+def transform_text(text, sent_model):
+    """
+    New method for generating text document vectors.
+    """
+    vec = sent_model.encode(text)
+    return vec
+
 def doc2vec(text):
     """
+    Old method for generating text document vectors.
     avg the word vectors for each word in the doc, 
     ignore the words not found in the db
     """
     conn = sqlite3.connect('data/word2vec/word2vec.db')
+    print(conn)
     cur = conn.cursor()
+    print(cur)
 
     cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    # print(cur.fetchall())
+    print(cur.fetchall())
     # get lang_id
     lang = detect_lang(text)
     if lang is None:

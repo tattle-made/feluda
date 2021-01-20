@@ -75,8 +75,16 @@ def detect_text(img_bytes):
 #
 #        print('bounds: {}'.format(','.join(vertices)))
 
+def transform_text(text, sent_model):
+    """
+    New method for generating text document vectors.
+    """
+    vec = sent_model.encode(text)
+    return vec
+
 def doc2vec(text):
     """
+    Old method for generating text document vectors.
     avg the word vectors for each word in the doc, 
     ignore the words not found in the db
     """

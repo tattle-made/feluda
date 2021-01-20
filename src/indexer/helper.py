@@ -6,7 +6,7 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 import wget
-from analyzer import ResNet18, detect_text, image_from_url, detect_lang, doc2vec
+from analyzer import ResNet18, detect_text, image_from_url, detect_lang, transform_text
 import cv2
 from VideoAnalyzer import VideoAnalyzer, compress_video
 from elasticsearch import Elasticsearch
@@ -15,6 +15,9 @@ from datetime import datetime
 from flask import jsonify 
 import uuid
 import logging
+from sentence_transformers import SentenceTransformer
+
+sent_model = SentenceTransformer('paraphrase-xlm-r-multilingual-v1')
 
 logger = logging.getLogger('tattle-api')
 
@@ -30,11 +33,11 @@ resnet18 = ResNet18()
 
 def get_text_vec(text):
     print("Generating document vector")
-    text_vec = doc2vec(text)
+    text_vec = transform_text(text, sent_model)
     print("Document vector generated")
 
     if text_vec is None:
-        text_vec = np.zeros(300).tolist()
+        text_vec = np.zeros(768).tolist()
     
     return text_vec
 
@@ -114,20 +117,20 @@ def index_data(es, data):
             lang = detect_lang(detected_text)
             #import ipdb; ipdb.set_trace()
             if detected_text == '' or None:
-                text_vec = np.zeros(300).tolist()
+                text_vec = np.zeros(768).tolist()
                 has_text = False
             else:
                 print("Generating image text vector")
-                text_vec = doc2vec(detected_text)
+                text_vec = transform_text(detected_text, sent_model)
                 print("Image text vector generated ")
                 has_text = True
 
             if lang is None:
-                text_vec = np.zeros(300).tolist()
+                text_vec = np.zeros(768).tolist()
                 has_text = True
 
             if text_vec is None:
-                text_vec = np.zeros(300).tolist()
+                text_vec = np.zeros(768).tolist()
                 has_text = True
 
             combined_vec = np.hstack((image_vec, text_vec)).tolist()
