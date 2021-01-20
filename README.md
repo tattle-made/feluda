@@ -5,9 +5,9 @@
 2. Run `docker-compose up` . This will bring up the following containers:
 
 
-Mongo DB : Used to store media hash and any associated metadata with the media.  
+Elasticsearch : Used to store searchable representations of multilingual text, images and videos  
 
-RabbitMQ : Used as a Job Queue to queue up long media indexing jobs.
+RabbitMQ : Used as a Job Queue to queue up long indexing jobs.
 
 Search Indexer : A RabbitMQ consumer that receives any new jobs that are added to the queue and processes them.  
 
@@ -18,7 +18,7 @@ The first time you run `docker-compose up` it will take several minutes for all 
 
 3. To verify if every service is up, visit the following URLs:
 
-mongo : visit http://localhost:27017
+elasticsearch : visit http://localhost:9200
 
 rabbitmq UI : visit http://localhost:15672
 
