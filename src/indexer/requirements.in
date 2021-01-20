@@ -14,3 +14,4 @@ elasticsearch
 wget==3.2
 pika==1.1.0
 ffmpy==0.2.3
+sentence-transformers==0.4.1.2
