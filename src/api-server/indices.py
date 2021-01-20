@@ -49,7 +49,7 @@ def get_mapping(index_type):
                         },
                         "text_vec": {
                             "type":"dense_vector",
-                            "dims": 300
+                            "dims": 768
                         },
                         "date_added": {
                             "type": "date"
@@ -78,7 +78,7 @@ def get_mapping(index_type):
                         },
                         "text_vec": {
                             "type":"dense_vector",
-                            "dims": 300
+                            "dims": 768
                         },
                         "lang": {
                             "type": "keyword"
