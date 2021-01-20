@@ -78,7 +78,7 @@ def search():
                 calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
             q = {
-            "size": 10,
+            "size": 3,
                 "query": {
                     "script_score": {
                         "query" : {
@@ -99,9 +99,10 @@ def search():
         def find_similar_text(index, text):
             resp = es.search(
                 index=index, 
-                body = {"query": {
-                            "match": {
-                                "text": text}}})
+                body = {"size": 3,
+                            "query": {
+                                    "match": {
+                                        "text": text}}})
             res = parse_response(resp)
             return res
 
@@ -121,22 +122,29 @@ def search():
         if data["media_type"] == "text": # add error handling
             text = data["text"]
             query_vec = get_text_vec(text)
+            res = {}
             vec_search_result = query_es(index=es_txt_index, vec=query_vec)
             text_search_result = find_similar_text(index=es_txt_index, text=text)
-            return jsonify(vec_search_result, text_search_result)
+            res["text_vector_matches"] = vec_search_result
+            res["simple_text_matches"] = text_search_result
+            return jsonify(res)
 
         elif data["media_type"] == "image":
             image_url = data['file_url']
             query_vec = get_image_vec(image_url)
+            res = {}
             result = query_es(index=es_img_index, vec=query_vec)
-            return jsonify(result)
+            res["image_vector_matches"] = result
+            return jsonify(res)
 
         elif data["media_type"] == "video":
             video_url = data["file_url"]
             vid_analyzer = get_vid_vec(video_url)
             query_vec = vid_analyzer.get_mean_feature().tolist()
+            res = {}
             result = query_es(index=es_vid_index, vec=query_vec)
-            return jsonify(result)
+            res["video_vector_matches"] = result
+            return jsonify(res)
 
     except Exception:
         print("Error while searching: ")
