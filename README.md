@@ -1,11 +1,12 @@
 ## Setup for Developing Locally
 
-1. Set environment variables by replacing the credentials in `/src/indexer/.env-template` and `/src/api-server/.env-template.local` with your credentials. Rename the files to `.env` and `.env.local` respectively.
+1. Set environment variables by replacing the credentials in `/src/indexer/.env-template` and `/src/api-server/.env-template` with your credentials. Rename the files to `.env` and `.env` respectively. 
+(For production, update the RabbitMQ and Elasticsearch host and credentials in the `.env` files)
 
 2. Run `docker-compose up` . This will bring up the following containers:
 
 
-Elasticsearch : Used to store searchable representations of multilingual text, images and videos  
+Elasticsearch : Used to store searchable representations of multilingual text, images and videos.
 
 RabbitMQ : Used as a Job Queue to queue up long indexing jobs.
 
@@ -31,23 +32,51 @@ docker exec -it search_api python application.py
 docker exec -it search_indexer python receive.py
 ```
 
-#### Test API calls (for direct, queue-less media indexing and search)
+#### Server endpoints 
+
+http://localhost:7000/media : Receives image URLs / video URLs / text documents via POST requests and sends them to a RabbitMQ job queue. This queue is consumed by `receive.py` and the processed data is indexed into the appropriate Elasticsearch index. This endpoint is designed for fault-tolerant batch indexing.  
+
+http://localhost:7000/upload_image : Receives an image URL via a POST request and indexes it in the appropriate Elasticsearch index.   
+
+http://localhost:7000/upload_video : Receives a video URL via a POST request and indexes it in the appropriate Elasticsearch index.   
+
+http://localhost:7000/upload_text : Receives a text document via a POST request and indexes it in the appropriate Elasticsearch index.  
+
+The `/upload_image`, `/upload_video` and `/upload_text` endpoints index data directly (bypassing RabbitMQ) and are suitable for development / testing.  
+
+http://localhost:7000/search : Receives a query image / video / text and returns the top 3 matches found in the Elasticsearch index in descending order.   
+Note: A text search returns two sets of matches: `simple_text_matches` and `text_vector_matches`. The former is useful for same-language search and the latter for multilingual search.  
+
+#### Examples
 
 ```
-# Index an Image
+curl --location --request POST 'http://localhost:7000/upload_text' \
+--header 'Content-Type: application/json' \
+--data-raw '{"source_id": "123",
+"media_type": "text",
+"source": "A",
+"text": "Symptoms of COVID-19 are variable, but often include fever, cough, fatigue, breathing difficulties, and loss of smell and taste. Symptoms begin one to fourteen days after exposure to the virus. Around one in five infected individuals do not develop any symptoms.",
+"metadata": {"test": "text indexing"}}'
+```
 
+```
 curl --location --request POST 'http://localhost:7000/upload_image' \
 --header 'Content-Type: application/json' \
---data-raw '{
+--data-raw '{"source_id": "456",
+  "media_type": "image",
+  "source": "B",
   "image_url": "https://tattle-story-scraper.s3.ap-south-1.amazonaws.com/e9ec45b7-3e9a-46a2-ba8e-46e606b85da6",
-  "doc_id": 69004
+  "metadata": {"test": "image indexing"}
 } '
 
-# Search for Duplicate images
+```
 
-curl --location --request POST 'http://localhost:7000/find_duplicate' \
+```
+curl --location --request POST 'http://localhost:7000/search' \
 --header 'Content-Type: application/json' \
---data-raw '{
-  "image_url": "https://tattle-story-scraper.s3.ap-south-1.amazonaws.com/e9ec45b7-3e9a-46a2-ba8e-46e606b85da6"
-} '
+--data-raw '{"source_id": "123",
+"media_type": "text",
+"source": "A",
+"text": "कोविड-19 के लक्षण परिवर्तनशील हैं, लेकिन अक्सर बुखार, खांसी, थकान, सांस लेने में कठिनाई और गंध और स्वाद की हानि शामिल हैं। वायरस के संपर्क में आने के एक से चौदह दिन बाद लक्षण दिखाई देने लगते हैं। पांच में से एक संक्रमित व्यक्ति में कोई लक्षण विकसित नहीं होते हैं।",
+"metadata": {"test": "text search"}}'
 ```
