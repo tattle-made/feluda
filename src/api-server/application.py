@@ -77,7 +77,7 @@ def search():
                 calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
             q = {
-            "size": 3, # maximum number of hits returned by the query
+            "size": 10, # maximum number of hits returned by the query
                 "query": {
                     "script_score": {
                         "query" : {

@@ -44,7 +44,7 @@ http://localhost:7000/upload_text : Receives a text document via a POST request 
 
 The `/upload_image`, `/upload_video` and `/upload_text` endpoints index data directly (bypassing RabbitMQ) and are suitable for development / testing. Indices are defined and accessed according to the names specified in `.env` and the mappings specified in `indices.py`. 
 
-http://localhost:7000/search : Receives a query image / video / text and returns the top 3 matches found in the Elasticsearch index in descending order.   
+http://localhost:7000/search : Receives a query image / video / text and returns the top 10 matches found in the Elasticsearch index in descending order.   
 Note: A text search returns two sets of matches: `simple_text_matches` and `text_vector_matches`. The former is useful for same-language search and the latter for multilingual search.  
 
 #### Examples
