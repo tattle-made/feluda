@@ -4,8 +4,8 @@ google-cloud==0.34.0
 google-cloud-vision==0.34.0
 scikit-image==0.15.0
 tqdm
-torch==1.2.0
-torchvision==0.4.0
+torch==1.7.1+cpu
+torchvision==0.8.2+cpu
 textblob
 Pillow==7.1.0
 opencv-python-headless
@@ -13,4 +13,9 @@ elasticsearch
 wget==3.2
 pika==1.1.0
 ffmpy==0.2.3
-sentence-transformers==0.4.1.2
+sentence-transformers==1.0.4
+python-dotenv
+boto3
+click
+typing-extensions
+pytest

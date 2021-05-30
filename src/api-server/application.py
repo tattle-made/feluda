@@ -24,12 +24,13 @@ from services.es import get_es_instance
 application = Flask(__name__)
 CORS(application)
 
-resnet18 = ResNet18()
+print("Starting Application 2")
+
 
 logger = logging.getLogger("tattle-api")
 
-queue_controller.connect()
-queue_controller.declare_queues()
+# queue_controller.connect()
+# queue_controller.declare_queues()
 
 es = get_es_instance()
 
@@ -65,6 +66,7 @@ def media():
 def search():
     try:
         data = request.get_json(force=True)
+        print(data)
 
         def query_es(index, vec):
             if type(vec) == np.ndarray:
@@ -77,7 +79,7 @@ def search():
                 calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
             q = {
-            "size": 10, # maximum number of hits returned by the query
+                "size": 10, # maximum number of hits returned by the query
                 "query": {
                     "script_score": {
                         "query" : {
@@ -105,6 +107,16 @@ def search():
             res = parse_response(resp)
             return res
 
+        def find_in_metadata(index, text):
+            resp = es.search(
+                index=index, 
+                body = {"size": 3,
+                            "query": {
+                                    "match": {
+                                        "metadata": text}}})
+            res = parse_response(resp)
+            return res
+
         def parse_response(resp):
             doc_ids, dists, source_ids, sources, texts = [], [], [], [], [] 
 
@@ -125,7 +137,9 @@ def search():
             vec_search_result = query_es(index=es_txt_index, vec=query_vec)
             text_search_result = find_similar_text(index=es_txt_index, text=text)
             res["text_vector_matches"] = vec_search_result
+            metadata_search_result = find_in_metadata(index=es_txt_index, text=text)
             res["simple_text_matches"] = text_search_result
+            res["metadata_matches"] = metadata_search_result
             return jsonify(res)
 
         elif data["media_type"] == "image":

@@ -18,13 +18,19 @@ from monitor import timeit
 import boto3
 
 def get_credentials():
-    aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
-    aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY_ID")
-    bucket = os.environ.get("AWS_BUCKET")
-    obj = os.environ.get("S3_CREDENTIALS_PATH")
-    s3 = boto3.client("s3", aws_access_key_id = aws_access_key_id,
-                          aws_secret_access_key= aws_secret_access_key) 
-    s3.download_file(bucket, obj, "credentials.json")
+    # check if credentials are available locally
+    if os.path.exists('credentials.json'):
+        print('file exists. not doing anything')
+    else :
+        print('downloading credentials')
+        aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID")
+        aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY_ID")
+        bucket = os.environ.get("AWS_BUCKET")
+        obj = os.environ.get("S3_CREDENTIALS_PATH")
+        s3 = boto3.client("s3", aws_access_key_id = aws_access_key_id,
+                            aws_secret_access_key= aws_secret_access_key) 
+        s3.download_file(bucket, obj, "credentials.json")
+        print('credentials downloaded')
 
 GOOGLE_API_KEY=get_credentials()
 
@@ -44,6 +50,7 @@ def image_from_url(image_url):
 
 class ResNet18():
     def __init__(self):
+        print('Initializing ResNet')
         self.model = models.resnet18(pretrained=True)
         self.feature_layer = self.model._modules.get('avgpool')
         self.model.eval()

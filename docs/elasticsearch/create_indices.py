@@ -1,13 +1,8 @@
-import requests, json, os
+import requests
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers as eshelpers
-import datetime as datetime
-import numpy as np
-
 import os, sys, json
-from pymongo import MongoClient
-from tqdm import tqdm
-import datetime
+
 
 def create_vid_index(host):
     url = 'http://'+host+':9200/vidsearch'

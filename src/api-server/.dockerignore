@@ -1,2 +1,5 @@
 data/word2vec/*.db
 data/word2vec/*.vec
+lib/
+bin/
+__pycache__

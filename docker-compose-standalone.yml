@@ -1,0 +1,67 @@
+version: "3.5"
+
+services:
+  indexer:
+    container_name: search_indexer
+    build:
+      context: ./src/indexer
+      dockerfile: Dockerfile
+      target: indexer_prod
+    shm_size: "8gb"
+    # ipc: host
+    volumes:
+      - ./src/indexer/:/app
+    env_file: ./src/indexer/development.env
+    command: tail -f /dev/null
+
+  search_api:
+    container_name: search_api
+    build:
+      context: ./src/api-server
+      dockerfile: Dockerfile
+      target: server_base
+    shm_size: "8gb"
+    # ipc: host
+    volumes:
+      - ./src/api-server:/app
+    env_file: ./src/api-server/development.env
+    ports:
+      - 7000:7000
+    command: tail -f /dev/null
+
+  elasticsearch:
+    container_name: es
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    volumes:
+      - ./.docker/es/data:/usr/share/elasticsearch/data
+    ports:
+      - "9300:9300"
+      - "9200:9200"
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+
+  rabbitmq:
+    image: rabbitmq:3.8.7-management
+    container_name: rabbitmq
+    hostname: rabbit
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "Admin123"
+    ports:
+      - 5672:5672
+      - 15672:15672

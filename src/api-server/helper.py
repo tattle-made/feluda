@@ -23,7 +23,6 @@ try:
     es_vid_index = os.environ['ES_VID_INDEX']
     es_img_index = os.environ['ES_IMG_INDEX']
     es_txt_index = os.environ['ES_TXT_INDEX']
-    
 except Exception:
     logger.info(logging.traceback.format_exc())
 
@@ -110,7 +109,10 @@ def index_data(es, data):
             return res
                 
         elif data["media_type"] == "image":
+            print('indexing image')
+            print(data)
             image_url = data["file_url"]
+            print(image_url)
             image_vec = get_image_vec(image_url)
             detected_text = detect_text(image_dict['image_bytes']).get('text','')
             lang = detect_lang(detected_text)
@@ -146,6 +148,8 @@ def index_data(es, data):
             "combined_vec": combined_vec,
             "date_added": date
                 }
+
+            print(doc)
 
             res = es.index(index=es_img_index, body=doc)
             print("Image vector indexed")
@@ -190,6 +194,9 @@ def index_data(es, data):
             print("Video vectors indexed")
             print("Bulk indexing result: ", bulk_res) 
             return res
+
+        else :
+            print('Unknown data type')
     except Exception:
         logger.info('Error while indexing: ')
         logger.info(logging.traceback.format_exc())
