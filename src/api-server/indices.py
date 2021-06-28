@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch
 from datetime import datetime
 
+
 def check_index(es, index, index_type):
 
     """
@@ -9,7 +10,7 @@ def check_index(es, index, index_type):
 
     Args:
     es - Elasticsearch client instance
-    index - (str) Name of the index 
+    index - (str) Name of the index
     type - (str) Allowed options are "text", "image" or "video"
 
     """
@@ -23,12 +24,12 @@ def check_index(es, index, index_type):
         body = get_mapping(index_type)
         es.indices.create(index=index, body=body)
         print("{} created".format(index))
-        
+
 
 def get_mapping(index_type):
 
     mappings = {
-        "text": '''{
+        "text": """{
                 "mappings": {
                     "properties":{
                         "source_id": {
@@ -56,8 +57,8 @@ def get_mapping(index_type):
                         }
                     }
                 }
-            }''',
-        "image": '''{
+            }""",
+        "image": """{
                 "mappings": {
                     "properties":{
                         "source_id": {
@@ -68,36 +69,18 @@ def get_mapping(index_type):
                         },
                         "metadata": {
                             "type": "object"
-                        },
-                        "has_text": {
-                            "type": "boolean"
-                        },
-                        "text": {
-                            "type": "text",
-                            "analyzer": "standard"
-                        },
-                        "text_vec": {
-                            "type":"dense_vector",
-                            "dims": 768
-                        },
-                        "lang": {
-                            "type": "keyword"
                         },
                         "image_vec": {
                             "type":"dense_vector",
                             "dims": 512
                         },
-                        "combined_vec": {
-                            "type":"dense_vector",
-                            "dims": 812
-                        },
                         "date_added": {
                             "type": "date"
                         }
                     }
                 }
-            }''', 
-        "video": '''{
+            }""",
+        "video": """{
                 "mappings": {
                     "properties":{
                         "source_id": {
@@ -127,7 +110,7 @@ def get_mapping(index_type):
                         }
                     }
                 }
-            }'''
+            }""",
     }
 
     return mappings[index_type]
