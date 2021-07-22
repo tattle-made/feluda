@@ -3,7 +3,7 @@ version: "3.5"
 services:
     elasticsearch:
         container_name: es
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
         volumes:
             - ./.docker/es/data:/usr/share/elasticsearch/data
         ports:
