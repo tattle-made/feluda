@@ -1,38 +1,36 @@
 version: "3.5"
 
 services:
-    elasticsearch:
-        container_name: es
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
-        volumes:
-            - ./.docker/es/data:/usr/share/elasticsearch/data
-        ports:
-            - "9300:9300"
-            - "9200:9200"
-        environment:
-            - xpack.security.enabled=false
-            - discovery.type=single-node
-        ulimits:
-            memlock:
-                soft: -1
-                hard: -1
-            nofile:
-                soft: 65536
-                hard: 65536
-        cap_add:
-            - IPC_LOCK
+    # elasticsearch:
+    #     container_name: es
+    #     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+    #     volumes:
+    #         - ./.docker/es/data:/usr/share/elasticsearch/data
+    #     ports:
+    #         - "9300:9300"
+    #         - "9200:9200"
+    #     environment:
+    #         - xpack.security.enabled=false
+    #         - discovery.type=single-node
+    #     ulimits:
+    #         memlock:
+    #             soft: -1
+    #             hard: -1
+    #         nofile:
+    #             soft: 65536
+    #             hard: 65536
+    #     cap_add:
+    #         - IPC_LOCK
 
-    search_api:
-        container_name: search_api
+    api:
+        container_name: api
         build:
-            context: ./src/api-server
+            context: ./src/api
             dockerfile: Dockerfile
-            target: server_base
-        shm_size: "8gb"
-        # ipc: host
+            target: debug
         volumes:
-            - ./src/api-server:/app
-        env_file: ./src/api-server/development.env
+            - ./src/api:/app
+        env_file: ./src/api/development.env
         ports:
             - 7000:7000
         command: tail -f /dev/null

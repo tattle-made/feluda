@@ -1,7 +1,0 @@
-1. Search function:
-    - Similar to image search on elastic search index
-    - weighted search on fields : vector, duration 
-    - tests
-
-2. upload multiple frame features for a video
-    -** query_es for multiple features 

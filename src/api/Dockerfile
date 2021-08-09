@@ -7,7 +7,6 @@ RUN apt-get update \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
-    # Vim is only for debugging in dev mode. Uncomment in production
     && apt-get purge -y --auto-remove \
     gcc build-essential \
     libgl1-mesa-glx libglib2.0-0 \
