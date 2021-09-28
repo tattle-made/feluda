@@ -19,3 +19,4 @@ boto3
 click
 typing-extensions
 pytest
+PyYAML==5.4.1

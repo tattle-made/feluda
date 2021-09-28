@@ -1,3 +1,7 @@
+# connect to queue
+# start listening for messages
+# process them
+
 import logging
 from datetime import datetime
 import sys

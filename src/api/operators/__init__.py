@@ -1,12 +1,27 @@
-import text
-import image
-import video
+import importlib
+
+PACKAGE = "operators"
 
 
-def get_operator(media_type):
-    if media_type == "text":
-        return text
-    elif media_type == "image":
-        return image
-    elif media_type == "video":
-        return video
+def intialize(config):
+    active_operators = {}
+    operators = config["parameters"]["operators"]
+    for operator in operators:
+        print(operator["type"], ":", operator["parameters"])
+        active_operators[operator["type"]] = importlib.import_module(
+            ".composite." + operator["type"], package=PACKAGE
+        )
+        active_operators[operator["type"]].initialize(operator["parameters"])
+    return active_operators
+
+
+def run(operator, post):
+    return operator.run(post)
+
+
+# operators = {
+#     "default": default,
+#     "text_fulltext_rep": default,
+#     "vid_vec_rep_resnet": default,
+#     "composite_image_text_indexer": composite_image_text_indexer,
+# }

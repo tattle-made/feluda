@@ -1,6 +1,6 @@
 FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
-FROM python:3.7-slim AS server_base
+FROM python:3.7-slim AS base
 COPY --from=ffmpeg / /
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -19,6 +19,7 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --user -r requirements.txt
 COPY . /app
+EXPOSE 7000
 
 # RUN apt-get update \
 #     && apt-get -y upgrade \
@@ -27,7 +28,12 @@ COPY . /app
 #     libgl1-mesa-glx libglib2.0-0 \
 #     && rm -rf /var/lib/apt/lists/* 
 
+#### DEBUG IMAGE ####
+FROM base AS debug
+RUN apt-get update && apt-get install -y vim zsh jq
+RUN pip install debugpy nose2
+CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m flask run -h 0.0.0.0 -p 5000
 
-EXPOSE 7000
-# CMD python application.py
-CMD tail -f /dev/null
+#### PROD IMAGE ####
+FROM base as prod
+CMD flask run --host=0.0.0.0nose2 

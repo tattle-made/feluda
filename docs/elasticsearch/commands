@@ -1,9 +1,0 @@
-curl localhost:9200/searchtest/_search
-curl -H'Content-Type: application/json' -X POST localhost:9200/searchtest/_search --data '{"query" : {"match" : {"_id" : 0}}}'
-curl -H'Content-Type: application/json' -X POST localhost:9200/searchtest/_search --data '{"query" : {"match" : {"_id" : 1}}}'
-curl -H'Content-Type: application/json' -X POST localhost:9200/searchtest/_search --data '{"query" : {"match" : {"_id" : 100}}}'
-curl -H'Content-Type: application/json' -X POST localhost:9200/searchtest/_search --data '{"query" : {"match" : {"_id" : 102}}}'
-curl -H'Content-Type: application/json' -X POST localhost:9200/searchtest/_search --data '{"query" : {"match" : {"_id" : 101}}}'
-curl localhost:9200/searchtest/_count
-curl -X DELETE localhost:9200/searchtest
-curl localhost:9200/_cat/indices

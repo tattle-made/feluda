@@ -1,0 +1,7 @@
+- Currently support 20 mb as the file size limit. This limit is actually on the compressed video file
+  and not the original video file.
+  We use FFmpeg to compress the file using the following command `ffmpeg -y -i sample_data/cat_vid_94mb.mp4 -vcodec libx265 -crf`
+
+# Possible Optimizations :
+
+- A lot of the intermediate steps seem to read video file from disk. Could it be held in memory and passed along those functions?
