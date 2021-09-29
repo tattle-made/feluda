@@ -6,7 +6,7 @@ class HealthRequestModel:
     pass
 
 
-class HealthRoute:
+class HealthHandler:
     def __init__(self):
         pass
 
@@ -44,5 +44,5 @@ class HealthController:
         ]
 
     def get_handler(self):
-        route = HealthRoute()
-        return route.make_handlers()
+        handler = HealthHandler()
+        return handler.make_handlers()

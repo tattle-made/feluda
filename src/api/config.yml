@@ -34,20 +34,20 @@ index :
       type : "composite_image_text_indexer"
       parameters:
         dimension : 256
-    # - name : "text indexer"
-    #   media_type : "text"
-    #   type : "text_fulltext_rep"
-    #   parameters:
-    #     dimension : 256
-    # - name : "video indexer"
-    #   media_type : "video"
-    #   type : "vid_vec_rep_resnet"
-    #   parameters:
-    #     max_length : "2min"
-    #     max_size : "5mb"
-    #     max_resolution: 
-    #       width : 1024
-    #       height : 1024
+    - name : "text indexer"
+      media_type : "text"
+      type : "text_fulltext_rep"
+      parameters:
+        dimension : 256
+    - name : "video indexer"
+      media_type : "video"
+      type : "vid_vec_rep_resnet"
+      parameters:
+        max_length : "2min"
+        max_size : "5mb"
+        max_resolution: 
+          width : 1024
+          height : 1024
 
 search : 
   label : "Search"

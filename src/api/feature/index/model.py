@@ -9,7 +9,6 @@ class IndexRequestPostData:
     post_id: str
     source_id: str
     client_id: str
-    media_type: str
 
 
 @dataclass
@@ -41,7 +40,8 @@ class Post:
     post_data: IndexRequestPostData
     config: IndexRequestConfig
     metadata: object
-    files: MultiDict(str, FileStorage)
+    files: MultiDict
+    # files: MultiDict(str, FileStorage)
 
 
 # @dataclass

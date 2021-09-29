@@ -1,5 +1,4 @@
-from api import operators
-from .handlers import make_handler
+from .handler import IndexHandler
 
 default_config = {"supported_media": ["text", "image", "video"]}
 
@@ -19,19 +18,23 @@ class IndexController:
     """
 
     def __init__(self, param, store, operators):
-        for operator in param["parameters"]["operators"]:
-            self.operators[operator["media_type"]] = operators[operator["type"]]
-        self.store = store
+        self.operators = {}
+        return
+        # for operator in param["parameters"]["operators"]:
+        #     self.operators[operator["media_type"]] = operators[operator["type"]]
+        # self.store = store
 
-    def get_handler(self, req):
-        return make_handler(req, self.operators)
+    def get_handler(self):
+        handler = IndexHandler()
+        return handler.make_handler(self.operators)
+        # return handler.make_handler(req, self.operators)
 
     def get_routes(self):
         """
         tuple syntax : (endpoint, method type, handler function)
         """
         return [
-            ("/index/text/", "POST"),
-            ("/index/image/", "POST"),
-            ("/index/video", "POST"),
+            ("/index/text", "index_text", ["POST"]),
+            ("/index/image", "index_image", ["POST"]),
+            ("/index/video", "index_video", ["POST"]),
         ]
