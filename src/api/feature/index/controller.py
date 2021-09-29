@@ -1,4 +1,4 @@
- from api import operators
+from api import operators
 from .handlers import make_handler
 
 default_config = {"supported_media": ["text", "image", "video"]}
@@ -17,6 +17,7 @@ class IndexController:
         support File with JSON
         support JSON
     """
+
     def __init__(self, param, store, operators):
         for operator in param["parameters"]["operators"]:
             self.operators[operator["media_type"]] = operators[operator["type"]]
@@ -24,7 +25,6 @@ class IndexController:
 
     def get_handler(self, req):
         return make_handler(req, self.operators)
-        
 
     def get_routes(self):
         """

@@ -1,4 +1,4 @@
-flask==1.0.0
+flask==2.0.1 
 flask_cors==3.0.0
 google-cloud==0.34.0
 google-cloud-vision==0.34.0

@@ -1,11 +1,12 @@
-from api.feature import health
+from feature import health
 from core import config, store, logger, queue
 from core.server import Server
-from feature.index import controller as IndexController
-from feature.health import HealthController
-from feature import search
-import operators
 
+# from feature.index import controller as IndexController
+from feature.health import HealthController
+
+# from feature import search
+# import operators
 
 # this is not needed for docker local dev but for non docker local dev. might need to document how to do this
 # for non docker local development.
@@ -22,15 +23,16 @@ try:
     ) = parameters.values()
 
     logger.initialize(logger_param)
-    queue.initialize(queue_param, log=logger)
-    store.initialize(store_param, log=logger)
+    # queue.initialize(queue_param, log=logger)
+    # store.initialize(store_param, log=logger)
 
     health_controller = HealthController()
-    index_controller = IndexController(index_param, store, operators.operators)
-    search.initialize(search_param, index_controller, store, log=logger)
+    # index_controller = IndexController(index_param, store, operators.operators)
+    # search.initialize(search_param, index_controller, store, log=logger)
 
-    server = Server(server_param, controllers=[index_controller, search], log=logger)
+    server = Server(server_param, controllers=[health_controller], log=logger)
     server.start()
 
 except Exception as e:
     print("Error Initializing app")
+    print(e)

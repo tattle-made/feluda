@@ -12,10 +12,14 @@ class Server:
         print("setting up routes")
         for controller in self.controllers:
             routes = controller.get_routes()
-            handler = controller.get_handler()
-            for route in routes:
-                endpoint, method_type = route
-                self.app.add_url_rule(endpoint, handler)
+            handler = controller.get_handler
+            try:
+                for route in routes:
+                    endpoint, name, methods = route
+                    self.app.add_url_rule(endpoint, name, handler, methods=methods)
+            except Exception as e:
+                print("Could not add Route")
+                print(e)
 
     def start(self):
         @self.app.route("/")
@@ -23,4 +27,3 @@ class Server:
             return "<p>Hello, World!</p>"
 
         self.app.run(port=5000)
-    

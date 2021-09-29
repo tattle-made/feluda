@@ -34,3 +34,10 @@ Ensure that the operators you need are enabled in the config.yml and that only t
 
 elements of a feature :
 controllers, routes, model
+
+# Pretty print while debugging
+
+a lot of the config and payloads are dicts. pprint is a handy way to see them in a formatted way.
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(my_dict)
