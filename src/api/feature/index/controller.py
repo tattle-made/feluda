@@ -18,7 +18,7 @@ class IndexController:
     """
 
     def __init__(self, param, store, operators):
-        self.operators = {}
+        self.operators = operators
         return
         # for operator in param["parameters"]["operators"]:
         #     self.operators[operator["media_type"]] = operators[operator["type"]]
@@ -37,4 +37,10 @@ class IndexController:
             ("/index/text", "index_text", ["POST"]),
             ("/index/image", "index_image", ["POST"]),
             ("/index/video", "index_video", ["POST"]),
+            ("/enqueue/text", "enqueue_text", ["POST"]),
+            ("/enqueue/image", "enqueue_image", ["POST"]),
+            ("/enqueue/video", "enqueue_video", ["POST"]),
+            ("/represent/text", "represent_text", ["POST"]),
+            ("/represent/image", "represent_image", ["POST"]),
+            ("/represent/video", "represent_video", ["POST"]),
         ]

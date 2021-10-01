@@ -48,4 +48,5 @@ services:
     env_file: ./src/api/development.env
     ports:
       - 7000:7000
+      - 5678:5678
     command: tail -f /dev/null

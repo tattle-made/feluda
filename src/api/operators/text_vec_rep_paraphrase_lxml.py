@@ -15,15 +15,15 @@ requirement_list = [
 def initialize(param):
     install_packages(requirement_list)
 
-    global SentenceTransformer, sent_model
+    global SentenceTransformer, sent_model, np
 
     from sentence_transformers import SentenceTransformer
+    import numpy as np
 
     sent_model = SentenceTransformer("paraphrase-xlm-r-multilingual-v1")
 
 
 def run(text):
-    text_bytes = file.read()
     text_vec = sent_model.encode(text)
     if text_vec is None:
         text_vec = np.zeros(768).tolist()

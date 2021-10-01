@@ -8,20 +8,20 @@ from datetime import datetime
 # todo should functions have a lean version to use when you know what you are doing?
 
 
-def make_from_url(image_url):
-    resp = requests.get(image_url)
-    image_bytes = resp.content
-    image = PIL.Image.open(BytesIO(image_bytes))
-    image_array = np.array(image)
-    return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+# def make_from_url(image_url):
+#     resp = requests.get(image_url)
+#     image_bytes = resp.content
+#     image = PIL.Image.open(BytesIO(image_bytes))
+#     image_array = np.array(image)
+#     return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
 
 
-def make_from_file(image_path):
-    with open(image_path, mode="rb") as file:
-        image_bytes = file.read()
-        image = PIL.Image.open(BytesIO(image_bytes))
-        image_array = np.array(image)
-        return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+# def make_from_file(image_path):
+#     with open(image_path, mode="rb") as file:
+#         image_bytes = file.read()
+#         image = PIL.Image.open(BytesIO(image_bytes))
+#         image_array = np.array(image)
+#         return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
 
 
 def make_for_store(store_type, post_data, post_metadata):

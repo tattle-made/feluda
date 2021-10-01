@@ -41,3 +41,5 @@ a lot of the config and payloads are dicts. pprint is a handy way to see them in
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 pp.pprint(my_dict)
+
+in the request payload, either look for the media item in the files OR look for a media_url or text field in the post_data

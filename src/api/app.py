@@ -28,8 +28,8 @@ try:
     logger.initialize(logger_param)
     # queue.initialize(queue_param, log=logger)
     # store.initialize(store_param, log=logger)
-    # operators.intialize(index_param)
-    index_controller = IndexController(index_param, None, None)
+    current_operators = operators.intialize(index_param)
+    index_controller = IndexController(index_param, None, operators=current_operators)
 
     health_controller = HealthController()
     # index_controller = IndexController(index_param, store, operators.operators)

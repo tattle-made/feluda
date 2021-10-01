@@ -1,7 +1,13 @@
 from dataclasses import dataclass
 from datetime import datetime
 import json
-from werkzeug.datastructures import MultiDict, FileStorage
+from os import stat
+from typing import Optional
+from werkzeug.datastructures import FileStorage
+import requests
+import PIL
+from io import BytesIO
+import numpy as np
 
 
 @dataclass
@@ -13,74 +19,78 @@ class IndexRequestPostData:
 
 @dataclass
 class TextPostData(IndexRequestPostData):
-    text: str
+    text: Optional[str] = None
     media_type: str = "text"
 
 
 @dataclass
 class ImagePostData(IndexRequestPostData):
-    media_url: str
+    media_url: Optional[str] = None
     media_type: str = "image"
+
+    @staticmethod
+    def make_from_url(image_url):
+        resp = requests.get(image_url)
+        image_bytes = resp.content
+        image = PIL.Image.open(BytesIO(image_bytes))
+        image_array = np.array(image)
+        return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+
+    def make_from_file(image_path):
+        with open(image_path, mode="rb") as file:
+            image_bytes = file.read()
+            image = PIL.Image.open(BytesIO(image_bytes))
+            image_array = np.array(image)
+            return {
+                "image": image,
+                "image_array": image_array,
+                "image_bytes": image_bytes,
+            }
 
 
 @dataclass
 class VideoPostData(IndexRequestPostData):
-    media_url: str
+    media_url: Optional[str] = None
     media_type: str = "video"
 
 
 @dataclass
-class IndexRequestConfig:
-    persist: bool = True
+class Config:
+    version: str = "0.1"
 
 
 @dataclass
 class Post:
     type: str
     post_data: IndexRequestPostData
-    config: IndexRequestConfig
+    config: Config
     metadata: object
-    files: MultiDict
-    # files: MultiDict(str, FileStorage)
+    file: FileStorage or None
 
-
-# @dataclass
-# class IndexRequestModel:
-#     post_id: str
-#     source_id: str
-#     client_id: str
-#     media_type: str
-#     metadata: object = {}
-#     file_url: str = None
-#     text_data: str = None
-#     date_added: datetime = datetime.utcnow()
-
-#     post: PostData = None
-
-#     @staticmethod
-#     def FromRequestData(req_data):
-#         return IndexRequestModel(
-#             post_id=req_data["post_id"],
-#             source_id=req_data["source_id"],
-#             client_id=req_data["client_id"],
-#             media_type=req_data["media_type"],
-#             metadata=req_data["metadata"],
-#             file_url=req_data["media_url"],
-#             text_data=req_data["text"],
-#         )
-
-#     def get_post_data(self):
-#         post = {
-#             "post_id": self.post_id,
-#             "source_id": self.source_id,
-#             "client_id": self.client_id,
-#         }
-#         if self.file_url is not None:
-#             post["media_url"] = self.file_url
-#         if self.text_data is not None:
-#             post["text_data"] = self.text_data
-
-#         return post
+    @staticmethod
+    def fromRequestPayload(type, request):
+        try:
+            data = json.load(request.files["data"])
+            file = request.files["media"]
+            config = data["config"]
+            metadata = data["metadata"]
+            post = data["post"]
+            return Post(
+                type=type,
+                post_data=TextPostData(**post)
+                if (type == "text")
+                else ImagePostData(**post)
+                if (type == "image")
+                else VideoPostData(**post)
+                if (type == "video")
+                else IndexRequestPostData(**post),
+                config=Config(**config),
+                metadata=metadata,
+                file=file,
+            )
+        except Exception as e:
+            print(e)
+            raise Exception("Unknown Structure of Data")
 
 
 def make_post_from_request(self, req, media_type):
@@ -94,7 +104,7 @@ def make_post_from_request(self, req, media_type):
         raise "Unsupported Media Type. Please refer to documentation on : /API/index/#media_type"
 
     metadata = json.loads(req.form.get("metadata"))
-    config = IndexRequestConfig(**req.form.get("config"))
+    config = Config(**req.form.get("config"))
     files = req.files["media"]
 
     post = Post(media_type, post_data, config, metadata, files)

@@ -5,15 +5,20 @@ import json
 
 
 class TestIndex(unittest.TestCase):
+    @skip
     def testIndexText(self):
         url = "http://localhost:5000/index/text"
         data = {
-            "post": {"id": "1234"},
+            "post": {
+                "post_id": "1234",
+                "source_id": "asdfasdf-asdfasdf-asdf",
+                "client_id": "123-12312",
+                "text": "this ia sample text ",
+            },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {"preserve": True},
         }
         files = {
-            "media": open("sample_data/image-with-text.jpg", "rb"),
+            "media": open("sample_data/simple-text.txt", "rb"),
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)
@@ -24,9 +29,13 @@ class TestIndex(unittest.TestCase):
     def testIndexImage(self):
         url = "http://localhost:5000/index/image"
         data = {
-            "post": {"id": "1234"},
+            "post": {
+                "post_id": "1234",
+                "source_id": "asdfasdf-asdfasdf-asdf",
+                "client_id": "123-12312",
+                "media_url": "http://www.google.com/image",
+            },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {"preserve": True},
         }
         files = {
             "media": open("sample_data/image-with-text.jpg", "rb"),
@@ -42,7 +51,46 @@ class TestIndex(unittest.TestCase):
         data = {
             "post": {"id": "1234"},
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {"preserve": True},
+        }
+        files = {
+            "media": open("sample_data/image-with-text.jpg", "rb"),
+            "data": json.dumps(data),
+        }
+        response = requests.post(url, json=data, files=files)
+        print(response.text)
+        self.assertEqual(response.status_code, 200)
+
+    @skip
+    def testRepresentText(self):
+        url = "http://localhost:5000/represent/text"
+        data = {
+            "post": {
+                "post_id": "1234",
+                "source_id": "asdfasdf-asdfasdf-asdf",
+                "client_id": "123-12312",
+                "text": "this is sample text ",
+            },
+            "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
+            "config": {},
+        }
+        files = {
+            "media": open("sample_data/simple-text.txt", "rb"),
+            "data": json.dumps(data),
+        }
+        response = requests.post(url, json=data, files=files)
+        print(response.text)
+        self.assertEqual(response.status_code, 200)
+
+    def testRepresentImage(self):
+        url = "http://localhost:5000/represent/image"
+        data = {
+            "post": {
+                "post_id": "1234",
+                "source_id": "asdfasdf-asdfasdf-asdf",
+                "client_id": "123-12312",
+            },
+            "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
+            "config": {},
         }
         files = {
             "media": open("sample_data/image-with-text.jpg", "rb"),

@@ -9,14 +9,14 @@ def intialize(config):
     for operator in operators:
         print(operator["type"], ":", operator["parameters"])
         active_operators[operator["type"]] = importlib.import_module(
-            ".composite." + operator["type"], package=PACKAGE
+            "." + operator["type"], package=PACKAGE
         )
         active_operators[operator["type"]].initialize(operator["parameters"])
     return active_operators
 
 
-def run(operator, post):
-    return operator.run(post)
+# def run(operator, post):
+#     return operator.run(post)
 
 
 # operators = {
