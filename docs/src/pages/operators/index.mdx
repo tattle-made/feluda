@@ -1,0 +1,18 @@
+# Operators
+
+Operators lie at the heart of Tattle Search. Operators define ways in which you can manipulate data
+that your search engine wants to operate on. You can configure Tattle Search to load as many or as
+few operators at runtime. Your modules can then access the configured operators by its key and use it by
+invoking its run method.
+
+`text_vec = operators["text_vec_rep_paraphrase_lxml"].run(text)`
+or
+`image_vec = operators["image_vec_rep_resnet"].run(image)`
+
+To create your own operators, make a class with the interface
+initialize(param), run(data), cleanup(), get_state()
+Use one of the existing operators as guide. `detect_text_in_image` is a fairly
+simple one.
+
+If you wish to add your operator to Tattle Search, please make a PR with your operator and test for it. In the
+future we may consider a plugin architecture to allow Tattle Search to enable third party operators.
