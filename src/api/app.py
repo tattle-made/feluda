@@ -21,15 +21,14 @@ try:
         queue_param,
         logger_param,
         server_param,
-        index_param,
-        search_param,
+        operator_param,
     ) = parameters.values()
 
     logger.initialize(logger_param)
     # queue.initialize(queue_param, log=logger)
     # store.initialize(store_param, log=logger)
-    current_operators = operators.intialize(index_param)
-    index_controller = IndexController(index_param, None, operators=current_operators)
+    current_operators = operators.intialize(operator_param)
+    index_controller = IndexController(None, operators=current_operators)
 
     health_controller = HealthController()
     # index_controller = IndexController(index_param, store, operators.operators)

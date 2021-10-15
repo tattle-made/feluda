@@ -59,6 +59,13 @@ class Config:
     version: str = "0.1"
 
 
+post_factory = {
+    "text": TextPostData,
+    "image": ImagePostData,
+    "video": VideoPostData,
+}
+
+
 @dataclass
 class Post:
     type: str
@@ -77,13 +84,7 @@ class Post:
             post = data["post"]
             return Post(
                 type=type,
-                post_data=TextPostData(**post)
-                if (type == "text")
-                else ImagePostData(**post)
-                if (type == "image")
-                else VideoPostData(**post)
-                if (type == "video")
-                else IndexRequestPostData(**post),
+                post_data=post_factory[type](**post),
                 config=Config(**config),
                 metadata=metadata,
                 file=file,
@@ -91,23 +92,3 @@ class Post:
         except Exception as e:
             print(e)
             raise Exception("Unknown Structure of Data")
-
-
-def make_post_from_request(self, req, media_type):
-    if media_type is "text":
-        post_data = TextPostData(**req.form.get("post"))
-    elif media_type is "image":
-        post_data = ImagePostData(**req.form.get("post"))
-    elif media_type is "video":
-        post_data = VideoPostData(**req.form.get("post"))
-    else:
-        raise "Unsupported Media Type. Please refer to documentation on : /API/index/#media_type"
-
-    metadata = json.loads(req.form.get("metadata"))
-    config = Config(**req.form.get("config"))
-    files = req.files["media"]
-
-    post = Post(media_type, post_data, config, metadata, files)
-
-    # return (post, metadata, config, files, media_type)
-    return post

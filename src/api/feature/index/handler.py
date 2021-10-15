@@ -1,4 +1,4 @@
-from .model import Post, make_post_from_request
+from .model import Post
 from flask import request
 import json
 import pprint
@@ -75,9 +75,8 @@ class IndexHandler:
 
     def represent_image(self, operators):
         post = Post.fromRequestPayload("image", request)
-        # image = post.make_from_file(post.file)
-        # print(image)
-        # image_vec = operators["image_vec_rep_resnet"].run(image)
+        image = post.make_from_file(post.file)
+        image_vec = operators["image_vec_rep_resnet"].run(image)
         return {"message": "represent_image"}
 
     def represent_video(self, operators):

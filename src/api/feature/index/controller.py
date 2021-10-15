@@ -17,7 +17,7 @@ class IndexController:
         support JSON
     """
 
-    def __init__(self, param, store, operators):
+    def __init__(self, store, operators):
         self.operators = operators
         return
         # for operator in param["parameters"]["operators"]:

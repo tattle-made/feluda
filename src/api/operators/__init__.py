@@ -5,7 +5,7 @@ PACKAGE = "operators"
 
 def intialize(config):
     active_operators = {}
-    operators = config["parameters"]["operators"]
+    operators = config["parameters"]
     for operator in operators:
         print(operator["type"], ":", operator["parameters"])
         active_operators[operator["type"]] = importlib.import_module(

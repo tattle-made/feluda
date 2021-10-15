@@ -20,30 +20,20 @@ server :
   parameters :
     port : 3000
     type : "https"
-  
-index :
-  label : "Media Indexer"
-  parameters:
-    supported_media :
-      - text
-      - image
-      - video 
-    operators : 
-      - name : "Text Vector Representation"
-        type : "text_vec_rep_paraphrase_lxml"
-        parameters: {}
-      - name : "Language Detection"
-        type : "detect_lang_of_text"
-        parameters: {}
-      - name : "Text Extraction"
-        type : "detect_text_in_image"
-        parameters: {}
-      - name : "Image Vector Representation"
-        type : "image_vec_rep_resnet"
-        parameters: {}
 
-
-search : 
-  label : "Search"
-
+operators : 
+  label : "Server"
+  parameters :
+    - name : "Text Vector Representation"
+      type : "text_vec_rep_paraphrase_lxml"
+      parameters: {}
+    - name : "Language Detection"
+      type : "detect_lang_of_text"
+      parameters: {}
+    - name : "Text Extraction"
+      type : "detect_text_in_image"
+      parameters: {}
+    - name : "Image Vector Representation"
+      type : "image_vec_rep_resnet"
+      parameters: {}
 
