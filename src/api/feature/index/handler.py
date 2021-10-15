@@ -1,4 +1,4 @@
-from .model import Post
+from .model import Post, ImageFactory
 from flask import request
 import json
 import pprint
@@ -75,9 +75,10 @@ class IndexHandler:
 
     def represent_image(self, operators):
         post = Post.fromRequestPayload("image", request)
-        image = post.make_from_file(post.file)
+        image = ImageFactory.make_from_file_in_memory(post.file)
         image_vec = operators["image_vec_rep_resnet"].run(image)
-        return {"message": "represent_image"}
+        return {"representation": image_vec.tolist()}
+        # return {"message": "represent_image"}
 
     def represent_video(self, operators):
         return {"message": "represent_video"}

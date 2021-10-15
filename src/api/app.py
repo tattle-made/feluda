@@ -25,14 +25,9 @@ try:
     ) = parameters.values()
 
     logger.initialize(logger_param)
-    # queue.initialize(queue_param, log=logger)
-    # store.initialize(store_param, log=logger)
     current_operators = operators.intialize(operator_param)
     index_controller = IndexController(None, operators=current_operators)
-
     health_controller = HealthController()
-    # index_controller = IndexController(index_param, store, operators.operators)
-    # search.initialize(search_param, index_controller, store, log=logger)
 
     server = Server(
         server_param, controllers=[health_controller, index_controller], log=logger

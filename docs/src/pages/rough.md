@@ -43,3 +43,8 @@ pp = pprint.PrettyPrinter(indent=4)
 pp.pprint(my_dict)
 
 in the request payload, either look for the media item in the files OR look for a media_url or text field in the post_data
+
+# Python and pip related things
+
+pip list
+pip install <package_name> -U // upgrades the package to its latest version.

@@ -9,4 +9,8 @@ nose2
 
 
 nose2 core.store.test_es
+
+
+# testing a single function
+nose2 feature.index.test_index.TestIndex.testRepresentImage
 ```

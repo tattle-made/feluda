@@ -98,8 +98,9 @@ class TestIndex(unittest.TestCase):
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)
-        print(response.text)
+        # print(response.json())
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()["representation"]), 512)
         # assert if the length of the vector is 512
 
     @skip

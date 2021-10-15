@@ -28,25 +28,6 @@ class ImagePostData(IndexRequestPostData):
     media_url: Optional[str] = None
     media_type: str = "image"
 
-    @staticmethod
-    def make_from_url(image_url):
-        resp = requests.get(image_url)
-        image_bytes = resp.content
-        image = PIL.Image.open(BytesIO(image_bytes))
-        image_array = np.array(image)
-        return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
-
-    def make_from_file(image_path):
-        with open(image_path, mode="rb") as file:
-            image_bytes = file.read()
-            image = PIL.Image.open(BytesIO(image_bytes))
-            image_array = np.array(image)
-            return {
-                "image": image,
-                "image_array": image_array,
-                "image_bytes": image_bytes,
-            }
-
 
 @dataclass
 class VideoPostData(IndexRequestPostData):
@@ -64,6 +45,39 @@ post_factory = {
     "image": ImagePostData,
     "video": VideoPostData,
 }
+
+
+class ImageFactory:
+    @staticmethod
+    def make_from_url(image_url):
+        resp = requests.get(image_url)
+        image_bytes = resp.content
+        image = PIL.Image.open(BytesIO(image_bytes))
+        image_array = np.array(image)
+        return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+
+    @staticmethod
+    def make_from_file_on_disk(image_path):
+        with open(image_path, mode="rb") as file:
+            image_bytes = file.read()
+            image = PIL.Image.open(BytesIO(image_bytes))
+            image_array = np.array(image)
+            return {
+                "image": image,
+                "image_array": image_array,
+                "image_bytes": image_bytes,
+            }
+
+    @staticmethod
+    def make_from_file_in_memory(image_data: FileStorage):
+        image_bytes = image_data.read()
+        image = PIL.Image.open(BytesIO(image_bytes))
+        image_array = np.array(image)
+        return {
+            "image": image,
+            "image_array": image_array,
+            "image_bytes": image_bytes,
+        }
 
 
 @dataclass

@@ -5,15 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Remote Attach",
+      "name": "Debug API in docker",
       "type": "python",
       "request": "attach",
-      "host": "127.0.0.1",
-      "port": 5678,
+      "connect": {
+        "host": "127.0.0.1",
+        "port": 5678
+      },
       "pathMappings": [
         {
           "localRoot": "${workspaceFolder}/src/api",
-          "remoteRoot": "/app"
+          "remoteRoot": "/app/"
         }
       ]
     }
