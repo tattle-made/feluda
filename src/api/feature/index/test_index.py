@@ -5,7 +5,6 @@ import json
 
 
 class TestIndex(unittest.TestCase):
-    @skip
     def testIndexText(self):
         url = "http://localhost:5000/index/text"
         data = {
@@ -25,7 +24,6 @@ class TestIndex(unittest.TestCase):
         print(response.text)
         self.assertEqual(response.status_code, 200)
 
-    @skip
     def testIndexImage(self):
         url = "http://localhost:5000/index/image"
         data = {
@@ -45,7 +43,6 @@ class TestIndex(unittest.TestCase):
         print(response.text)
         self.assertEqual(response.status_code, 200)
 
-    @skip
     def testIndexVideo(self):
         url = "http://localhost:5000/index/video"
         data = {
@@ -60,7 +57,6 @@ class TestIndex(unittest.TestCase):
         print(response.text)
         self.assertEqual(response.status_code, 200)
 
-    @skip
     def testRepresentText(self):
         url = "http://localhost:5000/represent/text"
         data = {
@@ -98,12 +94,9 @@ class TestIndex(unittest.TestCase):
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)
-        # print(response.json())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["representation"]), 512)
-        # assert if the length of the vector is 512
 
-    @skip
     def testRepresentVideo(self):
         url = "http://localhost:5000/represent/image"
         data = {
@@ -116,7 +109,7 @@ class TestIndex(unittest.TestCase):
             "config": {},
         }
         files = {
-            "media": open("sample_data/image-with-text.jpg", "rb"),
+            "media": open("sample_data/cat_water.mp4", "rb"),
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)

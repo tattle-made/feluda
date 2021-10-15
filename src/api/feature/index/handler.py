@@ -81,6 +81,7 @@ class IndexHandler:
         # return {"message": "represent_image"}
 
     def represent_video(self, operators):
+        post = Post.fromRequestPayload("video", request)
         return {"message": "represent_video"}
 
     def make_handler(self, operators):
