@@ -2,14 +2,16 @@ import * as React from "react";
 import AppShell from "../components/atoms/AppShell";
 import { Box, Heading, Text } from "grommet";
 
-// markup
 const IndexPage = () => {
   return (
     <AppShell>
+      <Box>
+        <Text>Nav Option</Text>
+      </Box>
       <div>
-        <h1>Tattle Search documentation</h1>
+        <h1>Khoj documentation</h1>
         <Text size={"medium"}>
-          Welcome to central repository for tattle operators
+          A multimodal multilingual search engine framework
         </Text>
       </div>
     </AppShell>

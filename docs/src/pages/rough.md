@@ -1,3 +1,7 @@
+---
+title: Rough Notes
+---
+
 # Semantics
 
 throughout the code you will read references to something called representation (occasionally shortened to rep), this
@@ -48,3 +52,7 @@ in the request payload, either look for the media item in the files OR look for 
 
 pip list
 pip install <package_name> -U // upgrades the package to its latest version.
+
+RESUME
+Open code in vscode
+open 3 terminals 1. docker-compose up 2. docker exec -it <container_id> /bin/sh -> python -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py 3. docker exec -it <container_id> /bin/sh -> nose2 feature.index.test_index.TestIndex.testRepresetnVideo

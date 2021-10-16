@@ -1,3 +1,7 @@
+---
+title: Burns
+---
+
 # Burns
 
 A catalogue of odd issues that have risen while developing and maintaining this software.
