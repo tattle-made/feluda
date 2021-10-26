@@ -17,17 +17,14 @@ class IndexController:
         support JSON
     """
 
-    def __init__(self, store, operators):
+    def __init__(self, store, operators, queue):
+        self.store = store
         self.operators = operators
-        return
-        # for operator in param["parameters"]["operators"]:
-        #     self.operators[operator["media_type"]] = operators[operator["type"]]
-        # self.store = store
+        self.queue = queue
 
     def get_handler(self):
         handler = IndexHandler()
         return handler.make_handler(self.operators)
-        # return handler.make_handler(req, self.operators)
 
     def get_routes(self):
         """

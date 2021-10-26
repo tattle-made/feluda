@@ -12,13 +12,27 @@ of a media item in a database (mongo, sql, elasticsearch) as opposed to creating
 
 # Logging
 
-there is a centralized logger that is passed from app.py to every module/component/feature.
-modules should expect it as a dependency and use log.info(), log.debug(), log.error() as a way to log results.
+within every module, inject the following code
+
+```python
+import logging
+log = logging.getLogger(__name__)
+```
+
+Continue to use log.info(), log.warning() and log.error() as a way to log results.
 During development these logs will be available for viewing to the developer in their terminal whereas in production, these will be collected by a log agent
 and sent to a centralized dashboard like kibana or xyz
-For exception handling, please use the log.exception() method. this ensures that the stack trace is printed along with the exception and is helpful in debugging.
 
-it would be better to find out a way to remove logger as a dependency of every module. so you didn't have to pass it to every
+For exception handling, please use the `log.exception()` method instead of `log.error()`. this ensures that the stack trace is printed along with the exception and is helpful in debugging.
+
+```python
+log.info("hello")
+log.warning("missing field : age")
+log.error("somethign terrible happened")
+log.exception("Error Initializing App")
+```
+
+to pretty print dict, use this `log.info(json.dumps(my_dict, indent=4))`
 
 # TODO
 

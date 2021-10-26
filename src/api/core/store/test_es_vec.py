@@ -21,9 +21,9 @@ class TestES(unittest.TestCase):
             print("No elasticsearch service found. Tests are bound to fail.")
         cls.param = {
             "host_name": "es",
-            "text_index_name": "text",
-            "image_index_name": "image",
-            "video_index_name": "video",
+            "text_index_name": "test_text",
+            "image_index_name": "test_image",
+            "video_index_name": "test_video",
         }
 
     @classmethod
@@ -37,25 +37,27 @@ class TestES(unittest.TestCase):
     @skip
     def test_create_indices(self):
         print(self.param)
+        es = ES(self.param)
+        es.connect()
+        es.create_index()
+        indices = es.get_indices()
+        # print(indices)
 
-        self.es.create_index()
-        indices = self.es.get_indices()
-
         self.assertEquals(
-            indices["text"]["mappings"]["properties"]["text_vec"]["dims"], 768
+            indices["test_text"]["mappings"]["properties"]["text"]["analyzer"],
+            "standard",
         )
         self.assertEquals(
-            indices["text"]["mappings"]["properties"]["text"]["analyzer"], "standard"
+            indices["test_image"]["mappings"]["properties"]["image_vec"]["dims"], 512
         )
         self.assertEquals(
-            indices["image"]["mappings"]["properties"]["image_vec"]["dims"], 512
-        )
-        self.assertEquals(
-            indices["video"]["mappings"]["properties"]["vid_vec"]["dims"], 512
+            indices["test_video"]["mappings"]["properties"]["vid_vec"]["dims"], 512
         )
 
     @skip
     def test_store_image(self):
+        es = ES(self.param)
+        es.connect()
         doc = {
             "source_id": str(1231231),
             "source": "tattle-admin",
@@ -64,7 +66,7 @@ class TestES(unittest.TestCase):
             "image_vec": np.random.randn(512).tolist(),
             "date_added": datetime.utcnow(),
         }
-        result = self.es.store(doc)
+        result = es.store(doc)
         self.assertEqual(result["result"], "created")
 
     def test_search_vectors(self):
@@ -81,9 +83,9 @@ class TestES(unittest.TestCase):
             "date_added": datetime.utcnow(),
         }
 
-        result = es.store(doc)
+        result = es.store("test_image", doc)
         pp.pprint(result)
-        search_result = es.find("image", vec)
+        search_result = es.find("test_image", vec)
         es.refresh()
         print("SEARCH RESULTS \n : ")
         pp.pprint(search_result)
@@ -101,3 +103,11 @@ class TestES(unittest.TestCase):
 
     def test_find_by_metadata_field(self):
         pass
+
+    def delete_indices(self):
+        print("DELETING INDICES")
+        es = ES(self.param)
+        es.connect()
+        es.delete_indices()
+        print("INDICES DELETED")
+        self.assertEqual(1, 1)

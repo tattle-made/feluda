@@ -1,3 +1,6 @@
+import logging
+
+log = logging.getLogger(__name__)
 from elasticsearch import Elasticsearch
 from .es_vec_mappings import mappings
 from .es_vec_adapter import es_to_sanitized
@@ -7,10 +10,11 @@ import numpy as np
 class ES:
     def __init__(self, param):
         self.es_host = param["host_name"]
-        self.txt_index_name = param["text_index_name"]
-        self.img_index_name = param["image_index_name"]
-        self.vid_index_name = param["video_index_name"]
-        self.index_types = ["text", "image", "video"]
+        self.indices = {
+            "text": param["text_index_name"],
+            "image": param["image_index_name"],
+            "video": param["video_index_name"],
+        }
 
     def connect(self):
         try:
@@ -20,11 +24,11 @@ class ES:
                     self.config,
                 ]
             )
-            print("Success Connecting to Elasticsearch")
+            log.info("Success Connecting to Elasticsearch")
         except Exception:
-            print("Error Connecting to Elasticsearch")
+            log.exception("Error Connecting to Elasticsearch")
 
-    def create_index(self):
+    def optionally_create_index(self):
         """
         Checks if an index already exists in Elasticsearch and if not, creates it according to the mapping specified for that index type.
         Note: This uses default shard settings.
@@ -33,46 +37,47 @@ class ES:
         es - Elasticsearch client instance
         index - (str) Name of the index
         type - (str) Allowed options are "text", "image" or "video"
-
         """
-        # WARNING: The next line is only for testing index creation and will delete existing indices!
-        # es.indices.delete(index=index, ignore=[400,404])
-
-        for index_type in self.index_types:
-            if self.client.indices.exists(index=index_type):
-                print("Verified that {} exists".format(index_type))
+        for index in self.indices:
+            if self.client.indices.exists(index=self.indices[index]):
+                log.info("Verified that {} exists".format(self.indices[index]))
             else:
-                print("{} does not exist, creating it now".format(index_type))
-                body = mappings[index_type]
-                self.client.indices.create(index=index_type, body=body)
-                print("{} created".format(index_type))
+                log.info(
+                    "{} does not exist, creating it now".format(self.indices[index])
+                )
+                body = mappings[index]
+                self.client.indices.create(index=self.indices[index], body=body)
+                log.info("{} created".format(self.indices[index]))
 
     def delete_indices(self):
-        for index_type in self.index_types:
-            self.client.indices.delete(index_type)
+        for index in self.indices:
+            self.client.indices.delete(self.indices[index])
 
     def get_indices(self):
-        indices = self.client.indices.get(",".join(self.index_types))
+        index_list = ""
+        for index in self.indices:
+            index_list += self.indices[index] + ","
+        index_list = index_list[:-1]
+        indices = self.client.indices.get(index_list)
         return indices
 
-    def store(self, doc):
-
-        result = self.client.index(index="image", body=doc)
+    def store(self, index_name, doc):
+        result = self.client.index(index=index_name, body=doc)
         return result
 
     def refresh(self):
-        for index_type in self.index_types:
-            self.client.indices.refresh(index_type)
+        for index in self.indices:
+            self.client.indices.refresh(self.indices[index])
 
     def find(self, index_name, vec):
         if type(vec) == np.ndarray:
             vec = vec.tolist()
 
-        if index_name == "text":
+        if index_name == self.indices["text"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'text_vec'))"
-        elif index_name == "image":
+        elif index_name == self.indices["image"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'image_vec'))"
-        elif index_name == "video":
+        elif index_name == self.indices["video"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
         q = {
@@ -94,11 +99,3 @@ class ES:
 
     def delete(id):
         pass
-
-
-# es_instance = ES()
-# es_instance.connect()
-
-
-# def get_es_instance():
-#     return es_instance.client

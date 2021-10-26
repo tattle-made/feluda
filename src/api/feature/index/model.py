@@ -80,6 +80,12 @@ class ImageFactory:
         }
 
 
+class VideoFactory:
+    @staticmethod
+    def make_from_file_on_disk(video_path):
+        return {"path": video_path}
+
+
 @dataclass
 class Post:
     type: str

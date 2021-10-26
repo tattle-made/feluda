@@ -9,6 +9,10 @@ store :
 
 queue : 
   label : "Rabbit MQ Queue"
+  parameters: 
+    host_name : "rabbitmq"
+    index_queue_name : "tattle-search-index-queue"
+    report_queue_name : "tattle-search-report-queue"
 
 logger : 
   label : "Logger"

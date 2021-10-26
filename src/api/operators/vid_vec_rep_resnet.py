@@ -223,7 +223,7 @@ def run(post):
     os.remove(fname)
 
     if not doable:
-        raise "Cannot index video"
+        raise "Unsupported Video. Cannot index video."
 
     avg_vec = vid_analyzer.get_mean_feature().tolist()
     all_vec = gendata(vid_analyzer)

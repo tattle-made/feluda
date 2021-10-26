@@ -40,6 +40,10 @@ mappings = {
                             "type":"dense_vector",
                             "dims": 512
                         },
+                        "text": {
+                            "type": "text",
+                            "analyzer": "standard"
+                        },
                         "date_added": {
                             "type": "date"
                         }

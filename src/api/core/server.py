@@ -1,3 +1,6 @@
+import logging
+
+log = logging.getLogger(__name__)
 from flask import Flask
 
 
@@ -18,8 +21,7 @@ class Server:
                     endpoint, name, methods = route
                     self.app.add_url_rule(endpoint, name, handler, methods=methods)
             except Exception as e:
-                print("Could not add Route")
-                print(e)
+                log.exception("Could not add Route")
 
     def start(self):
         @self.app.route("/")
