@@ -10,9 +10,6 @@ from queue_controller import Queue
 import os
 import operators
 
-# this is not needed for docker local dev but for non docker local dev. might need to document how to do this
-# for non docker local development.
-# load_dotenv()
 try:
     config = config.load("config.yml")
 

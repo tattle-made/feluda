@@ -15,3 +15,6 @@ developing this software further, try searching here to see if one of us has wal
    `return {"representation": text_vec.tolist(), "plain_text": plain_text}`
    I used this SO for reference : https://stackoverflow.com/a/51685601/2767642
    I also read in this (link)[https://github.com/numpy/numpy/issues/10494] that this might not always work but I havent faced any issues yet in our use case.
+
+2. environment variables not being loaded.
+   If you are running the app in a way where the environment variables arent set. you might want to import dot_env and run `load_dotenv()` at the outset of your program, this will load the environment variables mentioned in development.env into your environment
