@@ -1,5 +1,5 @@
 import logging
-from api.core.config import StoreConfig
+from core.config import StoreConfig
 
 log = logging.getLogger(__name__)
 from elasticsearch import Elasticsearch

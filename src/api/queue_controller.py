@@ -1,4 +1,4 @@
-from api.core.config import QueueConfig
+from core.config import QueueConfig
 from core.rabbit_mq import RabbitMQ
 from os import environ
 

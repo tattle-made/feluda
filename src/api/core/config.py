@@ -1,10 +1,10 @@
 import logging
-from typing import List
 
 log = logging.getLogger(__name__)
+
+from typing import List
 import yaml
 from dataclasses import dataclass
-import json
 from dacite import from_dict
 
 

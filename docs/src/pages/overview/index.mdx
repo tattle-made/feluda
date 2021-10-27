@@ -5,3 +5,13 @@ title: Overview
 # Overview
 
 Tattle Search is a framework for protoyping and building complex search engines.
+
+The source code is organized as follows :
+core : essential components of the framework.
+operators : all media operators that perform any sort of transformation of media items.
+generally speaking when you run the server, all operators aren't loaded. Certain operators can be
+enabled/disabled based on your usecase.
+endpoint : all the features exposed via API are located here. Structure of an endpoint can be understood at /overview/endpoint
+app.py :
+queue_controller.py : maybe it does not fit here.
+receiver.py :

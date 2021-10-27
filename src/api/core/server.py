@@ -1,13 +1,14 @@
 import logging
 
-from api.core.config import ServerConfig
+from core.config import ServerConfig
 
 log = logging.getLogger(__name__)
 from flask import Flask
 
 
 class Server:
-    def __init__(self, param: ServerConfig, controllers, log) -> None:
+    def __init__(self, param: ServerConfig, controllers) -> None:
+        self.param = param
         self.controllers = controllers
         self.app = Flask(__name__)
         self.setup_routes()
@@ -30,4 +31,4 @@ class Server:
         def hello_world():
             return "<p>Hello, World!</p>"
 
-        self.app.run(port=5000)
+        self.app.run(port=self.param.parameters.port)
