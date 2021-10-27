@@ -1,4 +1,5 @@
 import logging
+from api.core.config import StoreConfig
 
 log = logging.getLogger(__name__)
 from elasticsearch import Elasticsearch
@@ -8,12 +9,12 @@ import numpy as np
 
 
 class ES:
-    def __init__(self, param):
-        self.es_host = param["host_name"]
+    def __init__(self, config: StoreConfig):
+        self.es_host = config.parameters.host_name
         self.indices = {
-            "text": param["text_index_name"],
-            "image": param["image_index_name"],
-            "video": param["video_index_name"],
+            "text": config.parameters.text_index_name,
+            "image": config.parameters.image_index_name,
+            "video": config.parameters.video_index_name,
         }
 
     def connect(self):

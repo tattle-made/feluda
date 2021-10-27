@@ -1,11 +1,13 @@
 import logging
 
+from api.core.config import ServerConfig
+
 log = logging.getLogger(__name__)
 from flask import Flask
 
 
 class Server:
-    def __init__(self, param, controllers, log) -> None:
+    def __init__(self, param: ServerConfig, controllers, log) -> None:
         self.controllers = controllers
         self.app = Flask(__name__)
         self.setup_routes()

@@ -2,10 +2,10 @@ store :
   label : "Data Store"
   type : "es_vec"
   parameters:
-    - host_name : "es"
-    - image_index_name : "image"
-    - text_index_name : "text"
-    - video_index_name : "video"
+    host_name : "es"
+    image_index_name : "image"
+    text_index_name : "text"
+    video_index_name : "video"
 
 queue : 
   label : "Rabbit MQ Queue"

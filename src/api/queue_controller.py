@@ -1,13 +1,14 @@
+from api.core.config import QueueConfig
 from core.rabbit_mq import RabbitMQ
 from os import environ
 
 
 class Queue:
-    def __init__(self, param):
+    def __init__(self, param: QueueConfig):
         try:
             self.queue = RabbitMQ(
                 {
-                    "host": param["host_name"],
+                    "host": param.parameters.host_name,
                     "username": environ.get("MQ_USERNAME"),
                     "password": environ.get("MQ_PASSWORD"),
                 }
