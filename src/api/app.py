@@ -1,13 +1,15 @@
+import os
+import logging
+
 log = logging.getLogger(__name__)
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+
 from core import config
 from core.server import Server
 from feature.index.controller import IndexController
 from feature.health import HealthController
-import logging
 from core.store.es_vec import ES
 from queue_controller import Queue
-import os
 import operators
 
 try:
