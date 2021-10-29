@@ -1,23 +1,22 @@
 module.exports = {
   siteMetadata: {
-    siteUrl: "https://www.search.tattle.co.in",
-    description: "to be added later",
+    siteUrl: "https://docs.search.tattle.co.in",
     title: "docs",
-    author: "@tattle",
-    base_url: "https://search.tattle.co.in/",
+    description: "A search engine framework",
+    author: "@tattle-made",
   },
   plugins: [
     "gatsby-plugin-styled-components",
     "gatsby-plugin-image",
     "gatsby-plugin-react-helmet",
-    "gatsby-plugin-sitemap",
     {
-      resolve: "gatsby-plugin-manifest",
+      resolve: `gatsby-plugin-mdx`,
       options: {
-        icon: "src/images/icon.png",
+        defaultLayouts: {
+          default: require.resolve("./src/components/default-layout.js"),
+        },
       },
     },
-    "gatsby-plugin-mdx",
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
     {

@@ -18,7 +18,7 @@ function SEO({ description, lang, meta, title }) {
           title
           description
           author
-          base_url
+          siteUrl
         }
       }
     }
@@ -27,7 +27,7 @@ function SEO({ description, lang, meta, title }) {
   const metaDescription = description || site.siteMetadata.description;
   const author = site.siteMetadata.author;
   // const socialImageURL = allFile.edges[0].node.publicURL;
-  const baseURL = site.siteMetadata.base_url;
+  const baseURL = site.siteMetadata.siteUrl;
 
   return (
     <Helmet
