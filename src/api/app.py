@@ -15,7 +15,7 @@ import operators
 try:
     config = config.load("config.yml")
 
-    current_operators = operators.intialize(config.operators)
+    active_operators = operators.intialize(config.operators)
 
     es_store = ES(config.store)
     es_store.connect()
@@ -27,7 +27,7 @@ try:
 
     health_controller = HealthController()
     index_controller = IndexController(
-        store=es_store, operators=current_operators, queue=queue
+        store=es_store, operators=active_operators, queue=queue
     )
 
     server = Server(config.server, controllers=[health_controller, index_controller])
