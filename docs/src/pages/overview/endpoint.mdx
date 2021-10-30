@@ -1,18 +1,26 @@
+import ClassDiagram from "../../components/atoms/ClassDiagram";
+
 # Endpoint
 
-Every endpoint needs to define a Controller, Handler and Model.
+Endpoint refers to any functionality you want to expose via a REST API. Every endpoint needs to define a Controller, Handler and Model.
 
-Interface Definition
+## Interface Definitions
 
-Controller:
+<ClassDiagram
+  name="Controller"
+  methods={[{ name: "get_routes" }, { name: "get_handler" }]}
+/>
 
-- get_routes
-- get_handler
+<ClassDiagram
+  name="Handler"
+  methods={[
+    {
+      name: "make_handlers",
+      description: "map a API request path to a function",
+    },
+  ]}
+/>
 
-Handler:
+## Model:
 
-- make_handlers: map a API request path to a function
-
-Model:
-
-- dataclasses that model API requests and document them. The purpose models serve is document API paramters and provide code completion.
+Dataclasses that model API requests and document them. The purpose models serve is document API paramters and provide code completion.

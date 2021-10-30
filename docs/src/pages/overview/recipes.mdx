@@ -1,0 +1,48 @@
+# Recipes
+
+## A image and text search engine
+
+```yml
+store:
+  label: "Data Store"
+  type: "es_vec"
+  parameters:
+    host_name: "es"
+    image_index_name: "image"
+    text_index_name: "text"
+    video_index_name: "video"
+
+queue:
+  label: "Rabbit MQ Queue"
+  parameters:
+    host_name: "rabbitmq"
+    index_queue_name: "tattle-search-index-queue"
+    report_queue_name: "tattle-search-report-queue"
+
+logger:
+  label: "Logger"
+  parameters:
+    level: "info"
+
+server:
+  label: "Server"
+  parameters:
+    port: 7000
+    type: "https"
+
+operators:
+  label: "Server"
+  parameters:
+    - name: "Text Vector Representation"
+      type: "text_vec_rep_paraphrase_lxml"
+      parameters: {}
+    - name: "Language Detection"
+      type: "detect_lang_of_text"
+      parameters: {}
+    - name: "Text Extraction"
+      type: "detect_text_in_image"
+      parameters: {}
+    - name: "Image Vector Representation"
+      type: "image_vec_rep_resnet"
+      parameters: {}
+```

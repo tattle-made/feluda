@@ -2,19 +2,18 @@
 title: Testing
 ---
 
-# Testing Individual Operators
+# Testing
 
-** Example Commands **
+## Example Commands
 
-```
+```bash
 nose2 operators.test_detect_text_in_image.Test
 nose2 operators.test_detect_lang_of_text.Test
-nose2
-
-
 nose2 core.store.test_es
+```
 
+## Testing a single function
 
-# testing a single function
+```python
 nose2 feature.index.test_index.TestIndex.testRepresentImage
 ```

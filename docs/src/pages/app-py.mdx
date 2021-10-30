@@ -1,0 +1,15 @@
+# app.py
+
+This sample `app.py` code gives a good sense of how it all comes together.
+
+```
+from endpoint import Health, Index, Search
+
+feluda = Feluda("config.yml")
+
+feluda.server.set_endpoint(Health)
+feluda.server.set_endpoint(Index)
+feluda.server.set_endpoint(Search)
+
+feluda.server.start()
+```

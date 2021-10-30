@@ -20,20 +20,14 @@ const Menu = () => (
       <PlainLink to="/architecture">
         <Text size={"small"}>Architecture</Text>
       </PlainLink>
+      <PlainLink to="/overview/endpoint">
+        <Text size={"small"}>Endpoint</Text>
+      </PlainLink>
       <PlainLink to="/development">
         <Text size={"small"}>Development</Text>
       </PlainLink>
-      <PlainLink to="/burns">
-        <Text size={"small"}>Burns</Text>
-      </PlainLink>
-      <PlainLink to="/todo">
-        <Text size={"small"}>TODO</Text>
-      </PlainLink>
-      <PlainLink to="/testing">
-        <Text size={"small"}>Testing</Text>
-      </PlainLink>
-      <PlainLink to="/rough">
-        <Text size={"small"}>Rough</Text>
+      <PlainLink to="/overview/recipes">
+        <Text size={"small"}>Recipes</Text>
       </PlainLink>
     </Box>
     <PlainLink to={"/operators/"}>
@@ -49,6 +43,37 @@ const Menu = () => (
         <Text size={"small"}>Vid Vec Rep Resnet</Text>
       </PlainLink>
     </Box>
+    <PlainLink to={"/operators/"}>
+      <Heading level={4} margin={"none"}>
+        Contributors
+      </Heading>
+    </PlainLink>
+    <Box pad={"small"}>
+      <PlainLink to="/operators/text-extractor">
+        <Text size={"small"}>Development</Text>
+      </PlainLink>
+      <PlainLink to="/testing">
+        <Text size={"small"}>Testing</Text>
+      </PlainLink>
+      <PlainLink to="/operators/text-extractor">
+        <Text size={"small"}>Roadmap</Text>
+      </PlainLink>
+      <PlainLink to="/todo">
+        <Text size={"small"}>todo</Text>
+      </PlainLink>
+      <PlainLink to="/operators/text-extractor">
+        <Text size={"small"}>First Issues</Text>
+      </PlainLink>
+      <PlainLink to="/burns">
+        <Text size={"small"}>Burns</Text>
+      </PlainLink>
+    </Box>
+
+    <PlainLink to={"/rough"}>
+      <Heading level={4} margin={"none"}>
+        Miscellaneous
+      </Heading>
+    </PlainLink>
   </Box>
 );
 
@@ -78,7 +103,7 @@ const AppShell = ({
         height={{ min: "90vh", height: "fit-content" }}
         pad={"small"}
       >
-        <Box width={"960px"} height={"fit-content"}>
+        <Box width={"1020px"} height={"fit-content"}>
           <Box>
             <TattleLogo />
           </Box>

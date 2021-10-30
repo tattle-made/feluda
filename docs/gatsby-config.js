@@ -12,9 +12,19 @@ module.exports = {
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
+        extensions: [".mdx", ".md"],
         defaultLayouts: {
           default: require.resolve("./src/components/default-layout.js"),
         },
+        gatsbyRemarkPlugins: [
+          {
+            resolve: `gatsby-remark-highlight-code`,
+            options: {
+              terminal: "carbon",
+              theme: "synthwave",
+            },
+          },
+        ],
       },
     },
     "gatsby-plugin-sharp",
