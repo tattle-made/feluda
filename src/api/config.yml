@@ -15,16 +15,11 @@ queue :
     index_queue_name : "tattle-search-index-queue"
     report_queue_name : "tattle-search-report-queue"
 
-logger : 
-  label : "Logger"
-  parameters:
-    level : "info"
-
 server : 
   label : "Server"
   parameters :
     port : 7000
-    type : "https"
+    type : "http"
 
 operators : 
   label : "Server"
