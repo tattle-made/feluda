@@ -7,18 +7,20 @@ from flask import Flask
 
 
 class Server:
-    def __init__(self, param: ServerConfig, controllers) -> None:
+    def __init__(self, param: ServerConfig) -> None:
         self.param = param
-        self.controllers = controllers
         self.app = Flask(__name__)
-        self.setup_routes()
-        pass
+        self.endpoints = []
 
-    def setup_routes(self):
+    def add_endpoint(self, endpoint):
+        self.endpoints.append(endpoint)
+        # self.setup_routes()
+
+    def enable_endpoints(self):
         print("setting up routes")
-        for controller in self.controllers:
-            routes = controller.get_routes()
-            handler = controller.get_handler
+        for endpoint in self.endpoints:
+            routes = endpoint.get_routes()
+            handler = endpoint.get_handler
             try:
                 for route in routes:
                     endpoint, name, methods = route

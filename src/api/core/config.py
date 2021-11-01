@@ -33,6 +33,7 @@ class QueueParameters:
 @dataclass
 class QueueConfig:
     label: str
+    type: str
     parameters: QueueParameters
 
 

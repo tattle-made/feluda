@@ -37,6 +37,9 @@ class RabbitMQ:
     def is_connected(self):
         return self.channel.is_open
 
+    def declare_queue(self, queue_name):
+        self.queue.channel.queue_declare(queue=queue_name, durable=True)
+
     def publish_to_queue(self, queue_name, payload):
         if self.is_connected():
             try:

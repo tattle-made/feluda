@@ -7,6 +7,8 @@ from endpoint import Health, Index, Search
 
 feluda = Feluda("config.yml")
 
+feluda.connect()
+
 feluda.server.set_endpoint(Health)
 feluda.server.set_endpoint(Index)
 feluda.server.set_endpoint(Search)

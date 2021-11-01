@@ -9,6 +9,7 @@ store :
 
 queue : 
   label : "Rabbit MQ Queue"
+  type : "rabbitmq"
   parameters: 
     host_name : "rabbitmq"
     index_queue_name : "tattle-search-index-queue"
@@ -28,9 +29,6 @@ server :
 operators : 
   label : "Server"
   parameters :
-    - name : "Text Vector Representation"
-      type : "text_vec_rep_paraphrase_lxml"
-      parameters: {}
     - name : "Language Detection"
       type : "detect_lang_of_text"
       parameters: {}

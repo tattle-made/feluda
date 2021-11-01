@@ -1,5 +1,8 @@
+from dataclasses import dataclass
 from flask import request
 import json
+
+from core.feluda import Feluda
 
 
 class HealthRequestModel:
@@ -33,8 +36,8 @@ class HealthHandler:
             raise "Unsupported Health API endpoint"
 
 
-class HealthController:
-    def __init__(self):
+class HealthEndpoint:
+    def __init__(self, feluda: Feluda):
         pass
 
     def get_routes(self):

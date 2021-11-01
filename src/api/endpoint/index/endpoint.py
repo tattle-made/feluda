@@ -1,9 +1,10 @@
+from core.feluda import Feluda
 from .handler import IndexHandler
 
 default_config = {"supported_media": ["text", "image", "video"]}
 
 
-class IndexController:
+class IndexEndpoint:
     """
     features :
         index post
@@ -17,10 +18,10 @@ class IndexController:
         support JSON
     """
 
-    def __init__(self, store, operators, queue):
-        self.store = store
-        self.operators = operators
-        self.queue = queue
+    def __init__(self, feluda: Feluda):
+        self.store = feluda.store
+        self.operators = feluda.operators
+        self.queue = feluda.queue
 
     def get_handler(self):
         handler = IndexHandler()

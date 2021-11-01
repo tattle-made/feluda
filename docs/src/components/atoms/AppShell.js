@@ -107,7 +107,7 @@ const AppShell = ({
           <Box>
             <TattleLogo />
           </Box>
-          <Box direction={"row"}>
+          <Box direction={"row-responsive"}>
             <Menu />
 
             <Box width={"100%"}>{children}</Box>

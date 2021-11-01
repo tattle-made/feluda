@@ -1,4 +1,4 @@
-from operators.installer import install_packages
+from .installer import install_packages
 
 """
 This operator uses google cloud API to extract text from an image.
