@@ -33,4 +33,4 @@ class Server:
         def hello_world():
             return "<p>Hello, World!</p>"
 
-        self.app.run(port=self.param.parameters.port)
+        self.app.run(host="0.0.0.0", port=self.param.parameters.port)

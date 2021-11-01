@@ -25,7 +25,7 @@ class IndexEndpoint:
 
     def get_handler(self):
         handler = IndexHandler()
-        return handler.make_handler(self.operators)
+        return handler.make_handler(self.operators.active_operators)
 
     def get_routes(self):
         """

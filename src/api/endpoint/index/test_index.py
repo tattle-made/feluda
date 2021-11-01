@@ -3,10 +3,12 @@ from unittest.case import skip
 import requests
 import json
 
+API_URL = "http://localhost:7000"
+
 
 class TestIndex(unittest.TestCase):
     def testIndexText(self):
-        url = "http://localhost:5000/index/text"
+        url = API_URL + "/index/text"
         data = {
             "post": {
                 "post_id": "1234",
@@ -15,6 +17,7 @@ class TestIndex(unittest.TestCase):
                 "text": "this ia sample text ",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
+            "config": {},
         }
         files = {
             "media": open("sample_data/simple-text.txt", "rb"),
@@ -44,7 +47,7 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def testIndexVideo(self):
-        url = "http://localhost:5000/index/video"
+        url = API_URL + "/index/video"
         data = {
             "post": {"id": "1234"},
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
@@ -58,7 +61,7 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def testRepresentText(self):
-        url = "http://localhost:5000/represent/text"
+        url = API_URL + "/represent/text"
         data = {
             "post": {
                 "post_id": "1234",
@@ -79,7 +82,7 @@ class TestIndex(unittest.TestCase):
         # assert if the length of the vector is 512
 
     def testRepresentImage(self):
-        url = "http://localhost:5000/represent/image"
+        url = API_URL + "/represent/image"
         data = {
             "post": {
                 "post_id": "1234",
@@ -98,7 +101,7 @@ class TestIndex(unittest.TestCase):
         self.assertEqual(len(response.json()["representation"]), 512)
 
     def testRepresentVideo(self):
-        url = "http://localhost:5000/represent/image"
+        url = API_URL + "/represent/image"
         data = {
             "post": {
                 "post_id": "1234",
