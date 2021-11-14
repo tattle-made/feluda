@@ -70,7 +70,7 @@ class TestIndex(unittest.TestCase):
                 "text": "this is sample text ",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {},
+            "config": {"mode": "represent"},
         }
         files = {
             "media": open("sample_data/simple-text.txt", "rb"),

@@ -38,6 +38,7 @@ class VideoPostData(IndexRequestPostData):
 @dataclass
 class Config:
     version: str = "0.1"
+    mode: str = "store"
 
 
 post_factory = {

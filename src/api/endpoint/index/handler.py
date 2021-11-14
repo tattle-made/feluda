@@ -1,3 +1,5 @@
+from core.feluda import Feluda
+from core.store.es_vec_adapter import text_rep_to_es_doc
 from .model import Post, ImageFactory
 from flask import request
 import json
@@ -7,8 +9,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 class IndexHandler:
-    def __init__(self):
-        pass
+    def __init__(self, feluda: Feluda):
+        self.feluda = feluda
 
     def index_text(self, operators):
         # post, metadata, config, files, media_type = make_post_from_request(req, "text")
@@ -71,7 +73,19 @@ class IndexHandler:
         post = Post.fromRequestPayload("text", request)
         plain_text = post.post_data.text
         text_vec = operators["text_vec_rep_paraphrase_lxml"].run(post.post_data.text)
-        return {"representation": text_vec.tolist(), "plain_text": plain_text}
+        if post.config.mode == "represent":
+            return {"representation": text_vec.tolist(), "plain_text": plain_text}
+
+        if post.config.mode == "store":
+            rep = text_rep_to_es_doc(text_vec, post.post_data)
+            result = self.feluda.store.store("text", rep)
+            return {"result": result}
+
+        if post.config.mode == "enqueue":
+            # add to queue
+            # self.feluda.queue.add_to_index_queue(request.data)
+            # return {"message" : "post enqueued"}
+            pass
 
     def represent_image(self, operators):
         post = Post.fromRequestPayload("image", request)

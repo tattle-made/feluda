@@ -62,8 +62,8 @@ class ES:
         indices = self.client.indices.get(index_list)
         return indices
 
-    def store(self, index_name, doc):
-        result = self.client.index(index=index_name, body=doc)
+    def store(self, media_type, doc):
+        result = self.client.index(index=self.indices[media_type], body=doc)
         return result
 
     def refresh(self):
