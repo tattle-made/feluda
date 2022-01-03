@@ -9,6 +9,7 @@ from endpoint import health, index, search
 try:
     feluda = Feluda("config.yml")
     feluda.set_endpoints([health.HealthEndpoint, index.endpoint.IndexEndpoint])
+    # feluda.set_endpoints([health.HealthEndpoint, index.endpoint.IndexEndpoint, search.endpoint])
     feluda.server.start()
 except Exception as e:
     log.exception("Error Initializing Search Service")

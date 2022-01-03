@@ -8,7 +8,7 @@ store :
     video_index_name : "video"
 
 queue : 
-  label : "Rabbit MQ Queue"
+  label : "Queue"
   type : "rabbitmq"
   parameters: 
     host_name : "rabbitmq"
@@ -22,11 +22,11 @@ server :
     type : "http"
 
 operators : 
-  label : "Server"
+  label : "Operators"
   parameters :
-    - name : "Text Vector Representation"
-      type : "text_vec_rep_paraphrase_lxml"
-      parameters: {}
+    # - name : "Text Vector Representation"
+    #   type : "text_vec_rep_paraphrase_lxml"
+    #   parameters: {}
     - name : "Language Detection"
       type : "detect_lang_of_text"
       parameters: {}
@@ -36,4 +36,6 @@ operators :
     - name : "Image Vector Representation"
       type : "image_vec_rep_resnet"
       parameters: {}
-
+    - name : "Video Vector Representation"
+      type : "vid_vec_rep_resnet"
+      parameters: {}

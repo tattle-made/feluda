@@ -46,17 +46,6 @@ class QueueConfig:
 
 
 @dataclass
-class LoggerParameters:
-    level: str
-
-
-@dataclass
-class LoggerConfig:
-    label: str
-    parameters: LoggerParameters
-
-
-@dataclass
 class ServerParameters:
     port: int
     type: str
@@ -85,7 +74,6 @@ class OperatorConfig:
 class Config:
     store: StoreConfig
     queue: QueueConfig
-    logger: LoggerConfig
     server: ServerConfig
     operators: OperatorConfig
 

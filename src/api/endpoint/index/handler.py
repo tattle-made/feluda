@@ -1,121 +1,73 @@
+from typing import Callable
+from core.models.media import MediaMode, MediaType
 from core.feluda import Feluda
 from core.store.es_vec_adapter import text_rep_to_es_doc
-from .model import Post, ImageFactory
+from .model import ConfigMode, Post, Config, ImageFactory
 from flask import request
 import json
-import pprint
+from typing import Callable
+import logging
+import inspect
 
-pp = pprint.PrettyPrinter(indent=4)
+log = logging.getLogger(__name__)
+
+
+def generateRepresentation(post: Post, operators):
+    file = post.getMedia()
+    if post.type == MediaType.TEXT:
+        plain_text = file["text"]
+        text_vec = operators["text_vec_rep_paraphrase_lxml"].run(plain_text)
+        return {"plain_text": plain_text, "vector_representation": text_vec.tolist()}
+    elif post.type == MediaType.IMAGE:
+        image_vec = operators["image_vec_rep_resnet"].run(file)
+        return {"vector_representation": image_vec.tolist()}
+    elif post.type == MediaType.VIDEO:
+        video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
+        return video_vector_generator
 
 
 class IndexHandler:
     def __init__(self, feluda: Feluda):
         self.feluda = feluda
 
-    def index_text(self, operators):
-        # post, metadata, config, files, media_type = make_post_from_request(req, "text")
-        # print(post, metadata, config, files, media_type)
-        # file = request.files["media"]
-        # data = json.load(request.files["data"])
-        # post = Post.fromRequestData("text", data, file)
-        post = Post.fromRequestPayload("text", request)
+    def index(self, generateRepresentation: Callable):
+        response = {}
+        print(type(response))
 
-        # store.save(post)
-        # queue.enqueue(post)
-        # process(post)
+        try:
+            post = Post.fromRequestPayload(request)
+        except Exception as e:
+            log.exception("Malformed Index Payload.")
+            response = {
+                "error": "The Index Payload seems malformed. Please refer to documentation at /reference"
+            }
+            return response
 
-        return {"message": "handle_text"}
+        config_mode = post.config.mode
+        print(config_mode)
 
-    def index_image(self, operators):
-        # post = make_post_from_request(req, "text")
-        # print(post, metadata, config, files, media_type)
-
-        # text = operators["detect_text_in_image"].run(post)
-        # lang = operators["detect_lang_of_text"].run(text)
-        # text_vec = operators["text_vec_rep_paraphrase_lxml"].run(text)
-        # image_vec = operators["image_vec_rep_resnet"].run(post)
-        # composite_vec = operators["combine_vectors_256dim"].run(image_vec, text_vec)
-        # repr = composite_vec
-
-        # file = request.files["media"]
-        # data = json.load(request.files["data"])
-        # post = Post.fromRequestData("image", data, file)
-        post = Post.fromRequestPayload("image", request)
-        print("TYPE 1 : ", type(post))
-        print("TYPE 1 : ", type(post.post_data))
-
-        return {"message": "handle_image"}
-
-    def index_video(self, operators):
-        # post, metadata, config, files, media_type = make_post_from_request(req, "text")
-        # print(post, metadata, config, files, media_type)
-
-        # file = request.files["media"]
-        # data = json.load(request.files["data"])
-        # post = Post.fromRequestData("video", data, file)
-        post = Post.fromRequestPayload("video", request)
-        print("TYPE 1 : ", type(post))
-        print("TYPE 1 : ", type(post.post_data))
-
-        return {"message": "handle_video"}
-
-    def enqueue_text(self):
-
-        return {"message": "enqueue_text"}
-
-    def enqueue_image(self):
-        return {"message": "enqueue_image"}
-
-    def enqueue_video(self):
-        return {"message": "enqueue_video"}
-
-    def represent_text(self, operators):
-        post = Post.fromRequestPayload("text", request)
-        plain_text = post.post_data.text
-        text_vec = operators["text_vec_rep_paraphrase_lxml"].run(post.post_data.text)
-        if post.config.mode == "represent":
-            return {"representation": text_vec.tolist(), "plain_text": plain_text}
-
-        if post.config.mode == "store":
-            rep = text_rep_to_es_doc(text_vec, post.post_data)
-            result = self.feluda.store.store("text", rep)
-            return {"result": result}
-
-        if post.config.mode == "enqueue":
-            # add to queue
-            # self.feluda.queue.add_to_index_queue(request.data)
-            # return {"message" : "post enqueued"}
+        if config_mode == ConfigMode.ENQUEUE:
+            # add request to queue
+            pass
+        elif config_mode == ConfigMode.STORE:
+            operators = self.feluda.operators.active_operators
+            representation = generateRepresentation(post, operators)
+            response = {"message": "post stored"}
+            if inspect.isgenerator(representation) == True:
+                # representation is inside a generator
+                print("its a generator")
+                pass
+            else:
+                # representation is an object that can be saved
+                pass
+            # store in es or return right away
+        elif config_mode == ConfigMode.REFLECT:
+            pass
+        else:
             pass
 
-    def represent_image(self, operators):
-        post = Post.fromRequestPayload("image", request)
-        image = ImageFactory.make_from_file_in_memory(post.file)
-        image_vec = operators["image_vec_rep_resnet"].run(image)
-        return {"representation": image_vec.tolist()}
-        # return {"message": "represent_image"}
+        return response
 
-    def represent_video(self, operators):
-        post = Post.fromRequestPayload("video", request)
-        return {"message": "represent_video"}
-
-    def make_handler(self, operators):
-        if request.path == "/index/text":
-            return self.index_text(operators)
-        elif request.path == "/index/image":
-            return self.index_image(operators)
-        elif request.path == "/index/video":
-            return self.index_video(operators)
-        elif request.path == "/enqueue/text":
-            return self.enqueue_text()
-        elif request.path == "/enqueue/image":
-            return self.enqueue_image()
-        elif request.path == "/enqueue/video":
-            return self.enqueue_video()
-        elif request.path == "/represent/text":
-            return self.represent_text(operators)
-        elif request.path == "/represent/image":
-            return self.represent_image(operators)
-        elif request.path == "/represent/video":
-            return self.represent_video(operators)
-        else:
-            raise "Unsupported Index API endpoint"
+    def make_handler(self):
+        if request.path == "/index":
+            return self.index(generateRepresentation)

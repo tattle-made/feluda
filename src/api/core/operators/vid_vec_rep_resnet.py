@@ -54,8 +54,21 @@ def initialize(param):
         return newname
 
     def gendata(vid_analyzer):
+        # average vector
+        yield {
+            "vid_vec": vid_analyzer.get_mean_feature().tolist(),
+            "is_avg": False,
+            "duration": vid_analyzer.duration,
+            "n_keyframes": vid_analyzer.n_keyframes,
+        }
+        # keframe vectors
         for i in range(vid_analyzer.n_keyframes):
-            yield vid_analyzer.keyframe_features[:, i].tolist()
+            yield {
+                "vid_vec": vid_analyzer.keyframe_features[:, i].tolist(),
+                "is_avg": False,
+                "duration": vid_analyzer.duration,
+                "n_keyframes": vid_analyzer.n_keyframes,
+            }
 
     class ImageListDataset(data.Dataset):
         def __init__(self, image_list, transform=imagenet_transform):
@@ -202,8 +215,8 @@ def initialize(param):
             return idx
 
 
-def run(post):
-    fname = post["path"]
+def run(file):
+    fname = file["path"]
     fsize = os.path.getsize(fname) / 1e6
     print("original size: ", fsize)
     if fsize < 10:
@@ -225,10 +238,7 @@ def run(post):
     if not doable:
         raise "Unsupported Video. Cannot index video."
 
-    avg_vec = vid_analyzer.get_mean_feature().tolist()
-    all_vec = gendata(vid_analyzer)
-
-    return (avg_vec, all_vec)
+    return gendata(vid_analyzer)
 
 
 def cleanup(param):
