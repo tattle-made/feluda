@@ -24,7 +24,7 @@ class Feluda:
 
     def start(self):
         self.store.connect()
-        self.store.create_index()
+        self.store.optionally_create_index()
 
         self.queue.connect()
         self.queue.declare_queues()

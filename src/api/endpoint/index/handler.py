@@ -8,6 +8,7 @@ import json
 from typing import Callable
 import logging
 import inspect
+from datetime import datetime
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +25,28 @@ def generateRepresentation(post: Post, operators):
     elif post.type == MediaType.VIDEO:
         video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
         return video_vector_generator
+
+
+def generateDocument(post: Post, representation: any):
+    doc = {
+        "source_id": str(post.post_data.id),
+        "dataset": str(post.post_data.datasource_id),
+        "metadata": post.metadata,
+        "date_added": datetime.utcnow().strftime("%d%m%Y"),
+    }
+    if post.type == MediaType.TEXT:
+        doc["text"] = representation["plain_text"]
+        doc["lang"] = "en"
+    elif post.type == MediaType.IMAGE:
+        doc["image_vec"] = representation["vector_representation"]
+        doc["text"] = "image text"
+    elif post.type == MediaType.VIDEO:
+        for vector in representation:
+            doc["vid_vec"] = vector["vid_vec"]
+            doc["is_avg"] = vector["is_avg"]
+            doc["duration"] = vector["duration"]
+            doc["n_keyframes"] = vector["n_keyframes"]
+            yield doc
 
 
 class IndexHandler:
@@ -52,15 +75,9 @@ class IndexHandler:
         elif config_mode == ConfigMode.STORE:
             operators = self.feluda.operators.active_operators
             representation = generateRepresentation(post, operators)
-            response = {"message": "post stored"}
-            if inspect.isgenerator(representation) == True:
-                # representation is inside a generator
-                print("its a generator")
-                pass
-            else:
-                # representation is an object that can be saved
-                pass
-            # store in es or return right away
+            document = generateDocument(post, representation)
+            save_result = self.feluda.store.store(document, document)
+            return save_result
         elif config_mode == ConfigMode.REFLECT:
             pass
         else:

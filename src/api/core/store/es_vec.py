@@ -1,11 +1,13 @@
 import logging
+from api.core.models.media import MediaType
 from core.config import StoreConfig
 
 log = logging.getLogger(__name__)
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers as eshelpers
 from .es_vec_mappings import mappings
 from .es_vec_adapter import es_to_sanitized
 import numpy as np
+import inspect
 
 
 class ES:
@@ -62,9 +64,13 @@ class ES:
         indices = self.client.indices.get(index_list)
         return indices
 
-    def store(self, media_type, doc):
-        result = self.client.index(index=self.indices[media_type], body=doc)
-        return result
+    def store(self, media_type: MediaType, doc):
+        if inspect.isgenerator(doc):
+            bulk_res = eshelpers.bulk(self.client, doc)
+            return bulk_res
+        else:
+            result = self.client.index(index=self.indices[media_type.value], body=doc)
+            return result
 
     def refresh(self):
         for index in self.indices:

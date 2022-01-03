@@ -5,7 +5,7 @@ mappings = {
                         "source_id": {
                             "type": "keyword"
                         },
-                        "source": {
+                        "dataset": {
                             "type": "keyword"
                         },
                         "metadata": {
@@ -30,7 +30,7 @@ mappings = {
                         "source_id": {
                             "type": "keyword"
                         },
-                        "source": {
+                        "dataset": {
                             "type": "keyword"
                         },
                         "metadata": {
@@ -56,7 +56,7 @@ mappings = {
                         "source_id": {
                             "type": "keyword"
                         },
-                        "source": {
+                        "dataset": {
                             "type": "keyword"
                         },
                         "metadata": {
