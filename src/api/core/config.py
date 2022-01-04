@@ -10,7 +10,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from typing import List
+from typing import List, Optional
 import yaml
 from dataclasses import dataclass
 from dacite import from_dict
@@ -34,8 +34,7 @@ class StoreConfig:
 @dataclass
 class QueueParameters:
     host_name: str
-    index_queue_name: str
-    report_queue_name: str
+    queues: List[dict]
 
 
 @dataclass
@@ -72,10 +71,10 @@ class OperatorConfig:
 
 @dataclass
 class Config:
-    store: StoreConfig
-    queue: QueueConfig
-    server: ServerConfig
-    operators: OperatorConfig
+    store: Optional[StoreConfig]
+    queue: Optional[QueueConfig]
+    server: Optional[ServerConfig]
+    operators: Optional[OperatorConfig]
 
 
 def load(filepath) -> Config:

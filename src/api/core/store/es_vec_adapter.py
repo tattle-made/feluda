@@ -66,7 +66,7 @@ def es_to_sanitized(resp):
         doc_ids.append(h["_id"])
         dists.append(h["_score"])
         source_ids.append(h["_source"]["source_id"])
-        sources.append(h["_source"]["source"])
+        sources.append(h["_source"]["dataset"])
         texts.append(h["_source"].get("text", None))
         metadata.append(h["_source"]["metadata"])
 
@@ -74,7 +74,7 @@ def es_to_sanitized(resp):
         {
             "doc_id": doc_ids[i],
             "dist": dists[i],
-            "source": sources[i],
+            "dataset": sources[i],
             "source_id": source_ids[i],
             "text": texts[i],
             "metadata": metadata[i],

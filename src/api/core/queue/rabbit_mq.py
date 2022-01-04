@@ -1,16 +1,21 @@
 import logging
+from core.config import QueueConfig
 
 log = logging.getLogger(__name__)
 import pika
 import json
+from os import environ
 
 
 class RabbitMQ:
-    def __init__(self, param):
+    def __init__(self, param: QueueConfig):
         try:
-            self.mq_username = param["username"]
-            self.mq_password = param["password"]
-            self.mq_host = param["host"]
+            self.mq_username = environ.get("MQ_USERNAME")
+            self.mq_password = environ.get("MQ_PASSWORD")
+            self.mq_host = param.parameters.host_name
+            self.queues = []
+            for queue in param.parameters.queues:
+                self.queues.append(queue)
         except Exception:
             print("Invalid parameter")
             raise TypeError("Invalid parameters passed to RabbitMQ")
@@ -27,20 +32,23 @@ class RabbitMQ:
                 )
             )
             self.channel = connection.channel()
-            print("Success Connecting to RabbitMQ")
+            print("----> 2 ", "Success Connecting to RabbitMQ")
             self.channel.confirm_delivery()
             print("Publisher confirms enabled")
+
+            for queue in self.queues:
+                self.declare_queue(queue["name"])
+                print("Queue Declared : ", queue)
+
         except Exception:
+            log.exception("Error Connecting to RabbitMQ")
             print("Error Connecting to RabbitMQ ")
             raise Exception("Error connecting to RabbitMQ")
 
     def is_connected(self):
         return self.channel.is_open
 
-    def declare_queue(self, queue_name):
-        self.queue.channel.queue_declare(queue=queue_name, durable=True)
-
-    def publish_to_queue(self, queue_name, payload):
+    def message(self, queue_name, payload):
         if self.is_connected():
             try:
                 self.channel.basic_publish(
@@ -67,3 +75,8 @@ class RabbitMQ:
 
     def declare_queue(self, queue_name):
         self.channel.queue_declare(queue=queue_name, durable=True)
+
+    def listen(self, queue_name, callback):
+        self.channel.basic_consume(queue=queue_name, on_message_callback=callback)
+        print(" [*] Waiting for messages. To exit press CTRL+C ")
+        self.channel.start_consuming()

@@ -1,0 +1,7 @@
+queue : 
+  label : "Queue"
+  type : "rabbitmq"
+  parameters: 
+    host_name : "rabbitmq"
+    queues:
+      - name : "tattle-search-report-queue"

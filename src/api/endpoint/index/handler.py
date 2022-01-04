@@ -2,7 +2,7 @@ from typing import Callable
 from core.models.media import MediaMode, MediaType
 from core.feluda import Feluda
 from core.store.es_vec_adapter import text_rep_to_es_doc
-from .model import ConfigMode, Post, Config, ImageFactory
+from .model import ConfigMode, Post
 from flask import request
 import json
 from typing import Callable
@@ -61,10 +61,13 @@ class IndexHandler:
 
     def index(self, generateRepresentation: Callable):
         response = {}
-        print(type(response))
+
+        # fix : not sure why request.files can be accessed only once.
+        data = json.load(request.files["data"])
+        file = request.files.get("media", None)
 
         try:
-            post = Post.fromRequestPayload(request)
+            post = Post.fromRequestPayload(data, file)
         except Exception as e:
             log.exception("Malformed Index Payload.")
             response = {
@@ -73,11 +76,10 @@ class IndexHandler:
             return response
 
         config_mode = post.config.mode
-        print(config_mode)
 
         if config_mode == ConfigMode.ENQUEUE:
-            # add request to queue
-            pass
+            self.feluda.queue.message("tattle-search-index-queue", data)
+            return {"msg": "done"}
         elif config_mode == ConfigMode.STORE:
             operators = self.feluda.operators.active_operators
             representation = generateRepresentation(post, operators)
