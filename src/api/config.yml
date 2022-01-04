@@ -38,4 +38,6 @@ operators :
       parameters: {}
     - name : "Video Vector Representation"
       type : "vid_vec_rep_resnet"
-      parameters: {}
+      parameters: {
+        index_name : "video"
+      }

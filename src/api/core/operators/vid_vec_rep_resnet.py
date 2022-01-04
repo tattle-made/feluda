@@ -57,7 +57,7 @@ def initialize(param):
         # average vector
         yield {
             "vid_vec": vid_analyzer.get_mean_feature().tolist(),
-            "is_avg": False,
+            "is_avg": True,
             "duration": vid_analyzer.duration,
             "n_keyframes": vid_analyzer.n_keyframes,
         }

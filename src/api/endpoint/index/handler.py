@@ -17,36 +17,42 @@ def generateRepresentation(post: Post, operators):
     file = post.getMedia()
     if post.type == MediaType.TEXT:
         plain_text = file["text"]
-        text_vec = operators["text_vec_rep_paraphrase_lxml"].run(plain_text)
-        return {"plain_text": plain_text, "vector_representation": text_vec.tolist()}
+        return {"plain_text": plain_text}
     elif post.type == MediaType.IMAGE:
         image_vec = operators["image_vec_rep_resnet"].run(file)
-        return {"vector_representation": image_vec.tolist()}
+        return {"vector_representation": image_vec}
     elif post.type == MediaType.VIDEO:
         video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
         return video_vector_generator
 
 
 def generateDocument(post: Post, representation: any):
-    doc = {
+    base_doc = {
         "source_id": str(post.post_data.id),
         "dataset": str(post.post_data.datasource_id),
         "metadata": post.metadata,
         "date_added": datetime.utcnow().strftime("%d%m%Y"),
     }
     if post.type == MediaType.TEXT:
-        doc["text"] = representation["plain_text"]
-        doc["lang"] = "en"
+        base_doc["text"] = representation["plain_text"]
+        base_doc["lang"] = "en"
+        return base_doc
     elif post.type == MediaType.IMAGE:
-        doc["image_vec"] = representation["vector_representation"]
-        doc["text"] = "image text"
+        base_doc["image_vec"] = representation["vector_representation"]
+        base_doc["text"] = "image text"
+        return base_doc
     elif post.type == MediaType.VIDEO:
-        for vector in representation:
-            doc["vid_vec"] = vector["vid_vec"]
-            doc["is_avg"] = vector["is_avg"]
-            doc["duration"] = vector["duration"]
-            doc["n_keyframes"] = vector["n_keyframes"]
-            yield doc
+
+        def generatorDoc():
+            for vector in representation:
+                base_doc["_index"] = "video"
+                base_doc["vid_vec"] = vector["vid_vec"]
+                base_doc["is_avg"] = vector["is_avg"]
+                base_doc["duration"] = vector["duration"]
+                base_doc["n_keyframes"] = vector["n_keyframes"]
+                yield base_doc
+
+        return generatorDoc
 
 
 class IndexHandler:
@@ -76,7 +82,7 @@ class IndexHandler:
             operators = self.feluda.operators.active_operators
             representation = generateRepresentation(post, operators)
             document = generateDocument(post, representation)
-            save_result = self.feluda.store.store(document, document)
+            save_result = self.feluda.store.store(post.type, document)
             return save_result
         elif config_mode == ConfigMode.REFLECT:
             pass

@@ -6,6 +6,14 @@ from core import config, store
 from core.server import Server
 from core.operators import Operator
 from core.queue import Queue
+from enum import Enum
+
+
+class ComponentType(Enum):
+    OPERATORS = ("operators",)
+    STORE = ("store",)
+    QUEUE = ("queue",)
+    SERVER = "server"
 
 
 class Feluda:
@@ -30,6 +38,18 @@ class Feluda:
         self.queue.declare_queues()
 
         self.server.start()
+
+    def start_component(self, component_type: ComponentType):
+        if component_type == ComponentType.SERVER:
+            self.server.start()
+        elif component_type == ComponentType.STORE:
+            self.store.connect()
+            self.store.optionally_create_index()
+        elif component_type == ComponentType.QUEUE:
+            self.queue.connect()
+            self.queue.declare_queues()
+        else:
+            raise Exception("Unsupported Component Type")
 
     def get_state(self):
         pass

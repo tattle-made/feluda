@@ -19,16 +19,16 @@ class TestIndex(unittest.TestCase):
                 "client_id": "123-12312",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {"mode": "reflect", "version": "0.1"},
+            "config": {"mode": "store", "version": "0.1"},
         }
         files = {
             "media": open("sample_data/simple-text.txt", "rb"),
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)
-        print(len(response.json()["vector_representation"]))
+        print(response.json())
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()["vector_representation"]), 768)
+        # self.assertEqual(len(response.json()["vector_representation"]), 768)
 
     @skip
     def testIndexImage(self):
@@ -42,13 +42,14 @@ class TestIndex(unittest.TestCase):
                 "client_id": "123-12312",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {"mode": "reflect", "version": "0.1"},
+            "config": {"mode": "store", "version": "0.1"},
         }
         files = {
             "media": open("sample_data/simple-text.txt", "rb"),
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)
+        print(response.json())
         self.assertEqual(response.status_code, 200)
 
     def testIndexVideo(self):
@@ -69,4 +70,5 @@ class TestIndex(unittest.TestCase):
             "data": json.dumps(data),
         }
         response = requests.post(url, json=data, files=files)
+        print(response.json())
         self.assertEqual(response.status_code, 200)

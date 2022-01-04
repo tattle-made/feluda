@@ -1,5 +1,5 @@
 import logging
-from api.core.models.media import MediaType
+from core.models.media import MediaType
 from core.config import StoreConfig
 
 log = logging.getLogger(__name__)
@@ -65,9 +65,10 @@ class ES:
         return indices
 
     def store(self, media_type: MediaType, doc):
-        if inspect.isgenerator(doc):
-            bulk_res = eshelpers.bulk(self.client, doc)
-            return bulk_res
+        if inspect.isgeneratorfunction(doc):
+            bulk_res = eshelpers.bulk(self.client, doc())
+            print("----> 6", bulk_res)
+            return {"message": "multiple media stored"}
         else:
             result = self.client.index(index=self.indices[media_type.value], body=doc)
             return result
