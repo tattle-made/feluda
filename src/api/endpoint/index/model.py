@@ -111,6 +111,28 @@ class Post:
             log.exception("Unknown Structure of Data")
             raise Exception("Unknown Structure of Data")
 
+    @staticmethod
+    def fromRequestPayloadJSON(data, file=None):
+        try:
+            metadata = data["metadata"]
+            post = data["post"]
+            type = MediaType(post["media_type"])
+            return Post(
+                type=type,
+                mode=MediaMode.URL,
+                post_data=post_factory[type.value](**post),
+                config=Config(
+                    version=data["config"]["version"],
+                    mode=ConfigMode(data["config"]["mode"]),
+                ),
+                metadata=metadata,
+                file=file,
+            )
+        except Exception as e:
+            print("---->", e)
+            log.exception("Unknown Structure of Data")
+            raise Exception("Unknown Structure of Data")
+
     def getMedia(self) -> typing.IO:
         if self.mode == MediaMode.URL:
             media = media_factory[self.type].make_from_url(self.post_data.media_url)

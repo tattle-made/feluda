@@ -60,39 +60,37 @@ class IndexHandler:
         self.feluda = feluda
 
     def index(self, generateRepresentation: Callable):
-        response = {}
-
-        # fix : not sure why request.files can be accessed only once.
-        data = json.load(request.files["data"])
-        file = request.files.get("media", None)
-
         try:
-            post = Post.fromRequestPayload(data, file)
-        except Exception as e:
-            log.exception("Malformed Index Payload.")
-            response = {
-                "error": "The Index Payload seems malformed. Please refer to documentation at /reference"
-            }
-            return response
+            if request.content_type == "application/json":
+                post = Post.fromRequestPayloadJSON(request.get_json())
+            elif request.content_type == "multipart/form-data":
+                post = Post.fromRequestPayload(request)
+            else:
+                return "Unable to handle Index Request", 400
 
-        config_mode = post.config.mode
+            config_mode = post.config.mode
 
-        if config_mode == ConfigMode.ENQUEUE:
-            self.feluda.queue.message("tattle-search-index-queue", data)
-            return {"msg": "done"}
-        elif config_mode == ConfigMode.STORE:
-            operators = self.feluda.operators.active_operators
-            representation = generateRepresentation(post, operators)
-            document = generateDocument(post, representation)
-            save_result = self.feluda.store.store(post.type, document)
-            return save_result
-        elif config_mode == ConfigMode.REFLECT:
-            pass
-        else:
-            pass
+            if config_mode == ConfigMode.ENQUEUE:
+                self.feluda.queue.message(
+                    "tattle-search-index-queue", request.get_json()
+                )
+                return {"message": "Post Indexed"}
+            elif config_mode == ConfigMode.STORE:
+                operators = self.feluda.operators.active_operators
+                representation = generateRepresentation(post, operators)
+                document = generateDocument(post, representation)
+                save_result = self.feluda.store.store(post.type, document)
+                return save_result
+            elif config_mode == ConfigMode.REFLECT:
+                return "Method Unimplemented", 501
+            else:
+                return "Unexpected Index Mode", 400
 
-        return response
+        except:
+            log.exception("Unable to handle Index Request")
+            return "Unable to handle Index Request", 400
 
     def make_handler(self):
         if request.path == "/index":
             return self.index(generateRepresentation)
+            # return self.test_endpoint()

@@ -67,15 +67,17 @@ class TestIndex(unittest.TestCase):
             "config": {"mode": "store", "version": "0.1"},
         }
         files = {
-            "media": open("sample_data/simple-text.txt", "rb"),
+            # "media": open("sample_data/simple-text.txt", "rb"),
             "data": json.dumps(data),
         }
+        # axios.post("endpoint", data)
         response = requests.post(url, json=data, files=files)
         print(response.json())
         self.assertEqual(response.status_code, 200)
 
+    @skip
     def testIndexEnqueueImage(self):
-        url = API_URL + "/index"
+        url = API_URL + "/search"
         data = {
             "post": {
                 "id": "1234",
@@ -89,5 +91,22 @@ class TestIndex(unittest.TestCase):
         }
         files = {"data": json.dumps(data)}
         response = requests.post(url, files=files)
+        print(response.json())
+        self.assertEqual(response.status_code, 200)
+
+    def testIndexEnqueueImageJSON(self):
+        url = API_URL + "/index"
+        data = {
+            "post": {
+                "id": "1234",
+                "media_type": "image",
+                "media_url": "https://fs.tattle.co.in/service/kosh/file/c8709f21-bd7d-4e22-af14-50ad8a429f84",
+                "datasource_id": "asdfasdf-asdfasdf-asdf",
+                "client_id": "123-12312",
+            },
+            "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
+            "config": {"mode": "enqueue", "version": "0.1"},
+        }
+        response = requests.post(url, json=data)
         print(response.json())
         self.assertEqual(response.status_code, 200)
