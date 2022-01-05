@@ -1,7 +1,7 @@
 version: "3.5"
 
 services:
-  elasticsearch:
+  store:
     container_name: es
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
     volumes:
@@ -22,7 +22,7 @@ services:
     cap_add:
       - IPC_LOCK
 
-  rabbitmq:
+  queue:
     image: rabbitmq:3.8.7-management
     container_name: rabbitmq
     hostname: rabbit
@@ -50,3 +50,36 @@ services:
       - 7000:7000
       - 5678:5678
     command: tail -f /dev/null
+    depends_on:
+      store:
+        condition: service_started
+      queue:
+        condition: service_started
+
+  indexer:
+    container_name: indexer
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+      target: debug
+    env_file: ./src/api/development.env
+    command: tail -f /dev/null
+    depends_on:
+      store:
+        condition: service_started
+      queue:
+        condition: service_started
+
+  reporter:
+    container_name: reporter
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+      target: debug
+    env_file: ./src/api/development.env
+    command: tail -f /dev/null
+    depends_on:
+      store:
+        condition: service_started
+      queue:
+        condition: service_started
