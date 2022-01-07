@@ -35,10 +35,10 @@ def indexer(feluda):
             log.exception("Error indexing media")
             report["status"] = "failed"
             feluda.queue.message("tattle-search-report-queue", report)
-            try:
-                os.remove("/tmp/vid.mp4")
-            except:
-                log.exception("Error deleting video file")
+            # try:
+            #     os.remove("/tmp/vid.mp4")
+            # except:
+            #     log.exception("Error deleting video file")
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
     return worker
