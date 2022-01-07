@@ -102,6 +102,16 @@ class ES:
         res = es_to_sanitized(resp)
         return res
 
+    def find_text(self, text):
+        query_body = {
+            "size": 10,
+            "query": {"bool": {"must": {"match": {"text": text}}}},
+        }
+
+        result = self.client.search(index="text", body=query_body)
+        res = es_to_sanitized(result)
+        return res
+
     def update(param, doc):
         pass
 

@@ -20,7 +20,18 @@ def generateRepresentation(post: Post, operators):
         return {"plain_text": plain_text}
     elif post.type == MediaType.IMAGE:
         image_vec = operators["image_vec_rep_resnet"].run(file)
-        return {"vector_representation": image_vec}
+        # text = operators["detect_text_in_image"].run(file)
+        # entities = operators["ner_extraction.py"].run(text["text"])
+        # print(text)
+        # print(entities)
+        # return {
+        #     "vector_representation": image_vec,
+        #     "text": text["text"],
+        #     "entities": entities,
+        # }
+        return {
+            "vector_representation": image_vec,
+        }
     elif post.type == MediaType.VIDEO:
         video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
         return video_vector_generator

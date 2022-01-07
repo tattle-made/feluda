@@ -105,7 +105,7 @@ class TestIndex(unittest.TestCase):
                 "client_id": "123-12312",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
-            "config": {"mode": "enqueue", "version": "0.1"},
+            "config": {"mode": "store", "version": "0.1"},
         }
         response = requests.post(url, json=data)
         print(response.json())

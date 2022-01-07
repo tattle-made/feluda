@@ -83,3 +83,9 @@ services:
         condition: service_started
       queue:
         condition: service_started
+#     networks:
+#       - kosh-v2_kosh
+
+# networks:
+#   kosh-v2_kosh:
+#     external: true
