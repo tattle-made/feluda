@@ -14,8 +14,8 @@ log = logging.getLogger(__name__)
 @dataclass
 class IndexRequestPostData:
     id: str
-    datasource_id: str
-    client_id: str
+    datasource_id: Optional[str]
+    client_id: Optional[str]
 
 
 @dataclass
