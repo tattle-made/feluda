@@ -2,7 +2,7 @@ mappings = {
     "text": """{
                 "mappings": {
                     "properties":{
-                        "source_id": {
+                        "e_kosh_id": {
                             "type": "keyword"
                         },
                         "dataset": {
@@ -14,6 +14,9 @@ mappings = {
                         "text": {
                             "type": "text",
                             "analyzer": "standard"
+                        },
+                        "suggestion": {
+                            "type" : "completion"
                         },
                         "lang": {
                             "type": "keyword"
@@ -27,7 +30,7 @@ mappings = {
     "image": """{
                 "mappings": {
                     "properties":{
-                        "source_id": {
+                        "e_kosh_id": {
                             "type": "keyword"
                         },
                         "dataset": {
@@ -44,6 +47,9 @@ mappings = {
                             "type": "text",
                             "analyzer": "standard"
                         },
+                        "suggestion": {
+                            "type" : "completion"
+                        },
                         "date_added": {
                             "type": "date"
                         }
@@ -53,7 +59,7 @@ mappings = {
     "video": """{
                 "mappings": {
                     "properties":{
-                        "source_id": {
+                        "e_kosh_id": {
                             "type": "keyword"
                         },
                         "dataset": {

@@ -17,3 +17,13 @@ nose2 core.store.test_es
 ```python
 nose2 feature.index.test_index.TestIndex.testRepresentImage
 ```
+
+## Testing Operators
+
+```
+# Entire Test Suite
+nose2 core.operators.test_detect_text_in_image.Test
+
+# Single Functions
+nose2 core.operators.test_detect_text_in_image.Test.test_sample_image_from_url
+```

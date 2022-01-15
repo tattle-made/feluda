@@ -59,7 +59,7 @@ def run(image):
     file must be an image file of type abc.File
     """
     client = vision.ImageAnnotatorClient()
-    image_data = vision.types.Image(content=image["bytes"])
+    image_data = vision.types.Image(content=image["image_bytes"])
     resp = client.text_detection(image=image_data)
     resp = json.loads(MessageToJson(resp))
     text = resp.get("fullTextAnnotation", {}).get("text", "")

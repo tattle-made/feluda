@@ -1,0 +1,11 @@
+# Debugging
+
+We bundle a small command line utility to run commonly used commands against the various services required by Feluda.
+This cli is located in `debug.py`. To see list of supported commands and arguments, run `python debug.py --help`
+
+## Recipes for Common Operations
+
+| Command                        | Description                            |
+| ------------------------------ | -------------------------------------- |
+| python debug.py ping -s store  | pings the underlying datastore         |
+| python debug.py reset -s store | resets the store to pristine condition |

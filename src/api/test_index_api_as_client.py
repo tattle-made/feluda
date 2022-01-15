@@ -98,15 +98,15 @@ class TestIndex(unittest.TestCase):
         url = API_URL + "/index"
         data = {
             "post": {
-                "id": "1234",
+                "id": "0003",
                 "media_type": "image",
                 "media_url": "https://fs.tattle.co.in/service/kosh/file/c8709f21-bd7d-4e22-af14-50ad8a429f84",
-                "datasource_id": "asdfasdf-asdfasdf-asdf",
+                "datasource_id": "asdfasdf-gggggg-asdf",
                 "client_id": "123-12312",
             },
-            "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
+            "metadata": {"domain": "misinformation", "type": ["religion"]},
             "config": {"mode": "store", "version": "0.1"},
         }
         response = requests.post(url, json=data)
-        print(response.json())
+        # print(response.json())
         self.assertEqual(response.status_code, 200)

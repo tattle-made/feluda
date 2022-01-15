@@ -12,6 +12,11 @@ services:
     environment:
       - xpack.security.enabled=false
       - discovery.type=single-node
+      - http.cors.enabled=true
+      - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
+
     ulimits:
       memlock:
         soft: -1
@@ -56,33 +61,33 @@ services:
       queue:
         condition: service_started
 
-  indexer:
-    container_name: indexer
-    build:
-      context: ./src/api
-      dockerfile: Dockerfile
-      target: debug
-    env_file: ./src/api/development.env
-    command: tail -f /dev/null
-    depends_on:
-      store:
-        condition: service_started
-      queue:
-        condition: service_started
+  # indexer:
+  #   container_name: indexer
+  #   build:
+  #     context: ./src/api
+  #     dockerfile: Dockerfile
+  #     target: debug
+  #   env_file: ./src/api/development.env
+  #   command: tail -f /dev/null
+  #   depends_on:
+  #     store:
+  #       condition: service_started
+  #     queue:
+  #       condition: service_started
 
-  reporter:
-    container_name: reporter
-    build:
-      context: ./src/api
-      dockerfile: Dockerfile
-      target: debug
-    env_file: ./src/api/development.env
-    command: tail -f /dev/null
-    depends_on:
-      store:
-        condition: service_started
-      queue:
-        condition: service_started
+  # reporter:
+  #   container_name: reporter
+  #   build:
+  #     context: ./src/api
+  #     dockerfile: Dockerfile
+  #     target: debug
+  #   env_file: ./src/api/development.env
+  #   command: tail -f /dev/null
+  #   depends_on:
+  #     store:
+  #       condition: service_started
+  #     queue:
+  #       condition: service_started
 #     networks:
 #       - kosh-v2_kosh
 

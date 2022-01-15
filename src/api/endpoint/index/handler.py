@@ -20,17 +20,12 @@ def generateRepresentation(post: Post, operators):
         return {"plain_text": plain_text}
     elif post.type == MediaType.IMAGE:
         image_vec = operators["image_vec_rep_resnet"].run(file)
-        # text = operators["detect_text_in_image"].run(file)
-        # entities = operators["ner_extraction.py"].run(text["text"])
-        # print(text)
-        # print(entities)
-        # return {
-        #     "vector_representation": image_vec,
-        #     "text": text["text"],
-        #     "entities": entities,
-        # }
+        text = operators["detect_text_in_image"].run(file)
+        entities = operators["ner_extraction"].run(text["text"])
         return {
             "vector_representation": image_vec,
+            "text": text["text"],
+            "entities": entities,
         }
     elif post.type == MediaType.VIDEO:
         video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
@@ -39,10 +34,10 @@ def generateRepresentation(post: Post, operators):
 
 def generateDocument(post: Post, representation: any):
     base_doc = {
-        "source_id": str(post.post_data.id),
+        "e_kosh_id": str(post.post_data.id),
         "dataset": str(post.post_data.datasource_id),
         "metadata": post.metadata,
-        "date_added": datetime.utcnow().strftime("%d%m%Y"),
+        "date_added": datetime.now().isoformat(),
     }
     if post.type == MediaType.TEXT:
         base_doc["text"] = representation["plain_text"]
@@ -50,7 +45,8 @@ def generateDocument(post: Post, representation: any):
         return base_doc
     elif post.type == MediaType.IMAGE:
         base_doc["image_vec"] = representation["vector_representation"]
-        base_doc["text"] = "image text"
+        base_doc["text"] = representation["text"]
+        base_doc["suggestion"] = representation["entities"]
         return base_doc
     elif post.type == MediaType.VIDEO:
 

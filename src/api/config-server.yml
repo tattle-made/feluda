@@ -31,6 +31,9 @@ operators :
     - name : "Language Detection"
       type : "detect_lang_of_text"
       parameters: {}
+    - name : "Named Entity Extraction"
+      type : "ner_extraction"
+      parameters: {}
     - name : "Text Extraction"
       type : "detect_text_in_image"
       parameters: {}

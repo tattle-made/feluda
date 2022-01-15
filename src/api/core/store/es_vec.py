@@ -31,6 +31,9 @@ class ES:
         except Exception:
             log.exception("Error Connecting to Elasticsearch")
 
+    def ping(self):
+        return self.client.info()
+
     def optionally_create_index(self):
         """
         Checks if an index already exists in Elasticsearch and if not, creates it according to the mapping specified for that index type.
@@ -115,5 +118,7 @@ class ES:
     def update(param, doc):
         pass
 
-    def delete(id):
-        pass
+    # this is an alias for the delete_indices function. i find the name more generic
+    def reset(self):
+        for index in self.indices:
+            self.client.indices.delete(self.indices[index])

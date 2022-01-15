@@ -11,8 +11,7 @@ class TestIndex(unittest.TestCase):
         url = API_URL + "/index/text"
         data = {
             "post": {
-                "post_id": "1234",
-                "source_id": "asdfasdf-asdfasdf-asdf",
+                "id": "1234",
                 "client_id": "123-12312",
                 "text": "this ia sample text ",
             },
@@ -31,8 +30,7 @@ class TestIndex(unittest.TestCase):
         url = "http://localhost:5000/index/image"
         data = {
             "post": {
-                "post_id": "1234",
-                "source_id": "asdfasdf-asdfasdf-asdf",
+                "id": "1234",
                 "client_id": "123-12312",
                 "media_url": "http://www.google.com/image",
             },
@@ -64,8 +62,7 @@ class TestIndex(unittest.TestCase):
         url = API_URL + "/represent/text"
         data = {
             "post": {
-                "post_id": "1234",
-                "source_id": "asdfasdf-asdfasdf-asdf",
+                "id": "1234",
                 "client_id": "123-12312",
                 "text": "this is sample text ",
             },
@@ -85,8 +82,7 @@ class TestIndex(unittest.TestCase):
         url = API_URL + "/represent/image"
         data = {
             "post": {
-                "post_id": "1234",
-                "source_id": "asdfasdf-asdfasdf-asdf",
+                "id": "1234",
                 "client_id": "123-12312",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
@@ -104,8 +100,7 @@ class TestIndex(unittest.TestCase):
         url = API_URL + "/represent/image"
         data = {
             "post": {
-                "post_id": "1234",
-                "source_id": "asdfasdf-asdfasdf-asdf",
+                "id": "1234",
                 "client_id": "123-12312",
             },
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},

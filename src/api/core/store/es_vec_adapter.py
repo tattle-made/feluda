@@ -3,7 +3,7 @@ from datetime import datetime
 
 def text_rep_to_es_doc(rep, data):
     doc = {
-        "source_id": str(data["source_id"]),
+        "e_kosh_id": str(data["source_id"]),
         "source": data.get("source", "tattle-admin"),
         "metadata": data.get("metadata", {}),
         "text": rep["text"],
@@ -15,7 +15,7 @@ def text_rep_to_es_doc(rep, data):
 
 def image_rep_to_es_doc(rep, data):
     doc = {
-        "source_id": str(data["source_id"]),
+        "e_kosh_id": str(data["source_id"]),
         "source": data.get("source", "tattle-admin"),
         "metadata": data.get("metadata", {}),
         "has_text": rep["has_text"],
@@ -32,7 +32,7 @@ def video_rep_to_es_doc(rep, data):
     returns a tuple (avg_vec_doc, generator_of_docs)
     """
     doc = {
-        "source_id": str(data["source_id"]),
+        "e_kosh_id": str(data["source_id"]),
         "source": data.get("source", "tattle-admin"),
         "metadata": data.get("metadata", {}),
         "vid_vec": rep["avg"]["vec"],
@@ -46,7 +46,7 @@ def video_rep_to_es_doc(rep, data):
         for i in range(rep["n_keyframes"]):
             yield {
                 "_index": "video",
-                "source_id": str(data["source_id"]),
+                "e_kosh_id": str(data["source_id"]),
                 "source": data.get("source", "tattle-admin"),
                 "metadata": data.get("metadata", {}),
                 "vid_vec": rep["gen"][i],
@@ -65,7 +65,7 @@ def es_to_sanitized(resp):
     for h in resp["hits"]["hits"]:
         doc_ids.append(h["_id"])
         dists.append(h["_score"])
-        source_ids.append(h["_source"]["source_id"])
+        source_ids.append(h["_source"]["e_kosh_id"])
         sources.append(h["_source"]["dataset"])
         texts.append(h["_source"].get("text", None))
         metadata.append(h["_source"]["metadata"])
@@ -75,7 +75,7 @@ def es_to_sanitized(resp):
             "doc_id": doc_ids[i],
             "dist": dists[i],
             "dataset": sources[i],
-            "source_id": source_ids[i],
+            "e_kosh_id": source_ids[i],
             "text": texts[i],
             "metadata": metadata[i],
         }

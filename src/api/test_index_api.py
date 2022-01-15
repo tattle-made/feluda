@@ -14,9 +14,9 @@ class TestIndexApi(unittest.TestCase):
     def test_index_text_url(self):
         data = {
             "post": {
+                "id": "asdfasdf-asdfasdf-asdf",
                 "media_type": "text",
                 "post_id": "1234",
-                "source_id": "asdfasdf-asdfasdf-asdf",
                 "client_id": "123-12312",
                 "text": "this is sample text",
             },

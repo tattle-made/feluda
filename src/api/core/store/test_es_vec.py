@@ -59,7 +59,7 @@ class TestES(unittest.TestCase):
         es = ES(self.param)
         es.connect()
         doc = {
-            "source_id": str(1231231),
+            "e_kosh_id": str(1231231),
             "source": "tattle-admin",
             "metadata": {},
             "text": "test text to go with the image",
@@ -75,7 +75,7 @@ class TestES(unittest.TestCase):
         es.create_index()
         vec = np.random.randn(512).tolist()
         doc = {
-            "source_id": str(1231231),
+            "e_kosh_id": str(1231231),
             "source": "tattle-admin",
             "metadata": {"domain": "hate-speech"},
             "text": "test text to go with the image",
