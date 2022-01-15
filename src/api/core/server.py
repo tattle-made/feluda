@@ -4,12 +4,14 @@ from core.config import ServerConfig
 
 log = logging.getLogger(__name__)
 from flask import Flask
+from flask_cors import CORS
 
 
 class Server:
     def __init__(self, param: ServerConfig) -> None:
         self.param = param
         self.app = Flask(__name__)
+        CORS(self.app)
         self.endpoints = []
 
     def add_endpoint(self, endpoint):

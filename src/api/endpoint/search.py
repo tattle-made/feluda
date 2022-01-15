@@ -18,7 +18,6 @@ class SearchHandler:
         self.feluda = feluda
 
     def handle_search(self):
-        print("---> 1")
         try:
             if request.content_type == "application/json":
                 payload = request.get_json()
@@ -29,10 +28,8 @@ class SearchHandler:
                     return "Method Unimplemented", 501
                 else:
                     return {"message": "Unsupported Query Type"}, 400
-            elif request.content_type == "multipart/form-data":
-                print("---> 1")
+            elif "multipart/form-data" in request.content_type:
                 data = json.load(request.files["data"])
-                print("---> 2", data)
                 if data["query_type"] == "image":
                     file = request.files["media"]
                     print(file, type(file))
