@@ -19,7 +19,7 @@ def run(text):
     blob = TextBlob(text)
     lang = blob.detect_language()
     if lang not in supported:
-        return None
+        return "und"
     else:
         return lang
 

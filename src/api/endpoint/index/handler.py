@@ -1,3 +1,4 @@
+from pydoc import plain
 from typing import Callable
 from core.models.media import MediaMode, MediaType
 from core.feluda import Feluda
@@ -17,7 +18,10 @@ def generateRepresentation(post: Post, operators):
     file = post.getMedia()
     if post.type == MediaType.TEXT:
         plain_text = file["text"]
-        return {"plain_text": plain_text}
+        # lang = operators["detect_lang_of_text"].run(plain_text)
+        lang = "en"
+        entities = operators["ner_extraction"].run(plain_text)
+        return {"plain_text": plain_text, "lang": lang, "entities": entities}
     elif post.type == MediaType.IMAGE:
         image_vec = operators["image_vec_rep_resnet"].run(file)
         text = operators["detect_text_in_image"].run(file)
@@ -41,7 +45,8 @@ def generateDocument(post: Post, representation: any):
     }
     if post.type == MediaType.TEXT:
         base_doc["text"] = representation["plain_text"]
-        base_doc["lang"] = "en"
+        base_doc["lang"] = representation["lang"]
+        base_doc["suggestion"] = representation["entities"]
         return base_doc
     elif post.type == MediaType.IMAGE:
         base_doc["image_vec"] = representation["vector_representation"]

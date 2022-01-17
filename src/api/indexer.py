@@ -18,14 +18,13 @@ def indexer(feluda):
         report["id"] = data["post"]["id"]
         report["datasource"] = data["post"]["datasource_id"]
         try:
-            print(data)
-            report = {}
+            print("---> 1", data)
             post = Post.fromRequestPayload(data)
             operators = feluda.operators.active_operators
             representation = generateRepresentation(post, operators)
             document = generateDocument(post, representation)
+            print("-----> 2", document)
             save_result = feluda.store.store(post.type, document)
-            print(save_result)
             # return save_result
             report["status"] = "indexed"
             # print(report)
