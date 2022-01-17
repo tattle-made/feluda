@@ -43,7 +43,7 @@ services:
       - 15672:15672
 
   api:
-    container_name: api
+    container_name: feluda_api
     build:
       context: ./src/api
       dockerfile: Dockerfile
@@ -60,37 +60,35 @@ services:
         condition: service_started
       queue:
         condition: service_started
+  indexer:
+    container_name: feluda_indexer
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+      target: debug
+    env_file: ./src/api/development.env
+    command: tail -f /dev/null
+    depends_on:
+      store:
+        condition: service_started
+      queue:
+        condition: service_started
 
-  # indexer:
-  #   container_name: indexer
-  #   build:
-  #     context: ./src/api
-  #     dockerfile: Dockerfile
-  #     target: debug
-  #   env_file: ./src/api/development.env
-  #   command: tail -f /dev/null
-  #   depends_on:
-  #     store:
-  #       condition: service_started
-  #     queue:
-  #       condition: service_started
+  reporter:
+    container_name: feluda_reporter
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+      target: debug
+    env_file: ./src/api/development.env
+    command: tail -f /dev/null
+    depends_on:
+      store:
+        condition: service_started
+      queue:
+        condition: service_started
 
-  # reporter:
-  #   container_name: reporter
-  #   build:
-  #     context: ./src/api
-  #     dockerfile: Dockerfile
-  #     target: debug
-  #   env_file: ./src/api/development.env
-  #   command: tail -f /dev/null
-  #   depends_on:
-  #     store:
-  #       condition: service_started
-  #     queue:
-  #       condition: service_started
-#     networks:
-#       - kosh-v2_kosh
-
-# networks:
-#   kosh-v2_kosh:
-#     external: true
+networks:
+  default:
+    external: true
+    name: kosh-v2_tattle

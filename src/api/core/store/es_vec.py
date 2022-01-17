@@ -8,11 +8,13 @@ from .es_vec_mappings import mappings
 from .es_vec_adapter import es_to_sanitized
 import numpy as np
 import inspect
+import os
 
 
 class ES:
     def __init__(self, config: StoreConfig):
-        self.es_host = config.parameters.host_name
+        # self.es_host = config.parameters.host_name
+        self.es_host = os.environ.get("ES_HOST")
         self.indices = {
             "text": config.parameters.text_index_name,
             "image": config.parameters.image_index_name,
@@ -122,3 +124,7 @@ class ES:
     def reset(self):
         for index in self.indices:
             self.client.indices.delete(self.indices[index])
+
+    def stats(self):
+        indices = self.get_indices()
+        return indices

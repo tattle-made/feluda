@@ -57,6 +57,7 @@ class Feluda:
             self.store.optionally_create_index()
         elif component_type == ComponentType.QUEUE and self.queue:
             self.queue.connect()
+            self.queue.initialize()
         else:
             raise Exception("Unsupported Component Type")
 

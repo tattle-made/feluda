@@ -3,7 +3,7 @@ import pprint
 import os
 
 logging.basicConfig(level="INFO")
-pp = pprint.PrettyPrinter(indent=4)
+pp = pprint.PrettyPrinter(indent=2)
 
 
 class Logger:

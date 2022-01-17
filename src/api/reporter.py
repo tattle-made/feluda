@@ -4,6 +4,7 @@ from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 import json
 import requests
+from os import environ
 
 log = Logger(__name__)
 
@@ -15,7 +16,7 @@ def reporter(ch, method, properties, body):
     report = json.loads(body)
 
     try:
-        # requests.post("kosh url", report)
+        requests.post(environ("KOSH_API") + "/index/report", report)
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
         log.exception("Error Reporting Index Status")
