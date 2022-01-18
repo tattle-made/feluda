@@ -18,12 +18,13 @@ def reporter(ch, method, properties, body):
     print("MESSAGE RECEIVED")
     # print(type(body))
     # print(type(json.loads(body)))
-    report = json.loads(body)
+    report = json.loads(json.loads(body))
+    # print(type(report))
     log.prettyprint(report)
 
     try:
         requests.post(
-            environ.get("KOSH_API") + "/index/report", headers=headersAuth, data=report
+            environ.get("KOSH_API") + "/index/report", headers=headersAuth, json=report
         )
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:

@@ -24,7 +24,7 @@ class Feluda:
         if self.config.store:
             self.store = store.get_store(self.config.store)
         if self.config.queue:
-            print("---> 1", self.config.queue)
+            # print("---> 1", self.config.queue)
             self.queue = Queue.make(self.config.queue)
         if self.config.server:
             self.server = Server(self.config.server)
