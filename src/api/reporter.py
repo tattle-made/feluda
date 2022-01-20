@@ -8,7 +8,7 @@ from os import environ
 
 log = Logger(__name__)
 
-secret = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjgyOGY2NjEzLWE0ZjYtNDAxYi1iZDQ0LTBjNTI0YjljOWMwMSIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2NDIzNjEzNDl9.cAMEH2bawvneGmj5Pw9d1lZ6EZvMOeQPofAnJ40ZxAQ"
+secret = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwN2IzMTYwLTE3MjktNDI2MS04MjExLTU1YzFlOTc1ZWQ2NCIsInVzZXJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2NDI2Nzc4MTh9.p9UZ1xt1kOSyBTBMr3IoeONroZZVJYfUHcM7d9CHdR0"
 headersAuth = {
     "Authorization": "Basic " + str(secret),
 }
@@ -24,7 +24,9 @@ def reporter(ch, method, properties, body):
 
     try:
         requests.post(
-            environ.get("KOSH_API") + "/index/report", headers=headersAuth, json=report
+            environ.get("KOSH_API_URL") + "/index/report",
+            headers=headersAuth,
+            json=report,
         )
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
