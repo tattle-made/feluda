@@ -25,7 +25,16 @@ class SearchHandler:
                     results = self.feluda.store.find_text(payload["text"])
                     return {"matches": results}
                 elif payload["query_type"] == "raw_query":
-                    return "Method Unimplemented", 501
+                    raw_query = payload["query"]
+                    tokens = raw_query.split("=")
+                    field = tokens[0]
+                    value = tokens[1].replace("'", "")
+                    print("------> 3")
+                    print(field, " : ", value)
+                    results = self.feluda.store.query(field, value)
+                    return {"matches": results}
+                    # return "Method Unimplemented", 501
+
                 else:
                     return {"message": "Unsupported Query Type"}, 400
             elif "multipart/form-data" in request.content_type:

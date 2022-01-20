@@ -151,3 +151,5 @@ FROM username/repository:tag AS builder
 ```
 
 Note that this builder image would need to be rebuilt if there is any change in the dependencies.
+
+v : 0.0.1

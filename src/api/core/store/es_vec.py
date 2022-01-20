@@ -117,6 +117,30 @@ class ES:
         res = es_to_sanitized(result)
         return res
 
+    def query(self, fieldName, value):
+        query = {
+            "bool": {
+                # "must": {"match": {"metadata.type": "apple"}},
+                "must": {"match": {fieldName: value}},
+                # "filter": [{"match_phrase": {"dataset": "asdfasdf-000004"}}],
+            }
+        }
+        result = self.client.search(
+            query=query,
+            index="text",
+            _source=[
+                "metadata",
+                "dataset",
+                "source_id",
+                "text",
+                "date_added",
+                "source",
+                "e_kosh_id",
+            ],
+        )
+        res = es_to_sanitized(result)
+        return res
+
     def update(param, doc):
         pass
 
