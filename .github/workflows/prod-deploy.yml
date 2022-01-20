@@ -54,7 +54,7 @@ jobs:
         uses: steebchen/kubectl@v2.0.0
         with: # defaults to latest kubectl binary version
           config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
-          command: set image --record deployment/feluda-server feluda-server=tattletech/feluda-api:${{ steps.vars.outputs.sha_short }}
+          command: set image --record deployment/feluda-server feluda-server=tattletech/feluda-server:${{ steps.vars.outputs.sha_short }}
       - name: verify deployment
         uses: steebchen/kubectl@v2.0.0
         with:
