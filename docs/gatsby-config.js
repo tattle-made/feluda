@@ -45,5 +45,11 @@ module.exports = {
       },
       __key: "pages",
     },
+    {
+      resolve: `gatsby-plugin-s3`,
+      options: {
+        bucketName: "feluda.tattle.co.in",
+      },
+    },
   ],
 };
