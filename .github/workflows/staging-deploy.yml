@@ -70,3 +70,4 @@ jobs:
           SLACK_TITLE: "Deploy Feluda Production  workflow complete"
           SLACK_COLOR: "#020637"
           SLACK_ICON: https://tattle-media.s3.amazonaws.com/monogram-dark.svg
+
