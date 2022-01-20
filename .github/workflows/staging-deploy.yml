@@ -35,6 +35,8 @@ jobs:
         run: |
           echo "setting variables"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          pwd
+          ls
 
       - uses: elgohr/Publish-Docker-Github-Action@master
         with:
