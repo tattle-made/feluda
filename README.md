@@ -5,6 +5,10 @@ A configurable engine for analysing multi-lingual and multi-modal content.
 
 While flexible, we built it to analyse data collected from social media - images,text and video. This forms the core of our search, clustering and analysis services. Since different use cases might require different search capabilities with different trade offs, Feluda lets you specify which building blocks you want to use for the purpose and spins an engine with a corresponding configuration.
 
+## Example Uses
+- [Khoj](https://tattle.co.in/products/khoj/) : An Reverse Image search engine to find fact check articles
+- [Crowdsourcing Aid : A Case Study of the Information Chaos During India's Second Covid-19 Wave](https://tattle.co.in/articles/covid-whatsapp-public-groups/) : Analysis of whatsapp messages related to relief work collected from public whatsapp group during the second wave of Covid-19 in India.
+ 
 ## Features
 - Support for Vector based embeddings using ResNet models and Sentence Transformers
 - Support for hash based search using pHash
