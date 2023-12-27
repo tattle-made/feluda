@@ -121,7 +121,9 @@ credentials.json
 
 # Docker logs
 .docker/*
-src/api/sample_data/
+src/api/core/operators/sample_data/
+sample_data/**
 # a temporary folder made by denny.
 # it is safe to delete this line if you no longer see this folder in the root folder
 _docs
+
