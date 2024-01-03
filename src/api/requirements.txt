@@ -95,15 +95,16 @@ numpy==1.20.2
     #   torch
     #   torchvision
     #   transformers
-opencv-python-headless==4.5.1.48
-    # via -r requirements.in
+# opencv-python-headless==4.5.1.48
+#     # via -r requirements.in
+opencv-python-headless==4.7.0.72
 packaging==20.9
     # via
     #   google-api-core
     #   transformers
 pika==1.1.0
     # via -r requirements.in
-pillow==7.1.0
+pillow==7.1.2
     # via
     #   -r requirements.in
     #   imageio
@@ -187,7 +188,7 @@ torch==1.8.1+cpu
 -f https://download.pytorch.org/whl/torch_stable.html
 torchvision==0.9.1+cpu
     # via -r requirements.in
-tqdm==4.60.0
+tqdm==4.64.0
     # via
     #   -r requirements.in
     #   nltk
@@ -216,5 +217,6 @@ zipp==3.4.1
 dacite==1.6.0
 PyYAML==6.0
     # added manually by denny. these might get overwritten
+ultralytics==8.0.145
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
