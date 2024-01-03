@@ -22,5 +22,5 @@ class Test(unittest.TestCase):
             self.assertIn(expected_class, detected_classes)
 
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#     unittest.main()
