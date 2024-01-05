@@ -126,4 +126,6 @@ credentials.json
 # a temporary folder made by denny.
 # it is safe to delete this line if you no longer see this folder in the root folder
 _docs
+# YOLO segement pt file
+src/api/core/operators/yolov8n-seg.pt
 
