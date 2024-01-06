@@ -1,0 +1,21 @@
+## Documentation for Object Detection using YOLO
+
+You only look once (YOLO) is a state-of-the-art, real-time object detection system. It is trained on the COCO dataset.
+
+I am using the segment model of YOLO -> YOLOv8 segment - https://docs.ultralytics.com/tasks/segment/#models
+
+it's easy to setup and use YOLO
+
+First, we have to install the `ultralytics` library 
+```
+pip install ultralytics
+```
+
+then just setup YOLO object detection like this
+```
+from ultralytics import YOLO
+model = YOLO('yolov8n-seg.pt')
+result = model.predict('path/to/your/image', save=True, imgsz=1024, conf=0.5, project='sample_data', name='output')
+```
+
+the output image will be saved in `sample_data/output` folder, and the resulting image will be titled as `output.png`. This image will have bounding boxes with objects detected and will also show the segmented area. 
