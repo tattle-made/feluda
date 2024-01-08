@@ -18,4 +18,18 @@ model = YOLO('yolov8n-seg.pt')
 result = model.predict('path/to/your/image', save=True, imgsz=1024, conf=0.5, project='sample_data', name='output')
 ```
 
-the output image will be saved in `sample_data/output` folder, and the resulting image will be titled as `output.png`. This image will have bounding boxes with objects detected and will also show the segmented area. 
+The output image will be saved in `sample_data/output` folder, and the resulting image will be titled as `output.png`. This image will have bounding boxes with objects detected and will also show the segmented area. 
+
+## How to Run the Test
+
+The operator and the test file can be found at `src/api/core/operators` folder in the codebase. The operator is named `detect_objects.py` and the test file is named `test_detect_objects.py`
+
+To run the test, simply just run the test file
+```
+python test_detect_objects.py
+```
+
+This will initiate the test and first the YOLO models `.pt` file will be downloaded, after the tests runs, you should get an `OK` message in the terminal indicating that the test has run successfully.
+
+The output image will be saved in `sample_data/output` folder, and the resulting image will be titled as `output.png`. This image will have bounding boxes with objects detected and will also show the segmented area.
+

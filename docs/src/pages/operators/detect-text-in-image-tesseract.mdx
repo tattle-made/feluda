@@ -15,3 +15,14 @@ data = pytesseract.image_to_string(image, lang='eng+hin', config='--psm 6 --oem 
 Here the config settings help us define some more insight into the image and LSTM blocks for the image extraction engines. 
 
 You can take a look at the operator and the test of the operator for the entire code.
+
+## How to Run the Test
+
+The operator and the test file can be found at `src/api/core/operators` folder in the codebase. The operator is named `detect_text_in_image_tesseract.py` and the test file is named `test_detect_text_in_image_tesseract.py`
+
+To run the test, simply just run the test file
+```
+python test_detect_text_in_image_tesseract.py
+```
+
+The test will check if text was extracted correctly or not, it will fetch an sample image from the `sample_data` folder. You should get an `OK` message in the terminal indicating that the test has run successfully.
