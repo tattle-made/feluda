@@ -1,4 +1,3 @@
-from .installer import install_packages
 
 """
 This operator uses google cloud API to extract text from an image.
@@ -12,7 +11,6 @@ google-cloud==0.34.0
 google-cloud-vision==0.34.0
 boto3
 """
-requirement_list = ["google-cloud==0.34.0", "google-cloud-vision==0.34.0", "boto3"]
 
 
 def download_google_cloud_credentials():
@@ -42,7 +40,6 @@ def download_google_cloud_credentials():
 
 
 def initialize(param):
-    install_packages(requirement_list)
 
     global vision, json, os, boto3, MessageToJson, GOOGLE_API_KEY
 

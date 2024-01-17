@@ -1,9 +1,5 @@
-from installer import install_packages
-
-requirement_list = ["pytesseract==0.3.10"]
 
 def initialize(param):
-    install_packages(requirement_list)
 
     global config_psm
     global config_oem
