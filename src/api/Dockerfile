@@ -36,7 +36,7 @@ EXPOSE 7000
 FROM base AS debug
 RUN apt-get update && apt-get install -y vim zsh jq
 RUN pip install debugpy nose2
-RUN export FLASK_ENV=development
+RUN export FLASK_DEBUG=1
 CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m flask run -h 0.0.0.0 -p 5000
 
 #### PROD IMAGE ####
