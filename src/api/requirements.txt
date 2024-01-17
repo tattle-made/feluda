@@ -191,7 +191,7 @@ scipy==1.11.4
     #   sentence-transformers
 sentence-transformers==2.2.2
     # via -r requirements.in
-sentencepiece==0.1.95
+sentencepiece==0.1.99
     # via sentence-transformers
 six==1.15.0
     # via
