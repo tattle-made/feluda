@@ -1,6 +1,6 @@
 # FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
-FROM python:3.7-slim AS base
+FROM python:3.11-slim@sha256:637774748f62b832dc11e7b286e48cd716727ed04b45a0322776c01bc526afc3 AS base
 # COPY --from=ffmpeg / /
 RUN apt-get update \
     && apt-get -y upgrade \
