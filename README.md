@@ -27,7 +27,7 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
 
 ## Setup for Developing Locally
 
-1. Set environment variables by replacing the credentials in `/src/indexer/.env-template` and `/src/api-server/.env-template` with your credentials. Rename the files to `.env` and `.env` respectively.
+1. Set environment variables by replacing the credentials in `/src/api/.env-template` with your credentials. Rename the file to `development.env`.
    (For production, update the RabbitMQ and Elasticsearch host and credentials in the `.env` files)
 
 2. Run `docker-compose up` . This will bring up the following containers:
@@ -165,5 +165,29 @@ FROM username/repository:tag AS builder
 ```
 
 Note that this builder image would need to be rebuilt if there is any change in the dependencies.
+
+#### Updating Packages
+1. Update packages in `src/api/requirements.in`
+2. Use `pip-compile` to generate `requirements.txt`
+
+Note:
+
+- Use a custom `tmp` directory to avoid memory issues
+- Do not use `--generate-hashes` flag for `pip-compile` since  the cpu version of `pytorch` is being used from official repository as it is not available in `pypi`. `pip-compile` will manually generate the hash for the architecture specific file and the code will not be compatible with other architectures.
+
+```
+$ cd src/api/
+$ pip install --upgrade pip-tools
+$ $ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html requirements.in
+```
+
+#### Updating specific packages in `requirements.txt`
+This is useful to update dependencies e.g. when using `pip-audit` 
+
+```
+$ TMPDIR=<temp_dir> pip-compile --verbose --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
+
+```
+
 
 v : 0.0.7

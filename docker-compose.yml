@@ -5,7 +5,7 @@ services:
     container_name: es
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
     volumes:
-      - ./.docker/es/data:/usr/share/elasticsearch/data
+      - ./.docker/es/data:/var/lib/elasticsearch/data
     ports:
       - "9300:9300"
       - "9200:9200"
@@ -32,8 +32,8 @@ services:
     container_name: rabbitmq
     hostname: rabbit
     volumes:
-      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+      - ./.docker/rabbitmq/data:/var/lib/rabbitmq
+      - ./.docker/rabbitmq/logs:/var/log/rabbitmq
     environment:
       RABBITMQ_ERLANG_COOKIE: "secret-cookie"
       RABBITMQ_DEFAULT_USER: "admin"
@@ -60,6 +60,7 @@ services:
         condition: service_started
       queue:
         condition: service_started
+
   indexer:
     container_name: feluda_indexer
     build:
@@ -88,7 +89,7 @@ services:
       queue:
         condition: service_started
 
-networks:
-  default:
-    external: true
-    name: kosh-v2_tattle
+#networks:
+#  default:
+#    external: true
+#    name: kosh-v2_tattle
