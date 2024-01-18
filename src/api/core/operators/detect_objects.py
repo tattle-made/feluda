@@ -1,5 +1,9 @@
+from installer import install_packages
+
+requirement_list = ["ultralytics==8.0.145"]
 
 def initialize(param):
+    install_packages(requirement_list)
 
     from ultralytics import YOLO
 

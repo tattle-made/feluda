@@ -52,11 +52,8 @@ search server : visit http://localhost:5000
 
 4. Then start the server and indexer with:
 
-In a new terminal
-
 ```
-cd src/api
-docker exec -it feluda_api python server.py
+docker exec -it search_api python application.py
 docker exec -it search_indexer python receive.py
 ```
 

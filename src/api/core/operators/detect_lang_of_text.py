@@ -1,5 +1,11 @@
+from .installer import install_packages
+
+requirement_list = ["pytest", "nltk==3.6", "textblob==0.15.3"]
+
 
 def initialize(param):
+    print("Intalling packages for detect_lang_of_text")
+    install_packages(requirement_list)
 
     global TextBlob
 
