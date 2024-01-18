@@ -9,12 +9,14 @@ from .es_vec_adapter import es_to_sanitized
 import numpy as np
 import inspect
 import os
-
+import json
 
 class ES:
     def __init__(self, config: StoreConfig):
         # self.es_host = config.parameters.host_name
-        self.es_host = os.environ.get("ES_HOST")
+        # self.es_host = os.environ.get("ES_HOST")
+        ####### When running through Docker -> HOST should be 'es' #######
+        # self.es_host = 'es'
         self.indices = {
             "text": config.parameters.text_index_name,
             "image": config.parameters.image_index_name,
@@ -23,7 +25,7 @@ class ES:
 
     def connect(self):
         try:
-            self.config = {"host": self.es_host}
+            self.config = {"host": self.es_host, "port": 9200, "scheme": "http"}
             self.client = Elasticsearch(
                 [
                     self.config,
@@ -50,10 +52,8 @@ class ES:
             if self.client.indices.exists(index=self.indices[index]):
                 log.info("Verified that {} exists".format(self.indices[index]))
             else:
-                log.info(
-                    "{} does not exist, creating it now".format(self.indices[index])
-                )
-                body = mappings[index]
+                log.info("{} does not exist, creating it now".format(self.indices[index]))
+                body = json.loads(mappings[index])
                 self.client.indices.create(index=self.indices[index], body=body)
                 log.info("{} created".format(self.indices[index]))
 
