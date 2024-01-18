@@ -1,3 +1,5 @@
+from .installer import install_packages
+import os
 
 """
 This operator uses google cloud API to extract text from an image.
@@ -11,9 +13,15 @@ google-cloud==0.34.0
 google-cloud-vision==0.34.0
 boto3
 """
+# requirement_list = ["translate==3.6.1", "spacy==3.2.1"]
+requirement_list = ["googletrans==4.0.0rc1", "spacy==3.2.1"]
 
 
 def initialize(param):
+    install_packages(requirement_list)
+    os.system(
+        "pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.2.0/en_core_web_md-3.2.0.tar.gz"
+    )
 
     global translator, spacy, NER
 
