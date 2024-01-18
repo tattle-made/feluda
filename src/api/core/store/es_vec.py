@@ -14,7 +14,7 @@ import json
 class ES:
     def __init__(self, config: StoreConfig):
         # self.es_host = config.parameters.host_name
-        # self.es_host = os.environ.get("ES_HOST")
+        self.es_host = os.environ.get("ES_HOST")
         ####### When running through Docker -> HOST should be 'es' #######
         # self.es_host = 'es'
         self.indices = {
