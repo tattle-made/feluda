@@ -3,7 +3,7 @@ import torch
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
-from .installer import install_packages
+from installer import install_packages
 
 # imagenet normalize
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -47,3 +47,13 @@ def run(image_obj):
     image = image.convert("RGB")
     image_vec = resnet18.extract_feature(image)
     return image_vec
+
+# if __name__ == "__main__":
+#     initialize(param=None)
+#     image_path = r"sample_data/text.png"
+#     from PIL import Image
+#     image = Image.open(image_path)
+#     example_image_obj = {"image": image}
+#     result = run(example_image_obj)
+#     print(len(result))
+
