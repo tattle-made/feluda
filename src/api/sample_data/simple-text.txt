@@ -1,0 +1,1 @@
+sample text for test_index_api_as_client.py

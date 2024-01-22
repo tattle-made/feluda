@@ -14,9 +14,9 @@ import json
 class ES:
     def __init__(self, config: StoreConfig):
         # self.es_host = config.parameters.host_name
-        self.es_host = os.environ.get("ES_HOST")
-        ####### When running through Docker -> HOST should be 'es' #######
-        # self.es_host = 'es'
+        # self.es_host = os.environ.get("ES_HOST")
+        ##### When running through Docker -> HOST should be 'es' #######
+        self.es_host = 'es'
         self.indices = {
             "text": config.parameters.text_index_name,
             "image": config.parameters.image_index_name,
@@ -59,14 +59,14 @@ class ES:
 
     def delete_indices(self):
         for index in self.indices:
-            self.client.indices.delete(self.indices[index])
+            self.client.indices.delete(index=index)
 
     def get_indices(self):
         index_list = ""
         for index in self.indices:
             index_list += self.indices[index] + ","
         index_list = index_list[:-1]
-        indices = self.client.indices.get(index_list)
+        indices = self.client.indices.get(index=index_list)
         return indices
 
     def store(self, media_type: MediaType, doc):
@@ -80,7 +80,7 @@ class ES:
 
     def refresh(self):
         for index in self.indices:
-            self.client.indices.refresh(self.indices[index])
+            self.client.indices.refresh(index=index)
 
     def find(self, index_name, vec):
         if type(vec) == np.ndarray:

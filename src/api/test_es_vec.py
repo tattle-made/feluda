@@ -1,7 +1,9 @@
 import unittest
 from unittest.case import skip
 import requests
-from .es_vec import ES
+from core.store.es_vec import ES
+from core.config import StoreConfig, StoreParameters
+from core.models.media import MediaType
 import pprint
 from datetime import datetime
 import numpy as np
@@ -15,16 +17,26 @@ class TestES(unittest.TestCase):
         # ping es server to see if its working
         response = requests.get("http://es:9200")
 
-        if response.status_code is 200:
+        if response.status_code == 200:
             print("Elastic search server is running")
         else:
             print("No elasticsearch service found. Tests are bound to fail.")
-        cls.param = {
+        param_dict = {
             "host_name": "es",
             "text_index_name": "test_text",
             "image_index_name": "test_image",
             "video_index_name": "test_video",
         }
+        cls.param = StoreConfig(
+            label="test",
+            type="es",
+            parameters=StoreParameters(
+                host_name=param_dict["host_name"],
+                image_index_name=param_dict["image_index_name"],
+                text_index_name=param_dict["text_index_name"],
+                video_index_name=param_dict["video_index_name"],
+            )   
+        )
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -34,62 +46,65 @@ class TestES(unittest.TestCase):
     # def tearDown(self) -> None:
     #     pass
 
-    @skip
+    # @skip
     def test_create_indices(self):
         print(self.param)
         es = ES(self.param)
         es.connect()
-        es.create_index()
+        es.optionally_create_index()
         indices = es.get_indices()
         # print(indices)
 
-        self.assertEquals(
+        self.assertEqual(
             indices["test_text"]["mappings"]["properties"]["text"]["analyzer"],
             "standard",
         )
-        self.assertEquals(
+        self.assertEqual(
             indices["test_image"]["mappings"]["properties"]["image_vec"]["dims"], 512
         )
-        self.assertEquals(
+        self.assertEqual(
             indices["test_video"]["mappings"]["properties"]["vid_vec"]["dims"], 512
         )
 
-    @skip
+    # @skip
     def test_store_image(self):
         es = ES(self.param)
         es.connect()
         doc = {
             "e_kosh_id": str(1231231),
+            "dataset": "test-dataset-id",
             "source": "tattle-admin",
             "metadata": {},
             "text": "test text to go with the image",
             "image_vec": np.random.randn(512).tolist(),
             "date_added": datetime.utcnow(),
         }
-        result = es.store(doc)
+        mediaType = MediaType.IMAGE
+        result = es.store(mediaType, doc)
         self.assertEqual(result["result"], "created")
 
+    # @skip
     def test_search_vectors(self):
         es = ES(self.param)
         es.connect()
-        es.create_index()
+        es.optionally_create_index()
         vec = np.random.randn(512).tolist()
         doc = {
             "e_kosh_id": str(1231231),
+            "dataset": "test-dataset-id",
             "source": "tattle-admin",
             "metadata": {"domain": "hate-speech"},
             "text": "test text to go with the image",
             "image_vec": vec,
             "date_added": datetime.utcnow(),
         }
-
-        result = es.store("test_image", doc)
+        result = es.store(MediaType.IMAGE, doc)
         pp.pprint(result)
         search_result = es.find("test_image", vec)
-        es.refresh()
+        # es.refresh()
         print("SEARCH RESULTS \n : ")
         pp.pprint(search_result)
-        self.assertEqual(result["result"], "created")
+        self.assertEqual(search_result[0].get('dataset'), "test-dataset-id")
         # es.delete_indices()
 
     def test_store_text(self):

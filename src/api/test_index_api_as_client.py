@@ -7,9 +7,11 @@ API_URL = "http://localhost:7000"
 
 
 class TestIndex(unittest.TestCase):
-    @skip
+    # @skip
     def testIndexText(self):
         url = API_URL + "/index"
+        headers = {"Content-Type": "application/json"}
+        # headers = {"Content-Type": "multipart/form-data"}
         data = {
             "post": {
                 "id": "1234",
@@ -21,13 +23,15 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        files = {
-            "media": open("sample_data/simple-text.txt", "rb"),
-            "data": json.dumps(data),
-        }
-        response = requests.post(url, json=data, files=files)
-        print(response.json())
-        self.assertEqual(response.status_code, 200)
+        with open("sample_data/simple-text.txt", "rb") as media_file:
+            files = {
+                "media": media_file,
+                "data": json.dumps(data),
+            }
+            # response = requests.post(url, json=data, files=files, headers=headers)
+            response = requests.post(url, json=data, headers=headers)
+            print(response.text)
+            self.assertEqual(response.status_code, 200)
         # self.assertEqual(len(response.json()["vector_representation"]), 768)
 
     @skip
