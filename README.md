@@ -167,6 +167,7 @@ FROM username/repository:tag AS builder
 Note that this builder image would need to be rebuilt if there is any change in the dependencies.
 
 #### Updating Packages
+
 1. Update packages in `src/api/requirements.in`
 2. Use `pip-compile` to generate `requirements.txt`
 
@@ -175,19 +176,36 @@ Note:
 - Use a custom `tmp` directory to avoid memory issues
 - Do not use `--generate-hashes` flag for `pip-compile` since  the cpu version of `pytorch` is being used from official repository as it is not available in `pypi`. `pip-compile` will manually generate the hash for the architecture specific file and the code will not be compatible with other architectures.
 
-```
+```bash
 $ cd src/api/
 $ pip install --upgrade pip-tools
 $ $ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html requirements.in
 ```
 
 #### Updating specific packages in `requirements.txt`
+
 This is useful to update dependencies e.g. when using `pip-audit` 
 
-```
+```bash
 $ TMPDIR=<temp_dir> pip-compile --verbose --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
 
 ```
 
+### Running Tests
 
-v : 0.0.7
+To run a test, implement the following command
+
+```bash
+python -m unittest <FILE_NAME>.py
+```
+
+To run all the tests in a specific folder run
+
+```bash
+python -m unittest discover -s project_directory -p "test_*.py"
+```
+
+Read full test documentation [here](https://docs.python.org/3/library/unittest.html).
+
+----
+v : 0.0.8
