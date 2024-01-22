@@ -92,7 +92,7 @@ class IndexHandler:
                 representation = generateRepresentation(post, operators)
                 document = generateDocument(post, representation)
                 save_result = self.feluda.store.store(post.type, document)
-                return save_result
+                return {"message": "ok", "data" : save_result.get('_id', "default")}
             elif config_mode == ConfigMode.REFLECT:
                 return "Method Unimplemented", 501
             else:

@@ -3,7 +3,7 @@ import torch
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
-from installer import install_packages
+from .installer import install_packages
 
 # imagenet normalize
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
