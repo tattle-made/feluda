@@ -60,9 +60,11 @@ class TestIndex(unittest.TestCase):
             print(response.text)
             self.assertEqual(response.status_code, 200)
 
-    @skip
+    # @skip
     def testIndexVideo(self):
         url = API_URL + "/index"
+        headers = {"Content-Type": "application/json"}
+        # headers = {"Content-Type": "multipart/form-data"}
         data = {
             "post": {
                 "id": "1234",
@@ -79,8 +81,8 @@ class TestIndex(unittest.TestCase):
             "data": json.dumps(data),
         }
         # axios.post("endpoint", data)
-        response = requests.post(url, json=data, files=files)
-        print(response.json())
+        response = requests.post(url, json=data, headers=headers)
+        print(response.text)
         self.assertEqual(response.status_code, 200)
 
     @skip
