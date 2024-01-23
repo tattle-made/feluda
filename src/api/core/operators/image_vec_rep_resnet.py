@@ -3,14 +3,11 @@ import torch
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
-from .installer import install_packages
 
 # imagenet normalize
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 scaler = transforms.Resize((224, 224))
 to_tensor = transforms.ToTensor()
-
-requirement_list = ["pytest", "nltk==3.6", "textblob==0.15.3"]
 
 
 class ResNet18:
@@ -36,8 +33,6 @@ class ResNet18:
 
 
 def initialize(param):
-    print("Intalling packages for image_vec_rep_resnet")
-    install_packages(requirement_list)
     global resnet18
     resnet18 = ResNet18()
 

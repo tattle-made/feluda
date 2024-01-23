@@ -32,30 +32,40 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
 
 2. Run `docker-compose up` . This will bring up the following containers:
 
-Elasticsearch : Used to store searchable representations of multilingual text, images and videos.
+  Elasticsearch : Used to store searchable representations of multilingual text, images and videos.
 
-RabbitMQ : Used as a Job Queue to queue up long indexing jobs.
+  RabbitMQ : Used as a Job Queue to queue up long indexing jobs.
 
-Search Indexer : A RabbitMQ consumer that receives any new jobs that are added to the queue and processes them.
+  Search Indexer : A RabbitMQ consumer that receives any new jobs that are added to the queue and processes them.
 
-Search Server : A public REST API to index new media and provide additional public APIs to interact with this service.
+  Search Server : A public REST API to index new media and provide additional public APIs to interact with this service.
 
-The first time you run `docker-compose up` it will take several minutes for all services to come up. Its usually instantaneous after that, as long as you don't make changes to the Dockerfile associated with each service.
+  The first time you run `docker-compose up` it will take several minutes for all services to come up. Its usually instantaneous after that, as long as you don't make changes to the Dockerfile associated with each service.
 
 3. To verify if every service is up, visit the following URLs:
 
-elasticsearch : visit http://localhost:9200
+  elasticsearch : visit http://localhost:9200
 
-rabbitmq UI : visit http://localhost:15672
+  rabbitmq UI : visit http://localhost:15672
 
-search server : visit http://localhost:5000
+  search server : visit http://localhost:5000
 
-4. Then start the server and indexer with:
+4. Install required operators
+  Each operator has to be installed separately as a module
+  Example: Installing `detect_lang_of_text`
 
-```
-docker exec -it search_api python application.py
-docker exec -it search_indexer python receive.py
-```
+  ```
+  $ cd src/api/core/operators/
+  
+  $ pip install -r detect_lang_of_text_requirements.txt
+  ```
+
+5. Then start the server and indexer with:
+  
+  ```
+  $ docker exec -it feluda_api python server.py
+  $ docker exec -it search_indexer python receive.py
+  ```
 
 #### Server endpoints
 
@@ -179,7 +189,12 @@ Note:
 ```bash
 $ cd src/api/
 $ pip install --upgrade pip-tools
-$ $ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html requirements.in
+$ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html requirements.in
+
+# Updating operators e.g. detect_lang_of_text
+$ cd src/api/core/operators/
+$ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links detect_lang_of_text_requirements.in
+
 ```
 
 #### Updating specific packages in `requirements.txt`

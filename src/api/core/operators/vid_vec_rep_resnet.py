@@ -1,21 +1,7 @@
-from .installer import install_packages
-
-requirement_list = [
-    "-f https://download.pytorch.org/whl/torch_stable.html torch==1.8.1+cpu",
-    "numpy==1.20.2",
-    "wget",
-    "ffmpy",
-    "Pillow",
-    "torchvision",
-    "torch",
-    "scipy",
-    "cv-headless",
-]
 
 
 def initialize(param):
     print("Intalling packages for vid_vec_rep_resnet")
-    install_packages(requirement_list)
 
     global TextBlob, os, np, cv2, qr, torch, data, models, transforms, Image, FFmpeg, wget
     global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata, compress_video
