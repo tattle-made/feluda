@@ -52,7 +52,7 @@ torchvision==0.16.2+cpu
     # via -r vid_vec_rep_resnet_requirements.in
 typing-extensions==4.9.0
     # via torch
-urllib3==2.1.0
+urllib3==2.0.7
     # via requests
 wget==3.2
     # via -r vid_vec_rep_resnet_requirements.in
