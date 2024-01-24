@@ -51,19 +51,26 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
   search server : visit http://localhost:5000
 
 4. Install required operators
-  Each operator has to be installed separately as a module
-  Example: Installing `detect_lang_of_text`
+  Each operator has to be installed separately
 
   ```
+  # Install locally in venv
   $ cd src/api/core/operators/
-  
-  $ pip install -r detect_lang_of_text_requirements.txt
+  $ pip install -r image_vec_rep_resnet_requirements.txt
+  $ pip install -r vid_vec_rep_resnet_requirements.txt
   ```
 
-5. Then start the server and indexer with:
+5. Then start the server with:
   
   ```
+  $ cd src/api
   $ docker exec -it feluda_api python server.py
+  ```
+
+6. Verify that the server is running by opening: http://localhost:7000
+
+7. Then start the indexer with:
+  ```
   $ docker exec -it search_indexer python receive.py
   ```
 
