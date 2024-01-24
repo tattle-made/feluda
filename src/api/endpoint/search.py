@@ -38,16 +38,13 @@ class SearchHandler:
                 else:
                     return {"message": "Unsupported Query Type"}, 400
             elif "multipart/form-data" in request.content_type:
-                data = json.load(request.files["data"])
+                # data = json.loads(request.files["data"])
+                data = json.loads(request.form.get("data"))
                 if data["query_type"] == "image":
                     file = request.files["media"]
                     print(file, type(file))
-                    image_obj = media_factory[MediaType.IMAGE].make_from_file_in_memory(
-                        file
-                    )
-                    image_vec = self.feluda.operators.active_operators[
-                        "image_vec_rep_resnet"
-                    ].run(image_obj)
+                    image_obj = media_factory[MediaType.IMAGE].make_from_file_in_memory(file)
+                    image_vec = self.feluda.operators.active_operators["image_vec_rep_resnet"].run(image_obj)
                     results = self.feluda.store.find("image", image_vec)
                     return {"matches": results}
                 elif data["query_type"] == "video":
