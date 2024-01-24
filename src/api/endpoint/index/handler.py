@@ -24,12 +24,12 @@ def generateRepresentation(post: Post, operators):
         return {"plain_text": plain_text, "lang": lang, "entities": entities}
     elif post.type == MediaType.IMAGE:
         image_vec = operators["image_vec_rep_resnet"].run(file)
-        text = operators["detect_text_in_image"].run(file)
-        entities = operators["ner_extraction"].run(text["text"])
+        # text = operators["detect_text_in_image"].run(file)
+        # entities = operators["ner_extraction"].run(text["text"])
         return {
             "vector_representation": image_vec,
-            "text": text["text"],
-            "entities": entities,
+            # "text": text["text"],
+            # "entities": entities,
         }
     elif post.type == MediaType.VIDEO:
         video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
@@ -50,8 +50,8 @@ def generateDocument(post: Post, representation: any):
         return base_doc
     elif post.type == MediaType.IMAGE:
         base_doc["image_vec"] = representation["vector_representation"]
-        base_doc["text"] = representation["text"]
-        base_doc["suggestion"] = representation["entities"]
+        # base_doc["text"] = representation["text"]
+        # base_doc["suggestion"] = representation["entities"]
         return base_doc
     elif post.type == MediaType.VIDEO:
 
