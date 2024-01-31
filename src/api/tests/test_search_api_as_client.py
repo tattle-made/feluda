@@ -27,16 +27,9 @@ class TestSearch(unittest.TestCase):
     @skip
     def testSearchImage(self):
         url = API_URL + "/search"
-        # data = {"query_type": "image"}
+        data = {"query_type": "image"}
         with open("sample_data/c8709f21-bd7d-4e22-af14-50ad8a429f84.jpeg", "rb") as file:
-            # files = {
-            #     "media": file,
-            #     "data": json.dumps(data),
-            # }
-            # response = requests.post(url, files=files)
-            # print(response.text)
-            # self.assertEqual(response.status_code, 200)
-            data = {"data": json.dumps({"query_type": "image"})}
+            data = {"data": json.dumps(data)}
             files = {"media": file}
             response = requests.post(url, data=data, files=files)
             print(response.text)
