@@ -184,9 +184,9 @@ safetensors==0.4.1
     # via transformers
 scikit-image==0.22.0
     # via -r requirements.in
-scikit-learn==1.1.3
+scikit-learn==1.4.0
     # via sentence-transformers
-scipy==1.11.4
+scipy==1.12.0
     # via
     #   scikit-image
     #   scikit-learn
@@ -204,7 +204,7 @@ sympy==1.12
     # via torch
 textblob==0.17.1
     # via -r requirements.in
-threadpoolctl==2.1.0
+threadpoolctl==3.2.0
     # via scikit-learn
 tifffile==2023.12.9
     # via scikit-image
