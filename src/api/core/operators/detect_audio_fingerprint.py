@@ -2,8 +2,6 @@ import numpy as np
 import logging
 from scipy import signal
 from scipy.io import wavfile
-from scipy.spatial import distance
-# import matplotlib.pyplot as plt
 from pydub import AudioSegment
 import os
 
@@ -95,13 +93,13 @@ def fingerprint2(f, spect, framerate):
 
     return fingerprints
     
-if __name__ == "__main__":
-    convert(r'sample_data/audio.mp3')
-    audio_file = r'sample_data/audio.wav'
-    framerate_v, f_v, t_v, spect_v = spectrogram(audio_file)
-    # print('Frame rate - ', framerate_v, 'F - ', f_v, 'T - ', t_v, 'spect - ', spect_v)
-    fingerprint_v = fingerprint(f_v, spect_v)
-    print('Fingerprint - ', fingerprint_v)
-    fingerprint2_v = fingerprint2(f_v, spect_v, framerate_v)
-    print('Fingerprint2 - ', fingerprint2_v)
+# if __name__ == "__main__":
+#     convert(r'sample_data/audio.mp3')
+#     audio_file = r'sample_data/audio.wav'
+#     framerate_v, f_v, t_v, spect_v = spectrogram(audio_file)
+#     print('Frame rate - ', framerate_v, 'F - ', f_v, 'T - ', t_v, 'spect - ', spect_v)
+#     fingerprint_v = fingerprint(f_v, spect_v)
+#     print('Fingerprint - ', fingerprint_v)
+#     fingerprint2_v = fingerprint2(f_v, spect_v, framerate_v)
+#     print('Fingerprint2 - ', fingerprint2_v)
 
