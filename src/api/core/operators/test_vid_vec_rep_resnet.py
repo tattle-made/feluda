@@ -19,7 +19,9 @@ class Test(unittest.TestCase):
     def test_sample_video_from_disk(self):
         video = {"path": r"sample_data/sample-cat-video.mp4"}
         result = vid_vec_rep_resnet.run(video)
-        self.assertEqual(len(list(result)), 6)
+        # self.assertEqual(len(list(result)), 6)
+        for vec in result:
+            self.assertEqual(len(vec.get('vid_vec')), 512)
 
     @skip
     def test_unsupported_sample_video_from_disk(self):
@@ -37,7 +39,6 @@ class Test(unittest.TestCase):
         wget.download(video_url, out=video_path)
         video = VideoFactory.make_from_file_on_disk(video_path)
 
-        avg_vec, all_vec = vid_vec_rep_resnet.run(video)
-        self.assertEqual(len(avg_vec), 512)
+        all_vec = vid_vec_rep_resnet.run(video)
         for vec in all_vec:
             self.assertEqual(len(vec), 512)

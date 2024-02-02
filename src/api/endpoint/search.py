@@ -49,7 +49,6 @@ class SearchHandler:
                     return {"matches": results}
                 elif data["query_type"] == "video":
                     file = request.files["media"]
-                    print(file, type(file))
                     vid_obj = media_factory[MediaType.VIDEO].make_from_file_in_memory(
                         file
                     )
@@ -57,8 +56,9 @@ class SearchHandler:
                         "vid_vec_rep_resnet"
                     ].run(vid_obj)
                     average_vector = next(vid_vec)
-                    results = self.feluda.store.find("image", average_vector)
-                    return {"matches": []}
+                    # TODO: explore finding "all_vectors" along with the "avg_vector"
+                    results = self.feluda.store.find("video", average_vector.get('vid_vec'))
+                    return {"matches": results}
                 else:
                     return {"message": "Unsupported Query Type"}
             else:
