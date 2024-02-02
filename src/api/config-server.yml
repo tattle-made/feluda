@@ -45,3 +45,8 @@ operators :
       parameters: {
         index_name : "video"
       }
+    - name : "Audio Feature Representation"
+      type : "audio_similarity_features_rmse"
+      parameters: {
+        index_name : "audio"
+      }

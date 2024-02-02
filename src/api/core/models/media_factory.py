@@ -83,8 +83,32 @@ class VideoFactory:
         return {"path": "file_path_on_disk"}
 
 
+class AudioFactory:
+    @staticmethod
+    def make_from_url(audio_url):
+        fname = "/tmp/aud.wav"
+        try:
+            print("Downloading audio from url")
+            wget.download(audio_url, out=fname)
+            print("audio downloaded")
+        except Exception as e:
+            log.exception("Error downloading audio")
+            raise Exception("Error Downloading audio")
+        return {"path": fname}
+
+    @staticmethod
+    def make_from_file_on_disk(audio_path):
+        return {"path": audio_path}
+
+    @staticmethod
+    def make_from_file_in_memory(file_data: FileStorage):
+        # save on disk
+        return {"path": "file_path_on_disk"}
+
+
 media_factory = {
     MediaType.TEXT: TextFactory,
     MediaType.IMAGE: ImageFactory,
     MediaType.VIDEO: VideoFactory,
+    MediaType.AUDIO: AudioFactory,
 }

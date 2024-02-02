@@ -47,6 +47,13 @@ class SearchHandler:
                     image_vec = self.feluda.operators.active_operators["image_vec_rep_resnet"].run(image_obj)
                     results = self.feluda.store.find("image", image_vec)
                     return {"matches": results}
+                elif data["query_type"] == "audio":
+                    file = request.files["media"]
+                    print(file, type(file))
+                    audio_obj = media_factory[MediaType.AUDIO].make_from_file_in_memory(file)
+                    audio_vec = self.feluda.operators.active_operators["audio_similarity_features_rmse"].run(audio_obj)
+                    results = self.feluda.store.find("audio", audio_vec)
+                    return {"matches": results}
                 elif data["query_type"] == "video":
                     file = request.files["media"]
                     print(file, type(file))
