@@ -80,7 +80,9 @@ class VideoFactory:
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage):
         # save on disk
-        return {"path": "file_path_on_disk"}
+        fname = "/tmp/"+file_data.filename
+        file_data.save(fname)
+        return {"path": fname}
 
 
 media_factory = {
