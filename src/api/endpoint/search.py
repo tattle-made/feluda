@@ -56,6 +56,7 @@ class SearchHandler:
                         "vid_vec_rep_resnet"
                     ].run(vid_obj)
                     average_vector = next(vid_vec)
+                    # TODO: explore finding "all_vectors" along with the "avg_vector"
                     results = self.feluda.store.find("video", average_vector.get('vid_vec'))
                     return {"matches": results}
                 else:
