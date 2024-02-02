@@ -19,6 +19,7 @@ class ES:
             "text": config.parameters.text_index_name,
             "image": config.parameters.image_index_name,
             "video": config.parameters.video_index_name,
+            "audio": config.parameters.audio_index_name,
         }
 
     def connect(self):
@@ -44,7 +45,7 @@ class ES:
         Args:
         es - Elasticsearch client instance
         index - (str) Name of the index
-        type - (str) Allowed options are "text", "image" or "video"
+        type - (str) Allowed options are "text", "image", "video", "audio"
         """
         for index in self.indices:
             if self.client.indices.exists(index=self.indices[index]):
@@ -90,6 +91,8 @@ class ES:
             calculation = "1 / (1 + l2norm(params.query_vector, 'image_vec'))"
         elif index_name == self.indices["video"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
+        elif index_name == self.indices["audio"]:
+            calculation = "1 / (1 + l2norm(params.query_vector, 'audio_vec'))"
 
         q = {
             "size": 10,  # maximum number of hits returned by the query

@@ -34,6 +34,9 @@ def generateRepresentation(post: Post, operators):
     elif post.type == MediaType.VIDEO:
         video_vector_generator = operators["vid_vec_rep_resnet"].run(file)
         return video_vector_generator
+    elif post.type == MediaType.AUDIO:
+        audio_features_generator = operators["audio_similarity_features_rmse"].run(file)
+        return audio_features_generator
 
 
 def generateDocument(post: Post, representation: any):

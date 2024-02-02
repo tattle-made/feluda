@@ -22,6 +22,7 @@ class StoreParameters:
     image_index_name: str
     text_index_name: str
     video_index_name: str
+    audio_index_name: str
 
 
 @dataclass
