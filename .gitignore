@@ -129,3 +129,5 @@ _docs
 # YOLO segement pt file
 src/api/core/operators/yolov8n-seg.pt
 
+# SonarQube
+.scannerwork
