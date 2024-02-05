@@ -1,7 +1,7 @@
 
 
 def initialize(param):
-    print("Intalling packages for vid_vec_rep_resnet")
+    print("Installing packages for vid_vec_rep_resnet")
 
     global TextBlob, os, np, cv2, qr, torch, data, models, transforms, Image, FFmpeg, wget
     global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata, compress_video
