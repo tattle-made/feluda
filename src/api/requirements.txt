@@ -171,6 +171,8 @@ pyasn1-modules==0.2.8
     # via google-auth
 pygments==2.17.2
     # via rich
+pyinstrument==4.6.2
+    # via -r requirements.in
 pytest==7.4.4
     # via -r requirements.in
 python-dateutil==2.8.1

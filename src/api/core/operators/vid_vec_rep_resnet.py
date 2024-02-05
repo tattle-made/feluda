@@ -3,8 +3,8 @@
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
 
-    global TextBlob, os, np, cv2, qr, torch, data, models, transforms, Image, FFmpeg, wget
-    global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata, compress_video
+    global TextBlob, os, np, cv2, qr, torch, data, models, transforms, Image, wget #, FFmpeg
+    global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata #, compress_video
 
     import os
     import numpy as np
@@ -15,7 +15,7 @@ def initialize(param):
     import torchvision.models as models
     import torchvision.transforms as transforms
     from PIL import Image
-    from ffmpy import FFmpeg
+    # from ffmpy import FFmpeg
     import wget
 
     imagenet_transform = transforms.Compose(
@@ -26,6 +26,7 @@ def initialize(param):
         ]
     )
 
+    '''
     def compress_video(fname):
         newname = "/tmp/compressed.mp4"
         FNULL = open(os.devnull, "w")
@@ -38,6 +39,8 @@ def initialize(param):
         ff.run(stdout=FNULL, stderr=FNULL)
         # os.remove(fname)
         return newname
+    '''
+
 
     def gendata(vid_analyzer):
         # average vector
@@ -205,11 +208,11 @@ def run(file):
     fname = file["path"]
     fsize = os.path.getsize(fname) / 1e6
     print("original size: ", fsize)
-    if fsize < 10:
-        print("compressing video")
-        fname = compress_video(fname)
-        fsize = os.path.getsize(fname) / 1e6
-        print("compressed video size: ", fsize)
+    # if fsize < 10:
+    #     print("compressing video")
+    #     fname = compress_video(fname)
+    #     fsize = os.path.getsize(fname) / 1e6
+    #     print("compressed video size: ", fsize)
     if fsize > 10:
         raise Exception("Video too large")
 
@@ -219,7 +222,7 @@ def run(file):
 
     doable, error_msg = vid_analyzer.check_constraints()
 
-    os.remove(fname)
+    # os.remove(fname)
 
     if not doable:
         raise "Unsupported Video. Cannot index video."

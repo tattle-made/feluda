@@ -10,8 +10,6 @@ certifi==2023.11.17
     # via requests
 charset-normalizer==3.3.2
     # via requests
-ffmpy==0.3.1
-    # via -r vid_vec_rep_resnet_requirements.in
 filelock==3.13.1
     # via torch
 fsspec==2023.12.2
