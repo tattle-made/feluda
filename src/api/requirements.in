@@ -22,3 +22,4 @@ pytest==7.4.4
 PyYAML==6.0.1
 dacite==1.8.1
 memray==1.11.0  # dev
+pyinstrument==4.6.2
