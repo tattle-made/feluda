@@ -15,10 +15,10 @@ ENV PATH=/root/.local/bin:$PATH
 RUN pip install --upgrade pip
 RUN pip install pip-tools
 RUN apt-get update && apt-get -y upgrade && apt-get install -y vim curl
-RUN apt-get install -y ffmpeg
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get install -y tesseract-ocr tesseract-ocr-hin
+# RUN apt-get install -y ffmpeg
+# RUN apt-get update && \
+#     apt-get -y upgrade && \
+#     apt-get install -y tesseract-ocr tesseract-ocr-hin
 WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --user -r requirements.txt

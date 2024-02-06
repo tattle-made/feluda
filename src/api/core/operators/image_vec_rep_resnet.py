@@ -13,7 +13,7 @@ to_tensor = transforms.ToTensor()
 class ResNet18:
     def __init__(self):
         print("Initializing ResNet")
-        self.model = models.resnet18(pretrained=True)
+        self.model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         self.feature_layer = self.model._modules.get("avgpool")
         self.model.eval()
 

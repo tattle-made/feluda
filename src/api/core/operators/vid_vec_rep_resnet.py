@@ -3,7 +3,7 @@
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
 
-    global TextBlob, os, np, cv2, qr, torch, data, models, transforms, Image, wget #, FFmpeg
+    global os, np, cv2, qr, torch, data, models, transforms, Image #, wget #, FFmpeg
     global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata #, compress_video
 
     import os
@@ -16,7 +16,7 @@ def initialize(param):
     import torchvision.transforms as transforms
     from PIL import Image
     # from ffmpy import FFmpeg
-    import wget
+    # import wget
 
     imagenet_transform = transforms.Compose(
         [
@@ -88,7 +88,7 @@ def initialize(param):
             self.n_samples = self.n_frames / sampling_rate
             self.n_keyframes = n_keyframes
             # print("init model")
-            self.model = models.resnet18(pretrained=True)
+            self.model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
             # print(type(self.model))
             # list of individual PIL Images
             self.frame_images = []

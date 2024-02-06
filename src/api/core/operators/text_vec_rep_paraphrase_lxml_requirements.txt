@@ -40,7 +40,7 @@ mpmath==1.3.0
     # via sympy
 networkx==3.2.1
     # via torch
-nltk==3.6.6
+nltk==3.8.1
     # via
     #   -r text_vec_rep_paraphrase_lxml_requirements.in
     #   sentence-transformers

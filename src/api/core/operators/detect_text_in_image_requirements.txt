@@ -4,9 +4,9 @@
 #
 #    pip-compile detect_text_in_image_requirements.in
 #
-boto3==1.34.19
+boto3==1.34.34
     # via -r detect_text_in_image_requirements.in
-botocore==1.34.25
+botocore==1.34.35
     # via
     #   boto3
     #   s3transfer
