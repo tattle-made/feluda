@@ -16,4 +16,6 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 COPY . /app
 RUN chmod +x video_vec_operator_cprofile.sh
 RUN chmod +x video_vec_operator_time.sh
+RUN chmod +x video_vec_operator_profile_memray.sh
+RUN chmod +x video_vec_operator_profile_pyinstrument.sh
 CMD tail -f /dev/null
