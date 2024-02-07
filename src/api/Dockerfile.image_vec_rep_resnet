@@ -9,11 +9,21 @@ RUN apt-get update \
     libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/* 
 ENV PATH=/root/.local/bin:$PATH
+
 RUN pip install --no-cache-dir --upgrade pip
 WORKDIR /app
-COPY ./core/operators/image_vec_rep_resnet_requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --user -r requirements.txt
-COPY . /app
+COPY ./core/operators/image_vec_rep_resnet_requirements.txt /app/core/operators/image_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir --user -r /app/core/operators/image_vec_rep_resnet_requirements.txt
+COPY ./core/operators/image_vec_rep_resnet.py /app/core/operators/image_vec_rep_resnet.py
+
+COPY ./core/operators/sample_data/text.png /app/core/operators/sample_data/text.png
+COPY ./core/operators/test_image_vec_rep_resnet.py /app/core/operators/test_image_vec_rep_resnet.py
+COPY ./core/operators/test_image_vec_rep_resnet.py /app/core/operators/test_image_vec_rep_resnet.py
+
+COPY ./image_vec_operator_profile.py /app/image_vec_operator_profile.py
+COPY ./image_vec_operator_profile_memray.sh /app/image_vec_operator_profile_memray.sh
+COPY ./image_vec_operator_profile_pyinstrument.sh /app/image_vec_operator_profile_pyinstrument.sh
 RUN chmod +x image_vec_operator_profile_memray.sh
 RUN chmod +x image_vec_operator_profile_pyinstrument.sh
+
 CMD tail -f /dev/null
