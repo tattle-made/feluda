@@ -9,9 +9,9 @@ RUN apt-get update \
     libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/* 
 ENV PATH=/root/.local/bin:$PATH
-RUN pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 WORKDIR /app
 COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/requirements.txt
-RUN pip install --user -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 COPY . /app
 CMD tail -f /dev/null

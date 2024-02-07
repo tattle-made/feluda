@@ -43,7 +43,7 @@ class TestIndex(unittest.TestCase):
             "post": {
                 "id": "1234",
                 "media_type": "image",
-                "media_url": "https://fs.tattle.co.in/service/kosh/file/c8709f21-bd7d-4e22-af14-50ad8a429f84",
+                "media_url": "https://raw.githubusercontent.com/tattle-made/feluda/master/src/api/core/operators/sample_data/people.jpg",
                 "datasource_id": "asdfasdf-asdfasdf-asdf",
                 "client_id": "123-12312",
             },
@@ -69,7 +69,7 @@ class TestIndex(unittest.TestCase):
             "post": {
                 "id": "1234",
                 "media_type": "video",
-                "media_url": "https://fs.tattle.co.in/service/kosh/file/07ba4a2f-c0a2-44ba-96d8-7b4cc94c8ee7",
+                "media_url": "https://github.com/tattle-made/feluda/raw/master/src/api/core/operators/sample_data/sample-cat-video.mp4",
                 "datasource_id": "asdfasdf-asdfasdf-asdf",
                 "client_id": "123-12312",
             },

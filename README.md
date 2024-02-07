@@ -69,7 +69,16 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
   $ cd src/api/core/operators/
   $ pip install -r image_vec_rep_resnet_requirements.txt
   $ pip install -r vid_vec_rep_resnet_requirements.txt
+
+..# Create the docker containers
+  $ cd src/api/
+  $ docker build -t image-operator -f Dockerfile.image_vec_rep_resnet .
+  $ docker build -t video-operator -f Dockerfile.vid_vec_rep_resnet .
+..# Run the docker image
+  docker run image-operator
+  docker run video-operator
   ```
+
 
 6. Then, in a new terminal, start the server with:
   
