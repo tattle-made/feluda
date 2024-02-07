@@ -14,4 +14,6 @@ WORKDIR /app
 COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --user -r requirements.txt
 COPY . /app
+RUN chmod +x video_vec_operator_cprofile.sh
+RUN chmod +x video_vec_operator_time.sh
 CMD tail -f /dev/null
