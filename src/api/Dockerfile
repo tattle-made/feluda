@@ -12,16 +12,15 @@ RUN apt-get update \
     libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/* 
 ENV PATH=/root/.local/bin:$PATH
-RUN pip install --upgrade pip
-RUN pip install pip-tools
-RUN apt-get update && apt-get -y upgrade && apt-get install -y vim curl
-RUN apt-get install -y ffmpeg
-RUN apt-get update && \
-    apt-get -y upgrade && \
-    apt-get install -y tesseract-ocr tesseract-ocr-hin
+RUN pip install --no-cache-dir --upgrade pip
+# RUN apt-get update && apt-get -y upgrade && apt-get install -y vim curl
+# RUN apt-get install -y ffmpeg
+# RUN apt-get update && \
+#     apt-get -y upgrade && \
+#     apt-get install -y tesseract-ocr tesseract-ocr-hin
 WORKDIR /app
 COPY requirements.txt /app/requirements.txt
-RUN pip install --user -r requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 COPY . /app
 EXPOSE 7000
 
@@ -35,7 +34,7 @@ EXPOSE 7000
 #### DEBUG IMAGE ####
 FROM base AS debug
 RUN apt-get update && apt-get install -y vim zsh jq
-RUN pip install debugpy nose2
+RUN pip install --no-cache-dir debugpy nose2
 RUN export FLASK_DEBUG=1
 CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m flask run -h 0.0.0.0 -p 5000
 
