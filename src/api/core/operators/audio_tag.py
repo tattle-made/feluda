@@ -32,15 +32,15 @@ def run(audio_file):
     # Return the normalized embedding required for dot_product elastic similarity dense vector
     return normalized_v
 
-if __name__ == "__main__":
-    import json
-    import os
-    audio_file_path = r'sample_data/google-dataset/a-cappella-chorus.wav'
-    initialize(param={})
-    audio_filename = os.path.splitext(os.path.basename(audio_file_path))[0]
-    audio_emb = run(audio_file_path)
-    audio_emb_list = audio_emb.tolist()
-    print(audio_emb_list)
+# if __name__ == "__main__":
+#     import json
+#     import os
+#     audio_file_path = r'sample_data/google-dataset/a-cappella-chorus.wav'
+#     initialize(param={})
+#     audio_filename = os.path.splitext(os.path.basename(audio_file_path))[0]
+#     audio_emb = run(audio_file_path)
+#     audio_emb_list = audio_emb.tolist()
+#     print(audio_emb_list)
     # json_filename = fr"sample_data/jsons/{audio_filename}_emb.json"
     # with open(json_filename, 'w') as f:
     #     json.dump(audio_emb_list, f)
