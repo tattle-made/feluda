@@ -1,0 +1,40 @@
+name: Publish Video Operator to Dockerhub
+
+on: workflow_dispatch
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "setting variables"
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          pwd
+          ls
+
+      - uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/feluda-operator-vidvec
+          workdir: src/api/
+          dockerfile: Dockerfile.vid_vec_rep_resnet
+          tags: ${{ steps.vars.outputs.sha_short }}
+
+      # - name: deploy to cluster
+      #   uses: steebchen/kubectl@v2.0.0
+      #   with: # defaults to latest kubectl binary version
+      #     config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
+      #     command: set image --record deployment/feluda-server feluda-server=tattletech/feluda-server:${{ steps.vars.outputs.sha_short }}
+      # - name: verify deployment
+      #   uses: steebchen/kubectl@v2.0.0
+      #   with:
+      #     config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
+      #     version: v1.21.0 # specify kubectl binary version explicitly
+      #     command: rollout status deployment/feluda-server
