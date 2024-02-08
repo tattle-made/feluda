@@ -14,6 +14,7 @@ def profile_code():
     stats = pstats.Stats(profiler, stream=result_stream).sort_stats('cumulative')
     stats.print_stats()
     print(result_stream.getvalue())
+    print("Video vec c-profiler complete!")
 
 if __name__ == "__main__":
     profile_code()
