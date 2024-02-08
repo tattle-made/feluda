@@ -9,6 +9,7 @@ def find_time():
     end_time = time.time()
     duration = end_time - start_time
     print(f"Time taken - {duration}")
+    print("Video vec time profile complete!")
 
 if __name__ == "__main__":
     find_time()
