@@ -33,6 +33,13 @@ COPY ./video_vec_operator_profile_pyinstrument.sh /app/video_vec_operator_profil
 RUN chmod +x video_vec_operator_profile_memray.sh
 RUN chmod +x video_vec_operator_profile_pyinstrument.sh
 
+COPY ./video_vec_operator_timeLoop.py /app/video_vec_operator_timeLoop.py
+COPY ./video_vec_operator_timeLoop.sh /app/video_vec_operator_timeLoop.sh
+COPY ./video_vec_operator_timeMultiple.py /app/video_vec_operator_timeMultiple.py
+COPY ./video_vec_operator_timeMultiple.sh /app/video_vec_operator_timeMultiple.sh
+RUN chmod +x video_vec_operator_timeLoop.sh
+RUN chmod +x video_vec_operator_timeMultiple.sh
+
 COPY ./benchmark.sh /app/benchmark.sh
 RUN chmod +x benchmark.sh
 

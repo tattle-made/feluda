@@ -131,3 +131,6 @@ src/api/core/operators/yolov8n-seg.pt
 
 # SonarQube
 .scannerwork
+
+# Video Files
+**videos/
