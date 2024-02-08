@@ -213,8 +213,8 @@ def run(file):
     #     fname = compress_video(fname)
     #     fsize = os.path.getsize(fname) / 1e6
     #     print("compressed video size: ", fsize)
-    if fsize > 10:
-        raise Exception("Video too large")
+    # if fsize > 10:
+    #     raise Exception("Video too large")
 
     video = cv2.VideoCapture(fname)
     vid_analyzer = VideoAnalyzer(video)
@@ -224,8 +224,8 @@ def run(file):
 
     # os.remove(fname)
 
-    if not doable:
-        raise "Unsupported Video. Cannot index video."
+    # if not doable:
+    #     raise "Unsupported Video. Cannot index video."
 
     return gendata(vid_analyzer)
 
