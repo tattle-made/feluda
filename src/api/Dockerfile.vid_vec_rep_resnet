@@ -33,4 +33,7 @@ COPY ./video_vec_operator_profile_pyinstrument.sh /app/video_vec_operator_profil
 RUN chmod +x video_vec_operator_profile_memray.sh
 RUN chmod +x video_vec_operator_profile_pyinstrument.sh
 
+COPY ./benchmark.sh /app/benchmark.sh
+RUN chmod +x benchmark.sh
+
 CMD tail -f /dev/null
