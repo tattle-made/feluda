@@ -9,13 +9,28 @@ RUN apt-get update \
     libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/* 
 ENV PATH=/root/.local/bin:$PATH
+
 RUN pip install --no-cache-dir --upgrade pip
 WORKDIR /app
-COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --user -r requirements.txt
-COPY . /app
+COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
+COPY ./core/operators/vid_vec_rep_resnet.py /app/core/operators/vid_vec_rep_resnet.py
+
+COPY ./core/operators/sample_data/sample-cat-video.mp4 /app/core/operators/sample_data/sample-cat-video.mp4
+COPY ./core/operators/test_vid_vec_rep_resnet.py /app/core/operators/test_vid_vec_rep_resnet.py
+
+COPY ./video_vec_operator_cprofile.py /app/video_vec_operator_cprofile.py
+COPY ./video_vec_operator_cprofile.sh /app/video_vec_operator_cprofile.sh
 RUN chmod +x video_vec_operator_cprofile.sh
+
+COPY ./video_vec_operator_time.py /app/video_vec_operator_time.py
+COPY ./video_vec_operator_time.sh /app/video_vec_operator_time.sh
 RUN chmod +x video_vec_operator_time.sh
+
+COPY ./video_vec_operator_profile.py /app/video_vec_operator_profile.py
+COPY ./video_vec_operator_profile_memray.sh /app/video_vec_operator_profile_memray.sh
+COPY ./video_vec_operator_profile_pyinstrument.sh /app/video_vec_operator_profile_pyinstrument.sh
 RUN chmod +x video_vec_operator_profile_memray.sh
 RUN chmod +x video_vec_operator_profile_pyinstrument.sh
+
 CMD tail -f /dev/null
