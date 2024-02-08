@@ -11,6 +11,13 @@ Audio embeddings are often generated using spectrograms or other audio signal fe
 - Chroma features: Chroma features represent the 12 distinct pitch classes of the musical octave and are particularly useful in music-related tasks. 
 - Spectral contrast: Spectral contrast focuses on the perceptual brightness of different frequency bands within an audio signal.  
 
+## Implementation left
+To run this operator, we also have to install `wget`. this is not currently being installed in the Dockerfile. A step to perform is 
+```sh
+apt-get install wget
+```
+This will now make sure the operator is running
+
 ## How to Run the Test
 The operator and the test file can be found at `src/api/core/operators` folder in the codebase. The operator is named `audio_vec_embedding.py` and the test file is named `test_audio_vec_embedding.py`
 
