@@ -4,7 +4,7 @@
 #
 #    pip-compile --find-links=https://download.pytorch.org/whl/torch_stable.html vid_vec_rep_resnet_requirements.in
 #
---find-links https://download.pytorch.org/whl/torch_stable.html
+--find-links https://download.pytorch.org/whl/cpu
 
 certifi==2024.2.2
     # via requests
@@ -65,13 +65,13 @@ scipy==1.11.4
     # via -r vid_vec_rep_resnet_requirements.in
 sympy==1.12
     # via torch
-textual==0.48.2
+textual==0.50.0
     # via memray
-torch==2.1.2+cpu
+torch
     # via
     #   -r vid_vec_rep_resnet_requirements.in
     #   torchvision
-torchvision==0.16.2+cpu
+torchvision
     # via -r vid_vec_rep_resnet_requirements.in
 typing-extensions==4.9.0
     # via
@@ -79,5 +79,5 @@ typing-extensions==4.9.0
     #   torch
 uc-micro-py==1.0.2
     # via linkify-it-py
-urllib3==2.0.7
+urllib3==2.2.0
     # via requests
