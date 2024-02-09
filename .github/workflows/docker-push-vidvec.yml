@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   api:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -16,6 +16,8 @@ jobs:
           echo "setting variables"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
       - uses: elgohr/Publish-Docker-Github-Action@master
         with:
           username: tattletech
@@ -24,6 +26,7 @@ jobs:
           workdir: src/api/
           dockerfile: Dockerfile.vid_vec_rep_resnet
           tags: ${{ steps.vars.outputs.sha_short }}
+          platforms: linux/amd64,linux/arm64
 
       # - name: deploy to cluster
       #   uses: steebchen/kubectl@v2.0.0
