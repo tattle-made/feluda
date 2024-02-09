@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye AS base
+FROM python:3.11-slim@sha256:637774748f62b832dc11e7b286e48cd716727ed04b45a0322776c01bc526afc3 AS base
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y \
@@ -55,6 +55,10 @@ COPY ./video_vec_operator_profile_memray.sh /app/video_vec_operator_profile_memr
 COPY ./video_vec_operator_profile_pyinstrument.sh /app/video_vec_operator_profile_pyinstrument.sh
 RUN chmod +x video_vec_operator_profile_memray.sh
 RUN chmod +x video_vec_operator_profile_pyinstrument.sh
+
+COPY ./video_vec_operator_multicore.py /app/video_vec_operator_multicore.py
+COPY ./video_vec_operator_multicore.sh /app/video_vec_operator_multicore.sh
+RUN chmod +x video_vec_operator_multicore.sh
 
 COPY ./benchmark.sh /app/benchmark.sh
 RUN chmod +x benchmark.sh
