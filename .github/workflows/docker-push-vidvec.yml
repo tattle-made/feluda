@@ -29,7 +29,7 @@ jobs:
           name: tattletech/feluda-operator-vidvec
           workdir: src/api/
           dockerfile: Dockerfile.vid_vec_rep_resnet
-          tags: ${{ steps.vars.outputs.sha_short }}
+          tags: ${{ steps.vars.outputs.sha_short }}-amd64
           platforms: linux/amd64
       - uses: elgohr/Publish-Docker-Github-Action@main
         with:
@@ -38,7 +38,7 @@ jobs:
           name: tattletech/feluda-operator-vidvec
           workdir: src/api/
           dockerfile: Dockerfile.vid_vec_rep_resnet.graviton
-          tags: ${{ steps.vars.outputs.sha_short }}
+          tags: ${{ steps.vars.outputs.sha_short }}-arm64
           platforms: linux/arm64
 
       # - name: deploy to cluster
