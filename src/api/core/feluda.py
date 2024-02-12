@@ -5,7 +5,7 @@ log = logging.getLogger(__name__)
 from core import config, store
 from core.server import Server
 from core.operators import Operator
-from core.queue import Queue
+# from core.queue import Queue
 from enum import Enum
 
 
@@ -23,9 +23,9 @@ class Feluda:
             self.operators = Operator(self.config.operators)
         if self.config.store:
             self.store = store.get_store(self.config.store)
-        if self.config.queue:
-            # print("---> 1", self.config.queue)
-            self.queue = Queue.make(self.config.queue)
+        # if self.config.queue:
+        #     # print("---> 1", self.config.queue)
+        #     self.queue = Queue.make(self.config.queue)
         if self.config.server:
             self.server = Server(self.config.server)
 
@@ -43,8 +43,8 @@ class Feluda:
             self.store.connect()
             self.store.optionally_create_index()
 
-        if self.queue:
-            self.queue.connect()
+        # if self.queue:
+        #     self.queue.connect()
 
         if self.server:
             self.server.start()
@@ -55,9 +55,9 @@ class Feluda:
         elif component_type == ComponentType.STORE and self.store:
             self.store.connect()
             self.store.optionally_create_index()
-        elif component_type == ComponentType.QUEUE and self.queue:
-            self.queue.connect()
-            self.queue.initialize()
+        # elif component_type == ComponentType.QUEUE and self.queue:
+        #     self.queue.connect()
+        #     self.queue.initialize()
         else:
             raise Exception("Unsupported Component Type")
 

@@ -1,15 +1,15 @@
 # FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
-FROM python:3.11-slim@sha256:637774748f62b832dc11e7b286e48cd716727ed04b45a0322776c01bc526afc3 AS base
+FROM python:3.11-slim-bullseye AS base
 # COPY --from=ffmpeg / /
 RUN apt-get update \
     && apt-get -y upgrade \
-    && apt-get install -y \
-    --no-install-recommends gcc build-essential \
-    --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
-    && apt-get purge -y --auto-remove \
-    gcc build-essential \
-    libgl1-mesa-glx libglib2.0-0 \
+#    && apt-get install -y \
+#    --no-install-recommends gcc build-essential \
+#    --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
+#    && apt-get purge -y --auto-remove \
+#    gcc build-essential \
+#    libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/* 
 ENV PATH=/root/.local/bin:$PATH
 RUN pip install --no-cache-dir --upgrade pip

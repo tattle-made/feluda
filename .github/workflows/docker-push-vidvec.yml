@@ -30,7 +30,16 @@ jobs:
           workdir: src/api/
           dockerfile: Dockerfile.vid_vec_rep_resnet
           tags: ${{ steps.vars.outputs.sha_short }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
+      - uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/feluda-operator-vidvec
+          workdir: src/api/
+          dockerfile: Dockerfile.vid_vec_rep_resnet.graviton
+          tags: ${{ steps.vars.outputs.sha_short }}
+          platforms: linux/arm64
 
       # - name: deploy to cluster
       #   uses: steebchen/kubectl@v2.0.0

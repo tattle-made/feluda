@@ -26,20 +26,20 @@ services:
     cap_add:
       - IPC_LOCK
 
-  queue:
-    image: rabbitmq:3.8.7-management
-    container_name: rabbitmq
-    hostname: rabbit
-    volumes:
-      - ./.docker/rabbitmq/data:/var/lib/rabbitmq
-      - ./.docker/rabbitmq/logs:/var/log/rabbitmq
-    environment:
-      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
-      RABBITMQ_DEFAULT_USER: "admin"
-      RABBITMQ_DEFAULT_PASS: "Admin123"
-    ports:
-      - 5672:5672
-      - 15672:15672
+#  queue:
+#    image: rabbitmq:3.8.7-management
+#    container_name: rabbitmq
+#    hostname: rabbit
+#    volumes:
+#      - ./.docker/rabbitmq/data:/var/lib/rabbitmq
+#      - ./.docker/rabbitmq/logs:/var/log/rabbitmq
+#    environment:
+#      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
+#      RABBITMQ_DEFAULT_USER: "admin"
+#      RABBITMQ_DEFAULT_PASS: "Admin123"
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
 
   api:
     container_name: feluda_api
@@ -57,8 +57,8 @@ services:
     depends_on:
       store:
         condition: service_started
-      queue:
-        condition: service_started
+#      queue:
+#        condition: service_started
 
   indexer:
     container_name: feluda_indexer
@@ -71,22 +71,22 @@ services:
     depends_on:
       store:
         condition: service_started
-      queue:
-        condition: service_started
+#      queue:
+#        condition: service_started
 
-  reporter:
-    container_name: feluda_reporter
-    build:
-      context: ./src/api
-      dockerfile: Dockerfile
-      target: debug
-    env_file: ./src/api/development.env
-    command: tail -f /dev/null
-    depends_on:
-      store:
-        condition: service_started
-      queue:
-        condition: service_started
+#  reporter:
+#    container_name: feluda_reporter
+#    build:
+#      context: ./src/api
+#      dockerfile: Dockerfile
+#      target: debug
+#    env_file: ./src/api/development.env
+#    command: tail -f /dev/null
+#    depends_on:
+#      store:
+#        condition: service_started
+#      queue:
+#        condition: service_started
 
 #networks:
 #  default:

@@ -1,5 +1,5 @@
-torch==2.1.2+cpu
-torchvision==0.16.2+cpu
+torch==2.2.0+cpu
+torchvision==0.17.0+cpu
 numpy==1.26.3
 Pillow==10.2.0
 scipy==1.11.4
