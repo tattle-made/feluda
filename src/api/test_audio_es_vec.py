@@ -5,11 +5,14 @@ import pprint
 import os
 from elasticsearch import Elasticsearch
 from core.operators import audio_vec_embedding
+from time import sleep
 
 pp = pprint.PrettyPrinter(indent=4)
 '''
 Check how many documents have been indexed
 curl -X GET "http://es:9200/_cat/indices?v"
+Delete all the documents in an index
+curl -X POST "http://es:9200/test_audio/_delete_by_query" -H 'Content-Type: application/json' -d'{"query":{"match_all":{}}}'
 '''
 
 class TestAudioES(unittest.TestCase):
@@ -83,7 +86,7 @@ class TestAudioES(unittest.TestCase):
         # print(result)
         self.assertEqual(result["result"], "created")
 
-    @skip
+    # @skip
     def test_search_audio_vector(self):
         # create the audio indice
         self.create_test_audio_index()
@@ -112,6 +115,7 @@ class TestAudioES(unittest.TestCase):
         search_result = self.client.search(index="test_audio", body=query)
         print(search_result)
 
+    @skip
     def test_store_and_search_50files(self):
         self.create_test_audio_index()
         audio_vec_embedding.initialize(param=None)
@@ -124,6 +128,8 @@ class TestAudioES(unittest.TestCase):
                 'audio-embedding' : audio_emb_vec,
             }
             self.client.index(index=index_name, document=body)
+            sleep(0.5)
+
 
 
 
