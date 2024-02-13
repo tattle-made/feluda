@@ -87,4 +87,26 @@ mappings = {
                     }
                 }
             }""",
+    "audio": """{
+                "mappings": {
+                    "properties":{
+                        "e_kosh_id": {
+                            "type": "keyword"
+                        },
+                        "dataset": {
+                            "type": "keyword"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        },
+                        "audio_vec": {
+                            "type":"dense_vector",
+                            "dims": 2048
+                        },
+                        "date_added": {
+                            "type": "date"
+                        }
+                    }
+                }
+            }""",    
 }

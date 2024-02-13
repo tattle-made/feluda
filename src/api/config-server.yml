@@ -6,6 +6,7 @@ store :
     image_index_name : "image"
     text_index_name : "text"
     video_index_name : "video"
+    audio_index_name : "audio"
 
 queue : 
   label : "Queue"

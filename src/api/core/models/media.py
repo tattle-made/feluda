@@ -13,6 +13,7 @@ class MediaType(Enum):
     TEXT = "text"
     IMAGE = "image"
     VIDEO = "video"
+    AUDIO = "audio"
 
     @classmethod
     def make(media_type):
@@ -22,5 +23,7 @@ class MediaType(Enum):
             return MediaType.IMAGE
         elif media_type is "video":
             return MediaType.VIDEO
+        elif media_type is "audio":
+            return MediaType.AUDIO
         else:
             return MediaType.UNSUPPORTED
