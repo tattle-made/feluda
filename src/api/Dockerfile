@@ -13,11 +13,12 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 ENV PATH=/root/.local/bin:$PATH
 RUN pip install --no-cache-dir --upgrade pip
-# RUN apt-get update && apt-get -y upgrade && apt-get install -y vim curl
+RUN apt-get update && apt-get -y upgrade && apt-get install -y vim curl
 # RUN apt-get install -y ffmpeg
 # RUN apt-get update && \
 #     apt-get -y upgrade && \
 #     apt-get install -y tesseract-ocr tesseract-ocr-hin
+RUN apt-get update && apt-get -y upgrade && apt-get install wget
 WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --user -r requirements.txt
