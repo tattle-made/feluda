@@ -58,7 +58,7 @@ class ES:
 
     def delete_indices(self):
         for index in self.indices:
-            self.client.indices.delete(index=index)
+            self.client.indices.delete(index=self.indices[index])
 
     def get_indices(self):
         index_list = ""
@@ -79,7 +79,7 @@ class ES:
 
     def refresh(self):
         for index in self.indices:
-            self.client.indices.refresh(index=index)
+            self.client.indices.refresh()
 
     def find(self, index_name, vec):
         if type(vec) == np.ndarray:

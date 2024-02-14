@@ -106,13 +106,13 @@ class TestES(unittest.TestCase):
         }
         result = es.store(MediaType.IMAGE, doc)
         # pp.pprint(result)
-        sleep(3)
+        sleep(2)
         search_result = es.find("test_image", vec)
-        # es.refresh()
+        es.refresh()
         print("SEARCH RESULTS \n : ")
-        # print(search_result)
+        print(search_result)
         self.assertEqual(search_result[0]['dataset'], "test-dataset-id")
-        # es.delete_indices()
+        es.delete_indices()
 
     def test_store_text(self):
         pass
