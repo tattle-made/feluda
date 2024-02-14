@@ -84,6 +84,7 @@ class ES:
         if type(vec) == np.ndarray:
             vec = vec.tolist()
 
+        calculation = ""
         if index_name == self.indices["text"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'text_vec'))"
         elif index_name == self.indices["image"]:
@@ -91,6 +92,7 @@ class ES:
         elif index_name == self.indices["video"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
 
+        print("calculation:", calculation)
         q = {
             "size": 10,  # maximum number of hits returned by the query
             "query": {

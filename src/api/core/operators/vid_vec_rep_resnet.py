@@ -1,4 +1,5 @@
-
+import sys
+import traceback
 
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
@@ -110,8 +111,8 @@ def initialize(param):
             check if video is too big/unsupported.
             return fail=1, set appropriate error
             """
-            if self.fsize > 20:
-                return False, "file size larger than 20 MB not supported"
+            if self.fsize > 10:
+                return False, "file size larger than 10 MB not supported"
             # TODO : based on data statistics, how long it takes to process a video decide thresholds based on  w x h, frames
             return True, None
 
@@ -163,34 +164,52 @@ def initialize(param):
                     continue
                 else:
                     if i % self.sampling_rate == 0:
-                        images.append(Image.fromarray(image))
+                        # images.append(Image.fromarray(image))
+                        yield [Image.fromarray(image)]
             # print("extracted frames")
-            return images
+            # print("len(images):", len(images))
+            # print("sys.getsizeof(images[0])", sys.getsizeof(images[0]))
+            # print("sys.getsizeof(images)", sys.getsizeof(images))
+            # return images
 
         def extract_features(self, images, batch_size=1):
-            try:
-                dset = ImageListDataset(images)
-                dloader = data.DataLoader(dset, batch_size=batch_size, shuffle=False)
-                res = []
-                feature_layer = self.model._modules.get("avgpool")
+            res = []
+            image_count = 0
+            for img in images:
+                # print("image_count: ", image_count)
+                image_count += 1
+                try:
+                    dset = ImageListDataset(img)
+                    dloader = data.DataLoader(dset, batch_size=batch_size, shuffle=False)
+                    feature_layer = self.model._modules.get("avgpool")
 
-                def hook(m, i, o):
-                    feature_data = o.data.reshape((512, batch_size))
-                    embedding.copy_(feature_data)
+                    def hook(m, i, o):
+                        feature_data = o.data.reshape((512, batch_size))
+                        embedding.copy_(feature_data)
 
-                self.model.eval()
-                for i, image in enumerate(dloader):
-                    embedding = torch.zeros(512, batch_size)
-                    h = feature_layer.register_forward_hook(hook)
-                    self.model(image)
-                    h.remove()
-                    res.append(embedding.numpy())
-                res = np.hstack(res)
-                assert res.shape == (512, len(images))
-                return res
+                    self.model.eval()
+                    for i, image in enumerate(dloader):
+                        embedding = torch.zeros(512, batch_size)
+                        h = feature_layer.register_forward_hook(hook)
+                        self.model(image)
+                        h.remove()
+                        res.append(embedding.numpy())
+                    # print("len(res)", len(res))
+                    # res = np.hstack(res)
+                    # print("res.shape:", res.shape)
+                    # print("sys.getsizeof(res)", sys.getsizeof(res))
+                    # assert res.shape == (512, len(images))
+                    # return res
 
-            except Exception:
-                print(logging.traceback.format_exc())
+                except Exception:
+                    print(traceback.format_exc())
+
+            print("len(res)", len(res))
+            res = np.hstack(res)
+            print("res.shape:", res.shape)
+            print("sys.getsizeof(res)", sys.getsizeof(res))
+            assert res.shape == (512, image_count)
+            return res
 
         def find_keyframes(self, feature_matrix):
             # print("finding keyframes")
@@ -198,7 +217,7 @@ def initialize(param):
             # Q is the orthogonal matrix that is an approximation of the featue matrix
             # P is a pivot matrix containing indices of the original (feature matrix) image vectors that have the largest vector norms
             # We select the first n indices from P to get the n keyframes
-            print(P)
+            # print(P)
             idx = P[: self.n_keyframes]
             # print("found keyframes")
             return idx

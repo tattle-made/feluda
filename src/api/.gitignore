@@ -6,3 +6,6 @@ credentials.json
 
 # pyinstrument
 *.json
+
+# locust
+*.csv
