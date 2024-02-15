@@ -14,7 +14,7 @@ try:
     # feluda.set_endpoints([health.HealthEndpoint, index.endpoint.IndexEndpoint, search.endpoint])
     # feluda.server.start()
     feluda.start_component(ComponentType.STORE)
-    # feluda.start_component(ComponentType.QUEUE)
+    feluda.start_component(ComponentType.QUEUE)
     feluda.start_component(ComponentType.SERVER)
 except Exception as e:
     log.exception("Error Initializing Search Service")
