@@ -28,7 +28,7 @@ class TestSearch(unittest.TestCase):
     def testSearchImage(self):
         url = API_URL + "/search"
         data = {"query_type": "image"}
-        with open("sample_data/c8709f21-bd7d-4e22-af14-50ad8a429f84.jpeg", "rb") as file:
+        with open("sample_data/people.jpg", "rb") as file:
             data = {"data": json.dumps(data)}
             files = {"media": file}
             response = requests.post(url, data=data, files=files)
@@ -39,7 +39,7 @@ class TestSearch(unittest.TestCase):
     # @skip
     def testIndexVideo(self):
         url = API_URL + "/search"
-        with open("sample_data/07ba4a2f-c0a2-44ba-96d8-7b4cc94c8ee7.mp4", "rb") as file:
+        with open("sample_data/sample-cat-video.mp4", "rb") as file:
             data = {"data": json.dumps({"query_type": "video"})}
             files = {"media": file}
             response = requests.post(url, data=data, files=files)

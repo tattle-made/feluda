@@ -80,7 +80,6 @@ class TestIndex(unittest.TestCase):
             # "media": open("sample_data/simple-text.txt", "rb"),
             "data": json.dumps(data),
         }
-        # axios.post("endpoint", data)
         response = requests.post(url, json=data, headers=headers)
         print(response.text)
         self.assertEqual(response.status_code, 200)
@@ -88,11 +87,13 @@ class TestIndex(unittest.TestCase):
     @skip
     def testIndexEnqueueImage(self):
         url = API_URL + "/search"
+        # headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type": "multipart/form-data"}
         data = {
             "post": {
                 "id": "1234",
                 "media_type": "image",
-                "media_url": "https://fs.tattle.co.in/service/kosh/file/c8709f21-bd7d-4e22-af14-50ad8a429f84",
+                "media_url": "https://raw.githubusercontent.com/tattle-made/feluda/master/src/api/core/operators/sample_data/people.jpg",
                 "datasource_id": "asdfasdf-asdfasdf-asdf",
                 "client_id": "123-12312",
             },
@@ -100,8 +101,8 @@ class TestIndex(unittest.TestCase):
             "config": {"mode": "enqueue", "version": "0.1"},
         }
         files = {"data": json.dumps(data)}
-        response = requests.post(url, files=files)
-        print(response.json())
+        response = requests.post(url, json=data, headers=headers)
+        print(response.text)
         self.assertEqual(response.status_code, 200)
 
     @skip
