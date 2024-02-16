@@ -53,6 +53,7 @@ def indexer(feluda):
 
 try:
     feluda = Feluda("config-indexer.yml")
+
     # log.prettyprint(vars(feluda))
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
