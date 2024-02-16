@@ -14,7 +14,7 @@ def find_time():
     print("Video vec time profile complete!")
 
 
-N = 1
+N = 4
 total_cores = cpu_count()
 
 print("number of cpus: ", cpu_count())
