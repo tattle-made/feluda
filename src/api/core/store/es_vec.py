@@ -19,6 +19,7 @@ class ES:
             "text": config.parameters.text_index_name,
             "image": config.parameters.image_index_name,
             "video": config.parameters.video_index_name,
+            "audio": config.parameters.audio_index_name,
         }
 
     def connect(self):
@@ -57,7 +58,7 @@ class ES:
 
     def delete_indices(self):
         for index in self.indices:
-            self.client.indices.delete(index=index)
+            self.client.indices.delete(index=self.indices[index])
 
     def get_indices(self):
         index_list = ""
@@ -78,7 +79,7 @@ class ES:
 
     def refresh(self):
         for index in self.indices:
-            self.client.indices.refresh(index=index)
+            self.client.indices.refresh()
 
     def find(self, index_name, vec):
         if type(vec) == np.ndarray:
@@ -91,6 +92,8 @@ class ES:
             calculation = "1 / (1 + l2norm(params.query_vector, 'image_vec'))"
         elif index_name == self.indices["video"]:
             calculation = "1 / (1 + l2norm(params.query_vector, 'vid_vec'))"
+        elif index_name == self.indices["audio"]:
+            calculation = "1 / (1 + l2norm(params.query_vector, 'audio_vec'))"
 
         print("calculation:", calculation)
         q = {

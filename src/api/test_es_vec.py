@@ -7,6 +7,7 @@ from core.models.media import MediaType
 import pprint
 from datetime import datetime
 import numpy as np
+from time import sleep
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -26,6 +27,7 @@ class TestES(unittest.TestCase):
             "text_index_name": "test_text",
             "image_index_name": "test_image",
             "video_index_name": "test_video",
+            "audio_index_name": "test_audio",
         }
         cls.param = StoreConfig(
             label="test",
@@ -35,6 +37,7 @@ class TestES(unittest.TestCase):
                 image_index_name=param_dict["image_index_name"],
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
+                audio_index_name=param_dict["audio_index_name"],
             )   
         )
 
@@ -65,8 +68,11 @@ class TestES(unittest.TestCase):
         self.assertEqual(
             indices["test_video"]["mappings"]["properties"]["vid_vec"]["dims"], 512
         )
+        self.assertEqual(
+            indices["test_audio"]["mappings"]["properties"]["audio_vec"]["dims"], 2048
+        )
 
-    # @skip
+    @skip
     def test_store_image(self):
         es = ES(self.param)
         es.connect()
@@ -99,13 +105,14 @@ class TestES(unittest.TestCase):
             "date_added": datetime.utcnow(),
         }
         result = es.store(MediaType.IMAGE, doc)
-        pp.pprint(result)
+        # pp.pprint(result)
+        sleep(2)
         search_result = es.find("test_image", vec)
-        # es.refresh()
+        es.refresh()
         print("SEARCH RESULTS \n : ")
-        pp.pprint(search_result)
-        self.assertEqual(search_result[0].get('dataset'), "test-dataset-id")
-        # es.delete_indices()
+        print(search_result)
+        self.assertEqual(search_result[0]['dataset'], "test-dataset-id")
+        es.delete_indices()
 
     def test_store_text(self):
         pass

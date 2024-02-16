@@ -135,4 +135,4 @@ src/api/core/operators/yolov8n-seg.pt
 # Audio Files
 **100_audio_files/
 **50_audio_files/
-
+**audio_files/
