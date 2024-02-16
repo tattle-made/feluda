@@ -45,7 +45,7 @@ services:
     container_name: feluda_api
     build:
       context: ./src/api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.test_worker
       target: debug
     volumes:
       - ./src/api:/app
