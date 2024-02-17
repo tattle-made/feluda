@@ -90,7 +90,7 @@ class TestES(unittest.TestCase):
         self.assertEqual(result["result"], "created")
 
     # @skip
-    def test_search_vectors(self):
+    def test_store_and_search_vectors(self):
         es = ES(self.param)
         es.connect()
         es.optionally_create_index()

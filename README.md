@@ -159,7 +159,7 @@ To run all the tests in a specific folder run
 python -m unittest discover -s project_directory -p "test_*.py"
 ```
 
-Read full test documentation [here](https://docs.python.org/3/library/unittest.html).
+Read full test documentation [here](https://github.com/tattle-made/feluda/wiki/Running-Tests).
 
 ----
 v : 0.0.8
