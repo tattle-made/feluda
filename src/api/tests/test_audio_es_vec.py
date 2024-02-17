@@ -102,6 +102,7 @@ class TestAudioES(unittest.TestCase):
         search_result = es.find("test_audio", audio_emb_vec)
         print(search_result)
         self.assertEqual(search_result[0]['dataset'], "test-dataset-id")
+        es.delete_indices()
 
     @skip
     def test_store_and_search_50files(self):
