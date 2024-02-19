@@ -56,11 +56,10 @@ class RabbitMQ:
                     exchange="",
                     routing_key=queue_name,
                     properties=pika.BasicProperties(
-                        delivery_mode=2
+                        delivery_mode=2,
                     ),  # make message persistent
                     body=json.dumps(payload),
                 )
-                print("Message published")
             except pika.exceptions.UnroutableError:
                 print("Message could not be confirmed")
         else:

@@ -136,3 +136,6 @@ src/api/core/operators/yolov8n-seg.pt
 **100_audio_files/
 **50_audio_files/
 **audio_files/
+
+# Video Files
+**video_files/
