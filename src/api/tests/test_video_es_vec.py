@@ -24,9 +24,10 @@ class TestVideoES(unittest.TestCase):
     def setUpClass(cls) -> None:
         param_dict = {
             "host_name": "es",
-            "text_index_name": "text",
-            "image_index_name": "image",
-            "video_index_name": "video",
+            "text_index_name": "test_text",
+            "image_index_name": "test_image",
+            "video_index_name": "test_video",
+            "audio_index_name": "test_audio",
         }
         cls.param = StoreConfig(
             label="test",
@@ -36,7 +37,8 @@ class TestVideoES(unittest.TestCase):
                 image_index_name=param_dict["image_index_name"],
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
-            )
+                audio_index_name=param_dict["audio_index_name"],
+            )   
         )
 
     @classmethod
@@ -93,8 +95,7 @@ class TestVideoES(unittest.TestCase):
         video = {"path": r"core/operators/sample_data/sample-cat-video.mp4"}
         embedding = vid_vec_rep_resnet.run(video)
         average_vector = next(embedding)
-
         search_result = es.find("video", average_vector.get('vid_vec'))
         print("SEARCH RESULTS \n : ")
         pp.pprint(search_result)
-        self.assertEqual(search_result[0].get('dataset'), file_name)
+        self.assertEqual(search_result[0]['dataset'], file_name)
