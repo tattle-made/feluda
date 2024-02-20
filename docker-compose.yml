@@ -44,12 +44,12 @@ services:
   api:
     container_name: feluda_api
     build:
-      context: ./src/api
+      context: ./src
       dockerfile: Dockerfile
       target: debug
     volumes:
-      - ./src/api:/app
-    env_file: ./src/api/development.env
+      - ./src:/app
+    env_file: ./src/development.env
     ports:
       - 7000:7000
       - 5678:5678
@@ -63,10 +63,10 @@ services:
   indexer:
     container_name: feluda_indexer
     build:
-      context: ./src/api
+      context: ./src
       dockerfile: Dockerfile
       target: debug
-    env_file: ./src/api/development.env
+    env_file: ./src/development.env
     command: tail -f /dev/null
     depends_on:
       store:
@@ -74,19 +74,19 @@ services:
       queue:
         condition: service_started
 
-#  reporter:
-#    container_name: feluda_reporter
-#    build:
-#      context: ./src/api
-#      dockerfile: Dockerfile
-#      target: debug
-#    env_file: ./src/api/development.env
-#    command: tail -f /dev/null
-#    depends_on:
-#      store:
-#        condition: service_started
-#      queue:
-#        condition: service_started
+  reporter:
+    container_name: feluda_reporter
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+      target: debug
+    env_file: ./src/development.env
+    command: tail -f /dev/null
+    depends_on:
+      store:
+        condition: service_started
+      queue:
+        condition: service_started
 
 #networks:
 #  default:

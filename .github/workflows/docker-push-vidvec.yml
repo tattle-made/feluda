@@ -27,7 +27,7 @@ jobs:
           username: tattletech
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: tattletech/feluda-operator-vidvec
-          workdir: src/api/
+          workdir: src/benchmark/vidvec/
           dockerfile: Dockerfile.vid_vec_rep_resnet
           tags: ${{ steps.vars.outputs.sha_short }}-amd64
           platforms: linux/amd64
@@ -36,7 +36,7 @@ jobs:
           username: tattletech
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: tattletech/feluda-operator-vidvec
-          workdir: src/api/
+          workdir: src/benchmark/vidvec/
           dockerfile: Dockerfile.vid_vec_rep_resnet.graviton
           tags: ${{ steps.vars.outputs.sha_short }}-arm64
           platforms: linux/arm64
