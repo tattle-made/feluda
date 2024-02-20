@@ -1,3 +1,7 @@
+#################### CONFIG INDEXER #################### 
+# This configuration file defines components needed to run the indexer.py. 
+# The indexer will receive a media file while listening to the index queue, run operations on it, store it in elasticsearch and report to the report queue
+
 store :
   label : "Data Store"
   type : "es_vec"
