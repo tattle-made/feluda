@@ -1,1 +1,0 @@
-python -m benchmark.video_vec_operator_cprofile > output_cprofile.txt

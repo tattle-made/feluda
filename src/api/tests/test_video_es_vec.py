@@ -24,10 +24,10 @@ class TestVideoES(unittest.TestCase):
     def setUpClass(cls) -> None:
         param_dict = {
             "host_name": "es",
-            "text_index_name": "test_text",
-            "image_index_name": "test_image",
-            "video_index_name": "test_video",
-            "audio_index_name": "test_audio",
+            "text_index_name": "text",
+            "image_index_name": "image",
+            "video_index_name": "video",
+            "audio_index_name": "audio",
         }
         cls.param = StoreConfig(
             label="test",
