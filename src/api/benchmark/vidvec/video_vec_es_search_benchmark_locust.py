@@ -16,6 +16,7 @@ class BenchmarkUser(User):
             "text_index_name": "text",
             "image_index_name": "image",
             "video_index_name": "video",
+            "audio_index_name": "audio"
         }
 
         self.param = StoreConfig(
@@ -26,6 +27,7 @@ class BenchmarkUser(User):
                 image_index_name=param_dict["image_index_name"],
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
+                audio_index_name=param_dict["audio_index_name"],
             )
         )
 
