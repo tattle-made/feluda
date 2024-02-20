@@ -12,6 +12,7 @@ ENV PATH=/root/.local/bin:$PATH
 
 RUN pip install --no-cache-dir --upgrade pip
 WORKDIR /app
+# video requirments file
 COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
 RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
 
@@ -38,30 +39,33 @@ ENV OMP_PROC_BIND=false
 ENV OMP_PLACES=cores
 ###
 
+# video vec file
 COPY ./core/operators/vid_vec_rep_resnet.py /app/core/operators/vid_vec_rep_resnet.py
-
+# video vec test file
 COPY ./core/operators/sample_data/sample-cat-video.mp4 /app/core/operators/sample_data/sample-cat-video.mp4
 COPY ./core/operators/test_vid_vec_rep_resnet.py /app/core/operators/test_vid_vec_rep_resnet.py
-
-COPY ./video_vec_operator_cprofile.py /app/video_vec_operator_cprofile.py
-COPY ./video_vec_operator_cprofile.sh /app/video_vec_operator_cprofile.sh
-RUN chmod +x video_vec_operator_cprofile.sh
-
-COPY ./video_vec_operator_time.py /app/video_vec_operator_time.py
-COPY ./video_vec_operator_time.sh /app/video_vec_operator_time.sh
-RUN chmod +x video_vec_operator_time.sh
-
-COPY ./video_vec_operator_profile.py /app/video_vec_operator_profile.py
-COPY ./video_vec_operator_profile_memray.sh /app/video_vec_operator_profile_memray.sh
-COPY ./video_vec_operator_profile_pyinstrument.sh /app/video_vec_operator_profile_pyinstrument.sh
-RUN chmod +x video_vec_operator_profile_memray.sh
-RUN chmod +x video_vec_operator_profile_pyinstrument.sh
-
-COPY ./video_vec_operator_multicore.py /app/video_vec_operator_multicore.py
-COPY ./video_vec_operator_multicore.sh /app/video_vec_operator_multicore.sh
-RUN chmod +x video_vec_operator_multicore.sh
-
+# video vec c-profile test
+COPY ./benchmark/vidvec/video_vec_operator_cprofile.py /app/benchmark/vidvec/video_vec_operator_cprofile.py
+COPY ./benchmark/vidvec/video_vec_operator_cprofile.sh /app/benchmark/vidvec/video_vec_operator_cprofile.sh
+RUN chmod +x ./benchmark/vidvec/video_vec_operator_cprofile.sh
+# video vec time test
+COPY ./benchmark/vidvec/video_vec_operator_time.py /app/benchmark/vidvec/video_vec_operator_time.py
+COPY ./benchmark/vidvec/video_vec_operator_time.sh /app/benchmark/vidvec/video_vec_operator_time.sh
+RUN chmod +x ./benchmark/vidvec/video_vec_operator_time.sh
+# memory profile tests
+COPY ./benchmark/vidvec/video_vec_operator_profile.py /app/benchmark/vidvec/video_vec_operator_profile.py
+COPY ./benchmark/vidvec/video_vec_operator_profile_memray.sh /app/benchmark/vidvec/video_vec_operator_profile_memray.sh
+COPY ./benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh /app/benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh
+RUN chmod +x ./benchmark/vidvec/video_vec_operator_profile_memray.sh
+RUN chmod +x ./benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh
+# multicore test
+COPY ./benchmark/vidvec/video_vec_operator_multicore.py /app/benchmark/vidvec/video_vec_operator_multicore.py
+COPY ./benchmark/vidvec/video_vec_operator_multicore.sh /app/benchmark/vidvec/video_vec_operator_multicore.sh
+RUN chmod +x ./benchmark/vidvec/video_vec_operator_multicore.sh
+# main benchmark file
 COPY ./benchmark.sh /app/benchmark.sh
 RUN chmod +x benchmark.sh
+
+RUN apt-get update && apt-get install -y vim zsh
 
 CMD tail -f /dev/null
