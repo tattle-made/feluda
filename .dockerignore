@@ -142,3 +142,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+**data/word2vec/*.db
+**data/word2vec/*.vec
+**lib/
+**bin/
+**__pycache__/
