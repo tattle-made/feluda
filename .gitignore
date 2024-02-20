@@ -121,13 +121,13 @@ credentials.json
 
 # Docker logs
 .docker/*
-# src/api/core/operators/sample_data/
+# src/core/operators/sample_data/
 # sample_data/**
 # a temporary folder made by denny.
 # it is safe to delete this line if you no longer see this folder in the root folder
 _docs
 # YOLO segement pt file
-src/api/core/operators/yolov8n-seg.pt
+src/core/operators/yolov8n-seg.pt
 
 # SonarQube
 .scannerwork
@@ -148,4 +148,3 @@ src/api/core/operators/yolov8n-seg.pt
 
 # locust
 **.csv
-

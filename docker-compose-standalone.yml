@@ -25,12 +25,12 @@ services:
   api:
     container_name: api
     build:
-      context: ./src/api
+      context: ./src
       dockerfile: Dockerfile
       target: debug
     volumes:
-      - ./src/api:/app
-    env_file: ./src/api/development.env
+      - ./src:/app
+    env_file: ./src/development.env
     ports:
       - 7000:7000
       - 5678:5678
