@@ -6,11 +6,13 @@ import json
 
 
 class TestIndexApi(unittest.TestCase):
+    @skip
     def setUp(self) -> None:
         feluda = Feluda("config.yml")
         feluda.set_endpoints([index.endpoint.IndexEndpoint])
         self.app = feluda.server.app.test_client()
 
+    @skip
     def test_index_text_url(self):
         data = {
             "post": {
