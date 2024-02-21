@@ -50,15 +50,15 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        with open("sample_data/simple-text.txt", "rb") as media_file:
-            files = {
-                "media": media_file,
-                "data": json.dumps(data),
-            }
-            response = requests.post(url, json=data, headers=headers)
-            # response = requests.post(url, json=data, files=files, headers=headers)
-            print(response.text)
-            self.assertEqual(response.status_code, 200)
+        # with open("sample_data/simple-text.txt", "rb") as media_file:
+        #     files = {
+        #         "media": media_file,
+        #         "data": json.dumps(data),
+        #     }
+        response = requests.post(url, json=data, headers=headers)
+        # response = requests.post(url, json=data, files=files, headers=headers)
+        print(response.text)
+        self.assertEqual(response.status_code, 200)
 
     # @skip
     def testIndexVideo(self):
