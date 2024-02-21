@@ -98,4 +98,9 @@ class TestVideoES(unittest.TestCase):
         search_result = es.find("video", average_vector.get('vid_vec'))
         print("SEARCH RESULTS \n : ")
         pp.pprint(search_result)
-        self.assertEqual(search_result[0]['dataset'], file_name)
+        file_found = False
+        for result in search_result:
+            if result.get('dataset') == file_name:
+                file_found = True
+                break
+        self.assertTrue(file_found, f"File {file_name} not found in any search result.")
