@@ -43,7 +43,7 @@ class TestIndex(unittest.TestCase):
             "post": {
                 "id": "1234",
                 "media_type": "image",
-                "media_url": "https://raw.githubusercontent.com/tattle-made/feluda/master/src/api/core/operators/sample_data/people.jpg",
+                "media_url": "https://raw.githubusercontent.com/tattle-made/feluda/master/src/core/operators/sample_data/people.jpg",
                 "datasource_id": "asdfasdf-asdfasdf-asdf",
                 "client_id": "123-12312",
             },
@@ -69,7 +69,7 @@ class TestIndex(unittest.TestCase):
             "post": {
                 "id": "1234",
                 "media_type": "video",
-                "media_url": "https://github.com/tattle-made/feluda/raw/master/src/api/core/operators/sample_data/sample-cat-video.mp4",
+                "media_url": "https://github.com/tattle-made/feluda/raw/master/src/core/operators/sample_data/sample-cat-video.mp4",
                 "datasource_id": "asdfasdf-asdfasdf-asdf",
                 "client_id": "123-12312",
             },
