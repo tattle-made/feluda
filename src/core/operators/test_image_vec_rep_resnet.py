@@ -1,8 +1,7 @@
 import unittest
 from unittest.case import skip
-import image_vec_rep_resnet
-# from dtypes.image import make_from_url, make_from_file
-from PIL import Image
+from core.operators import image_vec_rep_resnet
+from core.models.media_factory import ImageFactory
 
 
 class Test(unittest.TestCase):
@@ -17,16 +16,19 @@ class Test(unittest.TestCase):
         # delete config files
         pass
 
+    # @skip
     def test_sample_image_from_disk(self):
-        image = Image.open(r'sample_data/text.png')
-        image_obj = {"image": image}
+        image_path = r'core/operators/sample_data/text.png'
+        image_obj = ImageFactory.make_from_file_on_disk(image_path)
         image_vec = image_vec_rep_resnet.run(image_obj)
+        print(len(image_vec))
         self.assertEqual(len(image_vec), 512)
 
-    @skip
+    # @skip
     def test_sample_image_from_url(self):
-        image = make_from_url(
+        image_obj = ImageFactory.make_from_url(
             "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
         )
-        image_vec = image_vec_rep_resnet.run(image)
+        image_vec = image_vec_rep_resnet.run(image_obj)
+        print(len(image_vec))
         self.assertEqual(len(image_vec), 512)
