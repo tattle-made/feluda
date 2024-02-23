@@ -85,14 +85,6 @@ class VideoFactory:
         return {"path": fname}
 
 class AudioFactory:
-    @staticmethod
-    def make_from_url():
-        pass
-
-    @staticmethod
-    def make_from_file_on_disk(audio_path):
-        return {"path": audio_path}
-    
     def make_from_url(audio_url):
         audio_file = "/tmp/audio.wav"
         try:
@@ -103,6 +95,11 @@ class AudioFactory:
             log.exception("Error downloading audio")
             raise Exception("Error Downloading audio")
         return {"path": audio_file}
+
+    @staticmethod
+    def make_from_file_on_disk(audio_path):
+        return {"path": audio_path}
+    
 
 media_factory = {
     MediaType.TEXT: TextFactory,
