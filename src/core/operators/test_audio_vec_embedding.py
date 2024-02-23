@@ -14,7 +14,7 @@ class Test(unittest.TestCase):
         # delete config files
         pass
 
-    @skip
+    # @skip
     def test_sample_audio_from_disk(self):
         audio_file_path = AudioFactory.make_from_file_on_disk(r'core/operators/sample_data/audio.wav')
         audio_emb = audio_vec_embedding.run(audio_file_path)
