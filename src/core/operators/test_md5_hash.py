@@ -1,6 +1,7 @@
 import unittest
 from unittest.case import skip
-import core.operators.md5_hash as md5_hash
+from core.operators import md5_hash
+from core.models.media_factory import VideoFactory
 
 class Test(unittest.TestCase):
     @classmethod
@@ -14,7 +15,13 @@ class Test(unittest.TestCase):
         pass
 
     def test_sample_media_from_disk(self):
-        media_file_path = r'sample_data/sample-cat-video.mp4'
-        md5_hash = md5_hash.run(media_file_path)
-        print(md5_hash)
-        self.assertEqual(32, len(md5_hash))
+        media_file_path = VideoFactory.make_from_file_on_disk("core/operators/sample_data/sample-cat-video.mp4")
+        hash = md5_hash.run(media_file_path)
+        self.assertEqual(32, len(hash))
+
+    # @skip
+    def test_sample_media_from_url(self):
+        media_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/cat_vid_2mb.mp4"
+        media_path = VideoFactory.make_from_url(media_url)
+        hash = md5_hash.run(media_path)
+        self.assertEqual(32, len(hash))
