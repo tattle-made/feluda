@@ -4,6 +4,7 @@ import requests
 from core.store.es_vec import ES
 from core.config import StoreConfig, StoreParameters
 from core.models.media import MediaType
+from core.models.media_factory import AudioFactory
 import pprint
 from datetime import datetime
 from core.operators import audio_vec_embedding
@@ -86,7 +87,7 @@ class TestAudioES(unittest.TestCase):
         es = ES(self.param)
         es.connect()
         audio_vec_embedding.initialize(param=None)
-        audio_file_path = r'core/operators/sample_data/audio.wav'
+        audio_file_path = AudioFactory.make_from_file_on_disk(r'core/operators/sample_data/audio.wav')
         audio_emb = audio_vec_embedding.run(audio_file_path)
         audio_emb_vec = audio_emb.tolist()
         doc = {
