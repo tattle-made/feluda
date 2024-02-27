@@ -14,3 +14,4 @@ pyinstrument==4.6.2
 numpy==1.26.3
 requests==2.31.0
 locust==2.23.1
+nose2==0.14.1
