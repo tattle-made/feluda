@@ -150,5 +150,5 @@ src/core/operators/yolov8n-seg.pt
 # locust
 **.csv
 
-# Video Files
-**video_files/
+# Audio CNN model
+src/core/operators/cnn/panns_data

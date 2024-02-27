@@ -5,7 +5,9 @@ def initialize(param):
 
     import numpy as np
     import librosa
-    from panns_inference import AudioTagging
+    # from panns_inference import AudioTagging
+    from cnn.inference import AudioTagging
+    import os
 
     # load the default model into cpu.
     model = AudioTagging(checkpoint_path=None, device='cpu')
@@ -25,9 +27,9 @@ def run(audio_file):
     normalized_v = normalize(emb[0])
     return normalized_v
 
-# if __name__ == "__main__":
-#     initialize(param={})
-#     audio_file_path = {"path": r'sample_data/audio.wav'}
-#     audio_emb = run(audio_file_path)
-#     audio_emb_list = audio_emb.tolist()
-#     print(len(audio_emb_list))
+if __name__ == "__main__":
+    initialize(param={})
+    # audio_file_path = {"path": r'sample_data/audio.wav'}
+    # audio_emb = run(audio_file_path)
+    # audio_emb_list = audio_emb.tolist()
+    # print(len(audio_emb_list))
