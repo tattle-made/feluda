@@ -4,6 +4,9 @@ from core.operators import vid_vec_rep_resnet
 import json
 from datetime import datetime
 from core.models.media import MediaType
+from core.models.media_factory import VideoFactory
+from time import sleep
+import subprocess
 log = Logger(__name__)
 
 def generate_document(post_id: str, representation: any):
@@ -29,7 +32,7 @@ def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         file_content = json.loads(body)
-        video_path = {"path": rf"{file_content['path']}"}
+        video_path = VideoFactory.make_from_url(file_content['path'])
         try:
             print("Processing File:", video_path)
             video_vec = vid_vec_rep_resnet.run(video_path)
@@ -44,6 +47,23 @@ def indexer(feluda):
             ch.basic_nack(delivery_tag=method.delivery_tag)
     return worker
 
+def handle_exception(feluda, queue_name, worker_func):
+    max_retries = 3
+    retry_interval = 5
+    retries = 0
+    
+    while retries < max_retries:
+        try:
+            feluda.start_component(ComponentType.QUEUE)
+            feluda.queue.listen(queue_name, worker_func)
+            return
+        except Exception as e:
+            print("Error handling exception:", e)
+            retries += 1
+            sleep(retry_interval)
+
+    print("Failed to re-establish connection after maximum retries.")
+
 try:
     feluda = Feluda("config-indexer.yml")
     feluda.setup()
@@ -52,4 +72,15 @@ try:
     vid_vec_rep_resnet.initialize(param=None)
     feluda.queue.listen("tattle-search-index-queue", indexer(feluda))
 except Exception as e:
-    print("Error Initializing Indexer")
+    print("Error Initializing Indexer", e)
+    print(type(e))
+    handle_exception()
+
+
+def run_worker():
+    while True:
+        try:
+            subprocess.run(["python", "test_worker.py"])
+        except Exception as e:
+            print("Error occurred while running worker:", e)
+            sleep(5)

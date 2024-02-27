@@ -9,16 +9,13 @@ try:
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
 
-    # while True:
-    dummy_payload = {
-        "id": str(12345),
-        "path": 'tests/sample_data/sample-cat-video.mp4'
-    }
-    feluda.queue.message("tattle-search-index-queue", dummy_payload)
-        # sleep(2)
+    for _ in range(5):
+        dummy_payload = {
+            "id": str(12345),
+            "path": 'https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/sample-cat-video.mp4'
+        }
+        feluda.queue.message("tattle-search-index-queue", dummy_payload)
+        sleep(0.3)
+
 except Exception as e:
-    print("Error Initializing Indexer")
-
-
-
-   
+    print("Error Initializing Indexer", e)
