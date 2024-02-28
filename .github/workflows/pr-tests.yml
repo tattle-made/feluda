@@ -32,4 +32,6 @@ jobs:
 
       - name: Check failure
         if: ${{ steps.vars.outputs.sut_output }} != 0
-        run: exit 1
+        run: |
+          echo ${{ steps.vars.outputs.sut_output }}
+          exit 1
