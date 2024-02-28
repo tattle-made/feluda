@@ -4,7 +4,7 @@ services:
       context: ./../src
       dockerfile: Dockerfile.test
       target: test
-    env_file: ./../src/development.env
+    env_file: ./../src/test.env
     command: bash -c "python -c 'import time';
       while ! curl store:9200 | grep -q 'You Know, for Search' 
       && ! curl queue:15672 | grep -q '<!DOCTYPE html>'; 
