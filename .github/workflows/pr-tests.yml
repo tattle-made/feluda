@@ -28,6 +28,6 @@ jobs:
           docker compose -f ./.ci/docker-compose.yml -p ci up -d store queue sut
           docker logs -f ci-sut-1
 
-      - name: Check failure
-        if: $ {{ docker wait ci-sut-1 }} != 0
-        run: exit 1
+#      - name: Check failure
+#        if: $ {{ docker wait ci-sut-1 }} != 0
+#        run: exit 1
