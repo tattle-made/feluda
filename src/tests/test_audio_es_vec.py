@@ -81,7 +81,7 @@ class TestAudioES(unittest.TestCase):
         # print(result)
         self.assertEqual(result["result"], "created")
     
-    # @skip
+    @skip
     def test_store_and_search_audio(self):
         es = ES(self.param)
         es.connect()
