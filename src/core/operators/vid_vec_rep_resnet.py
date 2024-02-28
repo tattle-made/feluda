@@ -241,7 +241,7 @@ def run(file):
 
     doable, error_msg = vid_analyzer.check_constraints()
 
-    # os.remove(fname)
+    os.remove(fname)
 
     if not doable:
         raise "Unsupported Video. Cannot index video."
@@ -255,18 +255,3 @@ def cleanup(param):
 
 def state():
     pass
-
-
-# if __name__ == "__main__":
-#     file_path = {"path": r"sample_data/sample-cat-video.mp4"}
-#     initialize(param=None)
-#     try:
-#         result = run(file_path)
-#         result_list = list(result)
-#         print("----RESULT-----")
-#         print(result_list)
-#         # for res in result_list:
-#         #     print(len(res))
-#         print("LEN - ", len(result_list[0]["vid_vec"]))
-#     except Exception as e:
-#         print(f"Error: {e}")
