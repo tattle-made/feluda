@@ -27,7 +27,7 @@ jobs:
           username: tattletech
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: tattletech/feluda-operator-vidvec
-          workdir: src/worker/vidvec/
-          dockerfile: Dockerfile.test_video_worker
+          workdir: src/
+          dockerfile: worker/vidvec/Dockerfile.test_video_worker
           tags: latest-amd64
           platforms: linux/amd64
