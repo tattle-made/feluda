@@ -31,7 +31,8 @@ jobs:
           echo "sut_output=$(docker wait ci-sut-1)" >> $GITHUB_OUTPUT
 
       - name: Check failure
-        if: ${{ steps.vars.outputs.sut_output }} != 0
         run: |
-          echo ${{ steps.vars.outputs.sut_output }}
-          exit 1
+          if [ ${{ steps.vars.outputs.sut_output }} != 0 ]; then
+            echo ${{ steps.vars.outputs.sut_output }}
+            exit 1
+          fi
