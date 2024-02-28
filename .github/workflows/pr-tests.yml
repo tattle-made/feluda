@@ -24,10 +24,12 @@ jobs:
         run: docker compose -f ./.ci/docker-compose.yml -p ci build
 
       - name: Launch containers to run tests
+        id: vars
         run: |
           docker compose -f ./.ci/docker-compose.yml -p ci up -d store queue sut
           docker logs -f ci-sut-1
+          echo "sut_output=$(docker wait ci-sut-1)" >> $GITHUB_OUTPUT
 
-#      - name: Check failure
-#        if: $ {{ docker wait ci-sut-1 }} != 0
-#        run: exit 1
+      - name: Check failure
+        if: ${{ steps.vars.outputs.sut_output }} != 0
+        run: exit 1
