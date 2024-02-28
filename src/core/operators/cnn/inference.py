@@ -36,7 +36,8 @@ class AudioTagging(object):
         #     zenodo_path = 'https://zenodo.org/record/3987831/files/Cnn14_mAP%3D0.431.pth?download=1'
         #     os.system('wget -O "{}" "{}"'.format(checkpoint_path, zenodo_path))
 
-        checkpoint_path='{}/panns_data/Cnn14_mAP=0.431.pth'.format(str(Path.home()))
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        checkpoint_path = os.path.join(script_dir, 'panns_data', 'Cnn14_mAP=0.431.pth')
         print(checkpoint_path)
 
         if device == 'cuda' and torch.cuda.is_available():
@@ -58,22 +59,22 @@ class AudioTagging(object):
         checkpoint = torch.load(checkpoint_path, map_location=self.device)
         self.model.load_state_dict(checkpoint['model'])
 
-    #     # Parallel
-    #     if 'cuda' in str(self.device):
-    #         self.model.to(self.device)
-    #         print('GPU number: {}'.format(torch.cuda.device_count()))
-    #         self.model = torch.nn.DataParallel(self.model)
-    #     else:
-    #         print('Using CPU.')
+        # Parallel
+        if 'cuda' in str(self.device):
+            self.model.to(self.device)
+            print('GPU number: {}'.format(torch.cuda.device_count()))
+            self.model = torch.nn.DataParallel(self.model)
+        else:
+            print('Using CPU.')
 
-    # def inference(self, audio):
-    #     audio = move_data_to_device(audio, self.device)
+    def inference(self, audio):
+        audio = move_data_to_device(audio, self.device)
 
-    #     with torch.no_grad():
-    #         self.model.eval()
-    #         output_dict = self.model(audio, None)
+        with torch.no_grad():
+            self.model.eval()
+            output_dict = self.model(audio, None)
 
-    #     clipwise_output = output_dict['clipwise_output'].data.cpu().numpy()
-    #     embedding = output_dict['embedding'].data.cpu().numpy()
+        clipwise_output = output_dict['clipwise_output'].data.cpu().numpy()
+        embedding = output_dict['embedding'].data.cpu().numpy()
 
-    #     return clipwise_output, embedding
+        return clipwise_output, embedding
