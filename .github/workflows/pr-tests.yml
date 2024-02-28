@@ -1,0 +1,27 @@
+name: Run tests on PR
+
+on:
+  pull_request:
+    branches:
+      - development
+      - hotfix
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build container for tests
+        run: docker compose -f ./.ci/docker-compose.yml -p ci build
+
+      - name: Launch containers to run tests
+        run: docker compose -f ./.ci/docker-compose.yml -p ci up -d store queue sut
