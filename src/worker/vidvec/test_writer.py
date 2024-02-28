@@ -9,7 +9,7 @@ try:
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
 
-    for _ in range(5):
+    for _ in range(10):
         dummy_payload = {
             "id": str(12345),
             "path": 'https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/sample-cat-video.mp4'

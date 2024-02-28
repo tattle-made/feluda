@@ -47,22 +47,21 @@ def indexer(feluda):
             ch.basic_nack(delivery_tag=method.delivery_tag)
     return worker
 
-def handle_exception(feluda, queue_name, worker_func):
-    max_retries = 3
-    retry_interval = 5
-    retries = 0
-    
-    while retries < max_retries:
+def handle_exception(feluda, queue_name, worker_func, retries, max_retries):
+    retry_interval = 60
+    if retries < max_retries:
+        print("Inside Handle Exception")
         try:
             feluda.start_component(ComponentType.QUEUE)
             feluda.queue.listen(queue_name, worker_func)
             return
         except Exception as e:
             print("Error handling exception:", e)
-            retries += 1
+            retries = retries + 1
             sleep(retry_interval)
-
-    print("Failed to re-establish connection after maximum retries.")
+            handle_exception(feluda, queue_name, worker_func, retries, max_retries)
+    else:
+        print("Failed to re-establish connection after maximum retries.")
 
 try:
     feluda = Feluda("config-indexer.yml")
@@ -73,14 +72,6 @@ try:
     feluda.queue.listen("tattle-search-index-queue", indexer(feluda))
 except Exception as e:
     print("Error Initializing Indexer", e)
-    print(type(e))
-    handle_exception()
-
-
-def run_worker():
-    while True:
-        try:
-            subprocess.run(["python", "test_worker.py"])
-        except Exception as e:
-            print("Error occurred while running worker:", e)
-            sleep(5)
+    retries = 0
+    max_retries = 10
+    handle_exception(feluda, "tattle-search-index-queue", indexer(feluda), retries, max_retries)
