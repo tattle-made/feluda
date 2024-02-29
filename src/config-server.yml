@@ -38,9 +38,9 @@ operators :
 #    - name : "Text Extraction"
 #      type : "detect_text_in_image"
 #      parameters: {}
-    - name : "Image Vector Representation"
-      type : "image_vec_rep_resnet"
-      parameters: {}
+#    - name : "Image Vector Representation"
+#      type : "image_vec_rep_resnet"
+#      parameters: {}
     - name : "Video Vector Representation"
       type : "vid_vec_rep_resnet"
       parameters: {
