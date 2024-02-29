@@ -1,0 +1,18 @@
+FROM python:3.11-slim-bullseye AS base
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && rm -rf /var/lib/apt/lists/*
+ENV PATH=/root/.local/bin:$PATH
+RUN pip install --no-cache-dir --upgrade pip
+RUN apt-get update && apt-get -y upgrade && apt-get install -y wget curl grep
+WORKDIR /app
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
+COPY . /app
+
+#### TEST IMAGE ####
+FROM base AS test
+RUN cd core/operators \
+    && pip install --no-cache-dir --user -r vid_vec_rep_resnet_requirements.txt \
+    && pip install --no-cache-dir --user -r audio_vec_embedding_requirements.txt
+

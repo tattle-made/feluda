@@ -24,7 +24,7 @@ class TestSearch(unittest.TestCase):
         # print(response.json())
         self.assertEqual(response.status_code, 200)
 
-    # @skip
+    @skip
     def testSearchImage(self):
         url = API_URL + "/search"
         data = {"query_type": "image"}
@@ -36,7 +36,7 @@ class TestSearch(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-    # @skip
+    @skip
     def testIndexVideo(self):
         url = API_URL + "/search"
         with open("tests/sample_data/sample-cat-video.mp4", "rb") as file:

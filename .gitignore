@@ -93,6 +93,7 @@ celerybeat-schedule
 .env
 .env.local
 *.env
+!test.env
 
 # virtualenv
 .venv/
@@ -120,6 +121,7 @@ credentials.json
 .DS_Store
 
 # Docker logs
+.ci/.docker/*
 .docker/*
 # src/core/operators/sample_data/
 # sample_data/**
