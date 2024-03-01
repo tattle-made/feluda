@@ -4,7 +4,8 @@ def initialize(param):
     import hashlib
 
 def run(media_path):
-    with open(media_path, "rb") as f:
+    file_path = media_path["path"]
+    with open(file_path, "rb") as f:
         file_hash = hashlib.md5()
         # file_hash = hashlib.blake2b()
         while chunk := f.read(4092):
