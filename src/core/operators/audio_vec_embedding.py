@@ -6,7 +6,7 @@ def initialize(param):
     import numpy as np
     import librosa
     # from panns_inference import AudioTagging
-    from audio_cnn_model.inference import AudioTagging
+    from core.operators.audio_cnn_model.inference import AudioTagging
     import os
 
     # load the default model into cpu.
