@@ -64,7 +64,7 @@ def handle_exception(feluda, queue_name, worker_func, retries, max_retries):
         print("Failed to re-establish connection after maximum retries.")
 
 try:
-    feluda = Feluda("config-indexer.yml")
+    feluda = Feluda("worker/vidvec/config.yml")
     feluda.setup()
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
