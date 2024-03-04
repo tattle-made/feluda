@@ -8,6 +8,5 @@ benchmark/vidvec/video_vec_operator_profile_memray.sh
 echo "test 3 done"
 benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh
 echo "test 4 done"
-# benchmark/vidvec/video_vec_operator_multicore.sh
-# echo "test 5 done"
+
 tail -f /dev/null
