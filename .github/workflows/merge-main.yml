@@ -1,0 +1,98 @@
+name: Merge PR to main
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    concurrency: release
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Dry Run to get next release version
+        id: next_version
+        run: |
+          pip install python-semantic-release
+          export NEXT_TAG_VERSION=$(semantic-release --noop version --print)
+          echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Python Semantic Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Declare some variables
+#        id: vars
+#        shell: bash
+#        run: |
+#          echo "setting variables"
+#          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Publish vidvec amd64 benchmark to dockerhub
+        if: steps.release.outcome == 'success'
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/feluda-operator-vidvec
+          workdir: src/
+          dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet
+          tags: benchmark-amd64-${{ steps.next_version.outputs.new_tag_version }}
+          platforms: linux/amd64
+
+      - name: Publish vidvec arm64 benchmark to dockerhub
+        if: steps.release.outcome == 'success'
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/feluda-operator-vidvec
+          workdir: src/
+          dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet.graviton
+          tags: benchmark-arm64-${{ steps.next_version.outputs.new_tag_version }}
+          platforms: linux/arm64
+
+#      - name: Publish vidvec amd64 worker to dockerhub
+#        if: steps.release.outcome == 'success'
+#        uses: elgohr/Publish-Docker-Github-Action@main
+#        with:
+#          username: tattletech
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#          name: tattletech/feluda-operator-vidvec
+#          workdir: src/
+#          dockerfile: worker/vidvec/Dockerfile.video_worker
+#          tags: worker-amd64-${{ steps.next_version.outputs.new_tag_version }}
+#          platforms: linux/amd64
+
+#      - name: deploy to cluster
+#        uses: steebchen/kubectl@v2.0.0
+#        with: # defaults to latest kubectl binary version
+#          config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
+#          command: set image --record deployment/feluda-server feluda-server=tattletech/feluda-server:${{ steps.vars.outputs.sha_short }}
+#      - name: verify deployment
+#        uses: steebchen/kubectl@v2.0.0
+#        with:
+#          config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
+#          version: v1.21.0 # specify kubectl binary version explicitly
+#          command: rollout status deployment/feluda-server
