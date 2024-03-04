@@ -35,15 +35,15 @@ RUN chmod +x ./benchmark/audiovec/audio_vec_operator_cprofile.sh
 COPY ./benchmark/audiovec/audio_vec_operator_profile.py /app/benchmark/audiovec/audio_vec_operator_profile.py
 COPY ./benchmark/audiovec/audio_vec_operator_profile_memray.sh /app/benchmark/audiovec/audio_vec_operator_profile_memray.sh
 COPY ./benchmark/audiovec/audio_vec_operator_profile_pyinstrument.sh /app/benchmark/audiovec/audio_vec_operator_profile_pyinstrument.sh
-RUN chomd +x ./benchmark/audiovec/audio_vec_operator_profile_memray.sh
+RUN chmod +x ./benchmark/audiovec/audio_vec_operator_profile_memray.sh
 RUN chmod +x ./benchmark/audiovec/audio_vec_operator_profile_pyinstrument.sh
 # multi-core test
 COPY ./benchmark/audiovec/audio_vec_operator_multicore.py /app/benchmark/audiovec/audio_vec_operator_multicore.py
 COPY ./benchmark/audiovec/audio_vec_operator_multicore.sh /app/benchmark/audiovec/audio_vec_operator_multicore.sh
-RUN chomd +x ./benchmark/audiovec/audio_vec_operator_multicore.sh
+RUN chmod +x ./benchmark/audiovec/audio_vec_operator_multicore.sh
 # main benchmark file
 COPY ./benchmark/benchmark-audio.sh /app/benchmark/benchmark-audio.sh
-RUN chomd +x ./benchmark/benchmark-audio.sh
+RUN chmod +x ./benchmark/benchmark-audio.sh
 
 RUN apt-get update && apt-get install -y vim zsh
 RUN apt-get update && apt-get install -y wget
