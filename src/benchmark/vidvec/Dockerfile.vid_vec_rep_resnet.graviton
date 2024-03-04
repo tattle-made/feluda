@@ -39,33 +39,24 @@ ENV OMP_PROC_BIND=false
 ENV OMP_PLACES=cores
 ###
 
+# video requirments file
+COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
 # video vec file
 COPY ./core/operators/vid_vec_rep_resnet.py /app/core/operators/vid_vec_rep_resnet.py
 # video vec test file
 COPY ./core/operators/sample_data/sample-cat-video.mp4 /app/core/operators/sample_data/sample-cat-video.mp4
 COPY ./core/operators/test_vid_vec_rep_resnet.py /app/core/operators/test_vid_vec_rep_resnet.py
-# video vec c-profile test
-COPY ./benchmark/vidvec/video_vec_operator_cprofile.py /app/benchmark/vidvec/video_vec_operator_cprofile.py
-COPY ./benchmark/vidvec/video_vec_operator_cprofile.sh /app/benchmark/vidvec/video_vec_operator_cprofile.sh
-RUN chmod +x ./benchmark/vidvec/video_vec_operator_cprofile.sh
-# video vec time test
-COPY ./benchmark/vidvec/video_vec_operator_time.py /app/benchmark/vidvec/video_vec_operator_time.py
-COPY ./benchmark/vidvec/video_vec_operator_time.sh /app/benchmark/vidvec/video_vec_operator_time.sh
-RUN chmod +x ./benchmark/vidvec/video_vec_operator_time.sh
-# memory profile tests
-COPY ./benchmark/vidvec/video_vec_operator_profile.py /app/benchmark/vidvec/video_vec_operator_profile.py
-COPY ./benchmark/vidvec/video_vec_operator_profile_memray.sh /app/benchmark/vidvec/video_vec_operator_profile_memray.sh
-COPY ./benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh /app/benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh
-RUN chmod +x ./benchmark/vidvec/video_vec_operator_profile_memray.sh
-RUN chmod +x ./benchmark/vidvec/video_vec_operator_profile_pyinstrument.sh
-# multicore test
-COPY ./benchmark/vidvec/video_vec_operator_multicore.py /app/benchmark/vidvec/video_vec_operator_multicore.py
-COPY ./benchmark/vidvec/video_vec_operator_multicore.sh /app/benchmark/vidvec/video_vec_operator_multicore.sh
-RUN chmod +x ./benchmark/vidvec/video_vec_operator_multicore.sh
+# media factory files
+COPY ./core/models/ /app/core/models/
+# benchmark files
+COPY ./benchmark/vidvec/ /app/benchmark/vidvec/
+RUN chmod +x ./benchmark/vidvec/*.sh
 # main benchmark file
-COPY ./benchmark.sh /app/benchmark.sh
-RUN chmod +x benchmark.sh
+COPY ./benchmark/benchmark-video.sh /app/benchmark/benchmark-video.sh
+RUN chmod +x benchmark/benchmark-video.sh
 
-RUN apt-get update && apt-get install -y vim zsh
+RUN apt-get update && apt-get install -y vim zsh wget
+RUN pip install numpy Pillow wget requests Werkzeug
 
 CMD tail -f /dev/null
