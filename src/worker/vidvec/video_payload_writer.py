@@ -4,7 +4,7 @@ log = Logger(__name__)
 from time import sleep
 
 try:
-    feluda = Feluda("config-indexer.yml")
+    feluda = Feluda("worker/vidvec/config.yml")
     feluda.setup()
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
