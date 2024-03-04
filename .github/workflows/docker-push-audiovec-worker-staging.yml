@@ -29,5 +29,5 @@ jobs:
           name: tattletech/feluda-operator-audiovec
           workdir: src/
           dockerfile: worker/audiovec/Dockerfile.audio_worker
-          tags: worker-latest-amd64
+          tags: worker-amd64-latest
           platforms: linux/amd64
