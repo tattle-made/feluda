@@ -1,13 +1,15 @@
 from multiprocessing import Process
 from multiprocessing import cpu_count
 from core.operators import vid_vec_rep_resnet
+from core.models.media_factory import VideoFactory
 import time
 
 
 def find_time():
-    file_path = {"path": r"core/operators/sample_data/sample-cat-video.mp4"}
+    video_url = "https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/sample-cat-video.mp4"
+    video_path = VideoFactory.make_from_url(video_url)
     start_time = time.time()
-    vid_vec_rep_resnet.run(file_path)
+    vid_vec_rep_resnet.run(video_path)
     end_time = time.time()
     duration = end_time - start_time
     print(f"Time taken - {duration}")
