@@ -45,11 +45,6 @@ RUN chomd +x ./benchmark/audiovec/audio_vec_operator_multicore.sh
 COPY ./benchmark/benchmark-audio.sh /app/benchmark/benchmark-audio.sh
 RUN chomd +x ./benchmark/benchmark-audio.sh
 
-RUN apt-get update && apt-get install -y vim zsh wget
-
-CMD tail -f /dev/null
-
-
 RUN apt-get update && apt-get install -y vim zsh
 RUN apt-get update && apt-get install -y wget
 
