@@ -1,4 +1,4 @@
-name: Publish Video Worker to Dockerhub for Staging
+name: Publish Audio Worker to Dockerhub for Staging
 
 on: workflow_dispatch
 
@@ -26,8 +26,8 @@ jobs:
         with:
           username: tattletech
           password: ${{ secrets.DOCKER_PASSWORD }}
-          name: tattletech/feluda-operator-vidvec
+          name: tattletech/feluda-operator-audiovec
           workdir: src/
-          dockerfile: worker/vidvec/Dockerfile.video_worker
+          dockerfile: worker/audiovec/Dockerfile.audio_worker
           tags: worker-amd64-latest
           platforms: linux/amd64

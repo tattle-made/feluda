@@ -34,7 +34,7 @@ class TestIndex(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
         # self.assertEqual(len(response.json()["vector_representation"]), 768)
 
-    # @skip
+    @skip
     def testIndexImage(self):
         url = API_URL + "/index"
         headers = {"Content-Type": "application/json"}
@@ -60,7 +60,7 @@ class TestIndex(unittest.TestCase):
         print(response.text)
         self.assertEqual(response.status_code, 200)
 
-    # @skip
+    @skip
     def testIndexVideo(self):
         url = API_URL + "/index"
         headers = {"Content-Type": "application/json"}

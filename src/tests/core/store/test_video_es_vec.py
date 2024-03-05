@@ -4,6 +4,7 @@ import pprint
 from core.store.es_vec import ES
 from core.config import StoreConfig, StoreParameters
 from core.models.media import MediaType
+from core.models.media_factory import VideoFactory
 from core.operators import vid_vec_rep_resnet
 from datetime import datetime
 
@@ -73,7 +74,8 @@ class TestVideoES(unittest.TestCase):
         # generate video embedding
         vid_vec_rep_resnet.initialize(param=None)
         file_name = "sample-cat-video.mp4"
-        video = {"path": r"core/operators/sample_data/sample-cat-video.mp4"}
+        video_url = "https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/sample-cat-video.mp4"
+        video = VideoFactory.make_from_url(video_url)
         embedding = vid_vec_rep_resnet.run(video)
         doc = self.generate_document(file_name, embedding)
 
@@ -92,7 +94,8 @@ class TestVideoES(unittest.TestCase):
         # generate video embedding
         vid_vec_rep_resnet.initialize(param=None)
         file_name = "sample-cat-video.mp4"
-        video = {"path": r"core/operators/sample_data/sample-cat-video.mp4"}
+        video_url = "https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/sample-cat-video.mp4"
+        video = VideoFactory.make_from_url(video_url)
         embedding = vid_vec_rep_resnet.run(video)
         average_vector = next(embedding)
         search_result = es.find("video", average_vector.get('vid_vec'))
