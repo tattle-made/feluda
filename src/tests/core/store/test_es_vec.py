@@ -15,6 +15,7 @@ pp = pprint.PrettyPrinter(indent=4)
 class TestES(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        print("-----------------ES TEST---------------------")
         # ping es server to see if its working
         response = requests.get("http://es:9200")
 

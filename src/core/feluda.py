@@ -2,10 +2,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-from core import config, store
-from core.server import Server
-from core.operators import Operator
-from core.queue import Queue
+from core import config
 from enum import Enum
 
 
@@ -20,14 +17,26 @@ class Feluda:
     def __init__(self, configPath):
         self.config = config.load(configPath)
         if self.config.operators:
+            from core.operators import Operator
+
             self.operators = Operator(self.config.operators)
         if self.config.store:
+            from core import store
+
             self.store = store.get_store(self.config.store)
         if self.config.queue:
             # print("---> 1", self.config.queue)
+            from core.queue import Queue
+
             self.queue = Queue.make(self.config.queue)
         if self.config.server:
+            from core.server import Server
+
             self.server = Server(self.config.server)
+
+    def setup(self):
+        if self.operators:
+            self.operators.setup()
 
     def set_endpoints(self, endpoints):
         if self.server:

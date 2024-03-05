@@ -134,10 +134,11 @@ src/core/operators/yolov8n-seg.pt
 # SonarQube
 .scannerwork
 
-# Audio Files
+# Audio and Video Files
 **100_audio_files/
 **50_audio_files/
 **audio_files/
+**video_files/
 
 **credentials.json
 
@@ -150,3 +151,6 @@ src/core/operators/yolov8n-seg.pt
 
 # locust
 **.csv
+
+# Audio CNN model
+src/core/operators/cnn/panns_data

@@ -6,6 +6,7 @@ def initialize(param):
 
     global os, np, cv2, qr, torch, data, models, transforms, Image #, wget #, FFmpeg
     global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata #, compress_video
+    global contextmanager
 
     import os
     import numpy as np
@@ -16,6 +17,7 @@ def initialize(param):
     import torchvision.models as models
     import torchvision.transforms as transforms
     from PIL import Image
+    from contextlib import contextmanager
     # from ffmpy import FFmpeg
     # import wget
 
@@ -222,7 +224,6 @@ def initialize(param):
             # print("found keyframes")
             return idx
 
-
 def run(file):
     fname = file["path"]
     fsize = os.path.getsize(fname) / 1e6
@@ -234,19 +235,26 @@ def run(file):
     #     print("compressed video size: ", fsize)
     if fsize > 10:
         raise Exception("Video too large")
+    
+    @contextmanager
+    def video_capture(fname):
+        video = cv2.VideoCapture(fname)
+        try:
+            yield video
+        finally:
+            video.release()
+            os.remove(fname)
 
-    video = cv2.VideoCapture(fname)
-    vid_analyzer = VideoAnalyzer(video)
-    vid_analyzer.set_fsize(fsize)
+    with video_capture(fname) as video:
+        vid_analyzer = VideoAnalyzer(video)
+        vid_analyzer.set_fsize(fsize)
 
-    doable, error_msg = vid_analyzer.check_constraints()
+        doable, error_msg = vid_analyzer.check_constraints()
 
-    # os.remove(fname)
+        if not doable:
+            raise Exception("Unsupported Video. Cannot index video.")
 
-    if not doable:
-        raise "Unsupported Video. Cannot index video."
-
-    return gendata(vid_analyzer)
+        return gendata(vid_analyzer)
 
 
 def cleanup(param):
@@ -255,18 +263,3 @@ def cleanup(param):
 
 def state():
     pass
-
-
-# if __name__ == "__main__":
-#     file_path = {"path": r"sample_data/sample-cat-video.mp4"}
-#     initialize(param=None)
-#     try:
-#         result = run(file_path)
-#         result_list = list(result)
-#         print("----RESULT-----")
-#         print(result_list)
-#         # for res in result_list:
-#         #     print(len(res))
-#         print("LEN - ", len(result_list[0]["vid_vec"]))
-#     except Exception as e:
-#         print(f"Error: {e}")
