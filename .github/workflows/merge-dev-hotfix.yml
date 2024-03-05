@@ -12,8 +12,6 @@ jobs:
   if_merged:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    environment:
-      name: staging
 
     steps:
       - name: Checkout code
@@ -35,7 +33,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@main
         with:
           username: tattletech
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_PWD }}
           name: tattletech/feluda-operator-vidvec
           workdir: src/
           dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet
@@ -46,7 +44,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@main
         with:
           username: tattletech
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_PWD }}
           name: tattletech/feluda-operator-vidvec
           workdir: src/
           dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet.graviton
