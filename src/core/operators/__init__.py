@@ -10,8 +10,10 @@ PACKAGE = "core.operators"
 class Operator:
     def __init__(self, config: OperatorConfig):
         self.active_operators = {}
-        operators = config.parameters
-        for operator in operators:
+        self.operators = config.parameters
+
+    def setup(self):
+        for operator in self.operators:
             # print(operator["type"], ":", operator["parameters"])
             log.info(operator.type)
             self.active_operators[operator.type] = importlib.import_module(
