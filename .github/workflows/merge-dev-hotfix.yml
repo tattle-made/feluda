@@ -33,7 +33,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@main
         with:
           username: tattletech
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_PWD }}
           name: tattletech/feluda-operator-vidvec
           workdir: src/
           dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet
@@ -44,7 +44,7 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@main
         with:
           username: tattletech
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          password: ${{ secrets.DOCKER_PWD }}
           name: tattletech/feluda-operator-vidvec
           workdir: src/
           dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet.graviton
