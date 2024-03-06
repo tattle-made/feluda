@@ -5,15 +5,14 @@ services:
       dockerfile: Dockerfile.test
       target: test
 #    env_file: ./../src/test.env
-    command: |
+    command: bash -c "python -m unittest discover -s ./tests/core/models -p "test_*.py";
+      python -m unittest core.operators.test_vid_vec_rep_resnet;
+      python -m unittest core.operators.test_audio_vec_embedding"
 #      bash -c "python -c 'import time';
 #      while ! curl store:9200 | grep -q 'You Know, for Search'
 #      && ! curl queue:15672 | grep -q '<!DOCTYPE html>';
 #      do python -c 'time.sleep(10)';
 #      done;
-      bash -c "python -m unittest discover -s ./tests/core/models -p "test_*.py";
-               python -m unittest core.operators.test_vid_vec_rep_resnet;
-               python -m unittest core.operators.test_audio_vec_embedding"
 #    links:
 #      - store
 #      - queue
