@@ -28,10 +28,10 @@ jobs:
 
       - name: Dry Run to get next release version
         id: next_version
+        shell: bash
         run: |
           pip install python-semantic-release
-          export NEXT_TAG_VERSION=$(semantic-release --noop version --print)
-          echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
+          echo "new_tag_version=$(semantic-release --noop version --print)" >> $GITHUB_OUTPUT
 
       - name: Python Semantic Release
         id: release
