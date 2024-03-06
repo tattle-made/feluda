@@ -4,58 +4,61 @@ services:
       context: ./../src
       dockerfile: Dockerfile.test
       target: test
-    env_file: ./../src/test.env
-    command: bash -c "python -c 'import time';
-      while ! curl store:9200 | grep -q 'You Know, for Search' 
-      && ! curl queue:15672 | grep -q '<!DOCTYPE html>'; 
-      do python -c 'time.sleep(10)'; 
-      done;
-      nose2 tests"
-    links:
-      - store
-      - queue
-    depends_on:
-      store:
-        condition: service_started
-      queue:
-        condition: service_started
+#    env_file: ./../src/test.env
+    command: bash -c "python -m unittest discover -s ./tests/core/models -p "test_*.py";
+      python -m unittest core.operators.test_vid_vec_rep_resnet;
+      python -m unittest core.operators.test_audio_vec_embedding"
+#      bash -c "python -c 'import time';
+#      while ! curl store:9200 | grep -q 'You Know, for Search'
+#      && ! curl queue:15672 | grep -q '<!DOCTYPE html>';
+#      do python -c 'time.sleep(10)';
+#      done;
+#    links:
+#      - store
+#      - queue
+#    depends_on:
+#      store:
+#        condition: service_started
+#      queue:
+#        condition: service_started
 
-  store:
-    container_name: es
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    volumes:
-      - ./.docker/es/data:/var/lib/elasticsearch/data
-#    ports:
-#      - "9300:9300"
-#      - "9200:9200"
-    environment:
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-      - http.cors.enabled=true
-      - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
-      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
-      - http.cors.allow-credentials=true
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    cap_add:
-      - IPC_LOCK
-
-  queue:
-    image: rabbitmq:3.12.12-management
-    container_name: rabbitmq
-    hostname: rabbit
-    volumes:
-      - ./.docker/rabbitmq/data:/var/lib/rabbitmq
-      - ./.docker/rabbitmq/logs:/var/log/rabbitmq
-    environment:
-      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
-      RABBITMQ_DEFAULT_USER: "admin"
-      RABBITMQ_DEFAULT_PASS: "Admin123"
-#    ports:
-#      - "5672:5672"
-#      - "15672:15672"
+#  store:
+#    container_name: es
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+#    volumes:
+#      - ./.docker/es/data:/var/lib/elasticsearch/data
+##    ports:
+##      - "9300:9300"
+##      - "9200:9200"
+#    environment:
+#      - xpack.security.enabled=false
+#      - discovery.type=single-node
+#      - http.cors.enabled=true
+#      - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
+#      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+#      - http.cors.allow-credentials=true
+#      - ES_JAVA_OPTS=-Xms750m -Xmx2g
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#      nofile:
+#        soft: 65536
+#        hard: 65536
+#    cap_add:
+#      - IPC_LOCK
+#
+#  queue:
+#    image: rabbitmq:3.12.12-management
+#    container_name: rabbitmq
+#    hostname: rabbit
+#    volumes:
+#      - ./.docker/rabbitmq/data:/var/lib/rabbitmq
+#      - ./.docker/rabbitmq/logs:/var/log/rabbitmq
+#    environment:
+#      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
+#      RABBITMQ_DEFAULT_USER: "admin"
+#      RABBITMQ_DEFAULT_PASS: "Admin123"
+##    ports:
+##      - "5672:5672"
+##      - "15672:15672"
