@@ -6,6 +6,7 @@ from time import sleep
 try:
     feluda = Feluda("worker/audiovec/config.yml")
     feluda.setup()
+    audio_index_queue = feluda.config.queue.parameters.queues[0]['name']
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
 
@@ -14,7 +15,7 @@ try:
             "id": str(12345),
             "path": 'https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/audio.wav'
         }
-        feluda.queue.message("tattle-search-index-queue", dummy_payload)
+        feluda.queue.message(audio_index_queue, dummy_payload)
         sleep(0.3)
 
 except Exception as e:

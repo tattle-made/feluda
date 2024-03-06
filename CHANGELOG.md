@@ -2,9 +2,86 @@
 
 
 
+## v0.2.0 (2024-03-05)
+
+### Ci
+
+* ci: allocating more RAM to elasticsearch ([`c0e3f15`](https://github.com/tattle-made/feluda/commit/c0e3f153304ecf3b373347b6d110e0039d30660f))
+
+* ci: Delete workflow
+- Deleted merge dev hotfix workflow
+- Disabled conditional build on merge main workflow ([`1ba4481`](https://github.com/tattle-made/feluda/commit/1ba4481dee610f5b028a9443fda6781f32c97b9c))
+
+* ci: Fix secrets access
+- Removed conditional on merge main workflow
+- Removed environment label from merge dev hotfix workflow
+- Modified docker secrets name ([`0881176`](https://github.com/tattle-made/feluda/commit/0881176092c63ff6e88df32665b29106efa029a8))
+
+* ci: Fix merge workflows
+- Disabled conditional checks on merge main workflow
+- Disabled environment setting from merge dev hotfix ([`d094b78`](https://github.com/tattle-made/feluda/commit/d094b78a651bcc445006120654fea1fcf5e716b8))
+
+### Refactor
+
+* refactor: merging development to main ([`5959f74`](https://github.com/tattle-made/feluda/commit/5959f74074e09894cb58906433d3fc1dce673005))
+
+### Test
+
+* test: fixing video es vec ([`bf7dede`](https://github.com/tattle-made/feluda/commit/bf7dedef64b419d88bacb4e5e1a19cb56c597688))
+
+### Unknown
+
+* Merge pull request #128 from tattle-made/development
+
+refactor: merge development to main ([`73cfa5d`](https://github.com/tattle-made/feluda/commit/73cfa5dec7261d1feba08fe2774935ac0eac3bf7))
+
+* Merge pull request #127 from aatmanvaidya/temp-main
+
+refactor: updating dev from main ([`b4dca72`](https://github.com/tattle-made/feluda/commit/b4dca72c491f21a22653621969836bc9601af5f5))
+
+* Merge remote-tracking branch &#39;upstream/development&#39; into temp-main ([`d4415c6`](https://github.com/tattle-made/feluda/commit/d4415c618ea610cf7941f139ff205db7e9f048f0))
+
+* Merge pull request #125 from tattle-made/hotfix
+
+Hotfix ([`06eb74e`](https://github.com/tattle-made/feluda/commit/06eb74ef6ab3457118bc14b0639c07e12f00e4a9))
+
+* Merge pull request #124 from duggalsu/del_merge_dev_hotfix_workflow
+
+ci: Delete workflow ([`0744842`](https://github.com/tattle-made/feluda/commit/07448428baeafe146f9fc4465d7eb42ad2bdd8df))
+
+* Merge remote-tracking branch &#39;upstream/hotfix&#39; into del_merge_dev_hotfix_workflow
+
+# Conflicts:
+#	.github/workflows/merge-dev-hotfix.yml ([`3fb216c`](https://github.com/tattle-made/feluda/commit/3fb216c080a7e7487f97157e39129d19fe6dfb0b))
+
+* Merge pull request #122 from duggalsu/fix_ci_merge_secrets_access
+
+ci: Fix secrets access ([`969261c`](https://github.com/tattle-made/feluda/commit/969261c075709a7836a150e2c903629f5530a743))
+
+* Merge pull request #121 from duggalsu/fix_ci_merge_workflow
+
+Fix ci merge workflow ([`0e36a80`](https://github.com/tattle-made/feluda/commit/0e36a805ce53de805d2be537d5f5d235e8988089))
+
+* Merge pull request #120 from aatmanvaidya/main-merge
+
+refactor: merging development to main ([`22bb325`](https://github.com/tattle-made/feluda/commit/22bb325b1b6a5f901bff66ca5d650de40b8d3a0f))
+
+
 ## v0.1.0 (2024-03-04)
 
 ### Chore
+
+* chore: fixing spelling in Dockerfile ([`a3e2fbe`](https://github.com/tattle-made/feluda/commit/a3e2fbe374cbd05898d317ead977b32f2044e3c3))
+
+* chore: renaming video worker files ([`10b60b2`](https://github.com/tattle-made/feluda/commit/10b60b2842cf0679faa2a35c8de5b98b2f89211d))
+
+* chore: updating library to local folder location ([`daa91f9`](https://github.com/tattle-made/feluda/commit/daa91f908c51de8fe81abd483903ea6ccd05936c))
+
+* chore: renaming audio cnn model ([`cbdbac9`](https://github.com/tattle-made/feluda/commit/cbdbac9f7b4380d8b5345f43e83a6e63cdafbc28))
+
+* chore: renaming worker files ([`6059355`](https://github.com/tattle-made/feluda/commit/605935594faeebe0a7143bbf198a234a9312f85a))
+
+* chore: renaming operator ([`191abd6`](https://github.com/tattle-made/feluda/commit/191abd692d7f305bb10da0ee525d8164f067f6a2))
 
 * chore: deleting docker-compose-standalone and renaming privacy policy (#89) ([`bf6fb1e`](https://github.com/tattle-made/feluda/commit/bf6fb1e784c57b9614e99c8f23180a25e504b008))
 
@@ -39,13 +116,25 @@
 
 * ci: audiovec worker staging dockerhub tag change ([`a79620d`](https://github.com/tattle-made/feluda/commit/a79620de452a7bfead251759d002ece49a576177))
 
+* ci: audiovec benchmark graviton dockerfile ([`81b02b5`](https://github.com/tattle-made/feluda/commit/81b02b5a759b02e2ed27fc4e9da7d5fc09f2e1bc))
+
+* ci: updating vidvec gravition Dockerfile ([`b1402b5`](https://github.com/tattle-made/feluda/commit/b1402b59d4efd834d42770940993a8050ae1b1c1))
+
+* ci: removing duplicate run  commands in Dockerfile ([`f967496`](https://github.com/tattle-made/feluda/commit/f96749680bd002f067150340aff1c6ba2f520a1d))
+
 * ci: audio worker staging github workflow ([`eec380a`](https://github.com/tattle-made/feluda/commit/eec380aaba6c04adc603a676bc52f6b411dd4d95))
 
+* ci: video worker dockerfile for graviton ([`8554f3b`](https://github.com/tattle-made/feluda/commit/8554f3bf823414f64cf25cece5ff2add4ef2b127))
+
 * ci: workflow dockerfile location change ([`d0826b8`](https://github.com/tattle-made/feluda/commit/d0826b8507e310977349062c254682763a28b90a))
+
+* ci: fix location for video requirment file ([`96e0b87`](https://github.com/tattle-made/feluda/commit/96e0b870c8dba3360c2f4616fd38935ba98b4424))
 
 * ci: workflow to push video worker to docker hub ([`594fc6c`](https://github.com/tattle-made/feluda/commit/594fc6c79f9632bd085f69b6598a16f9efba29a3))
 
 * ci: workflow to push video worker to docker hub ([`730b808`](https://github.com/tattle-made/feluda/commit/730b808237193b16bf98e9e225435df69845ae85))
+
+* ci: workflow to push video worker to docker hub ([`0d517c7`](https://github.com/tattle-made/feluda/commit/0d517c7c9362ce5d9844021fe9655b832c2267cd))
 
 * ci: updating vid Dockerfiles ([`8c32315`](https://github.com/tattle-made/feluda/commit/8c323158bba28c7431867d7e86e469b9b654a1b2))
 
@@ -54,6 +143,8 @@
 * ci: giving access to tests for video vec (#61) ([`5945004`](https://github.com/tattle-made/feluda/commit/5945004801c646d7fba6eab3018c6d5fddbd1c0a))
 
 ### Documentation
+
+* docs: adding reference of audio cnn model ([`9d499be`](https://github.com/tattle-made/feluda/commit/9d499be767d0ce89f4d195068ef53c403b9610cc))
 
 * docs: adding comments to the config-indexer ([`7bcbfca`](https://github.com/tattle-made/feluda/commit/7bcbfca5e39060602894ada922e81e4e3465f654))
 
@@ -66,6 +157,10 @@
 * docs: add Usage Case Studies ([`31400a6`](https://github.com/tattle-made/feluda/commit/31400a668e6aa8b6d66e4cddbab49fabd1d10634))
 
 ### Feature
+
+* feat: worker for audio operator ([`becf40c`](https://github.com/tattle-made/feluda/commit/becf40cbd451da8305d7948a87eecc911476109a))
+
+* feat: md5 operator ([`9e2d1be`](https://github.com/tattle-made/feluda/commit/9e2d1bec58105c3932bdf0db2e4e18d1a86c197c))
 
 * feat: feluda store supports audio (#78)
 
@@ -135,6 +230,34 @@
 
 ### Fix
 
+* fix: updating vidvec benchmark scripts ([`9aa4a50`](https://github.com/tattle-made/feluda/commit/9aa4a506d3936f21beeba4da0e8df8e879a0f4cd))
+
+* fix: context manager handles vidoes ([`e8f36ce`](https://github.com/tattle-made/feluda/commit/e8f36cef56527ca6eb216c4be8b213d5a84cf8eb))
+
+* fix: model is downloaded from github release ([`0c142df`](https://github.com/tattle-made/feluda/commit/0c142dfe0a1409bb2113961273be7fa2fcabeced))
+
+* fix: video operator deletes file ([`8f97a95`](https://github.com/tattle-made/feluda/commit/8f97a9565186e51ad2bf679b1c71df1068ab3a6f))
+
+* fix: video operator locaiton in Dockerfile ([`6d0e25d`](https://github.com/tattle-made/feluda/commit/6d0e25d60bfb6bb613e539104bac13337d97fced))
+
+* fix: worker handles disconnection to MQ ([`b6a48f3`](https://github.com/tattle-made/feluda/commit/b6a48f3e35722a046d738b2c06441be4f8a4cf82))
+
+* fix: cnn models works when saved on local machine ([`c86623d`](https://github.com/tattle-made/feluda/commit/c86623d100268226fca205a422f0094d569c47cf))
+
+* fix: worker supports url and optimising on connection lost ([`80c122d`](https://github.com/tattle-made/feluda/commit/80c122d017c12072d93b1389933cae561701d081))
+
+* fix: model fetched from local folder ([`ef512ef`](https://github.com/tattle-made/feluda/commit/ef512ef7119d0e7591a8fdf0f6be2ea63cf59fb6))
+
+* fix: audio vec test supports media factory ([`41be124`](https://github.com/tattle-made/feluda/commit/41be1242038acc232e5de99c151fe3fe4bf23685))
+
+* fix: video vec test supports media factory ([`bf727fd`](https://github.com/tattle-made/feluda/commit/bf727fd5fe3f9cd5e8c898c30ced4905240eaacc))
+
+* fix: image vec test supports media factory ([`6e33270`](https://github.com/tattle-made/feluda/commit/6e33270f1ad6f918f5347ed90aae1fc806b0fd51))
+
+* fix: Dockerfile location ([`a8ce31e`](https://github.com/tattle-made/feluda/commit/a8ce31e4ae614aad705c6ffaa2246f31263aeb5c))
+
+* fix: server operator setup ([`c8a5bf8`](https://github.com/tattle-made/feluda/commit/c8a5bf8602500375bebffa932b7a551178741c95))
+
 * fix: video es test (#87) ([`2670490`](https://github.com/tattle-made/feluda/commit/26704906b225ea1800a375d9f57c53e7a45e75c4))
 
 * fix: url media link for index api test ([`089412a`](https://github.com/tattle-made/feluda/commit/089412a15badf351d8ef33538af9a4d2052a82b3))
@@ -175,6 +298,14 @@
 
 ### Refactor
 
+* refactor: config file for video worker ([`66cd139`](https://github.com/tattle-made/feluda/commit/66cd13979cb0c3d9c4547127b8521182fe28da68))
+
+* refactor: moving tests to sub-folders ([`6837b89`](https://github.com/tattle-made/feluda/commit/6837b8916ec0164b6af4ed099f203a86f522659f))
+
+* refactor: rebasing worker branch to master ([`1656ece`](https://github.com/tattle-made/feluda/commit/1656ece2f5c55b675f70a9fe8face366b68b39ca))
+
+* refactor: core module import ([`07cbb11`](https://github.com/tattle-made/feluda/commit/07cbb11f534924a401495506804bef47a3554ab1))
+
 * refactor: removing api folder ([`91c797b`](https://github.com/tattle-made/feluda/commit/91c797b1d2f60664344f77167418aeb9f692dbf8))
 
 * refactor: vidvec locust es files ([`6d90ded`](https://github.com/tattle-made/feluda/commit/6d90deda7f38faef34af8f572bbf1bc72fda3c22))
@@ -203,6 +334,20 @@
 
 * refactor: source id field ([`6dfc8d3`](https://github.com/tattle-made/feluda/commit/6dfc8d327936cb5d39d4cb3d87084132c8bef26d))
 
+### Test
+
+* test: benchmarking scripts for audiovec operator ([`12685bd`](https://github.com/tattle-made/feluda/commit/12685bd7d089e281c2b6fcac736b6063bf8bfa2e))
+
+* test: md5 hash supports media factory ([`a75751c`](https://github.com/tattle-made/feluda/commit/a75751c571af8cadc49d7667f7dc9b7074099c5b))
+
+* test: media factory unit test ([`d2914d1`](https://github.com/tattle-made/feluda/commit/d2914d1d2da28c5aaf131183d4714e62b1daffea))
+
+* test: worker to queue and index video files (#84)
+
+* refactor: small improvements
+
+* test: worker to queue and index video vec ([`6eaf19b`](https://github.com/tattle-made/feluda/commit/6eaf19b39298762b6f9a3f34e50858d7314d02e6))
+
 ### Unknown
 
 * Merge pull request #119 from tattle-made/hotfix
@@ -212,6 +357,14 @@ Hotfix ([`aa0d296`](https://github.com/tattle-made/feluda/commit/aa0d296456de50d
 * Merge pull request #116 from aatmanvaidya/audio-worker-ci-tag-change
 
 ci: audiovec worker staging dockerhub tag change ([`71c43c8`](https://github.com/tattle-made/feluda/commit/71c43c88e58c01e43647607d12da35095eb94fed))
+
+* Merge pull request #115 from aatmanvaidya/bench-graviton
+
+ci: audiovec benchmark graviton dockerfile ([`3ca919c`](https://github.com/tattle-made/feluda/commit/3ca919c6f8bb8e89e9984ac750b4529fffe74955))
+
+* Merge pull request #114 from aatmanvaidya/video-worker-config
+
+refactor: config file for video worker ([`31cfe77`](https://github.com/tattle-made/feluda/commit/31cfe77cf4137cabadbb666eff44c5fd35568c7f))
 
 * Merge pull request #118 from tattle-made/hotfix
 
@@ -225,9 +378,37 @@ ci: Add automated semantic versioning ([`4a12794`](https://github.com/tattle-mad
 
 Hotfix ([`9de3594`](https://github.com/tattle-made/feluda/commit/9de3594dccf29ecea2e28dd5f373b0b72e42a18f))
 
+* Merge pull request #112 from aatmanvaidya/video-bench-update
+
+fix: updating vidvec benchmark scripts ([`c766038`](https://github.com/tattle-made/feluda/commit/c766038bf9b71efcc1c1fd8df6eff675ea72bf81))
+
+* Merge pull request #111 from aatmanvaidya/audio-benchmark
+
+test: benchmarking scripts for audiovec operator ([`4bf9dab`](https://github.com/tattle-made/feluda/commit/4bf9dab091bce3eca0077b235b2d7f0346934a9f))
+
 * Merge pull request #110 from aatmanvaidya/audio-worker-github-workflow
 
 ci: audio worker staging github workflow ([`9e11c03`](https://github.com/tattle-made/feluda/commit/9e11c039728f85cbf34fc4c8bb89ae77c390e8b4))
+
+* Merge pull request #109 from aatmanvaidya/audio-worker
+
+feat: worker for audio operator ([`23ff0f0`](https://github.com/tattle-made/feluda/commit/23ff0f080a939513eb97ed6a06c03fbdca0595e1))
+
+* Merge pull request #108 from aatmanvaidya/video-graviton
+
+ci: video worker dockerfile for graviton ([`fed8e23`](https://github.com/tattle-made/feluda/commit/fed8e23ffbe141d46ac880e6074b4063652ea02b))
+
+* Merge pull request #93 from aatmanvaidya/md5-test-fix
+
+test: md5 hash supports media factory ([`b0685a6`](https://github.com/tattle-made/feluda/commit/b0685a669076b44f91d254016d36f4cb4d475e91))
+
+* Merge pull request #106 from aatmanvaidya/audio-cnn-fix
+
+fix: audio operators uses function from a local folder ([`da3d37d`](https://github.com/tattle-made/feluda/commit/da3d37dd9fc6bdf78919ea0b0452f4e6a8e0b68f))
+
+* Merge pull request #107 from aatmanvaidya/video-op-fix
+
+fix: context manager handles vidoes ([`586b0c0`](https://github.com/tattle-made/feluda/commit/586b0c051c4ab9b252b40fa58d614a62eea760fa))
 
 * Merge pull request #105 from tattle-made/hotfix
 
@@ -272,6 +453,10 @@ GitHub workflow pr ([`cda6bbb`](https://github.com/tattle-made/feluda/commit/cda
 - Added ci pr docker compose file
 - Added ci dockerfiles to gitignore ([`c857181`](https://github.com/tattle-made/feluda/commit/c857181ab8345d4528937a3873e4f0195ea1640f))
 
+* Merge pull request #102 from aatmanvaidya/vid-ci-5
+
+fix: video operator locaiton in Dockerfile ([`d6ed2a3`](https://github.com/tattle-made/feluda/commit/d6ed2a39304f8cd42cfff352470ad2963554b177))
+
 * Merge pull request #103 from tattle-made/hotfix
 
 Hotfix ([`3f41df9`](https://github.com/tattle-made/feluda/commit/3f41df9c2a688bc94de093a5c3e2eeadff8659e6))
@@ -279,6 +464,10 @@ Hotfix ([`3f41df9`](https://github.com/tattle-made/feluda/commit/3f41df9c2a688bc
 * Merge pull request #101 from aatmanvaidya/vid-ci-4
 
 ci: workflow dockerfile location change ([`b7d9ab2`](https://github.com/tattle-made/feluda/commit/b7d9ab287f3cb99f96ea4b3f54f5e9a5520d7c60))
+
+* Merge pull request #100 from aatmanvaidya/vid-ci-2
+
+ci: fix location for video requirment file ([`92a103e`](https://github.com/tattle-made/feluda/commit/92a103eba924b475c230499dc5de266a18255894))
 
 * Merge pull request #99 from dennyabrain/local-hotfix
 
@@ -291,6 +480,14 @@ Hotfix ([`579b7ea`](https://github.com/tattle-made/feluda/commit/579b7ea7c65da39
 * Merge pull request #96 from aatmanvaidya/worker-ci
 
 ci: workflow to push video worker to docker hub ([`07b609c`](https://github.com/tattle-made/feluda/commit/07b609c1898c88d8aab225ec63ccaca356ea5847))
+
+* Merge pull request #95 from aatmanvaidya/worker-improve
+
+fix: video worker handles disconnection to RabbitMQ ([`9ce22a2`](https://github.com/tattle-made/feluda/commit/9ce22a2f591b699c15704cc0e1111b2bdb46a57f))
+
+* Merge pull request #94 from aatmanvaidya/tests-move
+
+refactor: moving tests to sub-folders ([`bf24df2`](https://github.com/tattle-made/feluda/commit/bf24df2bafbfe4453b005c76989ac81ed27f2664))
 
 * Merge pull request #80 from duggalsu/enable_rabbitmq
 
