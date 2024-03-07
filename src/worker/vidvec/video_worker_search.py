@@ -28,11 +28,11 @@ def indexer(feluda):
         file_content = json.loads(body)
         video_path = VideoFactory.make_from_url(file_content['path'])
         try:
-            print("Processing File:", video_path)
+            log.info("Processing File:")
             video_vec = vid_vec_rep_resnet.run(video_path)
             average_vector = next(video_vec)
             search_result = feluda.store.find("video", average_vector.get('vid_vec'))
-            print(search_result)
+            log.info(search_result)
             report = make_report_indexed(file_content, "searched")
             feluda.queue.message(feluda.config.queue.parameters.queues[3]['name'], report)
             ch.basic_ack(delivery_tag=method.delivery_tag)

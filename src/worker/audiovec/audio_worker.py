@@ -30,6 +30,7 @@ def indexer(feluda):
         file_content = json.loads(body)
         audio_path = AudioFactory.make_from_url(file_content['path'])
         try:
+            log.info("Processing File")
             media_type = MediaType.AUDIO
             audio_vec = audio_vec_embedding.run(audio_path)
             doc = {
@@ -40,7 +41,7 @@ def indexer(feluda):
             "date_added": datetime.utcnow(),
             }
             result = feluda.store.store(media_type, doc)
-            print(result)
+            log.info(result)
             report = make_report_indexed(file_content, "indexed")
             feluda.queue.message(feluda.config.queue.parameters.queues[1]['name'], report)
             ch.basic_ack(delivery_tag=method.delivery_tag)
