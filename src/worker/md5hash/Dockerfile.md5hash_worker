@@ -1,0 +1,26 @@
+FROM python:3.11-slim-bullseye AS base
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get install -y \
+    --no-install-recommends gcc build-essential \
+    --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
+    --no-install-recommends python3-dev
+ENV PATH=/root/.local/bin:$PATH
+RUN apt-get update && apt-get install -y vim zsh curl
+
+RUN pip install --no-cache-dir --upgrade pip
+WORKDIR /app
+
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+RUN apt-get purge -y --auto-remove \
+    gcc build-essential \
+    libgl1-mesa-glx libglib2.0-0 \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY . /app
+EXPOSE 7000
+
+FROM base AS debug
