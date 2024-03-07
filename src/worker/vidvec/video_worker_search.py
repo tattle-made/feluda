@@ -1,11 +1,9 @@
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
-from core.operators import audio_vec_embedding
+from core.operators import vid_vec_rep_resnet
 import json
-from core.models.media import MediaType
-from core.models.media_factory import AudioFactory
+from core.models.media_factory import VideoFactory
 from time import sleep
-from datetime import datetime
 log = Logger(__name__)
 
 def make_report_indexed(data, status):
@@ -28,27 +26,20 @@ def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         file_content = json.loads(body)
-        audio_path = AudioFactory.make_from_url(file_content['path'])
+        video_path = VideoFactory.make_from_url(file_content['path'])
         try:
-            media_type = MediaType.AUDIO
-            audio_vec = audio_vec_embedding.run(audio_path)
-            doc = {
-            "e_kosh_id": str(1231231),
-            "dataset": "test-dataset-id",
-            "metadata": {},
-            "audio_vec": audio_vec,
-            "date_added": datetime.utcnow(),
-            }
-            result = feluda.store.store(media_type, doc)
-            print(result)
-            report = make_report_indexed(file_content, "indexed")
-            feluda.queue.message(feluda.config.queue.parameters.queues[1]['name'], report)
+            print("Processing File:", video_path)
+            video_vec = vid_vec_rep_resnet.run(video_path)
+            average_vector = next(video_vec)
+            search_result = feluda.store.find("video", average_vector.get('vid_vec'))
+            print(search_result)
+            report = make_report_indexed(file_content, "searched")
+            feluda.queue.message(feluda.config.queue.parameters.queues[3]['name'], report)
             ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as e:
             print("Error indexing media", e)
-            # requeue the media file
             report = make_report_failed(file_content, "failed")
-            feluda.queue.message(feluda.config.queue.parameters.queues[1]['name'], report)
+            feluda.queue.message(feluda.config.queue.parameters.queues[3]['name'], report)
             ch.basic_nack(delivery_tag=method.delivery_tag)
     return worker
 
@@ -69,15 +60,15 @@ def handle_exception(feluda, queue_name, worker_func, retries, max_retries):
         print("Failed to re-establish connection after maximum retries.")
 
 try:
-    feluda = Feluda("worker/audiovec/config.yml")
+    feluda = Feluda("worker/vidvec/config.yml")
     feluda.setup()
-    audio_index_queue = feluda.config.queue.parameters.queues[0]['name']
+    video_search_queue = feluda.config.queue.parameters.queues[2]['name']
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
-    audio_vec_embedding.initialize(param=None)
-    feluda.queue.listen(audio_index_queue, indexer(feluda))
+    vid_vec_rep_resnet.initialize(param=None)
+    feluda.queue.listen(video_search_queue, indexer(feluda))
 except Exception as e:
     print("Error Initializing Indexer", e)
     retries = 0
     max_retries = 10
-    handle_exception(feluda, audio_index_queue, indexer(feluda), retries, max_retries)
+    handle_exception(feluda, video_search_queue, indexer(feluda), retries, max_retries)

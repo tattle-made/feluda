@@ -6,7 +6,6 @@ from datetime import datetime
 from core.models.media import MediaType
 from core.models.media_factory import VideoFactory
 from time import sleep
-import subprocess
 log = Logger(__name__)
 
 def make_report_indexed(data, status):

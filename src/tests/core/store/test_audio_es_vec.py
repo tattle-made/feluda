@@ -19,6 +19,8 @@ Delete all the documents in an index
 curl -X POST "http://es:9200/test_audio/_delete_by_query" -H 'Content-Type: application/json' -d'{"query":{"match_all":{}}}'
 Delete the indice
 curl -X DELETE "http://es:9200/test_audio"
+Refresh the indice
+curl -X POST "http://es:9200/test_audio/_refresh"
 '''
 
 class TestAudioES(unittest.TestCase):
