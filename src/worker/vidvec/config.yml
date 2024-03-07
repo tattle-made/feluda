@@ -16,6 +16,8 @@ queue :
     queues:
       - name : "video-index-queue"
       - name : "report-queue"
+      - name : "video-search-queue"
+      - name : "search-result-queue"
 
 operators : 
   label : "Operators"

@@ -16,6 +16,8 @@ queue :
     queues:
       - name : "audio-index-queue"
       - name : "report-queue"
+      - name : "audio-search-queue"
+      - name : "search-result-queue"
 
 operators : 
   label : "Operators"

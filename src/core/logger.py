@@ -11,8 +11,8 @@ class Logger:
         self.environment = os.environ.get("ENVIRONMENT", "DEVELOPMENT")
         self.log = logging.getLogger(moduleName)
 
-    def info(self, msg):
-        self.log.info(msg)
+    def info(self, msg, *args, **kwargs):
+        self.log.info(msg, *args, **kwargs)
 
     def debug(self, msg):
         if self.environment == "DEVELOPMENT":
@@ -23,3 +23,6 @@ class Logger:
 
     def prettyprint(self, msg):
         pp.pprint(msg)
+
+    def error(self, msg, *args, **kwargs):
+        self.log.error(self, msg, *args, **kwargs)
