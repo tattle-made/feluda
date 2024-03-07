@@ -4,10 +4,7 @@ RUN apt-get update \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
-    && apt-get purge -y --auto-remove \
-    gcc build-essential \
-    libgl1-mesa-glx libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/* 
+    --no-install-recommends python3-dev
 ENV PATH=/root/.local/bin:$PATH
 
 RUN pip install --no-cache-dir --upgrade pip
@@ -28,6 +25,12 @@ RUN chmod +x ./benchmark/vidvec/*.sh
 # main benchmark file
 COPY ./benchmark/benchmark-video.sh /app/benchmark/benchmark-video.sh
 RUN chmod +x benchmark/benchmark-video.sh
+
+RUN apt-get purge -y --auto-remove \
+    gcc build-essential \
+    libgl1-mesa-glx libglib2.0-0 \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y vim zsh wget
 RUN pip install numpy Pillow wget requests Werkzeug

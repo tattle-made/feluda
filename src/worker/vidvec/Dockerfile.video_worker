@@ -4,10 +4,7 @@ RUN apt-get update \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
-    && apt-get purge -y --auto-remove \
-    gcc build-essential \
-    libgl1-mesa-glx libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/* 
+    --no-install-recommends python3-dev
 ENV PATH=/root/.local/bin:$PATH
 RUN apt-get update && apt-get install -y vim zsh curl
 
@@ -19,6 +16,12 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # install video operator requirements
 COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
 RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
+
+RUN apt-get purge -y --auto-remove \
+    gcc build-essential \
+    libgl1-mesa-glx libglib2.0-0 \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . /app
 EXPOSE 7000
