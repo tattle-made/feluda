@@ -2,6 +2,39 @@
 
 
 
+## v0.3.2 (2024-03-07)
+
+### Ci
+
+* ci: github action to push md5hash worker to staging ([`b5df260`](https://github.com/tattle-made/feluda/commit/b5df26034280af5178f246c46308c5bd3856631d))
+
+* ci: add security checks on PR ([`ca7de73`](https://github.com/tattle-made/feluda/commit/ca7de732d8ed98cdf2d650e1bc0c5f30012f4803))
+
+### Fix
+
+* fix: linter formatting ([`4758315`](https://github.com/tattle-made/feluda/commit/4758315113d9b9de5c62600936e34c8ecc54f556))
+
+* fix: linter issues ([`11f3683`](https://github.com/tattle-made/feluda/commit/11f3683fdaef8abf46d635343213444e7cf3ba4b))
+
+### Unknown
+
+* Merge pull request #144 from tattle-made/hotfix
+
+Hotfix ([`dc64745`](https://github.com/tattle-made/feluda/commit/dc64745059fc7185e73b99ec530865054edd0df2))
+
+* Merge pull request #143 from aatmanvaidya/md5-ci
+
+ci: github action to push md5hash worker to staging ([`c896d29`](https://github.com/tattle-made/feluda/commit/c896d29bd76f3cd7ea39a5b9667ba3f20174e1b2))
+
+* Merge pull request #135 from duggalsu/test_official_docker_push_action
+
+Test official docker push action ([`1dbe184`](https://github.com/tattle-made/feluda/commit/1dbe184665209855c66ad6e8696c9fdccd33a662))
+
+* Merge pull request #141 from duggalsu/fix_linter_issues
+
+Fix linter issues ([`7dd3979`](https://github.com/tattle-made/feluda/commit/7dd397940b7d4fa325fe6552a19c7ed0349ab39d))
+
+
 ## v0.3.1 (2024-03-07)
 
 ### Fix
@@ -54,6 +87,10 @@ fix: Dockerfile arm build ([`a031c5d`](https://github.com/tattle-made/feluda/com
 * style: fixing logger ([`dc86b15`](https://github.com/tattle-made/feluda/commit/dc86b154fd0ffbf19f7f5522e835cea1e15d0566))
 
 * style: fixing logger ([`933f6db`](https://github.com/tattle-made/feluda/commit/933f6db71e0a0eb800b98affb3702882f8e3e015))
+
+### Test
+
+* test: official docker build and push workflow ([`4ad6685`](https://github.com/tattle-made/feluda/commit/4ad6685d7a166a50b6f6f4e80c19caff50397929))
 
 ### Unknown
 

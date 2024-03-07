@@ -25,3 +25,42 @@ jobs:
           pip install ruff
           ruff --output-format=github ./src/
         continue-on-error: false
+
+      - name: pip audit install setup 1
+        run: |
+          python -m venv env1/
+          source env1/bin/activate
+      - name: pip audit src requirements
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env1/
+          local: true
+          inputs: |
+            ./src/requirements.txt
+
+      - name: pip audit install setup 2
+        run: |
+          python -m venv env2/
+          source env2/bin/activate
+      - name: pip audit operator audiovec requirements
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env2/
+          local: true
+          inputs: |
+            ./src/core/operators/audio_vec_embedding_requirements.txt
+
+      - name: pip audit install setup 3
+        run: |
+          python -m venv env3/
+          source env3/bin/activate
+      - name: pip audit operator vidvec requirements
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env3/
+          local: true
+          inputs: |
+            ./src/core/operators/vid_vec_rep_resnet_requirements.txt
