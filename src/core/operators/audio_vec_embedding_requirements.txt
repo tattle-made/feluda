@@ -4,7 +4,15 @@
 #
 #    pip-compile --find-links=https://download.pytorch.org/whl/torch_stable.html audio_vec_embedding_requirements.in
 #
+# For arm64 architecture
+--find-links https://download.pytorch.org/whl/cpu
+torch==2.2.0; platform_machine=='aarch64'
+    # via -r audio_vec_embedding_requirements.in
+
+# For amd64 architecture
 --find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.2.0+cpu; platform_machine=='x86_64'
+    # via -r audio_vec_embedding_requirements.in
 
 audioread==3.0.1
     # via librosa
@@ -83,7 +91,6 @@ numpy==1.26.4
     #   scipy
     #   soxr
     #   torchlibrosa
-    #   torchvision
 packaging==23.2
     # via
     #   matplotlib
@@ -91,9 +98,7 @@ packaging==23.2
 panns-inference==0.1.1
     # via -r audio_vec_embedding_requirements.in
 pillow==10.2.0
-    # via
-    #   matplotlib
-    #   torchvision
+    # via matplotlib
 platformdirs==4.2.0
     # via pooch
 pooch==1.8.0
@@ -109,9 +114,7 @@ pyparsing==3.1.1
 python-dateutil==2.8.2
     # via matplotlib
 requests==2.31.0
-    # via
-    #   pooch
-    #   torchvision
+    # via pooch
 rich==13.7.1
     # via
     #   memray
@@ -134,14 +137,8 @@ textual==0.52.1
     # via memray
 threadpoolctl==3.2.0
     # via scikit-learn
-torch==2.2.0+cpu
-    # via
-    #   -r audio_vec_embedding_requirements.in
-    #   torchvision
 torchlibrosa==0.1.0
     # via panns-inference
-torchvision==0.17.0+cpu
-    # via -r audio_vec_embedding_requirements.in
 typing-extensions==4.9.0
     # via
     #   librosa

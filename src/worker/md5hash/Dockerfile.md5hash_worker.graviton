@@ -6,12 +6,13 @@ RUN apt-get update \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
     --no-install-recommends python3-dev
 ENV PATH=/root/.local/bin:$PATH
+RUN apt-get update && apt-get install -y vim zsh curl
 
 RUN pip install --no-cache-dir --upgrade pip
 WORKDIR /app
-# video requirments file
-COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
+
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir --user -r requirements.txt
 
 ### AWS Graviton Optimization ###
 
@@ -36,30 +37,13 @@ ENV OMP_PROC_BIND=false
 ENV OMP_PLACES=cores
 ###
 
-# video requirments file
-COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
-# video vec file
-COPY ./core/operators/vid_vec_rep_resnet.py /app/core/operators/vid_vec_rep_resnet.py
-# video vec test file
-COPY ./core/operators/sample_data/sample-cat-video.mp4 /app/core/operators/sample_data/sample-cat-video.mp4
-COPY ./core/operators/test_vid_vec_rep_resnet.py /app/core/operators/test_vid_vec_rep_resnet.py
-# media factory files
-COPY ./core/models/ /app/core/models/
-# benchmark files
-COPY ./benchmark/vidvec/ /app/benchmark/vidvec/
-RUN chmod +x ./benchmark/vidvec/*.sh
-# main benchmark file
-COPY ./benchmark/benchmark-video.sh /app/benchmark/benchmark-video.sh
-RUN chmod +x benchmark/benchmark-video.sh
-
 RUN apt-get purge -y --auto-remove \
     gcc build-essential \
     libgl1-mesa-glx libglib2.0-0 \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y vim zsh wget
-RUN pip install numpy Pillow wget requests Werkzeug
+COPY . /app
+EXPOSE 7000
 
-CMD tail -f /dev/null
+FROM base AS debug

@@ -2,6 +2,120 @@
 
 
 
+## v0.3.1 (2024-03-07)
+
+### Fix
+
+* fix: Dockerfile arm build ([`cce1ebe`](https://github.com/tattle-made/feluda/commit/cce1ebe09f3023c8b1e2e89cf4f867793c2f8c83))
+
+### Unknown
+
+* Merge pull request #140 from tattle-made/hotfix
+
+Hotfix ([`68469b1`](https://github.com/tattle-made/feluda/commit/68469b13186015bd3a411f050e5dc4de676d85d8))
+
+* Merge pull request #139 from aatmanvaidya/fix-dockerfiles
+
+fix: Dockerfile arm build ([`a031c5d`](https://github.com/tattle-made/feluda/commit/a031c5d508ec40ea10b79e4f3235339c3f72236f))
+
+
+## v0.3.0 (2024-03-07)
+
+### Ci
+
+* ci: Test fix versioning and modify docker images ([`455b77c`](https://github.com/tattle-made/feluda/commit/455b77c0b2692a6eb19b7499db0e18542b1c101f))
+
+* ci: Fix docker yml ([`d0a48f8`](https://github.com/tattle-made/feluda/commit/d0a48f8424de21b928ca0e09c421b87c155cc725))
+
+* ci: Fix yaml issue ([`2f47f19`](https://github.com/tattle-made/feluda/commit/2f47f1985760328c8932c3b5b8c8cbfc31613358))
+
+* ci: Fix yaml issue ([`82bfeb4`](https://github.com/tattle-made/feluda/commit/82bfeb4e545ed15b2f2795bdcac8fcb9dc7c2870))
+
+* ci: Test fix versioning and modify docker images ([`ae54bcd`](https://github.com/tattle-made/feluda/commit/ae54bcdbfdb3d0b3fde6e7573d7eb9b0ca57e2bd))
+
+* ci: Add worker docker push ([`97abfb0`](https://github.com/tattle-made/feluda/commit/97abfb06817e915fc5886fcb874cb09010dcc0ec))
+
+* ci: Fix docker yml ([`93f1e51`](https://github.com/tattle-made/feluda/commit/93f1e51ce074ef7998b9719a6003e24416367a13))
+
+* ci: Fix yaml issue ([`a320c49`](https://github.com/tattle-made/feluda/commit/a320c493fff2ab4fdddd12bb0b68e0c728055d51))
+
+* ci: Fix yaml issue ([`148fd8d`](https://github.com/tattle-made/feluda/commit/148fd8d5eba83d023abd8869ec4c7408bf579955))
+
+### Feature
+
+* feat: workers to search audio and video files ([`2301c98`](https://github.com/tattle-made/feluda/commit/2301c984b06319adafdd9fda7ea9aa9592ff5991))
+
+* feat: workers to search audio and video files ([`cd94344`](https://github.com/tattle-made/feluda/commit/cd943449b2d94a92e5c62ce2244a73db3955eea0))
+
+* feat: workers can report to queue ([`3c59999`](https://github.com/tattle-made/feluda/commit/3c59999681a4dc9eabde7fc467b76bec25cb4c69))
+
+### Style
+
+* style: fixing logger ([`dc86b15`](https://github.com/tattle-made/feluda/commit/dc86b154fd0ffbf19f7f5522e835cea1e15d0566))
+
+* style: fixing logger ([`933f6db`](https://github.com/tattle-made/feluda/commit/933f6db71e0a0eb800b98affb3702882f8e3e015))
+
+### Unknown
+
+* Merge pull request #138 from tattle-made/development
+
+merge development to main ([`df59805`](https://github.com/tattle-made/feluda/commit/df598058143f80f65e546c5af6bfdea825e113a0))
+
+* Merge pull request #136 from aatmanvaidya/worker-search-2
+
+feat: workers to search audio and video files ([`d9c0d1b`](https://github.com/tattle-made/feluda/commit/d9c0d1b518d8201bbf40861f23b0743230655c36))
+
+* Merge branch &#39;worker-search-2&#39; of https://github.com/aatmanvaidya/feluda into worker-search-2 ([`5a55ea7`](https://github.com/tattle-made/feluda/commit/5a55ea789bb5174968fc80c1429cc96025e2e00b))
+
+* Merge pull request #137 from aatmanvaidya/temp-main
+
+rebasing development with main ([`29b36b7`](https://github.com/tattle-made/feluda/commit/29b36b79249e9eeefbcab5f5316cfe1c984479b4))
+
+* ci (fix): Modify pr testing
+- Removed integration tests and required components
+- Used unittest for unit tests
+- Disabled audio from disk test ([`828b1e4`](https://github.com/tattle-made/feluda/commit/828b1e492e4434300e9870ec6bfad11c54b6deb1))
+
+* ci (fix): Increased es java mem limit ([`b4bdee4`](https://github.com/tattle-made/feluda/commit/b4bdee409885eff3ff3ad9954f5eb306bf3b6730))
+
+* ci (fix): version output ([`16add46`](https://github.com/tattle-made/feluda/commit/16add467ccfcc4520efd18f9104ffce5565056b2))
+
+* Merge pull request #134 from tattle-made/hotfix
+
+Hotfix ([`96eab93`](https://github.com/tattle-made/feluda/commit/96eab93ef4f86632c6a4f4862dcfb6d43415cdc6))
+
+* Merge pull request #133 from duggalsu/fix_ci_merge
+
+ci: Test fix versioning and modify docker images ([`09d6941`](https://github.com/tattle-made/feluda/commit/09d69417787a31211bf40680539438dc17078b61))
+
+* Merge branch &#39;hotfix&#39; into fix_ci_merge ([`5775824`](https://github.com/tattle-made/feluda/commit/5775824ab44e5e70934f71eff6f91cf77eb45957))
+
+* Merge pull request #132 from duggalsu/ci_merge_versioning
+
+Ci merge versioning ([`a49c6f5`](https://github.com/tattle-made/feluda/commit/a49c6f5246623f86832d88b71f1b32d3fa6d8ae1))
+
+* Merge pull request #131 from aatmanvaidya/worker-report
+
+feat: workers can report to queue ([`cf801f1`](https://github.com/tattle-made/feluda/commit/cf801f19d56e7f6dd9eecbd21059a346383acddc))
+
+* Merge pull request #130 from tattle-made/hotfix
+
+Hotfix ([`b74f0c7`](https://github.com/tattle-made/feluda/commit/b74f0c7d4e457710e4de01cb46a6ed0d8e87280d))
+
+* Merge pull request #129 from duggalsu/fix_ci_merge_versioning
+
+Fix ci merge versioning ([`4903a49`](https://github.com/tattle-made/feluda/commit/4903a4927b558911b7011e8c4231eaf2881f099e))
+
+* ci (fix): Modify pr testing
+- Removed integration tests and required components
+- Used unittest for unit tests
+- Disabled audio from disk test ([`0a596e0`](https://github.com/tattle-made/feluda/commit/0a596e0c3dcedaf406954390a78253be0f1609ec))
+
+* ci (fix): Increased es java mem limit ([`d39fed4`](https://github.com/tattle-made/feluda/commit/d39fed4d71d5c8acf48d96492d64393c8c93081a))
+
+* ci (fix): version output ([`d3aa1e4`](https://github.com/tattle-made/feluda/commit/d3aa1e4b2bcfff2d97031b761372677a8bfa4a14))
+
+
 ## v0.2.0 (2024-03-05)
 
 ### Ci
