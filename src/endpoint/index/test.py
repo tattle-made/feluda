@@ -46,4 +46,3 @@ index_handler = IndexHandler.make(media_type=post.type, mode=MediaMode.URL)
 result = index_handler(post)
 # TODO: below line commented out due to error
 # add_to_report_queue(result)
-

@@ -1,4 +1,5 @@
 import unittest
+
 # from unittest.case import skip
 import pprint
 from core.store.es_vec import ES
@@ -9,18 +10,17 @@ from core.operators import vid_vec_rep_resnet
 from datetime import datetime
 
 pp = pprint.PrettyPrinter(indent=4)
-'''
+"""
 # Get indexing stats
 curl -X GET "http://es:9200/_stats/indexing?pretty"
 # Check how many documents have been indexed
 curl -X GET "http://es:9200/_cat/indices?v"
 # Delete all the documents in an index
 curl -X POST "http://es:9200/video/_delete_by_query" -H 'Content-Type: application/json' -d'{"query":{"match_all":{}}}'
-'''
+"""
 
 
 class TestVideoES(unittest.TestCase):
-
     @classmethod
     def setUpClass(cls) -> None:
         param_dict = {
@@ -39,7 +39,7 @@ class TestVideoES(unittest.TestCase):
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
                 audio_index_name=param_dict["audio_index_name"],
-            )   
+            ),
         )
 
     @classmethod
@@ -98,12 +98,12 @@ class TestVideoES(unittest.TestCase):
         video = VideoFactory.make_from_url(video_url)
         embedding = vid_vec_rep_resnet.run(video)
         average_vector = next(embedding)
-        search_result = es.find("video", average_vector.get('vid_vec'))
+        search_result = es.find("video", average_vector.get("vid_vec"))
         print("SEARCH RESULTS \n : ")
         pp.pprint(search_result)
         file_found = False
         for result in search_result:
-            if result.get('dataset') == file_name:
+            if result.get("dataset") == file_name:
                 file_found = True
                 break
         self.assertTrue(file_found, f"File {file_name} not found in any search result.")

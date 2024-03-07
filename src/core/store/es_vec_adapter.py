@@ -41,6 +41,7 @@ def video_rep_to_es_doc(rep, data):
         "n_keyframes": rep["n_keyframes"],
         "date_added": datetime.utcnow(),
     }
+
     # todo : fix hardcode of _index
     def gendata():
         for i in range(rep["n_keyframes"]):

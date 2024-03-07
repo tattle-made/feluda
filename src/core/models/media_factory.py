@@ -80,9 +80,10 @@ class VideoFactory:
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage):
         # save on disk
-        fname = "/tmp/"+file_data.filename
+        fname = "/tmp/" + file_data.filename
         file_data.save(fname)
         return {"path": fname}
+
 
 class AudioFactory:
     def make_from_url(audio_url):
@@ -99,7 +100,7 @@ class AudioFactory:
     @staticmethod
     def make_from_file_on_disk(audio_path):
         return {"path": audio_path}
-    
+
 
 media_factory = {
     MediaType.TEXT: TextFactory,

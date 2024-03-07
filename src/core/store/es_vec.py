@@ -11,6 +11,7 @@ import json
 
 log = logging.getLogger(__name__)
 
+
 class ES:
     def __init__(self, config: StoreConfig):
         # self.es_host = config.parameters.host_name
@@ -51,7 +52,9 @@ class ES:
             if self.client.indices.exists(index=self.indices[index]):
                 log.info("Verified that {} exists".format(self.indices[index]))
             else:
-                log.info("{} does not exist, creating it now".format(self.indices[index]))
+                log.info(
+                    "{} does not exist, creating it now".format(self.indices[index])
+                )
                 body = json.loads(mappings[index])
                 self.client.indices.create(index=self.indices[index], body=body)
                 log.info("{} created".format(self.indices[index]))

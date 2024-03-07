@@ -1,7 +1,4 @@
-
-
 def initialize(param):
-
     global SentenceTransformer, sent_model, np
 
     from sentence_transformers import SentenceTransformer

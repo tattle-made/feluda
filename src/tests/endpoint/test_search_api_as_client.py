@@ -35,7 +35,6 @@ class TestSearch(unittest.TestCase):
             print(response.text)
             self.assertEqual(response.status_code, 200)
 
-
     @skip
     def testIndexVideo(self):
         url = API_URL + "/search"

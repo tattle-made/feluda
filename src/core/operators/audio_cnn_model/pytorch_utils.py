@@ -1,15 +1,16 @@
 """This pytorch_utils.py contains functions from:
 https://github.com/qiuqiangkong/audioset_tagging_cnn/blob/master/pytorch/pytorch_utils.py
 """
+
 import torch
 import torch.nn as nn
 # import torch.nn.functional as F
 
 
 def move_data_to_device(x, device):
-    if 'float' in str(x.dtype):
+    if "float" in str(x.dtype):
         x = torch.Tensor(x)
-    elif 'int' in str(x.dtype):
+    elif "int" in str(x.dtype):
         x = torch.LongTensor(x)
     else:
         return x
@@ -18,7 +19,7 @@ def move_data_to_device(x, device):
 
 
 class Interpolator(nn.Module):
-    def __init__(self, ratio, interpolate_mode='nearest'):
+    def __init__(self, ratio, interpolate_mode="nearest"):
         """Interpolate the sound event detection result along the time axis.
 
         Args:
@@ -28,12 +29,12 @@ class Interpolator(nn.Module):
         """
         super(Interpolator, self).__init__()
 
-        if interpolate_mode == 'nearest':
+        if interpolate_mode == "nearest":
             self.interpolator = NearestInterpolator(ratio)
 
     def forward(self, x):
         """Interpolate the sound event detection result along the time axis.
-        
+
         Args:
             x: (batch_size, time_steps, classes_num)
 
@@ -56,7 +57,7 @@ class NearestInterpolator(nn.Module):
 
     def forward(self, x):
         """Interpolate the sound event detection result along the time axis.
-        
+
         Args:
             x: (batch_size, time_steps, classes_num)
 
@@ -77,7 +78,9 @@ def pad_framewise_output(framewise_output, frames_num):
     Outputs:
       output: (batch_size, frames_num, classes_num)
     """
-    pad = framewise_output[:, -1 :, :].repeat(1, frames_num - framewise_output.shape[1], 1)
+    pad = framewise_output[:, -1:, :].repeat(
+        1, frames_num - framewise_output.shape[1], 1
+    )
     """tensor for padding"""
 
     output = torch.cat((framewise_output, pad), dim=1)
@@ -87,6 +90,8 @@ def pad_framewise_output(framewise_output, frames_num):
 
 
 def do_mixup(x, mixup_lambda):
-    out = x[0::2].transpose(0, -1) * mixup_lambda[0::2] + \
-        x[1::2].transpose(0, -1) * mixup_lambda[1::2]
+    out = (
+        x[0::2].transpose(0, -1) * mixup_lambda[0::2]
+        + x[1::2].transpose(0, -1) * mixup_lambda[1::2]
+    )
     return out.transpose(0, -1)

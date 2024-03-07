@@ -39,7 +39,7 @@ class TestES(unittest.TestCase):
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
                 audio_index_name=param_dict["audio_index_name"],
-            )   
+            ),
         )
 
     @classmethod
@@ -112,7 +112,7 @@ class TestES(unittest.TestCase):
         es.refresh()
         print("SEARCH RESULTS \n : ")
         print(search_result)
-        self.assertEqual(search_result[0]['dataset'], "test-dataset-id")
+        self.assertEqual(search_result[0]["dataset"], "test-dataset-id")
         es.delete_indices()
 
     def test_store_text(self):
