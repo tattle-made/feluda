@@ -6,11 +6,11 @@ from time import sleep
 try:
     feluda = Feluda("worker/audiovec/config.yml")
     feluda.setup()
-    audio_index_queue = feluda.config.queue.parameters.queues[0]['name']
+    audio_index_queue = feluda.config.queue.parameters.queues[2]['name']
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
 
-    for _ in range(10):
+    for _ in range(1):
         dummy_payload = {
             "id": str(12345),
             "path": 'https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/audio.wav'

@@ -14,8 +14,10 @@ queue :
   parameters: 
     host_name : "rabbitmq"
     queues:
-      - name : "tattle-search-index-queue"
-      - name : "tattle-search-report-queue"
+      - name : "video-index-queue"
+      - name : "report-queue"
+      - name : "video-search-queue"
+      - name : "search-result-queue"
 
 operators : 
   label : "Operators"
