@@ -25,3 +25,18 @@ jobs:
           pip install ruff
           ruff --output-format=github ./src/
         continue-on-error: false
+
+      - name: pip audit install setup
+        run: |
+          python -m venv env/
+          source env/bin/activate
+      - name: pip audit
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env/
+          local: true
+          inputs: |
+            ./src/requirements.txt
+            ./src/core/operators/audio_vec_embedding_requirements.txt
+            ./src/core/operators/vid_vec_rep_resnet_requirements.txt
