@@ -38,11 +38,11 @@ jobs:
         uses: python-semantic-release/python-semantic-release@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          echo "the release status is: ${{ steps.release.outputs.released }}"
-          echo "the new version is: ${{ steps.release.outputs.version }}"
-          echo "the new tag version is: ${{ steps.release.outputs.tag }}"
+#        shell: bash
+#        run: |
+#          echo "the release status is: ${{ steps.release.outputs.released }}"
+#          echo "the new version is: ${{ steps.release.outputs.version }}"
+#          echo "the new tag version is: ${{ steps.release.outputs.tag }}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
