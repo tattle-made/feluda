@@ -23,3 +23,6 @@ class Logger:
 
     def prettyprint(self, msg):
         pp.pprint(msg)
+
+    def error(self, msg):
+        self.log.error(msg)
