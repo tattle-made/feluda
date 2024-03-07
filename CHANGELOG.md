@@ -2,6 +2,23 @@
 
 
 
+## v0.3.1 (2024-03-07)
+
+### Fix
+
+* fix: Dockerfile arm build ([`cce1ebe`](https://github.com/tattle-made/feluda/commit/cce1ebe09f3023c8b1e2e89cf4f867793c2f8c83))
+
+### Unknown
+
+* Merge pull request #140 from tattle-made/hotfix
+
+Hotfix ([`68469b1`](https://github.com/tattle-made/feluda/commit/68469b13186015bd3a411f050e5dc4de676d85d8))
+
+* Merge pull request #139 from aatmanvaidya/fix-dockerfiles
+
+fix: Dockerfile arm build ([`a031c5d`](https://github.com/tattle-made/feluda/commit/a031c5d508ec40ea10b79e4f3235339c3f72236f))
+
+
 ## v0.3.0 (2024-03-07)
 
 ### Ci

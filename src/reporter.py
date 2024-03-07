@@ -1,5 +1,5 @@
-from endpoint.index.handler import generateDocument, generateRepresentation
-from endpoint.index.model import Post
+# from endpoint.index.handler import generateDocument, generateRepresentation
+# from endpoint.index.model import Post
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 import json
@@ -38,5 +38,5 @@ try:
     # log.prettyprint(vars(feluda))
     feluda.start_component(ComponentType.QUEUE)
     feluda.queue.listen("tattle-search-report-queue", reporter)
-except Exception as e:
+except Exception:
     log.exception("Error Initializing Indexer")

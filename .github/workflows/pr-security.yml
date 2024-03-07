@@ -1,0 +1,27 @@
+name: Run security checks on PR
+
+on:
+  pull_request:
+    branches:
+      - development
+      - hotfix
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  checks:
+    if: github.event.pull_request.draft == false
+    name: Run security checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff --output-format=github ./src/
+        continue-on-error: false

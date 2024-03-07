@@ -1,9 +1,9 @@
 import logging
-
-log = logging.getLogger(__name__)
 from . import rabbit_mq
 from core.config import QueueConfig
-from os import environ
+# from os import environ
+
+log = logging.getLogger(__name__)
 
 queues = {"rabbitmq": rabbit_mq.RabbitMQ}
 

@@ -13,6 +13,7 @@ def find_time():
     duration = end_time - start_time
     print(f"Time taken - {duration}")
 
+
 N = 1
 total_cores = cpu_count()
 

@@ -1,14 +1,13 @@
-
 def initialize(param):
-
     from ultralytics import YOLO
 
     global output_directory
-    output_directory = r'sample_data/yolo_output'
+    output_directory = r"sample_data/yolo_output"
 
     global model
-    model = YOLO('yolov8n-seg.pt')
-    print('model successfully downloaded')
+    model = YOLO("yolov8n-seg.pt")
+    print("model successfully downloaded")
+
 
 def count_objects(predictions, target_classes):
     object_counts = {x: 0 for x in target_classes}
@@ -28,9 +27,17 @@ def count_objects(predictions, target_classes):
 
     return present_objects
 
+
 def run(image_path):
     lables = []
-    result = model.predict(image_path, save=True, imgsz=1024, conf=0.5, project='sample_data', name='output')
+    result = model.predict(
+        image_path,
+        save=True,
+        imgsz=1024,
+        conf=0.5,
+        project="sample_data",
+        name="output",
+    )
 
     names = model.names
     for r in result:
@@ -42,11 +49,14 @@ def run(image_path):
 
     return result, lables
 
+
 def cleanup(param):
     pass
 
+
 def state():
     pass
+
 
 # if __name__ == "__main__":
 #     class_names = []
