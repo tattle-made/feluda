@@ -1,10 +1,10 @@
 import logging
 
-log = logging.getLogger(__name__)
-logging.basicConfig(level="INFO")
-
 from core.feluda import ComponentType, Feluda
 from endpoint import health, index, search
+
+log = logging.getLogger(__name__)
+logging.basicConfig(level="INFO")
 
 try:
     feluda = Feluda("config-server.yml")
@@ -18,4 +18,4 @@ try:
     feluda.start_component(ComponentType.QUEUE)
     feluda.start_component(ComponentType.SERVER)
 except Exception as e:
-    log.exception("Error Initializing Search Service")
+    log.exception("Error Initializing Search Service:", e)

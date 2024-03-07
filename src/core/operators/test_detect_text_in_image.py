@@ -56,6 +56,4 @@ class Test(unittest.TestCase):
         image = {"image_bytes": resp.content}
         detected_text = detect_text_in_image.run(image)
         print("----> 1", detected_text["text"])
-        self.assertEqual(
-            detected_text["text"], "ठंड बहुत हैं:\nअपना ख्याल रखना\nठंडी- ठंडी\n"
-        )
+        self.assertEqual(detected_text["text"], "ठंड बहुत हैं:\nअपना ख्याल रखना\nठंडी- ठंडी\n")

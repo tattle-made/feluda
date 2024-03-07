@@ -12,7 +12,7 @@ from time import sleep
 import os
 
 pp = pprint.PrettyPrinter(indent=4)
-'''
+"""
 Check how many documents have been indexed
 curl -X GET "http://es:9200/_cat/indices?v"
 Delete all the documents in an index
@@ -21,7 +21,8 @@ Delete the indice
 curl -X DELETE "http://es:9200/test_audio"
 Refresh the indice
 curl -X POST "http://es:9200/test_audio/_refresh"
-'''
+"""
+
 
 class TestAudioES(unittest.TestCase):
     @classmethod
@@ -49,7 +50,7 @@ class TestAudioES(unittest.TestCase):
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
                 audio_index_name=param_dict["audio_index_name"],
-            )   
+            ),
         )
 
     @classmethod
@@ -62,14 +63,16 @@ class TestAudioES(unittest.TestCase):
         es.connect()
         es.optionally_create_index()
         indices = es.get_indices()
-        self.assertEqual(indices["test_audio"]["mappings"]["properties"]["audio_vec"]["dims"], 2048)
+        self.assertEqual(
+            indices["test_audio"]["mappings"]["properties"]["audio_vec"]["dims"], 2048
+        )
 
     @skip
     def test_store_audio(self):
         es = ES(self.param)
         es.connect()
         audio_vec_embedding.initialize(param=None)
-        audio_file_path = r'core/operators/sample_data/audio.wav'
+        audio_file_path = r"core/operators/sample_data/audio.wav"
         audio_emb = audio_vec_embedding.run(audio_file_path)
         audio_emb_vec = audio_emb.tolist()
         doc = {
@@ -83,13 +86,15 @@ class TestAudioES(unittest.TestCase):
         result = es.store(mediaType, doc)
         # print(result)
         self.assertEqual(result["result"], "created")
-    
+
     @skip
     def test_store_and_search_audio(self):
         es = ES(self.param)
         es.connect()
         audio_vec_embedding.initialize(param=None)
-        audio_file_path = AudioFactory.make_from_file_on_disk(r'core/operators/sample_data/audio.wav')
+        audio_file_path = AudioFactory.make_from_file_on_disk(
+            r"core/operators/sample_data/audio.wav"
+        )
         audio_emb = audio_vec_embedding.run(audio_file_path)
         audio_emb_vec = audio_emb.tolist()
         doc = {
@@ -104,7 +109,7 @@ class TestAudioES(unittest.TestCase):
         sleep(4)
         search_result = es.find("test_audio", audio_emb_vec)
         print(search_result)
-        self.assertEqual(search_result[0]['dataset'], "test-dataset-id")
+        self.assertEqual(search_result[0]["dataset"], "test-dataset-id")
         es.delete_indices()
 
     @skip
@@ -113,7 +118,7 @@ class TestAudioES(unittest.TestCase):
         es.connect()
         mediaType = MediaType.AUDIO
         audio_vec_embedding.initialize(param=None)
-        audio_folder_path = r'core/operators/sample_data/50_audio_files'
+        audio_folder_path = r"core/operators/sample_data/50_audio_files"
         count = 1
         # store 50 files
         for file_name in os.listdir(audio_folder_path):
@@ -122,27 +127,22 @@ class TestAudioES(unittest.TestCase):
             audio_emb = audio_vec_embedding.run(audio_file_path)
             audio_emb_vec = audio_emb.tolist()
             doc = {
-            "e_kosh_id": str(count),
-            "dataset": "test-dataset-id",
-            "metadata": {},
-            "audio_vec": audio_emb_vec,
-            "date_added": datetime.utcnow(),
+                "e_kosh_id": str(count),
+                "dataset": "test-dataset-id",
+                "metadata": {},
+                "audio_vec": audio_emb_vec,
+                "date_added": datetime.utcnow(),
             }
             es.store(mediaType, doc)
             print(f"----------{count}---------------")
             count = count + 1
         print(f"Indexed {count} files")
         sleep(3)
-        audio_to_search = r'core/operators/sample_data/100_audio_files/a-cappella-chorus.wav'
+        audio_to_search = (
+            r"core/operators/sample_data/100_audio_files/a-cappella-chorus.wav"
+        )
         audio_to_search_emb = audio_vec_embedding.run(audio_to_search)
         audio_to_search_emb_vec = audio_to_search_emb.tolist()
         search_result = es.find("test_audio", audio_to_search_emb_vec)
         print(search_result)
-        self.assertEqual(search_result[0]['dataset'], "test-dataset-id")
-
-        
-
-
-
-
-    
+        self.assertEqual(search_result[0]["dataset"], "test-dataset-id")

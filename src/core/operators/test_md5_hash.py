@@ -1,7 +1,9 @@
 import unittest
-from unittest.case import skip
+
+# from unittest.case import skip
 from core.operators import md5_hash
 from core.models.media_factory import VideoFactory
+
 
 class Test(unittest.TestCase):
     @classmethod
@@ -15,7 +17,9 @@ class Test(unittest.TestCase):
         pass
 
     def test_sample_media_from_disk(self):
-        media_file_path = VideoFactory.make_from_file_on_disk("core/operators/sample_data/sample-cat-video.mp4")
+        media_file_path = VideoFactory.make_from_file_on_disk(
+            "core/operators/sample_data/sample-cat-video.mp4"
+        )
         hash = md5_hash.run(media_file_path)
         self.assertEqual(32, len(hash))
 

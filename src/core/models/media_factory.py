@@ -69,7 +69,7 @@ class VideoFactory:
             wget.download(video_url, out=fname)
             print("video downloaded")
         except Exception as e:
-            log.exception("Error downloading video")
+            log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
         return {"path": fname}
 
@@ -80,9 +80,10 @@ class VideoFactory:
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage):
         # save on disk
-        fname = "/tmp/"+file_data.filename
+        fname = "/tmp/" + file_data.filename
         file_data.save(fname)
         return {"path": fname}
+
 
 class AudioFactory:
     def make_from_url(audio_url):
@@ -92,14 +93,14 @@ class AudioFactory:
             wget.download(audio_url, out=audio_file)
             print("audio downloaded")
         except Exception as e:
-            log.exception("Error downloading audio")
+            log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
         return {"path": audio_file}
 
     @staticmethod
     def make_from_file_on_disk(audio_path):
         return {"path": audio_path}
-    
+
 
 media_factory = {
     MediaType.TEXT: TextFactory,
