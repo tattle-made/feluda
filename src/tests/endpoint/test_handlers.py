@@ -1,6 +1,6 @@
 import unittest
 from core.feluda import Feluda
-from endpoint import health
+# from endpoint import health
 from unittest.case import skip
 
 

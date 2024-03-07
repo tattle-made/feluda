@@ -3,7 +3,7 @@ https://github.com/qiuqiangkong/audioset_tagging_cnn/blob/master/pytorch/pytorch
 """
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+# import torch.nn.functional as F
 
 
 def move_data_to_device(x, device):

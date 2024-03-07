@@ -1,8 +1,6 @@
 import logging
 from core.models.media import MediaType
 from core.config import StoreConfig
-
-log = logging.getLogger(__name__)
 from elasticsearch import Elasticsearch, helpers as eshelpers
 from .es_vec_mappings import mappings
 from .es_vec_adapter import es_to_sanitized
@@ -10,6 +8,8 @@ import numpy as np
 import inspect
 import os
 import json
+
+log = logging.getLogger(__name__)
 
 class ES:
     def __init__(self, config: StoreConfig):

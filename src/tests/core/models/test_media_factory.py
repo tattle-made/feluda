@@ -1,5 +1,5 @@
 import unittest
-from unittest.case import skip
+# from unittest.case import skip
 import numpy as np
 from PIL import Image
 from core.models.media_factory import ImageFactory, VideoFactory, AudioFactory

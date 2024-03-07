@@ -7,7 +7,7 @@ def initialize(param):
     import librosa
     # from panns_inference import AudioTagging
     from core.operators.audio_cnn_model.inference import AudioTagging
-    import os
+    # import os
 
     # load the default model into cpu.
     model = AudioTagging(checkpoint_path=None, device='cpu')

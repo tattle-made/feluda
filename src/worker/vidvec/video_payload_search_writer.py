@@ -1,7 +1,7 @@
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
-log = Logger(__name__)
 from time import sleep
+log = Logger(__name__)
 
 try:
     feluda = Feluda("worker/vidvec/config.yml")

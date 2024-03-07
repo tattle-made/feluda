@@ -1,7 +1,7 @@
 import unittest
 from unittest.case import skip
 import requests
-import json
+# import json
 
 API_URL = "http://localhost:7000"
 
@@ -23,11 +23,11 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        with open("sample_data/simple-text.txt", "rb") as media_file:
-            files = {
-                "media": media_file,
-                "data": json.dumps(data),
-            }
+        with open("sample_data/simple-text.txt", "rb") as media_file:  # noqa: F841
+            # files = {
+            #     "media": media_file,
+            #     "data": json.dumps(data),
+            # }
             # response = requests.post(url, json=data, files=files, headers=headers)
             response = requests.post(url, json=data, headers=headers)
             print(response.text)
@@ -76,10 +76,10 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        files = {
-            # "media": open("sample_data/simple-text.txt", "rb"),
-            "data": json.dumps(data),
-        }
+        # files = {
+        #     # "media": open("sample_data/simple-text.txt", "rb"),
+        #     "data": json.dumps(data),
+        # }
         response = requests.post(url, json=data, headers=headers)
         print(response.text)
         self.assertEqual(response.status_code, 200)
@@ -100,7 +100,7 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "enqueue", "version": "0.1"},
         }
-        files = {"data": json.dumps(data)}
+        # files = {"data": json.dumps(data)}
         response = requests.post(url, json=data, headers=headers)
         print(response.text)
         self.assertEqual(response.status_code, 200)

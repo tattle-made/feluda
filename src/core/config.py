@@ -7,13 +7,11 @@ todo :
 @dennyabrain used dacite as a quick way to convert nested dicts to python dataclasess. While I am happy with its performance so far, I am happy to consider a different solution while also accounting for data validation, which is not done as of now.
 """
 import logging
-
-log = logging.getLogger(__name__)
-
 from typing import List, Optional
 import yaml
 from dataclasses import dataclass
 from dacite import from_dict
+log = logging.getLogger(__name__)
 
 
 @dataclass

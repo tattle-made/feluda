@@ -19,23 +19,31 @@ class IndexResult(Enum):
     FAILURE = 2
 
 
+class IndexHandler:
+    @staticmethod
+    def make(media_type: MediaType, mode: MediaMode):
+        if media_type is MediaType.TEXT:
+            # TODO: below line commented out due to error
+            # return IndexTextHandler.make(mode)
+            return
+        # elif media_type is MediaType.TEXT:
+        #     # TODO: below line commented out due to error
+        #     # return IndexTextHandler.make(mode)
+        #     return
+        # elif media_type is MediaType.TEXT:
+        #     # TODO: below line commented out due to error
+        #     # return IndexTextHandler.make(mode)
+        #     return
+        else:
+            return AttributeError
+
+
 payload = {"post": {}, "metadata": {}, "config": {}}
 post = Post.fromRequestPayload(payload["post"]["media_type"], payload)
 
 # mode can be 'file' or 'url'
 index_handler = IndexHandler.make(media_type=post.type, mode=MediaMode.URL)
 result = index_handler(post)
-add_to_report_queue(result)
+# TODO: below line commented out due to error
+# add_to_report_queue(result)
 
-
-class IndexHandler:
-    @staticmethod
-    def make(media_type: MediaType, mode: MediaMode):
-        if media_type is MediaType.TEXT:
-            return IndexTextHandler.make(mode)
-        elif media_type is MediaType.TEXT:
-            return IndexTextHandler.make(mode)
-        elif media_type is MediaType.TEXT:
-            return IndexTextHandler.make(mode)
-        else:
-            return AttributeError

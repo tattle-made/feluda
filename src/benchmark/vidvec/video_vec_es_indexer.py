@@ -72,7 +72,7 @@ def store_video_vector():
         embedding = vid_vec_rep_resnet.run(video)
         doc = generate_document(file_name, embedding)
         # TODO: save doc to storage so we don't have to recompute embeddings again
-        result = es.store(media_type, doc)
+        es.store(media_type, doc)
         count += 1
         print("Indexed file:", count)
         # print("result:", result)

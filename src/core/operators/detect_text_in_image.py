@@ -43,7 +43,8 @@ def initialize(param):
     global vision, json, os, boto3, MessageToJson, GOOGLE_API_KEY
 
     from google.cloud import vision
-    import json, os
+    import json
+    import os
     import boto3
     from google.protobuf.json_format import MessageToJson
 

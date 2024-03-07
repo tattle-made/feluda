@@ -1,9 +1,7 @@
 import logging
-
-log = logging.getLogger(__name__)
-
 from core import config
 from enum import Enum
+log = logging.getLogger(__name__)
 
 
 class ComponentType(Enum):

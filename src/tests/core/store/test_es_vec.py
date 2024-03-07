@@ -105,7 +105,7 @@ class TestES(unittest.TestCase):
             "image_vec": vec,
             "date_added": datetime.utcnow(),
         }
-        result = es.store(MediaType.IMAGE, doc)
+        es.store(MediaType.IMAGE, doc)
         # pp.pprint(result)
         sleep(2)
         search_result = es.find("test_image", vec)

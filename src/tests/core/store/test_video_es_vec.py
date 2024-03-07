@@ -1,5 +1,5 @@
 import unittest
-from unittest.case import skip
+# from unittest.case import skip
 import pprint
 from core.store.es_vec import ES
 from core.config import StoreConfig, StoreParameters

@@ -3,7 +3,7 @@ from endpoint.index.model import Post
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 import json
-import os
+# import os
 
 log = Logger(__name__)
 
@@ -31,7 +31,7 @@ def indexer(feluda):
             representation = generateRepresentation(post, operators)
             document = generateDocument(post, representation)
             # print("-----> 2", document)
-            save_result = feluda.store.store(post.type, document)
+            feluda.store.store(post.type, document)
             # return save_result
             report = make_report(data, "indexed")
 
@@ -59,4 +59,4 @@ try:
     feluda.start_component(ComponentType.QUEUE)
     feluda.queue.listen("tattle-search-index-queue", indexer(feluda))
 except Exception as e:
-    log.exception("Error Initializing Indexer")
+    log.exception("Error Initializing Indexer:", e)

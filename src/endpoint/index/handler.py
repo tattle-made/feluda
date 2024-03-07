@@ -1,14 +1,14 @@
-from pydoc import plain
-from typing import Callable
-from core.models.media import MediaMode, MediaType
+# from pydoc import plain
+# from typing import Callable
+from core.models.media import MediaType # MediaMode,
 from core.feluda import Feluda
-from core.store.es_vec_adapter import text_rep_to_es_doc
+# from core.store.es_vec_adapter import text_rep_to_es_doc
 from .model import ConfigMode, Post
 from flask import request
-import json
+# import json
 from typing import Callable
 import logging
-import inspect
+# import inspect
 from datetime import datetime
 
 log = logging.getLogger(__name__)
@@ -98,8 +98,8 @@ class IndexHandler:
             else:
                 return "Unexpected Index Mode", 400
 
-        except:
-            log.exception("Unable to handle Index Request")
+        except Exception as e:
+            log.exception("Unable to handle Index Request:", e)
             return "Unable to handle Index Request", 400
 
     def make_handler(self):

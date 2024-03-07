@@ -69,7 +69,7 @@ class VideoFactory:
             wget.download(video_url, out=fname)
             print("video downloaded")
         except Exception as e:
-            log.exception("Error downloading video")
+            log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
         return {"path": fname}
 
@@ -92,7 +92,7 @@ class AudioFactory:
             wget.download(audio_url, out=audio_file)
             print("audio downloaded")
         except Exception as e:
-            log.exception("Error downloading audio")
+            log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
         return {"path": audio_file}
 

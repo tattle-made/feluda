@@ -159,7 +159,7 @@ def initialize(param):
 
         def extract_frames(self, v):
             # print("extracting frames")
-            images = []
+            # images = []
             for i in range(self.n_frames):
                 success, image = v.read()
                 if image is None:

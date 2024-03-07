@@ -1,10 +1,10 @@
 import logging
 from core.config import QueueConfig
-
-log = logging.getLogger(__name__)
 import pika
 import json
 from os import environ
+
+log = logging.getLogger(__name__)
 
 
 class RabbitMQ:

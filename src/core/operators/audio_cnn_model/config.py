@@ -1,5 +1,5 @@
 import os
-import numpy as np
+#import numpy as np
 import csv
 from pathlib import Path
 

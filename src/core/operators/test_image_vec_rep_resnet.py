@@ -1,5 +1,5 @@
 import unittest
-from unittest.case import skip
+# from unittest.case import skip
 from core.operators import image_vec_rep_resnet
 from core.models.media_factory import ImageFactory
 

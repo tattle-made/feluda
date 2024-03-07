@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+# from dataclasses import dataclass
 from core.models.media import MediaType
 from core.models.media_factory import media_factory
 from flask import request
@@ -63,8 +63,8 @@ class SearchHandler:
                     return {"message": "Unsupported Query Type"}
             else:
                 return "Unable to handle Index Request", 400
-        except:
-            log.exception("Unable to handle Index Request")
+        except Exception as e:
+            log.exception("Unable to handle Index Request:", e)
             return "Unable to handle Index Request", 400
 
     def make_handlers(self):

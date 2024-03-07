@@ -17,13 +17,13 @@ class MediaType(Enum):
 
     @classmethod
     def make(media_type):
-        if media_type is "text":
+        if media_type == "text":
             return MediaType.TEXT
-        elif media_type is "image":
+        elif media_type == "image":
             return MediaType.IMAGE
-        elif media_type is "video":
+        elif media_type == "video":
             return MediaType.VIDEO
-        elif media_type is "audio":
+        elif media_type == "audio":
             return MediaType.AUDIO
         else:
             return MediaType.UNSUPPORTED
