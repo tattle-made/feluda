@@ -11,7 +11,7 @@ PyYAML==6.0.1
 dacite==1.8.1
 memray==1.11.0  # dev
 pyinstrument==4.6.2
-numpy==1.26.3
+numpy==1.26.4
 requests==2.31.0
 locust==2.23.1
 nose2==0.14.1
