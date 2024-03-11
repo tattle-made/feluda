@@ -1,17 +1,23 @@
 FROM python:3.11-slim-bullseye AS base
+
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
     --no-install-recommends python3-dev
-ENV PATH=/root/.local/bin:$PATH
+
+# Set python user
+RUN groupadd -g 999 python && \
+    useradd --create-home -r -u 999 -g python python
+RUN mkdir /usr/app && chown python:python /usr/app
+WORKDIR /usr/app
+
+# Set venv
+RUN python -m venv /usr/app/venv && chown -R python:python /usr/app/venv
+ENV PATH="/usr/app/venv/bin:$PATH"
 
 RUN pip install --no-cache-dir --upgrade pip
-WORKDIR /app
-# video requirments file
-COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
 
 ### AWS Graviton Optimization ###
 
@@ -37,20 +43,20 @@ ENV OMP_PLACES=cores
 ###
 
 # video requirments file
-COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
+COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir -r /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
 # video vec file
-COPY ./core/operators/vid_vec_rep_resnet.py /app/core/operators/vid_vec_rep_resnet.py
+COPY --chown=python:python ./core/operators/vid_vec_rep_resnet.py /usr/app/core/operators/vid_vec_rep_resnet.py
 # video vec test file
-COPY ./core/operators/sample_data/sample-cat-video.mp4 /app/core/operators/sample_data/sample-cat-video.mp4
-COPY ./core/operators/test_vid_vec_rep_resnet.py /app/core/operators/test_vid_vec_rep_resnet.py
+COPY --chown=python:python ./core/operators/sample_data/sample-cat-video.mp4 /usr/app/core/operators/sample_data/sample-cat-video.mp4
+COPY --chown=python:python ./core/operators/test_vid_vec_rep_resnet.py /usr/app/core/operators/test_vid_vec_rep_resnet.py
 # media factory files
-COPY ./core/models/ /app/core/models/
+COPY --chown=python:python ./core/models/ /usr/app/core/models/
 # benchmark files
-COPY ./benchmark/vidvec/ /app/benchmark/vidvec/
+COPY --chown=python:python ./benchmark/vidvec/ /usr/app/benchmark/vidvec/
 RUN chmod +x ./benchmark/vidvec/*.sh
 # main benchmark file
-COPY ./benchmark/benchmark-video.sh /app/benchmark/benchmark-video.sh
+COPY --chown=python:python ./benchmark/benchmark-video.sh /usr/app/benchmark/benchmark-video.sh
 RUN chmod +x benchmark/benchmark-video.sh
 
 RUN apt-get purge -y --auto-remove \
@@ -59,7 +65,8 @@ RUN apt-get purge -y --auto-remove \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y vim zsh wget
+RUN apt-get update && apt-get install -y --no-install-recommends vim zsh wget
 RUN pip install numpy Pillow wget requests Werkzeug
 
+USER 999
 CMD tail -f /dev/null
