@@ -64,3 +64,19 @@ jobs:
           local: true
           inputs: |
             ./src/core/operators/vid_vec_rep_resnet_requirements.txt
+
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+          scanners: 'vuln,misconfig,secret'
+          skip-dirs: '.vscode,docs'
+          exit-code: '1'
+#      - name: Upload Trivy scan results to GitHub Security tab
+#        uses: github/codeql-action/upload-sarif@v2
+#        with:
+#          sarif_file: 'trivy-results.sarif'
