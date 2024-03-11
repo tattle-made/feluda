@@ -36,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./src/
-          file: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet.graviton
+          file: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet_graviton
           platforms: linux/arm64
           push: true
           tags: tattletech/feluda-operator-vidvec:benchmark-arm64-latest-test
