@@ -79,7 +79,7 @@ class VideoFactory:
         except Exception as e:
             log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
-        return {"path": fname}
+        return {"path": fname.name}
 
     @staticmethod
     def make_from_file_on_disk(video_path):
@@ -105,7 +105,7 @@ class AudioFactory:
         except Exception as e:
             log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
-        return {"path": audio_file}
+        return {"path": audio_file.name}
 
     @staticmethod
     def make_from_file_on_disk(audio_path):
