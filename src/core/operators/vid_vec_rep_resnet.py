@@ -1,15 +1,14 @@
 import sys
 import traceback
-
+import os
 
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
 
-    global os, np, cv2, qr, torch, data, models, transforms, Image  # , wget #, FFmpeg
+    global np, cv2, qr, torch, data, models, transforms, Image  # , wget #, FFmpeg
     global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata  # , compress_video
     global contextmanager
 
-    import os
     import numpy as np
     import cv2
     from scipy.linalg import qr
@@ -246,7 +245,7 @@ def run(file):
             yield video
         finally:
             video.release()
-            os.remove(fname)
+            fname.close()
 
     with video_capture(fname) as video:
         vid_analyzer = VideoAnalyzer(video)
