@@ -7,6 +7,7 @@ from werkzeug.datastructures import FileStorage
 import wget
 from core.models.media import MediaType
 import logging
+import tempfile
 
 log = logging.getLogger(__name__)
 
@@ -70,10 +71,10 @@ class TextFactory:
 class VideoFactory:
     @staticmethod
     def make_from_url(video_url):
-        fname = "/tmp/vid.mp4"
+        fname = tempfile.NamedTemporaryFile(suffix='.mp4', delete=True)
         try:
             print("Downloading video from url")
-            wget.download(video_url, out=fname)
+            wget.download(video_url, out=fname.name)
             print("video downloaded")
         except Exception as e:
             log.exception("Error downloading video:", e)
@@ -87,17 +88,19 @@ class VideoFactory:
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage):
         # save on disk
-        fname = "/tmp/" + file_data.filename
+        fname = file_data.filename
+        # TODO: test use tmp folder with path if required
+        # fname = "/tmp/" + file_data.filename
         file_data.save(fname)
         return {"path": fname}
 
 
 class AudioFactory:
     def make_from_url(audio_url):
-        audio_file = "/tmp/audio.wav"
+        audio_file = tempfile.NamedTemporaryFile(suffix='.wav', delete=True)
         try:
             print("Downloading audio from url")
-            wget.download(audio_url, out=audio_file)
+            wget.download(audio_url, out=audio_file.name)
             print("audio downloaded")
         except Exception as e:
             log.exception("Error downloading audio:", e)
