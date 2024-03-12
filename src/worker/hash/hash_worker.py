@@ -2,8 +2,6 @@ from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 from core.operators import media_file_hash
 import json
-from datetime import datetime
-from core.models.media import MediaType
 from core.models.media_factory import VideoFactory
 from time import sleep
 log = Logger(__name__)
