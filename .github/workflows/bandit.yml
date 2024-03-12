@@ -13,7 +13,7 @@
 name: Bandit
 on:
   schedule:
-    - cron: '35 4 * * 2'
+    - cron: '55 4 * * 2'
 
 jobs:
   bandit:
