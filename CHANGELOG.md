@@ -2,6 +2,136 @@
 
 
 
+## v0.3.3 (2024-03-12)
+
+### Chore
+
+* chore: updated numpy version ([`a299171`](https://github.com/tattle-made/feluda/commit/a299171f166605d6e344876a573ed809f75a660a))
+
+### Ci
+
+* ci: Add bandit cron workflow to trigger on push to main for resolved issues ([`90864bd`](https://github.com/tattle-made/feluda/commit/90864bd87f46682e80586052b2f3a6667f940a7c))
+
+* ci: Updated cron time to test trigger ([`170c313`](https://github.com/tattle-made/feluda/commit/170c313467210a10561b3564e26ccb48977a4844))
+
+* ci: Enabled github token and modified cron UTC time ([`89c773f`](https://github.com/tattle-made/feluda/commit/89c773f7f5478a4a7a9e06d647575147932975df))
+
+* ci: Updated path settings ([`b02ed5b`](https://github.com/tattle-made/feluda/commit/b02ed5bd859d03aa22328a0545a1f354f672822d))
+
+* ci: Fix bandit cron workflow ([`faf897f`](https://github.com/tattle-made/feluda/commit/faf897f6f43f9e1524db15b20a3021c49f141cc5))
+
+* ci: Disabled bandit level ([`4802bea`](https://github.com/tattle-made/feluda/commit/4802bea43852c1997a766ecf237d909d02639629))
+
+* ci: Added bandit SAST scanning ([`5ecd5da`](https://github.com/tattle-made/feluda/commit/5ecd5da966697adccf1e9281039f58e4e251b7db))
+
+* ci: fixed scanners option ([`ae1ceb4`](https://github.com/tattle-made/feluda/commit/ae1ceb4f4fa2e399ec0ba2137bc9cb24e5925189))
+
+* ci: Added exit code with limit sarif severities and always upload results ([`b105ac5`](https://github.com/tattle-made/feluda/commit/b105ac54971bb0e55d2d54b2a82eb1e41d119cd9))
+
+* ci: Updated codeql-action version ([`03e48ea`](https://github.com/tattle-made/feluda/commit/03e48eadcc3aca6d2c302817c641ac2f0e7d5fe8))
+
+* ci: Removed failure condition for trivy scan to allow sarif upload ([`7b17253`](https://github.com/tattle-made/feluda/commit/7b1725375901b441ff7ed506d6c76ce2fdbd7ae3))
+
+* ci: Added githbu codeql sarif upload permissions ([`1bcd94b`](https://github.com/tattle-made/feluda/commit/1bcd94b8652610cd59597e3bb372d3a3747ec54f))
+
+* ci: Enabled trivy result upload to github codeql ([`e9afff0`](https://github.com/tattle-made/feluda/commit/e9afff0b53bbb35e284bfd4ca279e0021910e7a3))
+
+* ci: separate pip audit ([`e93e002`](https://github.com/tattle-made/feluda/commit/e93e002a12ff341f4a20375d0bd2fa85097a1aee))
+
+* ci: add pip audit security workflow ([`b7a4db2`](https://github.com/tattle-made/feluda/commit/b7a4db2cea64244af9b3889d9f1ea4fa70b1636a))
+
+### Fix
+
+* fix: (security) Added timeout to requests ([`f5c0645`](https://github.com/tattle-made/feluda/commit/f5c064540ebef3c1577a8706f4f6d28a0dfc5549))
+
+### Unknown
+
+* Merge pull request #162 from tattle-made/hotfix
+
+Hotfix ([`9c7d06b`](https://github.com/tattle-made/feluda/commit/9c7d06b2ec993fda29dcdab04e94c58213912240))
+
+* Merge pull request #161 from duggalsu/add_requests_timeout
+
+Add requests timeout ([`805e426`](https://github.com/tattle-made/feluda/commit/805e426b9d32d3d9ad4c086a56030a93d922a9ff))
+
+* Merge pull request #160 from tattle-made/hotfix
+
+Hotfix ([`76d900e`](https://github.com/tattle-made/feluda/commit/76d900e554860f6b8d5a7ad9e8c0580a23328e4f))
+
+* Merge pull request #159 from duggalsu/add_on_push_bandit_cron_workflow
+
+Add on push bandit cron workflow ([`bb97334`](https://github.com/tattle-made/feluda/commit/bb97334b4ae08074f3f9ad275cd1ce7380694689))
+
+* Merge pull request #158 from tattle-made/hotfix
+
+Hotfix ([`7b29e51`](https://github.com/tattle-made/feluda/commit/7b29e5171286c2c8aee6240c0ed7098acfe437f5))
+
+* Merge pull request #157 from duggalsu/test_bandit_cron_workflow_2
+
+Test bandit cron workflow 2 ([`5ef5baf`](https://github.com/tattle-made/feluda/commit/5ef5baf52174bd7cd88d2626abf14347540294c7))
+
+* Merge pull request #156 from tattle-made/hotfix
+
+Hotfix ([`dc387bc`](https://github.com/tattle-made/feluda/commit/dc387bce7034fc4bad0f8f3d96d5ff9ba235531b))
+
+* Merge pull request #155 from duggalsu/test_bandit_cron_workflow
+
+Test bandit cron workflow ([`bba6af8`](https://github.com/tattle-made/feluda/commit/bba6af876fddf1bb1090adbb11798667544af12c))
+
+* Merge pull request #154 from tattle-made/hotfix
+
+Hotfix ([`9fca369`](https://github.com/tattle-made/feluda/commit/9fca369f6896259a104b42cd2f4eb6ed1bee9694))
+
+* Merge pull request #153 from duggalsu/fix_bandit_cron_workflow
+
+Fix bandit cron workflow ([`d4f7e01`](https://github.com/tattle-made/feluda/commit/d4f7e01b078dcae482ae30144fc0985cf9a35d9d))
+
+* Merge pull request #152 from tattle-made/hotfix
+
+Hotfix ([`0605f12`](https://github.com/tattle-made/feluda/commit/0605f12043c25892d162e8038c8ab89522bb989c))
+
+* Merge pull request #151 from tattle-made/bandit_cron_job
+
+Bandit cron job ([`453093d`](https://github.com/tattle-made/feluda/commit/453093d34f70821b5e931d9190e18435f4e35df1))
+
+* Create bandit.yml ([`f9f5e2b`](https://github.com/tattle-made/feluda/commit/f9f5e2b97de86557e4ebe8916d0c47e56f35b7cd))
+
+* Merge pull request #150 from tattle-made/hotfix
+
+Hotfix ([`5355a37`](https://github.com/tattle-made/feluda/commit/5355a374ba3d4c1e549d47f09de024087efc6534))
+
+* Merge pull request #149 from duggalsu/add_ci_bandit
+
+Add ci bandit ([`c899ab4`](https://github.com/tattle-made/feluda/commit/c899ab42dd9b6efc0878126ef6c1f6c0be15d2b3))
+
+* Merge pull request #148 from tattle-made/hotfix
+
+Hotfix ([`1001e92`](https://github.com/tattle-made/feluda/commit/1001e92ec4157c8af7778fe8bc480691e7669386))
+
+* Merge pull request #147 from duggalsu/add_ci_trivy
+
+Add ci trivy ([`0f7e440`](https://github.com/tattle-made/feluda/commit/0f7e440ca3fd0ff1dafb748ef6e3d58a766f5360))
+
+* ci (security): Added IaC scan with Trivy ([`ac487f9`](https://github.com/tattle-made/feluda/commit/ac487f93c3a8e35f835f39ab1e2bb257978d16a1))
+
+* fix (security): Renamed graviton dockerfiles for detection by trivy ([`bc2b01c`](https://github.com/tattle-made/feluda/commit/bc2b01c1e24520abb2e0289b7479627f7997bcd3))
+
+* fix (security): Harden dockerfiles
+- Added unprivileged python user
+- Created venv for all pip install
+- Added chown for all files and dirs
+- Added --no-install-recommends to apt-get install cmd
+- Fixed feluda core server.py import issue ([`a760d2e`](https://github.com/tattle-made/feluda/commit/a760d2ee4626b9094607470de6f3bf2ebcd3cb5e))
+
+* Merge pull request #146 from tattle-made/hotfix
+
+Hotfix ([`adf12d0`](https://github.com/tattle-made/feluda/commit/adf12d0130571669a805e7a221b9b2ab1e2ebcaa))
+
+* Merge pull request #145 from duggalsu/add_ci_pip_audit
+
+Add ci pip audit ([`40f3ff6`](https://github.com/tattle-made/feluda/commit/40f3ff6f0833ba0c9402818ca933333803ae7dcd))
+
+
 ## v0.3.2 (2024-03-07)
 
 ### Ci
