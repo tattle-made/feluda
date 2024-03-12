@@ -12,6 +12,8 @@
 
 name: Bandit
 on:
+  push:
+    branches: [ "main" ]
   schedule:
     - cron: '55 4 * * 2'
 
