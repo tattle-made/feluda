@@ -76,10 +76,13 @@ class VideoFactory:
             print("Downloading video from url")
             wget.download(video_url, out=fname.name)
             print("video downloaded")
+            import os
+            fsize = os.path.getsize(fname.name) / 1e6
+            print("test original size: ", fsize)
         except Exception as e:
             log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
-        return {"path": fname.name}
+        return fname
 
     @staticmethod
     def make_from_file_on_disk(video_path):
@@ -96,6 +99,7 @@ class VideoFactory:
 
 
 class AudioFactory:
+    @staticmethod
     def make_from_url(audio_url):
         audio_file = tempfile.NamedTemporaryFile(suffix='.wav', delete=True)
         try:
@@ -105,7 +109,7 @@ class AudioFactory:
         except Exception as e:
             log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
-        return {"path": audio_file.name}
+        return audio_file
 
     @staticmethod
     def make_from_file_on_disk(audio_path):

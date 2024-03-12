@@ -5,10 +5,11 @@ import os
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
 
-    global np, cv2, qr, torch, data, models, transforms, Image  # , wget #, FFmpeg
+    global os, np, cv2, qr, torch, data, models, transforms, Image  # , wget #, FFmpeg
     global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata  # , compress_video
     global contextmanager
 
+    import os
     import numpy as np
     import cv2
     from scipy.linalg import qr
@@ -227,7 +228,12 @@ def initialize(param):
 
 
 def run(file):
-    fname = file["path"]
+    if isinstance(file, dict):
+        is_temp_file = False
+        fname = file["path"]
+    else:  # isinstance(file, tempfile._TemporaryFileWrapper)
+        is_temp_file = True
+        fname = file.name
     fsize = os.path.getsize(fname) / 1e6
     print("original size: ", fsize)
     # if fsize < 10:
@@ -245,7 +251,10 @@ def run(file):
             yield video
         finally:
             video.release()
-            fname.close()
+            if is_temp_file:
+                file.close()
+            else:
+                os.remove(fname)
 
     with video_capture(fname) as video:
         vid_analyzer = VideoAnalyzer(video)

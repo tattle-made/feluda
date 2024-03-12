@@ -18,11 +18,15 @@ RUN pip install --no-cache-dir --upgrade pip
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends wget curl grep
 COPY --chown=python:python requirements.txt /usr/app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Install operators before code copy to speedup docker build on code changes
+COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir -r /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
+COPY --chown=python:python ./core/operators/audio_vec_embedding_requirements.txt /usr/app/core/operators/audio_vec_embedding_requirements.txt
+RUN pip install --no-cache-dir -r /usr/app/core/operators/audio_vec_embedding_requirements.txt
+
 COPY --chown=python:python . /usr/app
 
 #### TEST IMAGE ####
 FROM base AS test
-RUN cd core/operators \
-    && pip install --no-cache-dir -r vid_vec_rep_resnet_requirements.txt \
-    && pip install --no-cache-dir -r audio_vec_embedding_requirements.txt
 USER 999
