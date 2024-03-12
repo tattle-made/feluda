@@ -67,7 +67,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: tattletech/feluda-operator-vidvec
           workdir: src/
-          dockerfile: worker/vidvec/Dockerfile.video_worker.graviton
+          dockerfile: worker/vidvec/Dockerfile.video_worker_graviton
           tags: worker-arm64-${{ steps.release.outputs.tag }}
           platforms: linux/arm64
 
@@ -91,7 +91,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: tattletech/feluda-operator-audiovec
           workdir: src/
-          dockerfile: worker/audiovec/Dockerfile.audio_worker.graviton
+          dockerfile: worker/audiovec/Dockerfile.audio_worker_graviton
           tags: worker-arm64-${{ steps.release.outputs.tag }}
           platforms: linux/arm64
 

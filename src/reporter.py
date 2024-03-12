@@ -1,5 +1,5 @@
-from endpoint.index.handler import generateDocument, generateRepresentation
-from endpoint.index.model import Post
+# from endpoint.index.handler import generateDocument, generateRepresentation
+# from endpoint.index.model import Post
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 import json
@@ -27,6 +27,7 @@ def reporter(ch, method, properties, body):
             environ.get("KOSH_API_URL") + "/index/report",
             headers=headersAuth,
             json=report,
+            timeout=(3.05, 5),
         )
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:
@@ -38,5 +39,5 @@ try:
     # log.prettyprint(vars(feluda))
     feluda.start_component(ComponentType.QUEUE)
     feluda.queue.listen("tattle-search-report-queue", reporter)
-except Exception as e:
+except Exception:
     log.exception("Error Initializing Indexer")

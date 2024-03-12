@@ -1,8 +1,8 @@
 import logging
-
-log = logging.getLogger(__name__)
 import importlib
 from core.config import OperatorConfig
+
+log = logging.getLogger(__name__)
 
 PACKAGE = "core.operators"
 

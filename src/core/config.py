@@ -1,19 +1,19 @@
 """
-This module loads configuration provided in a .yml file and makes it available as dataclasses. The main role of this module is 
+This module loads configuration provided in a .yml file and makes it available as dataclasses. The main role of this module is
 1. to document the possible values of various fields in the configuration file
 2. assist in providing auto complete and other IDE features via type support on python.
 
-todo : 
+todo :
 @dennyabrain used dacite as a quick way to convert nested dicts to python dataclasess. While I am happy with its performance so far, I am happy to consider a different solution while also accounting for data validation, which is not done as of now.
 """
+
 import logging
-
-log = logging.getLogger(__name__)
-
 from typing import List, Optional
 import yaml
 from dataclasses import dataclass
 from dacite import from_dict
+
+log = logging.getLogger(__name__)
 
 
 @dataclass

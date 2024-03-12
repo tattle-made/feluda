@@ -1,8 +1,6 @@
 import logging
 from core.models.media import MediaType
 from core.config import StoreConfig
-
-log = logging.getLogger(__name__)
 from elasticsearch import Elasticsearch, helpers as eshelpers
 from .es_vec_mappings import mappings
 from .es_vec_adapter import es_to_sanitized
@@ -10,6 +8,9 @@ import numpy as np
 import inspect
 import os
 import json
+
+log = logging.getLogger(__name__)
+
 
 class ES:
     def __init__(self, config: StoreConfig):
@@ -51,7 +52,9 @@ class ES:
             if self.client.indices.exists(index=self.indices[index]):
                 log.info("Verified that {} exists".format(self.indices[index]))
             else:
-                log.info("{} does not exist, creating it now".format(self.indices[index]))
+                log.info(
+                    "{} does not exist, creating it now".format(self.indices[index])
+                )
                 body = json.loads(mappings[index])
                 self.client.indices.create(index=self.indices[index], body=body)
                 log.info("{} created".format(self.indices[index]))

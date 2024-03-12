@@ -37,7 +37,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: tattletech/feluda-operator-vidvec
           workdir: src/
-          dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet.graviton
+          dockerfile: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet_graviton
           tags: benchmark-arm64-latest
           platforms: linux/arm64
 

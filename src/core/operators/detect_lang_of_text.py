@@ -1,6 +1,4 @@
-
 def initialize(param):
-
     global TextBlob
 
     from textblob import TextBlob

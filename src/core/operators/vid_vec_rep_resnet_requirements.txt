@@ -56,7 +56,7 @@ mpmath==1.3.0
     # via sympy
 networkx==3.2.1
     # via torch
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -r vid_vec_rep_resnet_requirements.in
     #   opencv-python-headless

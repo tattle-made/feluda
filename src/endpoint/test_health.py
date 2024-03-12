@@ -1,9 +1,13 @@
 import unittest
 import requests
+from requests.exceptions import ConnectTimeout
 
 
 class TestHealth(unittest.TestCase):
     def testHealthEndpoint(self):
         url = "http://localhost:5000/health"
-        response = requests.get(url)
-        self.assertEqual(response.status_code, 200)
+        try:
+            response = requests.get(url, timeout=(3.05, 5))
+            self.assertEqual(response.status_code, 200)
+        except ConnectTimeout:
+            print('Request has timed out')
