@@ -27,6 +27,7 @@ def reporter(ch, method, properties, body):
             environ.get("KOSH_API_URL") + "/index/report",
             headers=headersAuth,
             json=report,
+            timeout=(3.05, 5),
         )
         ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception:

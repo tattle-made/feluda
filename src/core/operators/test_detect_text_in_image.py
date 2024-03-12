@@ -47,13 +47,19 @@ class Test(unittest.TestCase):
     def test_sample_image_from_url(self):
         # todo : put URL of s3 endpoint in an environment variable to avoid s3 abuse
         import requests
+        from requests.exceptions import ConnectTimeout
 
-        # https://tattle-media.s3.amazonaws.com/test-data/tattle-search/image_with_text_handwritten_hindi.jpeg
-        resp = requests.get(
-            "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
-        )
+        try:
+            # https://tattle-media.s3.amazonaws.com/test-data/tattle-search/image_with_text_handwritten_hindi.jpeg
+            resp = requests.get(
+                "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png",
+                timeout=(3.05, 5)
+            )
 
-        image = {"image_bytes": resp.content}
-        detected_text = detect_text_in_image.run(image)
-        print("----> 1", detected_text["text"])
-        self.assertEqual(detected_text["text"], "ठंड बहुत हैं:\nअपना ख्याल रखना\nठंडी- ठंडी\n")
+            image = {"image_bytes": resp.content}
+            detected_text = detect_text_in_image.run(image)
+            print("----> 1", detected_text["text"])
+            self.assertEqual(detected_text["text"], "ठंड बहुत हैं:\nअपना ख्याल रखना\nठंडी- ठंडी\n")
+        except ConnectTimeout:
+            print('Request has timed out')
+

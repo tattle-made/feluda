@@ -1,6 +1,7 @@
 import unittest
 from unittest.case import skip
 import requests
+from requests.exceptions import ConnectTimeout
 from core.store.es_vec import ES
 from core.config import StoreConfig, StoreParameters
 from core.models.media import MediaType
@@ -27,31 +28,34 @@ curl -X POST "http://es:9200/test_audio/_refresh"
 class TestAudioES(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        # ping es server to see if its working
-        response = requests.get("http://es:9200")
+        try:
+            # ping es server to see if its working
+            response = requests.get("http://es:9200", timeout=(3.05, 5))
 
-        if response.status_code == 200:
-            print("Elastic search server is running")
-        else:
-            print("No elasticsearch service found. Tests are bound to fail.")
-        param_dict = {
-            "host_name": "es",
-            "text_index_name": "test_text",
-            "image_index_name": "test_image",
-            "video_index_name": "test_video",
-            "audio_index_name": "test_audio",
-        }
-        cls.param = StoreConfig(
-            label="test",
-            type="es",
-            parameters=StoreParameters(
-                host_name=param_dict["host_name"],
-                image_index_name=param_dict["image_index_name"],
-                text_index_name=param_dict["text_index_name"],
-                video_index_name=param_dict["video_index_name"],
-                audio_index_name=param_dict["audio_index_name"],
-            ),
-        )
+            if response.status_code == 200:
+                print("Elastic search server is running")
+            else:
+                print("No elasticsearch service found. Tests are bound to fail.")
+            param_dict = {
+                "host_name": "es",
+                "text_index_name": "test_text",
+                "image_index_name": "test_image",
+                "video_index_name": "test_video",
+                "audio_index_name": "test_audio",
+            }
+            cls.param = StoreConfig(
+                label="test",
+                type="es",
+                parameters=StoreParameters(
+                    host_name=param_dict["host_name"],
+                    image_index_name=param_dict["image_index_name"],
+                    text_index_name=param_dict["text_index_name"],
+                    video_index_name=param_dict["video_index_name"],
+                    audio_index_name=param_dict["audio_index_name"],
+                ),
+            )
+        except ConnectTimeout:
+            print('Request has timed out')
 
     @classmethod
     def tearDownClass(cls) -> None:
