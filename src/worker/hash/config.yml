@@ -10,6 +10,6 @@ queue :
 operators : 
   label : "Operators"
   parameters :
-    - name : "md5 hash"
-      type : "md5_hash"
+    - name : "Medial file Hash"
+      type : "media_file_hash"
       parameters: {}

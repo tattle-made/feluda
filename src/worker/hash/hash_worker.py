@@ -1,6 +1,6 @@
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
-from core.operators import md5_hash
+from core.operators import media_file_hash
 import json
 from datetime import datetime
 from core.models.media import MediaType
@@ -47,7 +47,7 @@ def indexer(feluda):
         video_path = VideoFactory.make_from_url(file_content['path'])
         try:
             log.info("Processing file")
-            hash = md5_hash.run(video_path)
+            hash = media_file_hash.run(video_path)
             log.info(hash)
             report = make_report_indexed(file_content, "indexed")
             feluda.queue.message(feluda.config.queue.parameters.queues[1]['name'], report)
@@ -61,11 +61,11 @@ def indexer(feluda):
     return worker
 
 try:
-    feluda = Feluda("worker/md5hash/config.yml")
+    feluda = Feluda("worker/hash/config.yml")
     feluda.setup()
     count_queue = feluda.config.queue.parameters.queues[0]['name']
     feluda.start_component(ComponentType.QUEUE)
-    md5_hash.initialize(param=None)
+    media_file_hash.initialize(param=None)
     feluda.queue.listen(count_queue, indexer(feluda))
 except Exception as e:
     print("Error Initializing Indexer", e)
