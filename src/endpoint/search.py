@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+# from dataclasses import dataclass
 from core.models.media import MediaType
 from core.models.media_factory import media_factory
 from flask import request
@@ -43,8 +43,12 @@ class SearchHandler:
                 if data["query_type"] == "image":
                     file = request.files["media"]
                     print(file, type(file))
-                    image_obj = media_factory[MediaType.IMAGE].make_from_file_in_memory(file)
-                    image_vec = self.feluda.operators.active_operators["image_vec_rep_resnet"].run(image_obj)
+                    image_obj = media_factory[MediaType.IMAGE].make_from_file_in_memory(
+                        file
+                    )
+                    image_vec = self.feluda.operators.active_operators[
+                        "image_vec_rep_resnet"
+                    ].run(image_obj)
                     results = self.feluda.store.find("image", image_vec)
                     return {"matches": results}
                 elif data["query_type"] == "video":
@@ -57,14 +61,16 @@ class SearchHandler:
                     ].run(vid_obj)
                     average_vector = next(vid_vec)
                     # TODO: explore finding "all_vectors" along with the "avg_vector"
-                    results = self.feluda.store.find("video", average_vector.get('vid_vec'))
+                    results = self.feluda.store.find(
+                        "video", average_vector.get("vid_vec")
+                    )
                     return {"matches": results}
                 else:
                     return {"message": "Unsupported Query Type"}
             else:
                 return "Unable to handle Index Request", 400
-        except:
-            log.exception("Unable to handle Index Request")
+        except Exception as e:
+            log.exception("Unable to handle Index Request:", e)
             return "Unable to handle Index Request", 400
 
     def make_handlers(self):

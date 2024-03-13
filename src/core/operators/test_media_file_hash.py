@@ -1,7 +1,8 @@
 import unittest
-from unittest.case import skip
+# from unittest.case import skip
 from core.operators import media_file_hash
 from core.models.media_factory import VideoFactory
+
 
 class Test(unittest.TestCase):
     @classmethod

@@ -16,7 +16,7 @@ class BenchmarkUser(User):
             "text_index_name": "text",
             "image_index_name": "image",
             "video_index_name": "video",
-            "audio_index_name": "audio"
+            "audio_index_name": "audio",
         }
 
         self.param = StoreConfig(
@@ -28,7 +28,7 @@ class BenchmarkUser(User):
                 text_index_name=param_dict["text_index_name"],
                 video_index_name=param_dict["video_index_name"],
                 audio_index_name=param_dict["audio_index_name"],
-            )
+            ),
         )
 
     @task
@@ -45,7 +45,9 @@ class BenchmarkUser(User):
 
         total_time = int((time.time() - start_time) * 1000)
         # Register custom request event for stats
-        events.request.fire(request_type='POST',
-                            name='Search',
-                            response_time=total_time,
-                            response_length=len(result))
+        events.request.fire(
+            request_type="POST",
+            name="Search",
+            response_time=total_time,
+            response_length=len(result),
+        )

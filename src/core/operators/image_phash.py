@@ -1,11 +1,9 @@
-
 """
 Documentation goes here
 """
 
 
 def initialize(param):
-
     global imagehash
 
     import imagehash

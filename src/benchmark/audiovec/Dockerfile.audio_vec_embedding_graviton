@@ -1,21 +1,27 @@
 FROM python:3.11-slim-bullseye AS base
+
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
     --no-install-recommends python3-dev
-ENV PATH=/root/.local/bin:$PATH
-RUN apt-get update && apt-get install -y vim zsh curl
+
+# Set python user
+RUN groupadd -g 999 python && \
+    useradd --create-home -r -u 999 -g python python
+RUN mkdir /usr/app && chown python:python /usr/app
+WORKDIR /usr/app
+
+# Set venv
+RUN python -m venv /usr/app/venv && chown -R python:python /usr/app/venv
+ENV PATH="/usr/app/venv/bin:$PATH"
 
 RUN pip install --no-cache-dir --upgrade pip
-WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --user -r requirements.txt
-# video requirments file
-COPY ./core/operators/vid_vec_rep_resnet_requirements.txt /app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir --user -r /app/core/operators/vid_vec_rep_resnet_requirements.txt
+# audio requirments file
+COPY --chown=python:python ./core/operators/audio_vec_embedding_requirements.txt /usr/app/core/operators/audio_vec_embedding_requirements.txt
+RUN pip install --no-cache-dir -r /usr/app/core/operators/audio_vec_embedding_requirements.txt
 
 ### AWS Graviton Optimization ###
 
@@ -40,13 +46,28 @@ ENV OMP_PROC_BIND=false
 ENV OMP_PLACES=cores
 ###
 
+# audio vec file
+COPY --chown=python:python ./core/operators/audio_vec_embedding.py /usr/app/core/operators/audio_vec_embedding.py
+# audio vec test and media files
+COPY --chown=python:python ./core/operators/sample_data/audio.wav /usr/app/core/operators/sample_data/audio.wav
+COPY --chown=python:python ./core/operators/test_audio_vec_embedding.py /usr/app/core/operators/test_audio_vec_embedding.py
+# audio cnn model folder
+COPY --chown=python:python ./core/operators/audio_cnn_model/ /usr/app/core/operators/audio_cnn_model/
+# benchmark files
+COPY --chown=python:python ./benchmark/audiovec/ /usr/app/benchmark/audiovec/
+RUN chmod +x ./benchmark/audiovec/*.sh
+# main benchmark file
+COPY --chown=python:python ./benchmark/benchmark-audio.sh /usr/app/benchmark/benchmark-audio.sh
+RUN chmod +x ./benchmark/benchmark-audio.sh
+
 RUN apt-get purge -y --auto-remove \
     gcc build-essential \
     libgl1-mesa-glx libglib2.0-0 \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /app
-EXPOSE 7000
+RUN apt-get update && apt-get install -y --no-install-recommends vim zsh
+RUN apt-get update && apt-get install -y --no-install-recommends wget
 
-FROM base AS debug
+USER 999
+CMD tail -f /dev/null

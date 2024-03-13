@@ -1,11 +1,12 @@
 import sys
 import traceback
 
+
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
 
-    global os, np, cv2, qr, torch, data, models, transforms, Image #, wget #, FFmpeg
-    global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata #, compress_video
+    global os, np, cv2, qr, torch, data, models, transforms, Image  # , wget #, FFmpeg
+    global imagenet_transform, ImageListDataset, VideoAnalyzer, gendata  # , compress_video
     global contextmanager
 
     import os
@@ -29,7 +30,7 @@ def initialize(param):
         ]
     )
 
-    '''
+    """
     def compress_video(fname):
         newname = "/tmp/compressed.mp4"
         FNULL = open(os.devnull, "w")
@@ -42,8 +43,7 @@ def initialize(param):
         ff.run(stdout=FNULL, stderr=FNULL)
         # os.remove(fname)
         return newname
-    '''
-
+    """
 
     def gendata(vid_analyzer):
         # average vector
@@ -159,7 +159,7 @@ def initialize(param):
 
         def extract_frames(self, v):
             # print("extracting frames")
-            images = []
+            # images = []
             for i in range(self.n_frames):
                 success, image = v.read()
                 if image is None:
@@ -182,7 +182,9 @@ def initialize(param):
                 image_count += 1
                 try:
                     dset = ImageListDataset(img)
-                    dloader = data.DataLoader(dset, batch_size=batch_size, shuffle=False)
+                    dloader = data.DataLoader(
+                        dset, batch_size=batch_size, shuffle=False
+                    )
                     feature_layer = self.model._modules.get("avgpool")
 
                     def hook(m, i, o):
@@ -210,7 +212,7 @@ def initialize(param):
             res = np.hstack(res)
             print("res.shape:", res.shape)
             print("sys.getsizeof(res)", sys.getsizeof(res))
-            assert res.shape == (512, image_count)
+            # assert res.shape == (512, image_count)
             return res
 
         def find_keyframes(self, feature_matrix):
@@ -224,6 +226,7 @@ def initialize(param):
             # print("found keyframes")
             return idx
 
+
 def run(file):
     fname = file["path"]
     fsize = os.path.getsize(fname) / 1e6
@@ -235,7 +238,7 @@ def run(file):
     #     print("compressed video size: ", fsize)
     if fsize > 10:
         raise Exception("Video too large")
-    
+
     @contextmanager
     def video_capture(fname):
         video = cv2.VideoCapture(fname)

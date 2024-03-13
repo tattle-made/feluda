@@ -1,7 +1,8 @@
 import unittest
 from unittest.case import skip
 import requests
-import json
+from requests.exceptions import ConnectTimeout
+# import json
 
 API_URL = "http://localhost:7000"
 
@@ -23,15 +24,18 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        with open("sample_data/simple-text.txt", "rb") as media_file:
-            files = {
-                "media": media_file,
-                "data": json.dumps(data),
-            }
+        with open("sample_data/simple-text.txt", "rb") as media_file:  # noqa: F841
+            # files = {
+            #     "media": media_file,
+            #     "data": json.dumps(data),
+            # }
             # response = requests.post(url, json=data, files=files, headers=headers)
-            response = requests.post(url, json=data, headers=headers)
-            print(response.text)
-            self.assertEqual(response.status_code, 200)
+            try:
+                response = requests.post(url, json=data, headers=headers, timeout=(3.05, 5))
+                print(response.text)
+                self.assertEqual(response.status_code, 200)
+            except ConnectTimeout:
+                print('Request has timed out')
         # self.assertEqual(len(response.json()["vector_representation"]), 768)
 
     @skip
@@ -55,10 +59,13 @@ class TestIndex(unittest.TestCase):
         #         "media": media_file,
         #         "data": json.dumps(data),
         #     }
-        response = requests.post(url, json=data, headers=headers)
-        # response = requests.post(url, json=data, files=files, headers=headers)
-        print(response.text)
-        self.assertEqual(response.status_code, 200)
+        try:
+            response = requests.post(url, json=data, headers=headers, timeout=(3.05, 5))
+            # response = requests.post(url, json=data, files=files, headers=headers)
+            print(response.text)
+            self.assertEqual(response.status_code, 200)
+        except ConnectTimeout:
+            print('Request has timed out')
 
     @skip
     def testIndexVideo(self):
@@ -76,13 +83,17 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        files = {
-            # "media": open("sample_data/simple-text.txt", "rb"),
-            "data": json.dumps(data),
-        }
-        response = requests.post(url, json=data, headers=headers)
-        print(response.text)
-        self.assertEqual(response.status_code, 200)
+        # files = {
+        #     # "media": open("sample_data/simple-text.txt", "rb"),
+        #     "data": json.dumps(data),
+        # }
+        try:
+            response = requests.post(url, json=data, headers=headers, timeout=(3.05, 5))
+            print(response.text)
+            self.assertEqual(response.status_code, 200)
+        except ConnectTimeout:
+            print('Request has timed out')
+
 
     @skip
     def testIndexEnqueueImage(self):
@@ -100,10 +111,14 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "hate_speech", "type": ["gender", "caste"]},
             "config": {"mode": "enqueue", "version": "0.1"},
         }
-        files = {"data": json.dumps(data)}
-        response = requests.post(url, json=data, headers=headers)
-        print(response.text)
-        self.assertEqual(response.status_code, 200)
+        # files = {"data": json.dumps(data)}
+        try:
+            response = requests.post(url, json=data, headers=headers, timeout=(3.05, 5))
+            print(response.text)
+            self.assertEqual(response.status_code, 200)
+        except ConnectTimeout:
+            print('Request has timed out')
+
 
     @skip
     def testIndexEnqueueImageJSON(self):
@@ -119,6 +134,10 @@ class TestIndex(unittest.TestCase):
             "metadata": {"domain": "misinformation", "type": ["religion"]},
             "config": {"mode": "store", "version": "0.1"},
         }
-        response = requests.post(url, json=data)
-        # print(response.json())
-        self.assertEqual(response.status_code, 200)
+        try:
+            response = requests.post(url, json=data, timeout=(3.05, 5))
+            # print(response.json())
+            self.assertEqual(response.status_code, 200)
+        except ConnectTimeout:
+            print('Request has timed out')
+

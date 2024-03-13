@@ -1,0 +1,105 @@
+name: Run security checks on PR
+
+on:
+  pull_request:
+    branches:
+      - development
+      - hotfix
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  checks:
+    if: github.event.pull_request.draft == false
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+    name: Run security checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff --output-format=github ./src/
+        continue-on-error: false
+
+      - name: pip audit install setup 1
+        run: |
+          python -m venv env1/
+          source env1/bin/activate
+      - name: pip audit src requirements
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env1/
+          local: true
+          inputs: |
+            ./src/requirements.txt
+
+      - name: pip audit install setup 2
+        run: |
+          python -m venv env2/
+          source env2/bin/activate
+      - name: pip audit operator audiovec requirements
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env2/
+          local: true
+          inputs: |
+            ./src/core/operators/audio_vec_embedding_requirements.txt
+
+      - name: pip audit install setup 3
+        run: |
+          python -m venv env3/
+          source env3/bin/activate
+      - name: pip audit operator vidvec requirements
+        uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          # must be populated earlier in the CI
+          virtual-environment: env3/
+          local: true
+          inputs: |
+            ./src/core/operators/vid_vec_rep_resnet_requirements.txt
+
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          limit-severities-for-sarif: true
+          severity: 'HIGH,CRITICAL'
+          scanners: 'vuln,config,secret'
+          skip-dirs: '.vscode,docs'
+          exit-code: '1'
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Bandit Scan
+        uses: shundor/python-bandit-scan@9cc5aa4a006482b8a7f91134412df6772dbda22c
+        with: # optional arguments
+          # exit with 0, even with results found
+          exit_zero: false # optional, default is DEFAULT
+          # File or directory to run bandit on
+          path: ./src/ # optional, default is .
+          # Report only issues of a given severity level or higher. Can be LOW, MEDIUM or HIGH. Default is UNDEFINED (everything)
+          # level: HIGH # optional, default is UNDEFINED
+          # Report only issues of a given confidence level or higher. Can be LOW, MEDIUM or HIGH. Default is UNDEFINED (everything)
+          # confidence: # optional, default is UNDEFINED
+          # comma-separated list of paths (glob patterns supported) to exclude from scan (note that these are in addition to the excluded paths provided in the config file) (default: .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
+          # excluded_paths: # optional, default is DEFAULT
+          # comma-separated list of test IDs to skip
+          # skips: # optional, default is DEFAULT
+          # path to a .bandit file that supplies command line arguments
+          # ini_path: # optional, default is DEFAULT

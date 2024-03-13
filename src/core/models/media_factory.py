@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import ConnectTimeout
 import PIL
 from io import BytesIO
 import numpy as np
@@ -13,12 +14,15 @@ log = logging.getLogger(__name__)
 class ImageFactory:
     @staticmethod
     def make_from_url(image_url):
-        print("1", image_url)
-        resp = requests.get(image_url)
-        image_bytes = resp.content
-        image = PIL.Image.open(BytesIO(image_bytes))
-        image_array = np.array(image)
-        return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+        try:
+            print("1", image_url)
+            resp = requests.get(image_url, timeout=(3.05, 5))
+            image_bytes = resp.content
+            image = PIL.Image.open(BytesIO(image_bytes))
+            image_array = np.array(image)
+            return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+        except ConnectTimeout:
+            print('Request has timed out')
 
     @staticmethod
     def make_from_file_on_disk(image_path):
@@ -47,9 +51,12 @@ class ImageFactory:
 class TextFactory:
     @staticmethod
     def make_from_url(text_url):
-        response = requests.get(text_url)
-        text = response.text
-        return {"text": text}
+        try:
+            response = requests.get(text_url, timeout=(3.05, 5))
+            text = response.text
+            return {"text": text}
+        except ConnectTimeout:
+            print('Request has timed out')
 
     @staticmethod
     def make_from_file_on_disk(image_path):
@@ -69,7 +76,7 @@ class VideoFactory:
             wget.download(video_url, out=fname)
             print("video downloaded")
         except Exception as e:
-            log.exception("Error downloading video")
+            log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
         return {"path": fname}
 
@@ -80,9 +87,10 @@ class VideoFactory:
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage):
         # save on disk
-        fname = "/tmp/"+file_data.filename
+        fname = "/tmp/" + file_data.filename
         file_data.save(fname)
         return {"path": fname}
+
 
 class AudioFactory:
     def make_from_url(audio_url):
@@ -92,14 +100,14 @@ class AudioFactory:
             wget.download(audio_url, out=audio_file)
             print("audio downloaded")
         except Exception as e:
-            log.exception("Error downloading audio")
+            log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
         return {"path": audio_file}
 
     @staticmethod
     def make_from_file_on_disk(audio_path):
         return {"path": audio_path}
-    
+
 
 media_factory = {
     MediaType.TEXT: TextFactory,

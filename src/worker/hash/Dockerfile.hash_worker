@@ -1,18 +1,27 @@
 FROM python:3.11-slim-bullseye AS base
+
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
     --no-install-recommends python3-dev
-ENV PATH=/root/.local/bin:$PATH
-RUN apt-get update && apt-get install -y vim zsh curl
+RUN apt-get update && apt-get install -y --no-install-recommends vim zsh curl
+
+# Set python user
+RUN groupadd -g 999 python && \
+    useradd --create-home -r -u 999 -g python python
+RUN mkdir /usr/app && chown python:python /usr/app
+WORKDIR /usr/app
+
+# Set venv
+RUN python -m venv /usr/app/venv && chown -R python:python /usr/app/venv
+ENV PATH="/usr/app/venv/bin:$PATH"
 
 RUN pip install --no-cache-dir --upgrade pip
-WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir --user -r requirements.txt
+COPY --chown=python:python requirements.txt /usr/app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN apt-get purge -y --auto-remove \
     gcc build-essential \
@@ -20,7 +29,8 @@ RUN apt-get purge -y --auto-remove \
     python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /app
+COPY --chown=python:python . /usr/app
 EXPOSE 7000
 
 FROM base AS debug
+USER 999

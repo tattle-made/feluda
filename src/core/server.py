@@ -1,10 +1,10 @@
 import logging
 
 from core.config import ServerConfig
-
-log = logging.getLogger(__name__)
 from flask import Flask
 from flask_cors import CORS
+
+log = logging.getLogger(__name__)
 
 
 class Server:
@@ -28,7 +28,7 @@ class Server:
                     endpoint, name, methods = route
                     self.app.add_url_rule(endpoint, name, handler, methods=methods)
             except Exception as e:
-                log.exception("Could not add Route")
+                log.exception("Could not add Route:", e)
 
     def start(self):
         @self.app.route("/")

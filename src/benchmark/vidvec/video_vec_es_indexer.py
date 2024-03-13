@@ -18,7 +18,7 @@ def initialize():
         "text_index_name": "text",
         "image_index_name": "image",
         "video_index_name": "video",
-        "audio_index_name": "audio"
+        "audio_index_name": "audio",
     }
 
     global param
@@ -32,7 +32,7 @@ def initialize():
             text_index_name=param_dict["text_index_name"],
             video_index_name=param_dict["video_index_name"],
             audio_index_name=param_dict["audio_index_name"],
-        )
+        ),
     )
 
 
@@ -63,7 +63,7 @@ def store_video_vector():
     media_type = MediaType.VIDEO
     vid_vec_rep_resnet.initialize(param=None)
 
-    folder_path = r'core/operators/sample_data/video_files'
+    folder_path = r"core/operators/sample_data/video_files"
     count = 0
     start_time = time.time()
     for file_name in os.listdir(folder_path):
@@ -72,7 +72,7 @@ def store_video_vector():
         embedding = vid_vec_rep_resnet.run(video)
         doc = generate_document(file_name, embedding)
         # TODO: save doc to storage so we don't have to recompute embeddings again
-        result = es.store(media_type, doc)
+        es.store(media_type, doc)
         count += 1
         print("Indexed file:", count)
         # print("result:", result)
