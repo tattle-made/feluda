@@ -1,0 +1,15 @@
+queue : 
+  label : "Queue"
+  type : "rabbitmq"
+  parameters: 
+    host_name : "rabbitmq"
+    queues:
+      - name : "count-queue"
+      - name : "count-report-queue"
+
+operators : 
+  label : "Operators"
+  parameters :
+    - name : "Medial file Hash"
+      type : "media_file_hash"
+      parameters: {}

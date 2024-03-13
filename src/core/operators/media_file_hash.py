@@ -6,8 +6,7 @@ def initialize(param):
 def run(media_path):
     file_path = media_path["path"]
     with open(file_path, "rb") as f:
-        file_hash = hashlib.md5()
-        # file_hash = hashlib.blake2b()
+        file_hash = hashlib.blake2b()
         while chunk := f.read(4092):
             file_hash.update(chunk)
 
@@ -15,8 +14,8 @@ def run(media_path):
 
 
 # if __name__ == "__main__":
-#     media_file_path = r'sample_data/sample-cat-video.mp4'
+#     media_file_path = {"path": r"core/operators/sample_data/sample-cat-video.mp4"}
 #     initialize(param={})
-#     md5_hash = run(media_file_path)
-#     print(md5_hash)
-#     print(len(md5_hash))
+#     file_hash = run(media_file_path)
+#     print(file_hash)
+#     print(len(file_hash))
