@@ -6,6 +6,7 @@ import os
 # import matplotlib.pyplot as plt
 import torch
 from pathlib import Path
+import wget
 
 from .pytorch_utils import move_data_to_device
 from .models import Cnn14  # , Cnn14_DecisionLevelMax
@@ -39,7 +40,8 @@ class AudioTagging(object):
         ):
             create_folder(os.path.dirname(checkpoint_path))
             zenodo_path = "https://github.com/tattle-made/feluda/releases/download/third-party-models/Cnn14_mAP.0.431.pth"
-            os.system('wget -O "{}" "{}"'.format(checkpoint_path, zenodo_path))
+            # os.system('wget -O "{}" "{}"'.format(checkpoint_path, zenodo_path))
+            wget.download(zenodo_path, out=checkpoint_path)
 
         # script_dir = os.path.dirname(os.path.abspath(__file__))
         # checkpoint_path = os.path.join(script_dir, 'panns_data', 'Cnn14_mAP=0.431.pth')

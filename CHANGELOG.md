@@ -2,11 +2,34 @@
 
 
 
+## v0.4.1 (2024-03-13)
+
+### Fix
+
+* fix: Renamed hash worker graviton file
+ci: Added publishing media hash worker docker images
+ci: Added release hash worker dockerfiles ([`33fb2d8`](https://github.com/tattle-made/feluda/commit/33fb2d84049576912c2d6c1b9b4691fa24d978e2))
+
+### Unknown
+
+* Merge pull request #173 from tattle-made/hotfix
+
+Hotfix ([`ec7b922`](https://github.com/tattle-made/feluda/commit/ec7b922fd83628816408196ea5d675c2b5fb7a93))
+
+* Merge pull request #172 from duggalsu/add_hash_worker_workflow
+
+Add hash worker workflow ([`b58c11f`](https://github.com/tattle-made/feluda/commit/b58c11f98b240dbe2d5d28e787002f8155901cdc))
+
+
 ## v0.4.0 (2024-03-13)
 
 ### Ci
 
 * ci: updating hash worker github workflow ([`73e5634`](https://github.com/tattle-made/feluda/commit/73e5634d462064f3fa4d38aec72ed126cc17aeea))
+
+### Fix
+
+* fix: subprocess call issue ([`058cee5`](https://github.com/tattle-made/feluda/commit/058cee5eeaef56c9704b4745f6cd9298b16cca35))
 
 ### Unknown
 
@@ -19,6 +42,10 @@ merge dev to main ([`55204f9`](https://github.com/tattle-made/feluda/commit/5520
 resolving merge conflicts ([`1dea270`](https://github.com/tattle-made/feluda/commit/1dea2707bbf211fb8b91c3335b71e1675d51e0f1))
 
 * Merge remote-tracking branch &#39;upstream/main&#39; into temp-dev-2 ([`3c28a9f`](https://github.com/tattle-made/feluda/commit/3c28a9f310413ce67264f069d1ab067f206ef014))
+
+* Merge pull request #171 from duggalsu/fix_subprocess_call
+
+Fix subprocess call ([`acf4974`](https://github.com/tattle-made/feluda/commit/acf4974c5374e1fe2f59cc2d33bb6c77c6b2c199))
 
 
 ## v0.3.4 (2024-03-13)
