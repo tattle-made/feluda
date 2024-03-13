@@ -3,8 +3,6 @@
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 import json
-import requests
-from os import environ
 
 log = Logger(__name__)
 
