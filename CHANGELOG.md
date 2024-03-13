@@ -2,7 +2,36 @@
 
 
 
+## v0.4.0 (2024-03-13)
+
+### Ci
+
+* ci: updating hash worker github workflow ([`73e5634`](https://github.com/tattle-made/feluda/commit/73e5634d462064f3fa4d38aec72ed126cc17aeea))
+
+### Unknown
+
+* Merge pull request #165 from tattle-made/development
+
+merge dev to main ([`55204f9`](https://github.com/tattle-made/feluda/commit/55204f9c60a466de06d8b102b66d5d85b48b1c91))
+
+* Merge pull request #166 from aatmanvaidya/temp-dev-2
+
+resolving merge conflicts ([`1dea270`](https://github.com/tattle-made/feluda/commit/1dea2707bbf211fb8b91c3335b71e1675d51e0f1))
+
+* Merge remote-tracking branch &#39;upstream/main&#39; into temp-dev-2 ([`3c28a9f`](https://github.com/tattle-made/feluda/commit/3c28a9f310413ce67264f069d1ab067f206ef014))
+
+
 ## v0.3.4 (2024-03-13)
+
+### Chore
+
+* chore: fixing module imports ([`4097614`](https://github.com/tattle-made/feluda/commit/4097614dd86b9edef88855771383faf2de6f1365))
+
+* chore: resolving merge conflicts ([`5e3da48`](https://github.com/tattle-made/feluda/commit/5e3da48f102cf1858078748444e1eb7bb40768a9))
+
+### Ci
+
+* ci: fixing hash worker dockerfiles ([`46173da`](https://github.com/tattle-made/feluda/commit/46173da54423a70a7f295862f7106cf98aceb6de))
 
 ### Fix
 
@@ -13,6 +42,8 @@
 * fix: linting issues ([`39d90be`](https://github.com/tattle-made/feluda/commit/39d90beb4caf35d93b4364360796d1932f177510))
 
 * fix: Removed secrets ([`11f4186`](https://github.com/tattle-made/feluda/commit/11f4186526ad0437ca5d62fc78216be5fd90f3fa))
+
+* fix: hash operator and worker ([`64d0797`](https://github.com/tattle-made/feluda/commit/64d0797b98ffb90ce5569f587b6403b9373893cf))
 
 ### Unknown
 
@@ -31,6 +62,10 @@ fix: Fixed assert issues ([`1290ef9`](https://github.com/tattle-made/feluda/comm
 * Merge pull request #167 from duggalsu/fix_secrets
 
 Fix secrets ([`3670bc9`](https://github.com/tattle-made/feluda/commit/3670bc973ae4a0fc699780fa8a3a91b1efcdd4b0))
+
+* Merge pull request #163 from aatmanvaidya/hash-op
+
+fix: hash operator and worker ([`d51aeb3`](https://github.com/tattle-made/feluda/commit/d51aeb3fbe23bf73235f754534f17667679bd660))
 
 
 ## v0.3.3 (2024-03-12)
@@ -165,11 +200,19 @@ Add ci pip audit ([`40f3ff6`](https://github.com/tattle-made/feluda/commit/40f3f
 
 ## v0.3.2 (2024-03-07)
 
+### Chore
+
+* chore: fixing docker-compose.yml ([`3fe5de6`](https://github.com/tattle-made/feluda/commit/3fe5de666deacb12c1ae755e860dec83a1c7e35a))
+
 ### Ci
 
 * ci: github action to push md5hash worker to staging ([`b5df260`](https://github.com/tattle-made/feluda/commit/b5df26034280af5178f246c46308c5bd3856631d))
 
 * ci: add security checks on PR ([`ca7de73`](https://github.com/tattle-made/feluda/commit/ca7de732d8ed98cdf2d650e1bc0c5f30012f4803))
+
+### Feature
+
+* feat: worker for md5hash operator ([`008cc8d`](https://github.com/tattle-made/feluda/commit/008cc8d52dbfa594db5b861f5374298b4b5a44b9))
 
 ### Fix
 
@@ -186,6 +229,10 @@ Hotfix ([`dc64745`](https://github.com/tattle-made/feluda/commit/dc64745059fc718
 * Merge pull request #143 from aatmanvaidya/md5-ci
 
 ci: github action to push md5hash worker to staging ([`c896d29`](https://github.com/tattle-made/feluda/commit/c896d29bd76f3cd7ea39a5b9667ba3f20174e1b2))
+
+* Merge pull request #142 from aatmanvaidya/md5-hash-worker
+
+feat: worker for md5hash operator ([`da40ef9`](https://github.com/tattle-made/feluda/commit/da40ef96dfa88cb09f03f110ebcd7e6c7b59a62e))
 
 * Merge pull request #135 from duggalsu/test_official_docker_push_action
 
