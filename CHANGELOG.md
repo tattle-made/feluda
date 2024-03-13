@@ -2,6 +2,23 @@
 
 
 
+## v0.4.2 (2024-03-13)
+
+### Fix
+
+* fix: wget issues ([`ff70726`](https://github.com/tattle-made/feluda/commit/ff707269a2a02325de8bb7d38ff2324a50d763fc))
+
+### Unknown
+
+* Merge pull request #175 from tattle-made/hotfix
+
+Hotfix ([`fc508fa`](https://github.com/tattle-made/feluda/commit/fc508fa4f0d39695a55c31f107379e2fd64daf43))
+
+* Merge pull request #174 from duggalsu/fix_wget_issues
+
+Fix wget issues ([`6b98b8f`](https://github.com/tattle-made/feluda/commit/6b98b8f08d361f3d7f99071e9fc9c40685eb14f9))
+
+
 ## v0.4.1 (2024-03-13)
 
 ### Fix
