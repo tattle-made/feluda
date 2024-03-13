@@ -95,6 +95,30 @@ jobs:
           tags: worker-arm64-${{ steps.release.outputs.tag }}
           platforms: linux/arm64
 
+      - name: Publish media hash amd64 worker to dockerhub
+        if: steps.release.outputs.released == 'true'
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/feluda-operator-hash
+          workdir: src/
+          dockerfile: worker/hash/Dockerfile.hash_worker
+          tags: worker-amd64-${{ steps.release.outputs.tag }}
+          platforms: linux/amd64
+
+      - name: Publish media hash arm64 worker to dockerhub
+        if: steps.release.outputs.released == 'true'
+        uses: elgohr/Publish-Docker-Github-Action@main
+        with:
+          username: tattletech
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          name: tattletech/feluda-operator-hash
+          workdir: src/
+          dockerfile: worker/hash/Dockerfile.hash_worker_graviton
+          tags: worker-arm64-${{ steps.release.outputs.tag }}
+          platforms: linux/arm64
+
 #      - name: deploy to cluster
 #        uses: steebchen/kubectl@v2.0.0
 #        with: # defaults to latest kubectl binary version
