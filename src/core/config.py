@@ -81,6 +81,6 @@ class Config:
 def load(filepath) -> Config:
     log.info("Loading config from " + filepath)
     with open(filepath) as f:
-        parameters = yaml.load(f, Loader=yaml.FullLoader)
+        parameters = yaml.safe_load(f)
     config = from_dict(data_class=Config, data=parameters)
     return config

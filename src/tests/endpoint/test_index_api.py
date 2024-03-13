@@ -31,4 +31,4 @@ class TestIndexApi(unittest.TestCase):
         }
         rv = self.app.post("/index", files=files)
         print(rv.data)
-        assert rv.status_code == 200
+        self.assertEqual(rv.status_code, 200)

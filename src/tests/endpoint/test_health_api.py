@@ -15,4 +15,4 @@ class TestIndexApi(unittest.TestCase):
     def test_health(self):
         rv = self.app.get("/health")
         print(rv.status_code)
-        assert rv.status_code == 200
+        self.assertEqual(rv.status_code, 200)
