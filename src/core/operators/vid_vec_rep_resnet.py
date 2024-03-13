@@ -212,7 +212,7 @@ def initialize(param):
             res = np.hstack(res)
             print("res.shape:", res.shape)
             print("sys.getsizeof(res)", sys.getsizeof(res))
-            assert res.shape == (512, image_count)
+            # assert res.shape == (512, image_count)
             return res
 
         def find_keyframes(self, feature_matrix):

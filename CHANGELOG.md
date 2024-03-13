@@ -2,6 +2,37 @@
 
 
 
+## v0.3.4 (2024-03-13)
+
+### Fix
+
+* fix: Fixed yaml load ([`0582882`](https://github.com/tattle-made/feluda/commit/0582882dec8322ab42bd2f7dc69206677858b633))
+
+* fix: Fixed assert issues ([`33f5fd2`](https://github.com/tattle-made/feluda/commit/33f5fd25a137c9176542be50e5fef39a730ebab0))
+
+* fix: linting issues ([`39d90be`](https://github.com/tattle-made/feluda/commit/39d90beb4caf35d93b4364360796d1932f177510))
+
+* fix: Removed secrets ([`11f4186`](https://github.com/tattle-made/feluda/commit/11f4186526ad0437ca5d62fc78216be5fd90f3fa))
+
+### Unknown
+
+* Merge pull request #170 from tattle-made/hotfix
+
+Hotfix ([`8f4e730`](https://github.com/tattle-made/feluda/commit/8f4e730d757094a0396fb71fb5139bd62c171280))
+
+* Merge pull request #169 from duggalsu/fix_yaml_load
+
+fix: Fixed yaml load ([`ab3851f`](https://github.com/tattle-made/feluda/commit/ab3851f41ce1e7820f1e849e24724edda6c44906))
+
+* Merge pull request #168 from duggalsu/fix_assert_issues
+
+fix: Fixed assert issues ([`1290ef9`](https://github.com/tattle-made/feluda/commit/1290ef9e4d23749dc356da5ff2b2aa650fbfe7ca))
+
+* Merge pull request #167 from duggalsu/fix_secrets
+
+Fix secrets ([`3670bc9`](https://github.com/tattle-made/feluda/commit/3670bc973ae4a0fc699780fa8a3a91b1efcdd4b0))
+
+
 ## v0.3.3 (2024-03-12)
 
 ### Chore
