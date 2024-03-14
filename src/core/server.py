@@ -3,6 +3,7 @@ import logging
 from core.config import ServerConfig
 from flask import Flask
 from flask_cors import CORS
+from os import environ
 
 log = logging.getLogger(__name__)
 
@@ -35,4 +36,6 @@ class Server:
         def hello_world():
             return "<p>Hello, World!</p>"
 
-        self.app.run(host="0.0.0.0", port=self.param.parameters.port, debug=True)
+        wsgi_host = environ.get("WSGI_HOST")
+        wsgi_debug = environ.get("WSGI_DEBUG")
+        self.app.run(host=wsgi_host, port=self.param.parameters.port, debug=wsgi_debug)
