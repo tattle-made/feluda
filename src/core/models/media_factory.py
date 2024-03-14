@@ -8,6 +8,7 @@ import wget
 from core.models.media import MediaType
 import logging
 import os
+import tempfile
 
 log = logging.getLogger(__name__)
 
@@ -71,14 +72,18 @@ class TextFactory:
 class VideoFactory:
     @staticmethod
     def make_from_url(video_url):
+        temp_dir = tempfile.gettempdir()
+        temp_url = video_url.split("?")[0]
+        file_name = temp_url.split("/")[-1] + ".mp4"
+        file_path = temp_dir + os.sep + file_name
         try:
             print("Downloading video from url")
-            dl_file = wget.download(video_url)
+            wget.download(video_url, out=file_path)
             print("video downloaded")
         except Exception as e:
             log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
-        return {"path": os.path.realpath(dl_file)}
+        return {"path": file_path}
 
     @staticmethod
     def make_from_file_on_disk(video_path):
@@ -97,14 +102,18 @@ class VideoFactory:
 class AudioFactory:
     @staticmethod
     def make_from_url(audio_url):
+        temp_dir = tempfile.gettempdir()
+        temp_url = audio_url.split("?")[0]
+        file_name = temp_url.split("/")[-1] + ".wav"
+        audio_file = temp_dir + os.sep + file_name
         try:
             print("Downloading audio from url")
-            audio_file = wget.download(audio_url)
+            wget.download(audio_url, out=audio_file)
             print("audio downloaded")
         except Exception as e:
             log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
-        return {"path": os.path.realpath(audio_file)}
+        return {"path": audio_file}
 
     @staticmethod
     def make_from_file_on_disk(audio_path):
