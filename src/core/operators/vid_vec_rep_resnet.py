@@ -1,6 +1,6 @@
 import sys
 import traceback
-import os
+
 
 def initialize(param):
     print("Installing packages for vid_vec_rep_resnet")
