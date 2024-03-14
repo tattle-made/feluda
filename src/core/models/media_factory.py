@@ -92,9 +92,7 @@ class VideoFactory:
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage):
         # save on disk
-        fname = file_data.filename
-        # TODO: test use tmp folder with path if required
-        # fname = "/tmp/" + file_data.filename
+        fname = tempfile.gettempdir() + os.sep + file_data.filename
         file_data.save(fname)
         return {"path": fname}
 
