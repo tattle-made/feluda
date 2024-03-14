@@ -2,6 +2,28 @@
 
 
 
+## v0.4.3 (2024-03-14)
+
+### Fix
+
+* fix: flask issues
+- Added config vars to env template
+- Disabled flask production docker image
+- Enabled flask dev server and debugpy to run on localhost
+- Added debug cmd flag as recommended approach
+- Modified flask app run to load host and debug values from env ([`cfc0601`](https://github.com/tattle-made/feluda/commit/cfc0601bec2c7e29044c2bc48d53cf077e50e6da))
+
+### Unknown
+
+* Merge pull request #177 from tattle-made/hotfix
+
+Hotfix ([`f2a2b3d`](https://github.com/tattle-made/feluda/commit/f2a2b3d770063795cea0615f17c9477781aaa8b5))
+
+* Merge pull request #176 from duggalsu/fix_flask_issues
+
+Fix flask issues ([`c68596f`](https://github.com/tattle-made/feluda/commit/c68596fd380ab7df68b4c9654f9fc2e3197b79f1))
+
+
 ## v0.4.2 (2024-03-13)
 
 ### Fix
