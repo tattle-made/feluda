@@ -2,6 +2,44 @@
 
 
 
+## v0.4.4 (2024-03-14)
+
+### Chore
+
+* chore: removed global import ([`d02366c`](https://github.com/tattle-made/feluda/commit/d02366c90399c39cd691f7d78104ff750bc553a7))
+
+### Fix
+
+* fix: tempfile path for make from file in memory function ([`831a700`](https://github.com/tattle-made/feluda/commit/831a70005eaab0e5b9a67b4db215e8c8b633f158))
+
+* fix: tempfile impl ([`2f9cc07`](https://github.com/tattle-made/feluda/commit/2f9cc077e29915e9422e01c723e0a48dcc70f8d3))
+
+* fix: Removed use of tempfile downloads ([`eb97f09`](https://github.com/tattle-made/feluda/commit/eb97f09ba5396457c82a9f97db25cf2aa6cf6755))
+
+* fix: Created tempfile safely ([`badc043`](https://github.com/tattle-made/feluda/commit/badc0436c55387b1b540096cc6185c91d9563f7d))
+
+### Unknown
+
+* Merge pull request #178 from tattle-made/hotfix
+
+Hotfix ([`a85423a`](https://github.com/tattle-made/feluda/commit/a85423a44e26ef3fb56700853f9d5a517712c29f))
+
+* Merge pull request #164 from duggalsu/fix_tempfile_issues
+
+Fix tempfile issues ([`c846df5`](https://github.com/tattle-made/feluda/commit/c846df5f57ef2bfb4b4f6bcbac7551f504c759df))
+
+* Merge remote-tracking branch &#39;refs/remotes/origin/fix_tempfile_issues&#39; into fix_tempfile_issues
+
+# Conflicts:
+#	src/core/models/media_factory.py ([`36ec52b`](https://github.com/tattle-made/feluda/commit/36ec52b111b788ad424fb0f27562e0ffafa6b650))
+
+* Fix tempfile issues
+- Optimized dockerfile
+- Modified tempfile tests ([`d082d93`](https://github.com/tattle-made/feluda/commit/d082d937f39240f66a19424a5081769410e21852))
+
+* - Fixed video and audio file return path ([`bc43d19`](https://github.com/tattle-made/feluda/commit/bc43d1986a08d8314f8abf9d3976f49f5b9ed669))
+
+
 ## v0.4.3 (2024-03-14)
 
 ### Fix
@@ -109,6 +147,8 @@ Fix subprocess call ([`acf4974`](https://github.com/tattle-made/feluda/commit/ac
 
 * fix: Removed secrets ([`11f4186`](https://github.com/tattle-made/feluda/commit/11f4186526ad0437ca5d62fc78216be5fd90f3fa))
 
+* fix: Created tempfile safely ([`fc0d3a2`](https://github.com/tattle-made/feluda/commit/fc0d3a2b8e70aa17ebae6f76da9099699b911afb))
+
 * fix: hash operator and worker ([`64d0797`](https://github.com/tattle-made/feluda/commit/64d0797b98ffb90ce5569f587b6403b9373893cf))
 
 ### Unknown
@@ -128,6 +168,8 @@ fix: Fixed assert issues ([`1290ef9`](https://github.com/tattle-made/feluda/comm
 * Merge pull request #167 from duggalsu/fix_secrets
 
 Fix secrets ([`3670bc9`](https://github.com/tattle-made/feluda/commit/3670bc973ae4a0fc699780fa8a3a91b1efcdd4b0))
+
+* - Fixed video and audio file return path ([`a251873`](https://github.com/tattle-made/feluda/commit/a2518731af3474881b62505fa10e77267ab163f5))
 
 * Merge pull request #163 from aatmanvaidya/hash-op
 
