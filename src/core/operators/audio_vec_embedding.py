@@ -23,10 +23,7 @@ def normalize(v):
 
 
 def run(audio_file):
-    if isinstance(audio_file, dict):
-        audio = audio_file["path"]
-    else:  # isinstance(file, tempfile._TemporaryFileWrapper)
-        audio = audio_file.name
+    audio = audio_file["path"]
     a, _ = librosa.load(audio, sr=44100)
     query_audio = a[None, :]
     _, emb = model.inference(query_audio)

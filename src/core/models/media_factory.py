@@ -7,7 +7,7 @@ from werkzeug.datastructures import FileStorage
 import wget
 from core.models.media import MediaType
 import logging
-import tempfile
+import os
 
 log = logging.getLogger(__name__)
 
@@ -71,18 +71,14 @@ class TextFactory:
 class VideoFactory:
     @staticmethod
     def make_from_url(video_url):
-        fname = tempfile.NamedTemporaryFile(suffix='.mp4', delete=True)
         try:
             print("Downloading video from url")
-            wget.download(video_url, out=fname.name)
+            dl_file = wget.download(video_url)
             print("video downloaded")
-            import os
-            fsize = os.path.getsize(fname.name) / 1e6
-            print("test original size: ", fsize)
         except Exception as e:
             log.exception("Error downloading video:", e)
             raise Exception("Error Downloading Video")
-        return fname
+        return {"path": os.path.realpath(dl_file)}
 
     @staticmethod
     def make_from_file_on_disk(video_path):
@@ -101,15 +97,14 @@ class VideoFactory:
 class AudioFactory:
     @staticmethod
     def make_from_url(audio_url):
-        audio_file = tempfile.NamedTemporaryFile(suffix='.wav', delete=True)
         try:
             print("Downloading audio from url")
-            wget.download(audio_url, out=audio_file.name)
+            audio_file = wget.download(audio_url)
             print("audio downloaded")
         except Exception as e:
             log.exception("Error downloading audio:", e)
             raise Exception("Error Downloading audio")
-        return audio_file
+        return {"path": os.path.realpath(audio_file)}
 
     @staticmethod
     def make_from_file_on_disk(audio_path):

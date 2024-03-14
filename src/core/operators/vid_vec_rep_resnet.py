@@ -228,12 +228,7 @@ def initialize(param):
 
 
 def run(file):
-    if isinstance(file, dict):
-        is_temp_file = False
-        fname = file["path"]
-    else:  # isinstance(file, tempfile._TemporaryFileWrapper)
-        is_temp_file = True
-        fname = file.name
+    fname = file["path"]
     fsize = os.path.getsize(fname) / 1e6
     print("original size: ", fsize)
     # if fsize < 10:
@@ -251,10 +246,7 @@ def run(file):
             yield video
         finally:
             video.release()
-            if is_temp_file:
-                file.close()
-            else:
-                os.remove(fname)
+            os.remove(fname)
 
     with video_capture(fname) as video:
         vid_analyzer = VideoAnalyzer(video)
