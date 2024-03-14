@@ -46,11 +46,11 @@ EXPOSE 7000
 FROM base AS debug
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh jq
 RUN pip install --no-cache-dir debugpy nose2
-RUN export FLASK_DEBUG=1
 USER 999
-CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m flask run -h 0.0.0.0 -p 5000
+CMD python -m debugpy --listen localhost:5678 --wait-for-client -m flask run --debug -h localhost -p 5000
 
 #### PROD IMAGE ####
-FROM base AS prod
-USER 999
-CMD flask run --host=0.0.0.0
+# TODO: Setup production WSGI server - https://flask.palletsprojects.com/en/3.0.x/deploying/index.html
+#FROM base AS prod
+#USER 999
+#CMD flask run --host=0.0.0.0
