@@ -9,11 +9,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-        with:
-          ref: main
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
 
@@ -29,7 +24,7 @@ jobs:
       - name: Build and push amd64
         uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
         with:
-          context: src/
+          context: "{{defaultContext}}:src/"
           file: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet
           platforms: linux/amd64
           push: true
@@ -38,7 +33,7 @@ jobs:
       - name: Build and push arm64
         uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
         with:
-          context: src/
+          context: "{{defaultContext}}:src/"
           file: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet_graviton
           platforms: linux/arm64
           push: true
