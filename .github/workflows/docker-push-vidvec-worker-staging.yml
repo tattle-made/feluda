@@ -1,33 +1,40 @@
 name: Publish Video Worker to Dockerhub for Staging
 
+permissions:
+  contents: read
+
 on: workflow_dispatch
 
 jobs:
-  api:
+  docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: development
-      - name: "Setup Node version"
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.9.0
-      - name: Declare some variables
-        id: vars
-        shell: bash
-        run: |
-          echo "setting variables"
-          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - uses: elgohr/Publish-Docker-Github-Action@main
+        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20 # v3.2.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v.3.1.0
         with:
-          username: tattletech
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          name: tattletech/feluda-operator-vidvec
-          workdir: src/
-          dockerfile: worker/vidvec/Dockerfile.video_worker
-          tags: worker-amd64-latest
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push amd64
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
+        with:
+          context: "{{defaultContext}}:src/"
+          file: worker/vidvec/Dockerfile.video_worker
           platforms: linux/amd64
+          push: true
+          tags: tattletech/feluda-operator-vidvec:worker-amd64-latest
+
+      - name: Build and push arm64
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
+        with:
+          context: "{{defaultContext}}:src/"
+          file: worker/vidvec/Dockerfile.video_worker_graviton
+          platforms: linux/arm64
+          push: true
+          tags: tattletech/feluda-operator-vidvec:worker-arm64-latest
