@@ -2,6 +2,57 @@
 
 
 
+## v0.4.5 (2024-03-15)
+
+### Ci
+
+* ci: removed explict checkout in docker build ([`2068476`](https://github.com/tattle-made/feluda/commit/206847606128fd7de54d59274c64d4592a162e3f))
+
+* ci: fix context in test workflow ([`201c900`](https://github.com/tattle-made/feluda/commit/201c900b7d67bc55df7bc3de4b9d9351f692ea3d))
+
+* ci: Fix issues with docker push vidvec benchmark test workflow ([`1d4a31e`](https://github.com/tattle-made/feluda/commit/1d4a31e31d9a7f80aee71ee1df93c4a28b0448c9))
+
+### Fix
+
+* fix: Fix workflows ([`c356dc9`](https://github.com/tattle-made/feluda/commit/c356dc9cfb69211686fbcb3a1fbb076acc01f6f3))
+
+### Unknown
+
+* Merge pull request #186 from tattle-made/hotfix
+
+Hotfix ([`2c19559`](https://github.com/tattle-made/feluda/commit/2c195594ce9984dd36d52c1b0210807f1bde2329))
+
+* Merge pull request #185 from duggalsu/fix_docker_workflow
+
+Fix docker workflow ([`acc4000`](https://github.com/tattle-made/feluda/commit/acc4000c3939c1f3c9829f9eb5fdc863086c1942))
+
+* Merge pull request #184 from tattle-made/hotfix
+
+Hotfix ([`3d6c84f`](https://github.com/tattle-made/feluda/commit/3d6c84fbe7d53ba99ed5b6dac071e918bda9afa5))
+
+* Merge pull request #183 from duggalsu/fix_vidvec_benchmark_test_workflow_2
+
+Fix vidvec benchmark test workflow 2 ([`7d5cc01`](https://github.com/tattle-made/feluda/commit/7d5cc0168735453dded3138f26fc70c6e037df17))
+
+* Merge pull request #182 from tattle-made/hotfix
+
+Hotfix ([`f6d87f8`](https://github.com/tattle-made/feluda/commit/f6d87f8c2ff893d5a8ff41b3ca6cbfd87b1d1fff))
+
+* Merge pull request #181 from duggalsu/fix_vidvec_benchmark_test_workflow
+
+Fix vidvec benchmark test workflow ([`6f2a32a`](https://github.com/tattle-made/feluda/commit/6f2a32a3ed2a663c180604cd70259ad90dc7baa2))
+
+* Merge pull request #180 from tattle-made/hotfix
+
+Hotfix ([`0b30a78`](https://github.com/tattle-made/feluda/commit/0b30a78e503a5533bf8c6d38eaa08165d6ef26af))
+
+* Merge pull request #179 from tattle-made/scorecard_workflow
+
+Scorecard workflow ([`d1f468d`](https://github.com/tattle-made/feluda/commit/d1f468d545193a0a077f876faf474b6e7e3ba2b7))
+
+* Create scorecard.yml ([`7bf1e20`](https://github.com/tattle-made/feluda/commit/7bf1e2015672db2f82ef47e05b4a8ee4d739f3da))
+
+
 ## v0.4.4 (2024-03-14)
 
 ### Chore
