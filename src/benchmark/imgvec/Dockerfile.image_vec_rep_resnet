@@ -1,4 +1,4 @@
-FROM python:3.11-slim@sha256:637774748f62b832dc11e7b286e48cd716727ed04b45a0322776c01bc526afc3 AS base
+FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
 
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -22,7 +22,7 @@ ENV PATH="/usr/app/venv/bin:$PATH"
 
 RUN pip install --no-cache-dir --upgrade pip
 COPY --chown=python:python ./core/operators/image_vec_rep_resnet_requirements.txt /usr/app/core/operators/image_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir -r /usr/app/core/operators/image_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/core/operators/image_vec_rep_resnet_requirements.txt
 COPY --chown=python:python ./core/operators/image_vec_rep_resnet.py /usr/app/core/operators/image_vec_rep_resnet.py
 
 COPY --chown=python:python ./core/operators/sample_data/text.png /usr/app/core/operators/sample_data/text.png

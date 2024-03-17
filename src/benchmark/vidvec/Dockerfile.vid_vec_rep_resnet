@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye AS base
+FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
 
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -20,7 +20,7 @@ ENV PATH="/usr/app/venv/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade pip
 # video requirments file
 COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir -r /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
 # video vec file
 COPY --chown=python:python ./core/operators/vid_vec_rep_resnet.py /usr/app/core/operators/vid_vec_rep_resnet.py
 # video vec test file
@@ -42,7 +42,7 @@ RUN apt-get purge -y --auto-remove \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh wget
-RUN pip install numpy Pillow wget requests Werkzeug
+RUN pip install --no-cache-dir numpy Pillow wget requests Werkzeug
 
 USER 999
 CMD tail -f /dev/null
