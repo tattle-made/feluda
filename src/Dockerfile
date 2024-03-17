@@ -1,6 +1,6 @@
 # FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
-FROM python:3.11-slim-bullseye AS base
+FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
 
 # COPY --from=ffmpeg / /
 RUN apt-get update \
@@ -31,7 +31,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
 #     apt-get install -y tesseract-ocr tesseract-ocr-hin
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends wget
 COPY --chown=python:python requirements.txt /usr/app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r requirements.txt
 COPY --chown=python:python . /usr/app
 EXPOSE 7000
 
