@@ -2,6 +2,38 @@
 
 
 
+## v0.4.6 (2024-03-17)
+
+### Ci
+
+* ci: removed require hashes to allow no-deps to work ([`e634622`](https://github.com/tattle-made/feluda/commit/e6346228df9eace2204e54915439ff9ddf838101))
+
+* ci: added no deps and require hashes for pip audit ([`e5f110c`](https://github.com/tattle-made/feluda/commit/e5f110ceb5184e4a0c2017a950d351fefb9f9946))
+
+### Fix
+
+* fix: Security enhancements and performance optimizations
+- security: Removed exposed port in all workers
+- security: Pinned docker platform in all dockerfile images
+- security: Pinned docker images digest in all dockerfile images
+- security: Pinned python packages by hash digest in all dockerfile images
+- perf: Optimized workers and test image for smaller size and build times
+- perf: Enabled github docker cache for all workflows
+- docs: Updated readme with generate hash instructions for requirements ([`7b181af`](https://github.com/tattle-made/feluda/commit/7b181af09738467ee8e37f24bb664c858cccb6c4))
+
+### Unknown
+
+* Merge pull request #188 from tattle-made/hotfix
+
+Hotfix ([`f92ef82`](https://github.com/tattle-made/feluda/commit/f92ef820710bcf5f4dfe2e874d58128e0df0dea3))
+
+* Merge pull request #187 from duggalsu/opt_vid_worker
+
+Opt vid worker ([`217d60d`](https://github.com/tattle-made/feluda/commit/217d60d744cfd556c1dab8e55e801dffc4848fd7))
+
+* - setup python version ([`2d1863c`](https://github.com/tattle-made/feluda/commit/2d1863c3be284b71d99354b82ebc1c1061c5422f))
+
+
 ## v0.4.5 (2024-03-15)
 
 ### Ci
