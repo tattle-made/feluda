@@ -41,6 +41,8 @@ jobs:
           # must be populated earlier in the CI
           virtual-environment: env1/
           local: true
+          require-hashes: true
+          no-deps: true
           inputs: |
             ./src/requirements.txt
 
@@ -54,6 +56,8 @@ jobs:
           # must be populated earlier in the CI
           virtual-environment: env2/
           local: true
+          require-hashes: true
+          no-deps: true
           inputs: |
             ./src/core/operators/audio_vec_embedding_requirements.txt
 
@@ -67,6 +71,8 @@ jobs:
           # must be populated earlier in the CI
           virtual-environment: env3/
           local: true
+          require-hashes: true
+          no-deps: true
           inputs: |
             ./src/core/operators/vid_vec_rep_resnet_requirements.txt
 
