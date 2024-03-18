@@ -27,6 +27,7 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/hash/Dockerfile.hash_worker
           platforms: linux/amd64
+          build-args: UID=1000, GID=1000
           push: true
           tags: tattletech/feluda-operator-hash:worker-amd64-latest
 
@@ -36,5 +37,6 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/hash/Dockerfile.hash_worker_graviton
           platforms: linux/arm64
+          build-args: UID=1000, GID=1000
           push: true
           tags: tattletech/feluda-operator-hash:worker-arm64-latest
