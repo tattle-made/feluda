@@ -1,5 +1,7 @@
 ### BUILDER IMAGE ###
 FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS builder
+ARG UID
+ARG GID
 
 # Fetch OS packages updates, upgrade packages, and install packages required for build
 RUN apt-get update \
@@ -10,8 +12,8 @@ RUN apt-get update \
     --no-install-recommends python3-dev
 
 # Set python user
-RUN groupadd -g 999 python \
-    && useradd --create-home -r -u 999 -g python python \
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
     && mkdir /home/python/app \
     && chown -R python:python /home/python/app/
 # Set working dir
@@ -37,6 +39,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 ### PRODUCTION IMAGE ###
 FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS production
+ARG UID
+ARG GID
 
 # Update image, install required utils, and remove cache
 RUN apt-get update \
@@ -45,8 +49,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Set python group and user, create home dir, and create app dir for user
-RUN groupadd -g 999 python \
-    && useradd --create-home -r -u 999 -g python python \
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
     && mkdir /home/python/app \
     && chown -R python:python /home/python/app/
 

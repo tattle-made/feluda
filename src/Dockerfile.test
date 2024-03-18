@@ -1,5 +1,7 @@
 ### TEST IMAGE ###
 FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS test
+ARG UID
+ARG GID
 
 # Update image, install required utils, and remove cache
 RUN apt-get update \
@@ -8,8 +10,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Set python group and user, create home dir, create app dir, change ownership of app to user
-RUN groupadd -g 999 python \
-    && useradd --create-home -r -u 999 -g python python \
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
     && mkdir /home/python/app \
     && chown -R python:python /home/python/app/
 
