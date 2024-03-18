@@ -2,6 +2,25 @@
 
 
 
+## v0.4.8 (2024-03-18)
+
+### Fix
+
+* fix: Fixed volume sync and non-root user permission issues ([`5fd4258`](https://github.com/tattle-made/feluda/commit/5fd42588ecf7f8edaae528fcdb0e61e701d64ae8))
+
+### Unknown
+
+* Merge pull request #215 from tattle-made/hotfix
+
+Hotfix ([`20ed58a`](https://github.com/tattle-made/feluda/commit/20ed58aa398fad0e6acb58e07e6529fd5c15c895))
+
+* Merge pull request #214 from duggalsu/fix_volume_sync
+
+Fix volume sync ([`772d71d`](https://github.com/tattle-made/feluda/commit/772d71da92180f630dea452acb7a4d114ff4c6f1))
+
+* - Added UID and GID args to ci-sut docker compose ([`3bdb16a`](https://github.com/tattle-made/feluda/commit/3bdb16ad7dbab3936ceccf697c86e6d53a6f8d7d))
+
+
 ## v0.4.7 (2024-03-18)
 
 ### Ci
