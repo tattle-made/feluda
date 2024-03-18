@@ -1,5 +1,5 @@
 ### BUILDER IMAGE ###
-FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS builder
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS builder
 
 # Fetch OS packages updates, upgrade packages, and install packages required for build
 RUN apt-get update \
@@ -37,7 +37,7 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 
 ### PRODUCTION IMAGE ###
-FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS production
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS production
 
 # Update image, install required utils, and remove cache
 RUN apt-get update \
