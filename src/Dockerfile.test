@@ -1,5 +1,5 @@
 ### TEST IMAGE ###
-FROM --platform=$BUILDPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS test
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS test
 
 # Update image, install required utils, and remove cache
 RUN apt-get update \

@@ -64,8 +64,6 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: tattletech/feluda-server:${{ steps.vars.outputs.sha_short }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: deploy to cluster
         uses: steebchen/kubectl@7c4c70d551952e40881998b840e16d4d9824a54f # v2.1.1
