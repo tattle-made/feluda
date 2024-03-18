@@ -2,6 +2,23 @@
 
 
 
+## v0.4.9 (2024-03-18)
+
+### Fix
+
+* fix(ci): Added docker build args to github workflows ([`496d600`](https://github.com/tattle-made/feluda/commit/496d60029d2ef9cc8b95ed3ca4e88d3d5f511aa0))
+
+### Unknown
+
+* Merge pull request #217 from tattle-made/hotfix
+
+Hotfix ([`c039f63`](https://github.com/tattle-made/feluda/commit/c039f631d7c8f39e7b7a123fc17519f5103a103d))
+
+* Merge pull request #216 from duggalsu/fix_docker_build_args
+
+Fix docker build args ([`ef9c159`](https://github.com/tattle-made/feluda/commit/ef9c1596b79595bbfab65b5b0b71dc3fe520dc09))
+
+
 ## v0.4.8 (2024-03-18)
 
 ### Fix
