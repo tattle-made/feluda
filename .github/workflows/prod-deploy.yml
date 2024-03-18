@@ -62,7 +62,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: Dockerfile
           platforms: linux/amd64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-server:${{ steps.vars.outputs.sha_short }}
 
