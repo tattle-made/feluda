@@ -49,6 +49,25 @@ def generate_document(post_id: str, representation: any):
 
 
 def indexer(feluda):
+
+    def calc_video_vec_crc(video_vec_gen):
+        import numpy
+        import binascii
+        count = 0
+        combined_vec = [[]]
+        for vector in video_vec_gen:
+            if count == 0:
+                # skip first vector - mean of keyframes
+                count += 1
+            else:
+                combined_vec.append(vector)
+        # remove first list which is empty
+        combined_vec = combined_vec[1:]
+        combined_vec_arr = numpy.asarray(combined_vec)
+        print(combined_vec_arr)
+        arr_crc = binascii.crc32(combined_vec_arr.tobytes(order='C'))
+        return arr_crc
+
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         file_content = json.loads(body)
@@ -56,6 +75,8 @@ def indexer(feluda):
         try:
             log.info("Processing file")
             video_vec = vid_vec_rep_resnet.run(video_path)
+            video_vec_crc = calc_video_vec_crc(video_vec)
+            log.info("video_vec_crc:{}".format(video_vec_crc))
             doc = generate_document(video_path["path"], video_vec)
             media_type = MediaType.VIDEO
             result = feluda.store.store(media_type, doc)
