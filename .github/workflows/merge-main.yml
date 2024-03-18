@@ -62,7 +62,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/vidvec/Dockerfile.video_worker
           platforms: linux/amd64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-operator-vidvec:worker-amd64-${{ needs.release.outputs.tag }}
 
@@ -72,7 +74,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/vidvec/Dockerfile.video_worker_graviton
           platforms: linux/arm64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-operator-vidvec:worker-arm64-${{ needs.release.outputs.tag }}
 
@@ -82,7 +86,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/audiovec/Dockerfile.audio_worker
           platforms: linux/amd64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-operator-audiovec:worker-amd64-${{ needs.release.outputs.tag }}
 
@@ -92,7 +98,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/audiovec/Dockerfile.audio_worker_graviton
           platforms: linux/arm64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-operator-audiovec:worker-arm64-${{ needs.release.outputs.tag }}
 
@@ -102,7 +110,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/hash/Dockerfile.hash_worker
           platforms: linux/amd64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-operator-hash:worker-amd64-${{ needs.release.outputs.tag }}
 
@@ -112,7 +122,9 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/hash/Dockerfile.hash_worker_graviton
           platforms: linux/arm64
-          build-args: UID=1000, GID=1000
+          build-args: |
+            "UID=1000"
+            "GID=1000"
           push: true
           tags: tattletech/feluda-operator-hash:worker-arm64-${{ needs.release.outputs.tag }}
 
