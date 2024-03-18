@@ -2,6 +2,65 @@
 
 
 
+## v0.4.7 (2024-03-18)
+
+### Ci
+
+* ci: remove intermediate cache deletion step ([`ade1e67`](https://github.com/tattle-made/feluda/commit/ade1e6795a886e497c7910f7839358389db0398b))
+
+* ci: updated dockerfile base image platform ([`d0542bf`](https://github.com/tattle-made/feluda/commit/d0542bf63a0469f83ff053e9e7621dfe4f7bf454))
+
+* ci: Add github cache action for local key-based caching ([`7b8ed07`](https://github.com/tattle-made/feluda/commit/7b8ed07566cfc6430ab8678b37df20ffca81c291))
+
+* ci: Added dependabot config ([`8a57943`](https://github.com/tattle-made/feluda/commit/8a57943ed43b2feb7b4a7b19d1bdd7c20ac4e68b))
+
+### Fix
+
+* fix: Remove github caching and modify base image to use TARGETPLATFORM ([`0dfb172`](https://github.com/tattle-made/feluda/commit/0dfb17245c54d7efb81da38d72fb66daa09e70b9))
+
+### Unknown
+
+* Merge pull request #213 from tattle-made/hotfix
+
+Hotfix ([`4541139`](https://github.com/tattle-made/feluda/commit/4541139173016b62bcb254d932ee1396667dea10))
+
+* Merge pull request #212 from duggalsu/remove_github_caching
+
+Remove GitHub caching ([`c490cea`](https://github.com/tattle-made/feluda/commit/c490cea40a5611249cff6cef99d97096c2132e08))
+
+* Merge pull request #211 from tattle-made/hotfix
+
+Hotfix ([`cdb081a`](https://github.com/tattle-made/feluda/commit/cdb081a603b326953259137757513ced996cf4c5))
+
+* Merge pull request #210 from duggalsu/rm_intermediate_cache_del
+
+Rm intermediate cache del ([`caae5a8`](https://github.com/tattle-made/feluda/commit/caae5a8202ab6b4326d8b663689cbf0e3adb980c))
+
+* Merge pull request #209 from tattle-made/hotfix
+
+Hotfix ([`decd119`](https://github.com/tattle-made/feluda/commit/decd119bd39781281a7f47151280b34dd4f90763))
+
+* Merge pull request #208 from duggalsu/modify_base_img_platform
+
+Modify base img platform ([`c48efa4`](https://github.com/tattle-made/feluda/commit/c48efa4af4aae2eeeb461eb4d5049e17bccb8b82))
+
+* Merge pull request #201 from tattle-made/hotfix
+
+Hotfix ([`d91149a`](https://github.com/tattle-made/feluda/commit/d91149ab2602dcce0096451824726fe0cb52c943))
+
+* Merge pull request #200 from duggalsu/fix_github_caching
+
+Fix GitHub caching ([`389f021`](https://github.com/tattle-made/feluda/commit/389f0213b493e5b4acd498cdd5881f925b2bd9d3))
+
+* Merge pull request #190 from tattle-made/hotfix
+
+Hotfix ([`5d13eea`](https://github.com/tattle-made/feluda/commit/5d13eeaf50635f5faadbb7aa2819410d5b6a59b1))
+
+* Merge pull request #189 from duggalsu/add_dependabot_yml
+
+Add dependabot yml ([`74945f2`](https://github.com/tattle-made/feluda/commit/74945f2643f99b70f598538e3cb52460bdcfa420))
+
+
 ## v0.4.6 (2024-03-17)
 
 ### Ci

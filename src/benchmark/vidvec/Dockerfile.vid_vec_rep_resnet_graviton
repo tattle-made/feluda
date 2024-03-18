@@ -1,4 +1,6 @@
 FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
+ARG UID
+ARG GID
 
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -8,9 +10,10 @@ RUN apt-get update \
     --no-install-recommends python3-dev
 
 # Set python user
-RUN groupadd -g 999 python && \
-    useradd --create-home -r -u 999 -g python python
-RUN mkdir /usr/app && chown python:python /usr/app
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /usr/app \
+    && chown -R python:python /usr/app
 WORKDIR /usr/app
 
 # Set venv
@@ -68,5 +71,5 @@ RUN apt-get purge -y --auto-remove \
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh wget
 RUN pip install --no-cache-dir numpy Pillow wget requests Werkzeug
 
-USER 999
+USER python:python
 CMD tail -f /dev/null

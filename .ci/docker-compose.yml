@@ -4,6 +4,9 @@ services:
       context: ./../src
       dockerfile: Dockerfile.test
       target: test
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
 #    env_file: ./../src/test.env
     command: bash -c "python -m unittest discover -s ./tests/core/models -p "test_*.py";
       python -m unittest core.operators.test_vid_vec_rep_resnet;

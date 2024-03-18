@@ -1,6 +1,8 @@
 # FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
 FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
+ARG UID
+ARG GID
 
 # COPY --from=ffmpeg / /
 RUN apt-get update \
@@ -14,9 +16,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 
 # Set python user
-RUN groupadd -g 999 python && \
-    useradd --create-home -r -u 999 -g python python
-RUN mkdir /usr/app && chown python:python /usr/app
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /usr/app \
+    && chown -R python:python /usr/app
 WORKDIR /usr/app
 
 # Set venv
@@ -46,11 +49,11 @@ EXPOSE 7000
 FROM base AS debug
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh jq
 RUN pip install --no-cache-dir debugpy nose2
-USER 999
+USER python:python
 CMD python -m debugpy --listen localhost:5678 --wait-for-client -m flask run --debug -h localhost -p 5000
 
 #### PROD IMAGE ####
 # TODO: Setup production WSGI server - https://flask.palletsprojects.com/en/3.0.x/deploying/index.html
 #FROM base AS prod
-#USER 999
+#USER python:python
 #CMD flask run --host=0.0.0.0
