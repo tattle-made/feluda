@@ -47,8 +47,11 @@ services:
       context: ./src
       dockerfile: Dockerfile
       target: debug
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
     volumes:
-      - ./src:/app
+      - ./src:/usr/app
     env_file: ./src/development.env
     ports:
       - 7000:7000
