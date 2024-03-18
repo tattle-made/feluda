@@ -27,6 +27,7 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/vidvec/Dockerfile.video_worker
           platforms: linux/amd64
+          build-args: UID=1000, GID=1000
           push: true
           tags: tattletech/feluda-operator-vidvec:worker-amd64-latest
 
@@ -36,5 +37,6 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: worker/vidvec/Dockerfile.video_worker_graviton
           platforms: linux/arm64
+          build-args: UID=1000, GID=1000
           push: true
           tags: tattletech/feluda-operator-vidvec:worker-arm64-latest

@@ -27,6 +27,7 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet
           platforms: linux/amd64
+          build-args: UID=1000, GID=1000
           push: true
           tags: tattletech/feluda-operator-vidvec:benchmark-amd64-latest
 
@@ -36,5 +37,6 @@ jobs:
           context: "{{defaultContext}}:src/"
           file: benchmark/vidvec/Dockerfile.vid_vec_rep_resnet_graviton
           platforms: linux/arm64
+          build-args: UID=1000, GID=1000
           push: true
           tags: tattletech/feluda-operator-vidvec:benchmark-arm64-latest
