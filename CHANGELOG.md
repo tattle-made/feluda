@@ -2,7 +2,335 @@
 
 
 
+## v0.4.10 (2024-03-18)
+
+### Fix
+
+* fix(ci): Fixed github workflow docker build args format ([`b6a3d14`](https://github.com/tattle-made/feluda/commit/b6a3d14ee6f12b7614fcd2613abc3879a9505f8c))
+
+### Unknown
+
+* Merge pull request #219 from tattle-made/hotfix
+
+Hotfix ([`4b4a3ff`](https://github.com/tattle-made/feluda/commit/4b4a3ffebd2241add79a676d4a196b7ca2e7faa7))
+
+* Merge pull request #218 from duggalsu/fix_docker_build_args_format
+
+Fix docker build args format ([`fe1adfd`](https://github.com/tattle-made/feluda/commit/fe1adfd9593131245889932722ed9f2ece853032))
+
+
+## v0.4.9 (2024-03-18)
+
+### Fix
+
+* fix(ci): Added docker build args to github workflows ([`496d600`](https://github.com/tattle-made/feluda/commit/496d60029d2ef9cc8b95ed3ca4e88d3d5f511aa0))
+
+### Unknown
+
+* Merge pull request #217 from tattle-made/hotfix
+
+Hotfix ([`c039f63`](https://github.com/tattle-made/feluda/commit/c039f631d7c8f39e7b7a123fc17519f5103a103d))
+
+* Merge pull request #216 from duggalsu/fix_docker_build_args
+
+Fix docker build args ([`ef9c159`](https://github.com/tattle-made/feluda/commit/ef9c1596b79595bbfab65b5b0b71dc3fe520dc09))
+
+
+## v0.4.8 (2024-03-18)
+
+### Fix
+
+* fix: Fixed volume sync and non-root user permission issues ([`5fd4258`](https://github.com/tattle-made/feluda/commit/5fd42588ecf7f8edaae528fcdb0e61e701d64ae8))
+
+### Unknown
+
+* Merge pull request #215 from tattle-made/hotfix
+
+Hotfix ([`20ed58a`](https://github.com/tattle-made/feluda/commit/20ed58aa398fad0e6acb58e07e6529fd5c15c895))
+
+* Merge pull request #214 from duggalsu/fix_volume_sync
+
+Fix volume sync ([`772d71d`](https://github.com/tattle-made/feluda/commit/772d71da92180f630dea452acb7a4d114ff4c6f1))
+
+* - Added UID and GID args to ci-sut docker compose ([`3bdb16a`](https://github.com/tattle-made/feluda/commit/3bdb16ad7dbab3936ceccf697c86e6d53a6f8d7d))
+
+
+## v0.4.7 (2024-03-18)
+
+### Ci
+
+* ci: remove intermediate cache deletion step ([`ade1e67`](https://github.com/tattle-made/feluda/commit/ade1e6795a886e497c7910f7839358389db0398b))
+
+* ci: updated dockerfile base image platform ([`d0542bf`](https://github.com/tattle-made/feluda/commit/d0542bf63a0469f83ff053e9e7621dfe4f7bf454))
+
+* ci: Add github cache action for local key-based caching ([`7b8ed07`](https://github.com/tattle-made/feluda/commit/7b8ed07566cfc6430ab8678b37df20ffca81c291))
+
+* ci: Added dependabot config ([`8a57943`](https://github.com/tattle-made/feluda/commit/8a57943ed43b2feb7b4a7b19d1bdd7c20ac4e68b))
+
+### Fix
+
+* fix: Remove github caching and modify base image to use TARGETPLATFORM ([`0dfb172`](https://github.com/tattle-made/feluda/commit/0dfb17245c54d7efb81da38d72fb66daa09e70b9))
+
+### Unknown
+
+* Merge pull request #213 from tattle-made/hotfix
+
+Hotfix ([`4541139`](https://github.com/tattle-made/feluda/commit/4541139173016b62bcb254d932ee1396667dea10))
+
+* Merge pull request #212 from duggalsu/remove_github_caching
+
+Remove GitHub caching ([`c490cea`](https://github.com/tattle-made/feluda/commit/c490cea40a5611249cff6cef99d97096c2132e08))
+
+* Merge pull request #211 from tattle-made/hotfix
+
+Hotfix ([`cdb081a`](https://github.com/tattle-made/feluda/commit/cdb081a603b326953259137757513ced996cf4c5))
+
+* Merge pull request #210 from duggalsu/rm_intermediate_cache_del
+
+Rm intermediate cache del ([`caae5a8`](https://github.com/tattle-made/feluda/commit/caae5a8202ab6b4326d8b663689cbf0e3adb980c))
+
+* Merge pull request #209 from tattle-made/hotfix
+
+Hotfix ([`decd119`](https://github.com/tattle-made/feluda/commit/decd119bd39781281a7f47151280b34dd4f90763))
+
+* Merge pull request #208 from duggalsu/modify_base_img_platform
+
+Modify base img platform ([`c48efa4`](https://github.com/tattle-made/feluda/commit/c48efa4af4aae2eeeb461eb4d5049e17bccb8b82))
+
+* Merge pull request #201 from tattle-made/hotfix
+
+Hotfix ([`d91149a`](https://github.com/tattle-made/feluda/commit/d91149ab2602dcce0096451824726fe0cb52c943))
+
+* Merge pull request #200 from duggalsu/fix_github_caching
+
+Fix GitHub caching ([`389f021`](https://github.com/tattle-made/feluda/commit/389f0213b493e5b4acd498cdd5881f925b2bd9d3))
+
+* Merge pull request #190 from tattle-made/hotfix
+
+Hotfix ([`5d13eea`](https://github.com/tattle-made/feluda/commit/5d13eeaf50635f5faadbb7aa2819410d5b6a59b1))
+
+* Merge pull request #189 from duggalsu/add_dependabot_yml
+
+Add dependabot yml ([`74945f2`](https://github.com/tattle-made/feluda/commit/74945f2643f99b70f598538e3cb52460bdcfa420))
+
+
+## v0.4.6 (2024-03-17)
+
+### Ci
+
+* ci: removed require hashes to allow no-deps to work ([`e634622`](https://github.com/tattle-made/feluda/commit/e6346228df9eace2204e54915439ff9ddf838101))
+
+* ci: added no deps and require hashes for pip audit ([`e5f110c`](https://github.com/tattle-made/feluda/commit/e5f110ceb5184e4a0c2017a950d351fefb9f9946))
+
+### Fix
+
+* fix: Security enhancements and performance optimizations
+- security: Removed exposed port in all workers
+- security: Pinned docker platform in all dockerfile images
+- security: Pinned docker images digest in all dockerfile images
+- security: Pinned python packages by hash digest in all dockerfile images
+- perf: Optimized workers and test image for smaller size and build times
+- perf: Enabled github docker cache for all workflows
+- docs: Updated readme with generate hash instructions for requirements ([`7b181af`](https://github.com/tattle-made/feluda/commit/7b181af09738467ee8e37f24bb664c858cccb6c4))
+
+### Unknown
+
+* Merge pull request #188 from tattle-made/hotfix
+
+Hotfix ([`f92ef82`](https://github.com/tattle-made/feluda/commit/f92ef820710bcf5f4dfe2e874d58128e0df0dea3))
+
+* Merge pull request #187 from duggalsu/opt_vid_worker
+
+Opt vid worker ([`217d60d`](https://github.com/tattle-made/feluda/commit/217d60d744cfd556c1dab8e55e801dffc4848fd7))
+
+* - setup python version ([`2d1863c`](https://github.com/tattle-made/feluda/commit/2d1863c3be284b71d99354b82ebc1c1061c5422f))
+
+
+## v0.4.5 (2024-03-15)
+
+### Ci
+
+* ci: removed explict checkout in docker build ([`2068476`](https://github.com/tattle-made/feluda/commit/206847606128fd7de54d59274c64d4592a162e3f))
+
+* ci: fix context in test workflow ([`201c900`](https://github.com/tattle-made/feluda/commit/201c900b7d67bc55df7bc3de4b9d9351f692ea3d))
+
+* ci: Fix issues with docker push vidvec benchmark test workflow ([`1d4a31e`](https://github.com/tattle-made/feluda/commit/1d4a31e31d9a7f80aee71ee1df93c4a28b0448c9))
+
+### Fix
+
+* fix: Fix workflows ([`c356dc9`](https://github.com/tattle-made/feluda/commit/c356dc9cfb69211686fbcb3a1fbb076acc01f6f3))
+
+### Unknown
+
+* Merge pull request #186 from tattle-made/hotfix
+
+Hotfix ([`2c19559`](https://github.com/tattle-made/feluda/commit/2c195594ce9984dd36d52c1b0210807f1bde2329))
+
+* Merge pull request #185 from duggalsu/fix_docker_workflow
+
+Fix docker workflow ([`acc4000`](https://github.com/tattle-made/feluda/commit/acc4000c3939c1f3c9829f9eb5fdc863086c1942))
+
+* Merge pull request #184 from tattle-made/hotfix
+
+Hotfix ([`3d6c84f`](https://github.com/tattle-made/feluda/commit/3d6c84fbe7d53ba99ed5b6dac071e918bda9afa5))
+
+* Merge pull request #183 from duggalsu/fix_vidvec_benchmark_test_workflow_2
+
+Fix vidvec benchmark test workflow 2 ([`7d5cc01`](https://github.com/tattle-made/feluda/commit/7d5cc0168735453dded3138f26fc70c6e037df17))
+
+* Merge pull request #182 from tattle-made/hotfix
+
+Hotfix ([`f6d87f8`](https://github.com/tattle-made/feluda/commit/f6d87f8c2ff893d5a8ff41b3ca6cbfd87b1d1fff))
+
+* Merge pull request #181 from duggalsu/fix_vidvec_benchmark_test_workflow
+
+Fix vidvec benchmark test workflow ([`6f2a32a`](https://github.com/tattle-made/feluda/commit/6f2a32a3ed2a663c180604cd70259ad90dc7baa2))
+
+* Merge pull request #180 from tattle-made/hotfix
+
+Hotfix ([`0b30a78`](https://github.com/tattle-made/feluda/commit/0b30a78e503a5533bf8c6d38eaa08165d6ef26af))
+
+* Merge pull request #179 from tattle-made/scorecard_workflow
+
+Scorecard workflow ([`d1f468d`](https://github.com/tattle-made/feluda/commit/d1f468d545193a0a077f876faf474b6e7e3ba2b7))
+
+* Create scorecard.yml ([`7bf1e20`](https://github.com/tattle-made/feluda/commit/7bf1e2015672db2f82ef47e05b4a8ee4d739f3da))
+
+
+## v0.4.4 (2024-03-14)
+
+### Chore
+
+* chore: removed global import ([`d02366c`](https://github.com/tattle-made/feluda/commit/d02366c90399c39cd691f7d78104ff750bc553a7))
+
+### Fix
+
+* fix: tempfile path for make from file in memory function ([`831a700`](https://github.com/tattle-made/feluda/commit/831a70005eaab0e5b9a67b4db215e8c8b633f158))
+
+* fix: tempfile impl ([`2f9cc07`](https://github.com/tattle-made/feluda/commit/2f9cc077e29915e9422e01c723e0a48dcc70f8d3))
+
+* fix: Removed use of tempfile downloads ([`eb97f09`](https://github.com/tattle-made/feluda/commit/eb97f09ba5396457c82a9f97db25cf2aa6cf6755))
+
+* fix: Created tempfile safely ([`badc043`](https://github.com/tattle-made/feluda/commit/badc0436c55387b1b540096cc6185c91d9563f7d))
+
+### Unknown
+
+* Merge pull request #178 from tattle-made/hotfix
+
+Hotfix ([`a85423a`](https://github.com/tattle-made/feluda/commit/a85423a44e26ef3fb56700853f9d5a517712c29f))
+
+* Merge pull request #164 from duggalsu/fix_tempfile_issues
+
+Fix tempfile issues ([`c846df5`](https://github.com/tattle-made/feluda/commit/c846df5f57ef2bfb4b4f6bcbac7551f504c759df))
+
+* Merge remote-tracking branch &#39;refs/remotes/origin/fix_tempfile_issues&#39; into fix_tempfile_issues
+
+# Conflicts:
+#	src/core/models/media_factory.py ([`36ec52b`](https://github.com/tattle-made/feluda/commit/36ec52b111b788ad424fb0f27562e0ffafa6b650))
+
+* Fix tempfile issues
+- Optimized dockerfile
+- Modified tempfile tests ([`d082d93`](https://github.com/tattle-made/feluda/commit/d082d937f39240f66a19424a5081769410e21852))
+
+* - Fixed video and audio file return path ([`bc43d19`](https://github.com/tattle-made/feluda/commit/bc43d1986a08d8314f8abf9d3976f49f5b9ed669))
+
+
+## v0.4.3 (2024-03-14)
+
+### Fix
+
+* fix: flask issues
+- Added config vars to env template
+- Disabled flask production docker image
+- Enabled flask dev server and debugpy to run on localhost
+- Added debug cmd flag as recommended approach
+- Modified flask app run to load host and debug values from env ([`cfc0601`](https://github.com/tattle-made/feluda/commit/cfc0601bec2c7e29044c2bc48d53cf077e50e6da))
+
+### Unknown
+
+* Merge pull request #177 from tattle-made/hotfix
+
+Hotfix ([`f2a2b3d`](https://github.com/tattle-made/feluda/commit/f2a2b3d770063795cea0615f17c9477781aaa8b5))
+
+* Merge pull request #176 from duggalsu/fix_flask_issues
+
+Fix flask issues ([`c68596f`](https://github.com/tattle-made/feluda/commit/c68596fd380ab7df68b4c9654f9fc2e3197b79f1))
+
+
+## v0.4.2 (2024-03-13)
+
+### Fix
+
+* fix: wget issues ([`ff70726`](https://github.com/tattle-made/feluda/commit/ff707269a2a02325de8bb7d38ff2324a50d763fc))
+
+### Unknown
+
+* Merge pull request #175 from tattle-made/hotfix
+
+Hotfix ([`fc508fa`](https://github.com/tattle-made/feluda/commit/fc508fa4f0d39695a55c31f107379e2fd64daf43))
+
+* Merge pull request #174 from duggalsu/fix_wget_issues
+
+Fix wget issues ([`6b98b8f`](https://github.com/tattle-made/feluda/commit/6b98b8f08d361f3d7f99071e9fc9c40685eb14f9))
+
+
+## v0.4.1 (2024-03-13)
+
+### Fix
+
+* fix: Renamed hash worker graviton file
+ci: Added publishing media hash worker docker images
+ci: Added release hash worker dockerfiles ([`33fb2d8`](https://github.com/tattle-made/feluda/commit/33fb2d84049576912c2d6c1b9b4691fa24d978e2))
+
+### Unknown
+
+* Merge pull request #173 from tattle-made/hotfix
+
+Hotfix ([`ec7b922`](https://github.com/tattle-made/feluda/commit/ec7b922fd83628816408196ea5d675c2b5fb7a93))
+
+* Merge pull request #172 from duggalsu/add_hash_worker_workflow
+
+Add hash worker workflow ([`b58c11f`](https://github.com/tattle-made/feluda/commit/b58c11f98b240dbe2d5d28e787002f8155901cdc))
+
+
+## v0.4.0 (2024-03-13)
+
+### Ci
+
+* ci: updating hash worker github workflow ([`73e5634`](https://github.com/tattle-made/feluda/commit/73e5634d462064f3fa4d38aec72ed126cc17aeea))
+
+### Fix
+
+* fix: subprocess call issue ([`058cee5`](https://github.com/tattle-made/feluda/commit/058cee5eeaef56c9704b4745f6cd9298b16cca35))
+
+### Unknown
+
+* Merge pull request #165 from tattle-made/development
+
+merge dev to main ([`55204f9`](https://github.com/tattle-made/feluda/commit/55204f9c60a466de06d8b102b66d5d85b48b1c91))
+
+* Merge pull request #166 from aatmanvaidya/temp-dev-2
+
+resolving merge conflicts ([`1dea270`](https://github.com/tattle-made/feluda/commit/1dea2707bbf211fb8b91c3335b71e1675d51e0f1))
+
+* Merge remote-tracking branch &#39;upstream/main&#39; into temp-dev-2 ([`3c28a9f`](https://github.com/tattle-made/feluda/commit/3c28a9f310413ce67264f069d1ab067f206ef014))
+
+* Merge pull request #171 from duggalsu/fix_subprocess_call
+
+Fix subprocess call ([`acf4974`](https://github.com/tattle-made/feluda/commit/acf4974c5374e1fe2f59cc2d33bb6c77c6b2c199))
+
+
 ## v0.3.4 (2024-03-13)
+
+### Chore
+
+* chore: fixing module imports ([`4097614`](https://github.com/tattle-made/feluda/commit/4097614dd86b9edef88855771383faf2de6f1365))
+
+* chore: resolving merge conflicts ([`5e3da48`](https://github.com/tattle-made/feluda/commit/5e3da48f102cf1858078748444e1eb7bb40768a9))
+
+### Ci
+
+* ci: fixing hash worker dockerfiles ([`46173da`](https://github.com/tattle-made/feluda/commit/46173da54423a70a7f295862f7106cf98aceb6de))
 
 ### Fix
 
@@ -13,6 +341,10 @@
 * fix: linting issues ([`39d90be`](https://github.com/tattle-made/feluda/commit/39d90beb4caf35d93b4364360796d1932f177510))
 
 * fix: Removed secrets ([`11f4186`](https://github.com/tattle-made/feluda/commit/11f4186526ad0437ca5d62fc78216be5fd90f3fa))
+
+* fix: Created tempfile safely ([`fc0d3a2`](https://github.com/tattle-made/feluda/commit/fc0d3a2b8e70aa17ebae6f76da9099699b911afb))
+
+* fix: hash operator and worker ([`64d0797`](https://github.com/tattle-made/feluda/commit/64d0797b98ffb90ce5569f587b6403b9373893cf))
 
 ### Unknown
 
@@ -31,6 +363,12 @@ fix: Fixed assert issues ([`1290ef9`](https://github.com/tattle-made/feluda/comm
 * Merge pull request #167 from duggalsu/fix_secrets
 
 Fix secrets ([`3670bc9`](https://github.com/tattle-made/feluda/commit/3670bc973ae4a0fc699780fa8a3a91b1efcdd4b0))
+
+* - Fixed video and audio file return path ([`a251873`](https://github.com/tattle-made/feluda/commit/a2518731af3474881b62505fa10e77267ab163f5))
+
+* Merge pull request #163 from aatmanvaidya/hash-op
+
+fix: hash operator and worker ([`d51aeb3`](https://github.com/tattle-made/feluda/commit/d51aeb3fbe23bf73235f754534f17667679bd660))
 
 
 ## v0.3.3 (2024-03-12)
@@ -165,11 +503,19 @@ Add ci pip audit ([`40f3ff6`](https://github.com/tattle-made/feluda/commit/40f3f
 
 ## v0.3.2 (2024-03-07)
 
+### Chore
+
+* chore: fixing docker-compose.yml ([`3fe5de6`](https://github.com/tattle-made/feluda/commit/3fe5de666deacb12c1ae755e860dec83a1c7e35a))
+
 ### Ci
 
 * ci: github action to push md5hash worker to staging ([`b5df260`](https://github.com/tattle-made/feluda/commit/b5df26034280af5178f246c46308c5bd3856631d))
 
 * ci: add security checks on PR ([`ca7de73`](https://github.com/tattle-made/feluda/commit/ca7de732d8ed98cdf2d650e1bc0c5f30012f4803))
+
+### Feature
+
+* feat: worker for md5hash operator ([`008cc8d`](https://github.com/tattle-made/feluda/commit/008cc8d52dbfa594db5b861f5374298b4b5a44b9))
 
 ### Fix
 
@@ -186,6 +532,10 @@ Hotfix ([`dc64745`](https://github.com/tattle-made/feluda/commit/dc64745059fc718
 * Merge pull request #143 from aatmanvaidya/md5-ci
 
 ci: github action to push md5hash worker to staging ([`c896d29`](https://github.com/tattle-made/feluda/commit/c896d29bd76f3cd7ea39a5b9667ba3f20174e1b2))
+
+* Merge pull request #142 from aatmanvaidya/md5-hash-worker
+
+feat: worker for md5hash operator ([`da40ef9`](https://github.com/tattle-made/feluda/commit/da40ef96dfa88cb09f03f110ebcd7e6c7b59a62e))
 
 * Merge pull request #135 from duggalsu/test_official_docker_push_action
 

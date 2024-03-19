@@ -1,6 +1,8 @@
 # FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
-FROM python:3.11-slim-bullseye AS base
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
+ARG UID
+ARG GID
 
 # COPY --from=ffmpeg / /
 RUN apt-get update \
@@ -14,9 +16,10 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 
 # Set python user
-RUN groupadd -g 999 python && \
-    useradd --create-home -r -u 999 -g python python
-RUN mkdir /usr/app && chown python:python /usr/app
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /usr/app \
+    && chown -R python:python /usr/app
 WORKDIR /usr/app
 
 # Set venv
@@ -31,7 +34,7 @@ RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-reco
 #     apt-get install -y tesseract-ocr tesseract-ocr-hin
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends wget
 COPY --chown=python:python requirements.txt /usr/app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r requirements.txt
 COPY --chown=python:python . /usr/app
 EXPOSE 7000
 
@@ -46,11 +49,11 @@ EXPOSE 7000
 FROM base AS debug
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh jq
 RUN pip install --no-cache-dir debugpy nose2
-RUN export FLASK_DEBUG=1
-USER 999
-CMD python -m debugpy --listen 0.0.0.0:5678 --wait-for-client -m flask run -h 0.0.0.0 -p 5000
+USER python:python
+CMD python -m debugpy --listen localhost:5678 --wait-for-client -m flask run --debug -h localhost -p 5000
 
 #### PROD IMAGE ####
-FROM base AS prod
-USER 999
-CMD flask run --host=0.0.0.0
+# TODO: Setup production WSGI server - https://flask.palletsprojects.com/en/3.0.x/deploying/index.html
+#FROM base AS prod
+#USER python:python
+#CMD flask run --host=0.0.0.0

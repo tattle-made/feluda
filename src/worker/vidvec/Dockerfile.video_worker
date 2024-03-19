@@ -1,39 +1,72 @@
-FROM python:3.11-slim-bullseye AS base
+### BUILDER IMAGE ###
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS builder
+ARG UID
+ARG GID
 
+# Fetch OS packages updates, upgrade packages, and install packages required for build
 RUN apt-get update \
     && apt-get -y upgrade \
     && apt-get install -y \
     --no-install-recommends gcc build-essential \
     --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
     --no-install-recommends python3-dev
-RUN apt-get update && apt-get install -y --no-install-recommends vim zsh curl
 
 # Set python user
-RUN groupadd -g 999 python && \
-    useradd --create-home -r -u 999 -g python python
-RUN mkdir /usr/app && chown python:python /usr/app
-WORKDIR /usr/app
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /home/python/app \
+    && chown -R python:python /home/python/app/
+# Set working dir
+WORKDIR /home/python/app
 
-# Set venv
-RUN python -m venv /usr/app/venv && chown -R python:python /usr/app/venv
-ENV PATH="/usr/app/venv/bin:$PATH"
+# Create venv and change ownership recursively
+RUN python -m venv /home/python/app/venv \
+    && chown -R python:python /home/python/app/venv
+# Set venv in path
+ENV PATH="/home/python/app/venv/bin:$PATH"
 
-RUN pip install --no-cache-dir --upgrade pip
+# Copy core and operator requirements
+COPY --chown=python:python requirements.txt /home/python/app/requirements.txt
+COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /home/python/app/core/operators/vid_vec_rep_resnet_requirements.txt
 
-COPY --chown=python:python requirements.txt /usr/app/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-# install video operator requirements
-COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
-RUN pip install --no-cache-dir -r /usr/app/core/operators/vid_vec_rep_resnet_requirements.txt
+# Run pip install
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/vid_vec_rep_resnet_requirements.txt
 
-RUN apt-get purge -y --auto-remove \
-    gcc build-essential \
-    libgl1-mesa-glx libglib2.0-0 \
-    python3-dev \
+#####################################
+
+
+### PRODUCTION IMAGE ###
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS production
+ARG UID
+ARG GID
+
+# Update image, install required utils, and remove cache
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get install -y --no-install-recommends vim zsh curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --chown=python:python . /usr/app
-EXPOSE 7000
+# Set python group and user, create home dir, create app dir, change ownership of app to user
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /home/python/app \
+    && chown -R python:python /home/python/app/
 
-FROM base AS debug
-USER 999
+# Set working dir
+WORKDIR /home/python/app
+
+# Copy output from builder stage
+COPY --from=builder /home/python/app /home/python/app
+
+# Copy all files and change ownership to unprivileged user
+COPY --chown=python:python . /home/python/app
+
+# Set venv path
+ENV PATH="/home/python/app/venv/bin:$PATH"
+
+# Set unprivileged user with group membership
+USER python:python
+
+#################################

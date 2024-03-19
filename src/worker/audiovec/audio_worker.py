@@ -6,6 +6,8 @@ from core.models.media import MediaType
 from core.models.media_factory import AudioFactory
 from time import sleep
 from datetime import datetime
+import numpy as np
+import binascii
 
 log = Logger(__name__)
 
@@ -29,6 +31,12 @@ def make_report_failed(data, status):
 
 
 def indexer(feluda):
+
+    def calc_audio_vec_crc(audio_vector):
+        vec_arr = np.asarray(audio_vector)
+        arr_crc = binascii.crc32(vec_arr.tobytes(order='C'))
+        return arr_crc
+
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         file_content = json.loads(body)
@@ -37,6 +45,8 @@ def indexer(feluda):
             log.info("Processing File")
             media_type = MediaType.AUDIO
             audio_vec = audio_vec_embedding.run(audio_path)
+            audio_vec_crc = calc_audio_vec_crc(audio_vec)
+            log.debug("audio_vec_crc:{}".format(audio_vec_crc))
             doc = {
                 "e_kosh_id": str(1231231),
                 "dataset": "test-dataset-id",

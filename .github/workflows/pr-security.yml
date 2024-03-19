@@ -1,5 +1,8 @@
 name: Run security checks on PR
 
+permissions:
+  contents: read # for actions/checkout to fetch code
+
 on:
   pull_request:
     branches:
@@ -15,17 +18,21 @@ jobs:
   checks:
     if: github.event.pull_request.draft == false
     permissions:
-      contents: read # for actions/checkout to fetch code
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
     name: Run security checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Setup Python version
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.11'
 
       - name: Lint with Ruff
         run: |
-          pip install ruff
+          pip install ruff==0.3.2
           ruff --output-format=github ./src/
         continue-on-error: false
 
@@ -34,11 +41,12 @@ jobs:
           python -m venv env1/
           source env1/bin/activate
       - name: pip audit src requirements
-        uses: pypa/gh-action-pip-audit@v1.0.8
+        uses: pypa/gh-action-pip-audit@d499194be74aeb3bc7dbed3a224a87e1831132c7 # v1.0.8
         with:
           # must be populated earlier in the CI
           virtual-environment: env1/
           local: true
+          no-deps: true
           inputs: |
             ./src/requirements.txt
 
@@ -47,11 +55,12 @@ jobs:
           python -m venv env2/
           source env2/bin/activate
       - name: pip audit operator audiovec requirements
-        uses: pypa/gh-action-pip-audit@v1.0.8
+        uses: pypa/gh-action-pip-audit@d499194be74aeb3bc7dbed3a224a87e1831132c7 # v1.0.8
         with:
           # must be populated earlier in the CI
           virtual-environment: env2/
           local: true
+          no-deps: true
           inputs: |
             ./src/core/operators/audio_vec_embedding_requirements.txt
 
@@ -60,16 +69,17 @@ jobs:
           python -m venv env3/
           source env3/bin/activate
       - name: pip audit operator vidvec requirements
-        uses: pypa/gh-action-pip-audit@v1.0.8
+        uses: pypa/gh-action-pip-audit@d499194be74aeb3bc7dbed3a224a87e1831132c7 # v1.0.8
         with:
           # must be populated earlier in the CI
           virtual-environment: env3/
           local: true
+          no-deps: true
           inputs: |
             ./src/core/operators/vid_vec_rep_resnet_requirements.txt
 
       - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@062f2592684a31eb3aa050cc61e7ca1451cecd3d # v0.18.0
         with:
           scan-type: 'fs'
           ignore-unfixed: true
@@ -81,13 +91,13 @@ jobs:
           skip-dirs: '.vscode,docs'
           exit-code: '1'
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@9e39a05578dd315aad814d3c71bd03472cc5b815 # v.3.24.7
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
 
       - name: Bandit Scan
-        uses: shundor/python-bandit-scan@9cc5aa4a006482b8a7f91134412df6772dbda22c
+        uses: shundor/python-bandit-scan@9cc5aa4a006482b8a7f91134412df6772dbda22c # v1.0
         with: # optional arguments
           # exit with 0, even with results found
           exit_zero: false # optional, default is DEFAULT

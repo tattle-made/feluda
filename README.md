@@ -122,26 +122,84 @@ While the former fetches data from the service's MongoDB and sends it to the API
 Note:
 
 - Use a custom `tmp` directory to avoid memory issues
-- Do not use `--generate-hashes` flag for `pip-compile` since  the cpu version of `pytorch` is being used from official repository as it is not available in `pypi`. `pip-compile` will manually generate the hash for the architecture specific file and the code will not be compatible with other architectures.
 - If an operator defaults to a higher version than allowed by feluda core `requirements.txt`, manually edit the `<operator>_requirements.txt` to the compatible version. Then run `pip install`. If it runs without errors, the package version is valid for the operator.
 
 ```bash
-$ cd src/api/
+$ cd src/
 $ pip install --upgrade pip-tools
-$ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html requirements.in
+$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --emit-index-url --emit-find-links requirements.in
 
-# Updating operators e.g. detect_lang_of_text
-$ cd src/api/core/operators/
-$ TMPDIR=<temp_dir> pip-compile --verbose --emit-index-url --emit-find-links detect_lang_of_text_requirements.in
-
+# Updating operators
+$ cd src/core/operators/
+# The link for torch is required since PyPi only hosts the GPU version of torch packages.
+$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html vid_vec_rep_resnet_requirements.in
+$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html audio_vec_embedding_requirements.in
 ```
+
+#### Modify generated `requirements.txt` for platform specific torch packages
+
+NOTE: Update the command to match python docker image version
+
+```bash
+# Download package to find hash - you will get an error message if the package has been previously downloaded without the hash. The hash value will be printed in the message. Use that hash
+
+$ pip download --no-deps --require-hashes --python-version 311 --implementation cp --abi cp311 --platform linux_x86_64 --find-links https://download.pytorch.org/whl/torch_stable.html torch==2.2.0+cpu
+$ pip download --no-deps --require-hashes --python-version 311 --implementation cp --abi cp311 --platform linux_x86_64 --find-links https://download.pytorch.org/whl/torch_stable.html torchvision==0.17.0+cpu
+$ pip download --no-deps --require-hashes --python-version 311 --implementation cp --abi cp311 --platform manylinux2014_aarch64 --find-links https://download.pytorch.org/whl/cpu torch==2.2.0
+$ pip download --no-deps --require-hashes --python-version 311 --implementation cp --abi cp311 --platform manylinux2014_aarch64 --find-links https://download.pytorch.org/whl/cpu torchvision==0.17.0
+```
+Replace the torch package lines from `requirement.txt` with the following (depending upon the generated hash values above)
+
+```bash
+# For arm64 architecture
+--find-links https://download.pytorch.org/whl/cpu
+torch==2.2.0; platform_machine=='aarch64' \
+    --hash=sha256:9328e3c1ce628a281d2707526b4d1080eae7c4afab4f81cea75bde1f9441dc78
+    # via
+    #   -r vid_vec_rep_resnet_requirements.in
+    #   torchvision
+torchvision==0.17.0; platform_machine=='aarch64' \
+    --hash=sha256:3d2e9552d72e4037f2db6f7d97989a2e2f95763aa1861963a3faf521bb1610c4 \
+    # via -r vid_vec_rep_resnet_requirements.in
+
+# For amd64 architecture
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.2.0+cpu; platform_machine=='x86_64' \
+    --hash=sha256:15a657038eea92ac5db6ab97b30bd4b5345741b49553b2a7e552e80001297124 \
+    --hash=sha256:15e05748815545b6eb99196c0219822b210a5eff0dc194997a283534b8c98d7c \
+    --hash=sha256:2a8ff4440c1f024ad7982018c378470d2ae0a72f2bc269a22b1a677e09bdd3b1 \
+    --hash=sha256:4ddaf3393f5123da4a83a53f98fb9c9c64c53d0061da3c7243f982cdfe9eb888 \
+    --hash=sha256:58194066e594cd8aff27ddb746399d040900cc0e8a331d67ea98499777fa4d31 \
+    --hash=sha256:5b40dc66914c02d564365f991ec9a6b18cbaa586610e3b160ef559b2ce18c6c8 \
+    --hash=sha256:5f907293f5a58619c1c520380f17641f76400a136474a4b1a66c363d2563fe5e \
+    --hash=sha256:8258824bec0181e01a086aef5809016116a97626af2dcbf932d4e0b192d9c1b8 \
+    --hash=sha256:d053976a4f9ca3bace6e4191e0b6e0bcffbc29f70d419b14d01228b371335467 \
+    --hash=sha256:f72e7ce8010aa8797665ff6c4c1d259c28f3a51f332762d9de77f8a20277817f
+    # via
+    #   -r vid_vec_rep_resnet_requirements.in
+    #   torchvision
+torchvision==0.17.0+cpu; platform_machine=='x86_64' \
+    --hash=sha256:00e88e9483e52f99fc61a73941b6ef0b59d031930276fc220ee8973170f305ff \
+    --hash=sha256:04e72249add0e5a0fc3d06a876833651e77eb6c3c3f9276e70d9bd67804c8549 \
+    --hash=sha256:39d3b3a80c63d18594e81829fdbd6108512dff98fa17156c7bec59133a0c1173 \
+    --hash=sha256:55660c67bd8d5b777984655116b75070c73d37ce64175a8120cb59010039fd7f \
+    --hash=sha256:569ebc5f47bb765ae73cd380ace01ddcb074c67df05d7f15f5ddd0fa3062881a \
+    --hash=sha256:701d7fcfdd8ed206dcb71774190152f0a2d6c999ad7cee277fc5a71a943ae64d \
+    --hash=sha256:b683d52753c5579a5b0250d7976deada17deab646071da289bd598d1af4877e0 \
+    --hash=sha256:bb787aab6daf2d72600c14cd7c3c11459701dc5fac07e790e0335777e20b39df \
+    --hash=sha256:da83b8a14d1b0579b1119e24272b0c7bf3e9ad14297bca87184d02c12d210501 \
+    --hash=sha256:eb1e9d061c528c8bb40436d445599ca05fa997701ac395db3aaec5cb7660b6ee
+    # via -r vid_vec_rep_resnet_requirements.in
+```
+
+
 
 #### Updating specific packages in `requirements.txt`
 
 This is useful to update dependencies e.g. when using `pip-audit` 
 
 ```bash
-$ TMPDIR=<temp_dir> pip-compile --verbose --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
+$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
 
 ```
 
