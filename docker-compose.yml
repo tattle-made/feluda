@@ -52,6 +52,7 @@ services:
         - "GID=${GID:-1000}"
     volumes:
       - ./src:/usr/app
+      - venv:/usr/app/venv/
     env_file: ./src/development.env
     ports:
       - 7000:7000
@@ -69,6 +70,9 @@ services:
       context: ./src
       dockerfile: Dockerfile
       target: debug
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
     env_file: ./src/development.env
     command: tail -f /dev/null
     depends_on:
@@ -83,6 +87,9 @@ services:
       context: ./src
       dockerfile: Dockerfile
       target: debug
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
     env_file: ./src/development.env
     command: tail -f /dev/null
     depends_on:
@@ -90,6 +97,9 @@ services:
         condition: service_started
       queue:
         condition: service_started
+
+volumes:
+    venv: {}
 
 #networks:
 #  default:
