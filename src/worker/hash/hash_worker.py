@@ -49,7 +49,7 @@ def indexer(feluda):
             hash = media_file_hash.run(video_path)
             log.info(hash)
             # write the hash into a table
-            pg_manager.store("hash_table", "hash", hash)
+            pg_manager.store("user_message_inbox_duplicate", "value", hash)
             log.info("Hash value added to PostgreSQL")
             report = make_report_indexed(file_content, "indexed")
             feluda.queue.message(feluda.config.queue.parameters.queues[1]['name'], report)
@@ -67,6 +67,7 @@ try:
     feluda.setup()
     pg_manager = PostgreSQLManager()
     pg_manager.connect()
+    pg_manager.create_table("user_message_inbox_duplicate", "value")
     count_queue = feluda.config.queue.parameters.queues[0]['name']
     feluda.start_component(ComponentType.QUEUE)
     media_file_hash.initialize(param=None)

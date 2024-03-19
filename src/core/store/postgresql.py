@@ -27,11 +27,11 @@ class PostgreSQLManager:
         except psycopg2.Error as e:
             print("Error connecting to PostgreSQL database:", e)
 
-    def create_table(self, table_name):
+    def create_table(self, table_name, column_name):
         if self.cur:
             try:
                 self.cur.execute(
-                    f"""CREATE TABLE IF NOT EXISTS {table_name} (id SERIAL PRIMARY KEY, hash VARCHAR(128))"""
+                    f"""CREATE TABLE IF NOT EXISTS {table_name} (id SERIAL PRIMARY KEY, {column_name} VARCHAR(128))"""
                 )
                 self.conn.commit()
                 print(f"Table '{table_name}' created successfully!")
@@ -108,5 +108,5 @@ class PostgreSQLManager:
 # if __name__ == "__main__":
 #     pg_manager = PostgreSQLManager()
 #     pg_manager.connect()
-#     pg_manager.create_table("hash_table")
+#     pg_manager.create_table("user_message_inbox_duplicate", "value")
 #     pg_manager.close_connection()
