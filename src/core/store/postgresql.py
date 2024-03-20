@@ -27,25 +27,76 @@ class PostgreSQLManager:
         except psycopg2.Error as e:
             print("Error connecting to PostgreSQL database:", e)
 
-    def create_table(self, table_name, column_name):
+    def create_trigger_function(self):
         if self.cur:
             try:
+                # create trigger function
                 self.cur.execute(
-                    f"""CREATE TABLE IF NOT EXISTS {table_name} (id SERIAL PRIMARY KEY, {column_name} VARCHAR(128))"""
+                    """CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+                        RETURNS TRIGGER AS $$
+                        BEGIN
+                          NEW.updated_at = NOW();
+                          RETURN NEW;
+                        END;
+                        $$ LANGUAGE plpgsql"""
                 )
                 self.conn.commit()
-                print(f"Table '{table_name}' created successfully!")
+                print("Trigger function created successfully!")
+            except psycopg2.Error as e:
+                print("Error creating trigger function:", e)
+        else:
+            print("Not connected to the database. Call connect() first.")
+
+    def create_table(self, table_name, value_column, worker_column):
+        if self.cur:
+            try:
+                if table_name == "user_message_inbox_duplicate":
+                    self.cur.execute(
+                        f"""CREATE TABLE IF NOT EXISTS {table_name} (id SERIAL PRIMARY KEY, {value_column} VARCHAR(128))"""
+                    )
+                    self.conn.commit()
+                    print(f"Table '{table_name}' created successfully!")
+                elif table_name == "user_message_inbox_perceptually_similar":
+                    # create table if not exists
+                    self.cur.execute(
+                        f"""CREATE TABLE IF NOT EXISTS {table_name} (
+                            id SERIAL NOT NULL PRIMARY KEY, 
+                            {value_column} VARCHAR(128), 
+                            {worker_column} VARCHAR(128), 
+                            inserted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), 
+                            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                            )"""
+                    )
+                    self.conn.commit()
+                    print(f"Table '{table_name}' created successfully!")
             except psycopg2.Error as e:
                 print("Error creating table:", e)
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def store(self, table_name, column_name, value):
+    def create_trigger(self, table_name):
+        if self.cur:
+            try:
+                # create trigger
+                self.cur.execute(
+                    f"""CREATE OR REPLACE TRIGGER set_timestamp 
+                        BEFORE UPDATE ON {table_name} 
+                        FOR EACH ROW 
+                        EXECUTE PROCEDURE trigger_set_timestamp()"""
+                )
+                self.conn.commit()
+                print(f"Trigger for '{table_name}' created successfully!")
+            except psycopg2.Error as e:
+                print("Error creating trigger:", e)
+        else:
+            print("Not connected to the database. Call connect() first.")
+
+    def store(self, table_name, value_column, value_column_value, worker_column, worker_column_value):
         if self.cur:
             try:
                 self.cur.execute(
-                    f"""INSERT INTO {table_name} ({column_name}) VALUES (%s)""",
-                    (value,),
+                    f"""INSERT INTO {table_name} ({value_column}, {worker_column}) VALUES (%s, %s)""",
+                    (value_column_value, worker_column_value),
                 )
                 self.conn.commit()
                 print("Value stored successfully!")
@@ -55,12 +106,12 @@ class PostgreSQLManager:
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def update(self, table_name, column_name, id_value, new_value):
+    def update(self, table_name, value_column, id_value, value_column_new_value, worker_column, worker_column_new_value):
         if self.cur:
             try:
                 self.cur.execute(
-                    f"""UPDATE {table_name} SET {column_name} = %s WHERE id = %s""",
-                    (new_value, id_value),
+                    f"""UPDATE {table_name} SET {value_column} = %s, {worker_column} = %s WHERE id = %s""",
+                    (value_column_new_value, worker_column_new_value, id_value),
                 )
                 self.conn.commit()
                 print("Value updated successfully!")
