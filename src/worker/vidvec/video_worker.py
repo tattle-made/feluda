@@ -83,7 +83,7 @@ def indexer(feluda):
                 "value",
                 str(video_vec_crc),
                 "worker_name",
-                "vector_crc")
+                "video_vector_crc")
             log.info("CRC value added to PostgreSQL")
             doc = generate_document(video_path["path"], video_vec)
             media_type = MediaType.VIDEO
