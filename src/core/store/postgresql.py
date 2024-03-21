@@ -30,16 +30,16 @@ class PostgreSQLManager:
     def create_trigger_function(self):
         if self.cur:
             try:
-                # create trigger function
-                self.cur.execute(
-                    """CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+                prepared_stmt = """CREATE OR REPLACE FUNCTION trigger_set_timestamp()
                         RETURNS TRIGGER AS $$
                         BEGIN
                           NEW.updated_at = NOW();
                           RETURN NEW;
                         END;
                         $$ LANGUAGE plpgsql"""
-                )
+
+                # create trigger function
+                self.cur.execute(prepared_stmt)
                 self.conn.commit()
                 print("Trigger function created successfully!")
             except psycopg2.Error as e:
@@ -47,34 +47,31 @@ class PostgreSQLManager:
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def create_table(self, table_name, value_column, worker_column):
+    def create_table(self, table_name):
         if self.cur:
             try:
+                prepared_stmt = None
                 if table_name == "user_message_inbox_duplicate":
-                    self.cur.execute(
-                        f"""CREATE TABLE IF NOT EXISTS {table_name} (
+                    prepared_stmt = """CREATE TABLE IF NOT EXISTS user_message_inbox_duplicate (
                             id SERIAL PRIMARY KEY,
-                            {value_column} VARCHAR(128),
-                            {worker_column} VARCHAR(128),
+                            value VARCHAR(128),
+                            worker_name VARCHAR(128),
                             inserted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                             )"""
-                    )
-                    self.conn.commit()
-                    print(f"Table '{table_name}' created successfully!")
                 elif table_name == "user_message_inbox_perceptually_similar":
-                    # create table if not exists
-                    self.cur.execute(
-                        f"""CREATE TABLE IF NOT EXISTS {table_name} (
+                    prepared_stmt = """CREATE TABLE IF NOT EXISTS user_message_inbox_perceptually_similar (
                             id SERIAL NOT NULL PRIMARY KEY, 
-                            {value_column} VARCHAR(128), 
-                            {worker_column} VARCHAR(128), 
+                            value VARCHAR(128), 
+                            worker_name VARCHAR(128), 
                             inserted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), 
                             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                             )"""
-                    )
-                    self.conn.commit()
-                    print(f"Table '{table_name}' created successfully!")
+
+                # create table if not exists
+                self.cur.execute(prepared_stmt)
+                self.conn.commit()
+                print("Table '" + table_name + "' created successfully!")
             except psycopg2.Error as e:
                 print("Error creating table:", e)
         else:
@@ -83,72 +80,80 @@ class PostgreSQLManager:
     def create_trigger(self, table_name):
         if self.cur:
             try:
-                # create trigger
-                self.cur.execute(
-                    f"""CREATE OR REPLACE TRIGGER set_timestamp 
-                        BEFORE UPDATE ON {table_name} 
+                prepared_stmt = None
+                if table_name == "user_message_inbox_duplicate":
+                    prepared_stmt = """CREATE OR REPLACE TRIGGER set_timestamp 
+                            BEFORE UPDATE ON user_message_inbox_duplicate
+                            FOR EACH ROW 
+                            EXECUTE PROCEDURE trigger_set_timestamp()"""
+                elif table_name == "user_message_inbox_perceptually_similar":
+                    prepared_stmt = """CREATE OR REPLACE TRIGGER set_timestamp 
+                        BEFORE UPDATE ON user_message_inbox_perceptually_similar 
                         FOR EACH ROW 
                         EXECUTE PROCEDURE trigger_set_timestamp()"""
-                )
+
+                # create trigger
+                self.cur.execute(prepared_stmt)
                 self.conn.commit()
-                print(f"Trigger for '{table_name}' created successfully!")
+                print("Trigger for '" + table_name + "' created successfully!")
             except psycopg2.Error as e:
                 print("Error creating trigger:", e)
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def store(self, table_name, value_column, value_column_value, worker_column, worker_column_value):
+    def store(self, table_name, value_column_value, worker_column_value):
         if self.cur:
             try:
+                prepared_stmt = None
                 if table_name == "user_message_inbox_duplicate":
-                    self.cur.execute(
-                        f"""INSERT INTO {table_name} ({value_column}, {worker_column}) VALUES (%s, %s)""",
-                        (value_column_value, worker_column_value),
-                    )
-                    self.conn.commit()
-                    print("Value stored successfully!")
+                    prepared_stmt = "INSERT INTO user_message_inbox_duplicate (value, worker_name) VALUES (%s, %s)"
                 elif table_name == "user_message_inbox_perceptually_similar":
-                    self.cur.execute(
-                        f"""INSERT INTO {table_name} ({value_column}, {worker_column}) VALUES (%s, %s)""",
-                        (value_column_value, worker_column_value),
-                    )
-                    self.conn.commit()
-                    print(f"Value stored successfully in {table_name}!")
+                    prepared_stmt = "INSERT INTO user_message_inbox_perceptually_similar (value, worker_name) VALUES (%s, %s)"
+
+                self.cur.execute(
+                    prepared_stmt,
+                    (value_column_value, worker_column_value),
+                )
+                self.conn.commit()
+                print("Value stored successfully!")
             except psycopg2.Error as e:
                 self.conn.rollback()
                 print("Error storing value:", e)
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def update(self, table_name, value_column, id_value, value_column_new_value, worker_column, worker_column_new_value):
+    def update(self, table_name, id_value, value_column_new_value, worker_column_new_value):
         if self.cur:
             try:
+                prepared_stmt = None
                 if table_name == "user_message_inbox_duplicate":
-                    self.cur.execute(
-                    f"""UPDATE {table_name} SET {value_column} = %s, {worker_column} = %s WHERE id = %s""",
-                    (value_column_new_value, worker_column_new_value, id_value),
-                    )
-                    self.conn.commit()
-                    print(f"Value updated successfully at {table_name}!")
-                    pass
+                    prepared_stmt = "UPDATE user_message_inbox_duplicate SET value = %s, worker_name = %s WHERE id = %s"
                 elif table_name == "user_message_inbox_perceptually_similar":
-                    self.cur.execute(
-                        f"""UPDATE {table_name} SET {value_column} = %s, {worker_column} = %s WHERE id = %s""",
-                        (value_column_new_value, worker_column_new_value, id_value),
-                    )
-                    self.conn.commit()
-                    print(f"Value updated successfully in {table_name}!")
+                    prepared_stmt = "UPDATE user_message_inbox_perceptually_similar SET value = %s, worker_name = %s WHERE id = %s"
+
+                self.cur.execute(
+                    prepared_stmt,
+                    (value_column_new_value, worker_column_new_value, id_value),
+                )
+                self.conn.commit()
+                print("Value updated successfully at " + table_name + "!")
             except psycopg2.Error as e:
                 self.conn.rollback()
                 print("Error updating value:", e)
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def delete(self, table_name, column_name, id_value):
+    def delete(self, table_name, id_value):
         if self.cur:
             try:
+                prepared_stmt = None
+                if table_name == "user_message_inbox_duplicate":
+                    prepared_stmt = "DELETE FROM user_message_inbox_duplicate WHERE id = %s"
+                elif table_name == "user_message_inbox_perceptually_similar":
+                    prepared_stmt = "DELETE FROM user_message_inbox_perceptually_similar WHERE id = %s"
+
                 self.cur.execute(
-                    f"""DELETE FROM {table_name} WHERE {column_name} = %s""",
+                    prepared_stmt,
                     (id_value,),
                 )
                 self.conn.commit()
@@ -169,9 +174,15 @@ class PostgreSQLManager:
     def delete_table(self, table_name):
         if self.cur:
             try:
-                self.cur.execute(f"DROP TABLE IF EXISTS {table_name}")
+                prepared_stmt = None
+                if table_name == "user_message_inbox_duplicate":
+                    prepared_stmt = "DROP TABLE IF EXISTS user_message_inbox_duplicate"
+                elif table_name == "user_message_inbox_perceptually_similar":
+                    prepared_stmt = "DROP TABLE IF EXISTS user_message_inbox_perceptually_similar"
+
+                self.cur.execute(prepared_stmt)
                 self.conn.commit()
-                print(f"Table '{table_name}' deleted successfully!")
+                print("Table '" + table_name + "' deleted successfully!")
             except psycopg2.Error as e:
                 self.conn.rollback()
                 print("Error deleting table:", e)
@@ -183,7 +194,9 @@ class PostgreSQLManager:
 #     pg_manager = PostgreSQLManager()
 #     pg_manager.connect()
 #     pg_manager.create_trigger_function()
-#     pg_manager.create_table("user_message_inbox_duplicate", "value", "hash_worker")
+#     pg_manager.create_table("user_message_inbox_duplicate")
 #     pg_manager.create_trigger("user_message_inbox_duplicate")
-#     pg_manager.update("user_message_inbox_duplicate", "value", 1, "some_new_hash", "worker_name", "blake2b_hash_value")
+#     #pg_manager.store("user_message_inbox_duplicate", "hash_val", "blake2b_hash_value")
+#     pg_manager.update("user_message_inbox_duplicate", 1, "some_new_hash", "blake2b_hash_value")
+#     pg_manager.update("user_message_inbox_perceptually_similar", 1, "some_new_hash", "video_vector_crc")
 #     pg_manager.close_connection()

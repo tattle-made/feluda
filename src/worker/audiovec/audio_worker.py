@@ -51,9 +51,7 @@ def indexer(feluda):
             # write the crc into a table
             pg_manager.store(
                 "user_message_inbox_perceptually_similar",
-                "value",
                 str(audio_vec_crc),
-                "worker_name",
                 "audio_vector_crc")
             log.info("CRC value added to PostgreSQL")
             doc = {
@@ -108,7 +106,7 @@ try:
     pg_manager = PostgreSQLManager()
     pg_manager.connect()
     pg_manager.create_trigger_function()
-    pg_manager.create_table("user_message_inbox_perceptually_similar", "value", "worker_name")
+    pg_manager.create_table("user_message_inbox_perceptually_similar")
     pg_manager.create_trigger("user_message_inbox_perceptually_similar")
     audio_index_queue = feluda.config.queue.parameters.queues[0]["name"]
     feluda.start_component(ComponentType.STORE)
