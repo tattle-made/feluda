@@ -55,6 +55,7 @@ class PostgreSQLManager:
                         f"""CREATE TABLE IF NOT EXISTS {table_name} (
                             id SERIAL PRIMARY KEY,
                             {value_column} VARCHAR(128),
+                            {worker_column} VARCHAR(128),
                             inserted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
                             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                             )"""
@@ -101,8 +102,8 @@ class PostgreSQLManager:
             try:
                 if table_name == "user_message_inbox_duplicate":
                     self.cur.execute(
-                    f"""INSERT INTO {table_name} ({value_column}) VALUES (%s)""",
-                    (value_column_value,),
+                        f"""INSERT INTO {table_name} ({value_column}, {worker_column}) VALUES (%s, %s)""",
+                        (value_column_value, worker_column_value),
                     )
                     self.conn.commit()
                     print("Value stored successfully!")
@@ -124,8 +125,8 @@ class PostgreSQLManager:
             try:
                 if table_name == "user_message_inbox_duplicate":
                     self.cur.execute(
-                    f"""UPDATE {table_name} SET {value_column} = %s WHERE id = %s""",
-                    (value_column_new_value, id_value),
+                    f"""UPDATE {table_name} SET {value_column} = %s, {worker_column} = %s WHERE id = %s""",
+                    (value_column_new_value, worker_column_new_value, id_value),
                     )
                     self.conn.commit()
                     print(f"Value updated successfully at {table_name}!")
@@ -184,5 +185,5 @@ class PostgreSQLManager:
 #     pg_manager.create_trigger_function()
 #     pg_manager.create_table("user_message_inbox_duplicate", "value", "hash_worker")
 #     pg_manager.create_trigger("user_message_inbox_duplicate")
-#     pg_manager.update("user_message_inbox_duplicate", "value", 1, "some_new_hash", "worker_name", "hash_worker")
+#     pg_manager.update("user_message_inbox_duplicate", "value", 1, "some_new_hash", "worker_name", "blake2b_hash_value")
 #     pg_manager.close_connection()
