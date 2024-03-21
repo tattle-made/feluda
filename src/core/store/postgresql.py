@@ -109,8 +109,8 @@ class PostgreSQLManager:
                     print("Value stored successfully!")
                 elif table_name == "user_message_inbox_perceptually_similar":
                     self.cur.execute(
-                        f"""INSERT INTO {table_name} ({value_column}, {worker_column}) VALUES (%s, %s)""",
-                        (value_column_value, worker_column_value),
+                        "INSERT INTO %s (%s, %s) VALUES (%s, %s)",
+                        (table_name, value_column, worker_column, value_column_value, worker_column_value),
                     )
                     self.conn.commit()
                     print(f"Value stored successfully in {table_name}!")
@@ -133,8 +133,9 @@ class PostgreSQLManager:
                     pass
                 elif table_name == "user_message_inbox_perceptually_similar":
                     self.cur.execute(
-                        f"""UPDATE {table_name} SET {value_column} = %s, {worker_column} = %s WHERE id = %s""",
-                        (value_column_new_value, worker_column_new_value, id_value),
+                        "UPDATE %s SET %s = %s, %s = %s WHERE id = %s",
+                        (table_name, value_column, value_column_new_value,
+                         worker_column, worker_column_new_value, id_value),
                     )
                     self.conn.commit()
                     print(f"Value updated successfully in {table_name}!")
@@ -148,8 +149,8 @@ class PostgreSQLManager:
         if self.cur:
             try:
                 self.cur.execute(
-                    f"""DELETE FROM {table_name} WHERE {column_name} = %s""",
-                    (id_value,),
+                    "DELETE FROM %s WHERE %s = %s",
+                    (table_name, column_name, id_value,),
                 )
                 self.conn.commit()
                 print("Value deleted successfully!")
