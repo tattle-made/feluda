@@ -3,6 +3,7 @@ from core.logger import Logger
 from core.operators import media_file_hash
 import json
 from core.models.media_factory import VideoFactory
+from core.store.postgresql import PostgreSQLManager
 from time import sleep
 log = Logger(__name__)
 
@@ -46,7 +47,9 @@ def indexer(feluda):
         try:
             log.info("Processing file")
             hash = media_file_hash.run(video_path)
-            log.info(hash)
+            log.debug(hash)
+            pg_manager.store("user_message_inbox_duplicate", str(hash), "blake2b_hash_value")
+            log.info("Hash value added to PostgreSQL")
             report = make_report_indexed(file_content, "indexed")
             feluda.queue.message(feluda.config.queue.parameters.queues[1]['name'], report)
             ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -58,9 +61,17 @@ def indexer(feluda):
             ch.basic_nack(delivery_tag=method.delivery_tag)
     return worker
 
+feluda = None
+pg_manager = None
+count_queue = None
 try:
     feluda = Feluda("worker/hash/config.yml")
     feluda.setup()
+    pg_manager = PostgreSQLManager()
+    pg_manager.connect()
+    pg_manager.create_trigger_function()
+    pg_manager.create_table("user_message_inbox_duplicate")
+    pg_manager.create_trigger("user_message_inbox_duplicate")
     count_queue = feluda.config.queue.parameters.queues[0]['name']
     feluda.start_component(ComponentType.QUEUE)
     media_file_hash.initialize(param=None)
@@ -70,3 +81,4 @@ except Exception as e:
     retries = 0
     max_retries = 10
     handle_exception(feluda, count_queue, indexer(feluda), retries, max_retries)
+    pg_manager.close_connection()

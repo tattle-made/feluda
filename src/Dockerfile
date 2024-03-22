@@ -16,9 +16,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* 
 
 # Set python user
-RUN groupadd -g $GID python \
-    && useradd --create-home -r -u $UID -g python python \
-    && mkdir /usr/app \
+RUN groupadd -f -g $GID python \
+    && id -u python >/dev/null 2>&1 || useradd --create-home -r -u $UID -g python python \
+    && mkdir -p /usr/app \
     && chown -R python:python /usr/app
 WORKDIR /usr/app
 
@@ -47,9 +47,27 @@ EXPOSE 7000
 
 #### DEBUG IMAGE ####
 FROM base AS debug
+ARG UID
+ARG GID
+
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh jq
+
+# Set python user
+RUN groupadd -f -g $GID python \
+    && id -u python >/dev/null 2>&1 || useradd --create-home -r -u $UID -g python python \
+    && mkdir -p /usr/app \
+    && chown -R python:python /usr/app
+WORKDIR /usr/app
+
+# Set venv path
+ENV PATH="/usr/app/venv/bin:$PATH"
+
+# install python packages
 RUN pip install --no-cache-dir debugpy nose2
+
+# Set unprivileged user with group membership
 USER python:python
+
 CMD python -m debugpy --listen localhost:5678 --wait-for-client -m flask run --debug -h localhost -p 5000
 
 #### PROD IMAGE ####

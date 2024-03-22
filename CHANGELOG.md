@@ -2,6 +2,113 @@
 
 
 
+## v0.5.0 (2024-03-21)
+
+### Chore
+
+* chore: adding context manager to audio operator ([`38f610f`](https://github.com/tattle-made/feluda/commit/38f610fa6101fcdcd80b02d43e61dec514685e1a))
+
+* chore: updating table name ([`c015d30`](https://github.com/tattle-made/feluda/commit/c015d30b9dad79617195b1cab31a4b6491490933))
+
+### Ci
+
+* ci: Added PR checks to run on main branch ([`efc63e7`](https://github.com/tattle-made/feluda/commit/efc63e716bfd224bad7cc07864ab0db999bd24cb))
+
+### Feature
+
+* feat: Added audio CRC write to postgres
+- Modified video worker column value ([`17ca1a7`](https://github.com/tattle-made/feluda/commit/17ca1a72b8b47ba9203a9ac7f107e40d5b4d248d))
+
+* feat: Add video CRC to postgres
+- Created trigger function for updating timestamp
+- Modified create table function with conditional for table
+- Added create table for storing CRC
+- Added function to create trigger for table
+- Modified store and update functions to store worker_column
+- Added postgres init and call to storing video CRC
+- Pinned images in docker compose ([`f11e1c8`](https://github.com/tattle-made/feluda/commit/f11e1c844512e138e7420a5469416f9707cc2b3e))
+
+* feat: hash worker can add data to postgresql ([`eae1993`](https://github.com/tattle-made/feluda/commit/eae1993db5f043b1c8e04b4fb7fcec4d67191114))
+
+* feat: Added creation of CRC for video and audio vec for media matching ([`ca52993`](https://github.com/tattle-made/feluda/commit/ca529937c13f6b998541d6e0363d179991426232))
+
+* feat: Add calculating video vec CRC for media matching ([`9d57125`](https://github.com/tattle-made/feluda/commit/9d571257f8bb41a495160a62847ca46db4ab838c))
+
+### Fix
+
+* fix(security): SQL issues
+- Replaced all dynamic SQL with prepared statements
+- Removed all f-strings
+- Added str conversion to hash function on db store as failsafe ([`8e86b2a`](https://github.com/tattle-made/feluda/commit/8e86b2a0937a3092ba49c8357a5ad7753daa3cc3))
+
+* fix(security): SQL issues
+
+# Conflicts:
+#	src/core/store/postgresql.py ([`3a5f003`](https://github.com/tattle-made/feluda/commit/3a5f003cafe0e1342eb352aea2e59a514b9bc475))
+
+* fix: store and update postgres functions to support hash worker ([`1511228`](https://github.com/tattle-made/feluda/commit/151122862a4cfe1adbaf9dbdd7999f3c5319e5e2))
+
+* fix: postgres store and update func in hash worker ([`f7cb056`](https://github.com/tattle-made/feluda/commit/f7cb056fc9cd7a201ebb8d73726857dc5438ed51))
+
+* fix: Update urllib3 package and fix feluda core dockerfile
+- Updated urllib3 manually for botocore compatibility
+- Updated groupadd, useradd and mkdir commands to handle failure
+- Added setting python user to debug image
+- Added venv volume to feluda api in docker compose file
+- Added build args for feluda indexer and reporter
+- Added volumes in docker compose file ([`317c2a0`](https://github.com/tattle-made/feluda/commit/317c2a09a7bfa0daebff97b78ff5d35a05c06af3))
+
+### Refactor
+
+* refactor: commenting init func ([`bbdffbe`](https://github.com/tattle-made/feluda/commit/bbdffbece59cd5fb737f48df6299235f4c0aa542))
+
+### Unknown
+
+* Merge pull request #230 from tattle-made/development
+
+merge dev to main ([`ed75278`](https://github.com/tattle-made/feluda/commit/ed752788090d1b1c7fdfa84e6389116bd68985ac))
+
+* Merge pull request #229 from duggalsu/test_sql
+
+Fix SQL queries ([`81a99ed`](https://github.com/tattle-made/feluda/commit/81a99eda41303fb1f7138a5453640d3d2652ed8f))
+
+* Merge pull request #228 from aatmanvaidya/hash-worker-update
+
+fix: postgres store and update func in hash worker ([`27f6715`](https://github.com/tattle-made/feluda/commit/27f671523fa2eb9643308d884b8244be9bbac743))
+
+* Merge pull request #227 from aatmanvaidya/audio-delete
+
+chore: adding context manager to audio operator ([`bd6202f`](https://github.com/tattle-made/feluda/commit/bd6202ff12b06612f529285f44a1821c2b1f9678))
+
+* Merge pull request #226 from duggalsu/add_crc_postgres_audio
+
+feat: Added audio CRC write to postgres ([`ddc008a`](https://github.com/tattle-made/feluda/commit/ddc008a4beffcb55d71080670968b0965c6d5692))
+
+* Merge pull request #225 from duggalsu/add_crc_postgres
+
+feat: Add video CRC to postgres ([`6d173bb`](https://github.com/tattle-made/feluda/commit/6d173bba4a729a172697b2059737d34029ffbb28))
+
+* Merge pull request #224 from tattle-made/hotfix
+
+Hotfix ([`34f3ed0`](https://github.com/tattle-made/feluda/commit/34f3ed0c6e03ef765cb3c29140f635982ed68c34))
+
+* Merge pull request #223 from duggalsu/add_pr_checks_main
+
+Add pr checks main ([`aceb907`](https://github.com/tattle-made/feluda/commit/aceb9078c991a239d04227214b8519f06635fbbf))
+
+* Merge pull request #222 from duggalsu/update_urllib3_audio_video_requirements
+
+fix: Update urllib3 package and fix feluda core dockerfile ([`e5e5f4e`](https://github.com/tattle-made/feluda/commit/e5e5f4e29e73cc2afc478cc925f00b430b3430d6))
+
+* Merge pull request #221 from aatmanvaidya/postgres-hash
+
+feat: hash worker can add data to postgresql ([`c34a6b3`](https://github.com/tattle-made/feluda/commit/c34a6b39e28d26c01a83f94690101a394009573e))
+
+* Merge pull request #220 from duggalsu/impl_media_crc
+
+Impl media crc ([`f4018b0`](https://github.com/tattle-made/feluda/commit/f4018b01ad62183ae1bde2026aed272da6d5f8a5))
+
+
 ## v0.4.10 (2024-03-18)
 
 ### Fix

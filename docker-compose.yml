@@ -3,7 +3,7 @@ version: "3.5"
 services:
   store:
     container_name: es
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    image: docker.elastic.co/elasticsearch/elasticsearch@sha256:ec72548cf833e58578d8ff40df44346a49480b2c88a4e73a91e1b85ec7ef0d44 # docker.elastic.co/elasticsearch/elasticsearch:8.12.0
     volumes:
       - ./.docker/es/data:/var/lib/elasticsearch/data
     ports:
@@ -27,7 +27,7 @@ services:
       - IPC_LOCK
 
   queue:
-    image: rabbitmq:3.12.12-management
+    image: rabbitmq@sha256:e2505f78d58dca8c372cde3930e4d6bee5e02ac9001ce85ece5a11df606c1fa3 # rabbitmq:3.12.12-management
     container_name: rabbitmq
     hostname: rabbit
     volumes:
@@ -52,6 +52,7 @@ services:
         - "GID=${GID:-1000}"
     volumes:
       - ./src:/usr/app
+      - venv:/usr/app/venv/
     env_file: ./src/development.env
     ports:
       - 7000:7000
@@ -69,6 +70,9 @@ services:
       context: ./src
       dockerfile: Dockerfile
       target: debug
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
     env_file: ./src/development.env
     command: tail -f /dev/null
     depends_on:
@@ -83,6 +87,9 @@ services:
       context: ./src
       dockerfile: Dockerfile
       target: debug
+      args:
+        - "UID=${UID:-1000}"
+        - "GID=${GID:-1000}"
     env_file: ./src/development.env
     command: tail -f /dev/null
     depends_on:
@@ -90,6 +97,9 @@ services:
         condition: service_started
       queue:
         condition: service_started
+
+volumes:
+    venv: {}
 
 #networks:
 #  default:

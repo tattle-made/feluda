@@ -5,7 +5,10 @@ import json
 from datetime import datetime
 from core.models.media import MediaType
 from core.models.media_factory import VideoFactory
+from core.store.postgresql import PostgreSQLManager
 from time import sleep
+import numpy as np
+import binascii
 
 log = Logger(__name__)
 
@@ -49,6 +52,22 @@ def generate_document(post_id: str, representation: any):
 
 
 def indexer(feluda):
+
+    def calc_video_vec_crc(video_vec_gen):
+        count = 0
+        combined_vec = [[]]
+        for vector in video_vec_gen:
+            if count == 0:
+                # skip first vector - mean of keyframes
+                count += 1
+            else:
+                combined_vec.append(vector["vid_vec"])
+        # remove first list which is empty
+        combined_vec = combined_vec[1:]
+        combined_vec_arr = np.asarray(combined_vec)
+        arr_crc = binascii.crc32(combined_vec_arr.tobytes(order='C'))
+        return arr_crc
+
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         file_content = json.loads(body)
@@ -56,6 +75,14 @@ def indexer(feluda):
         try:
             log.info("Processing file")
             video_vec = vid_vec_rep_resnet.run(video_path)
+            video_vec_crc = calc_video_vec_crc(video_vec)
+            log.debug("video_vec_crc:{}".format(video_vec_crc))
+            # write the crc into a table
+            pg_manager.store(
+                "user_message_inbox_perceptually_similar",
+                str(video_vec_crc),
+                "video_vector_crc")
+            log.info("CRC value added to PostgreSQL")
             doc = generate_document(video_path["path"], video_vec)
             media_type = MediaType.VIDEO
             result = feluda.store.store(media_type, doc)
@@ -94,9 +121,17 @@ def handle_exception(feluda, queue_name, worker_func, retries, max_retries):
         print("Failed to re-establish connection after maximum retries.")
 
 
+feluda = None
+pg_manager = None
+video_index_queue = None
 try:
     feluda = Feluda("worker/vidvec/config.yml")
     feluda.setup()
+    pg_manager = PostgreSQLManager()
+    pg_manager.connect()
+    pg_manager.create_trigger_function()
+    pg_manager.create_table("user_message_inbox_perceptually_similar")
+    pg_manager.create_trigger("user_message_inbox_perceptually_similar")
     video_index_queue = feluda.config.queue.parameters.queues[0]["name"]
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
@@ -107,3 +142,4 @@ except Exception as e:
     retries = 0
     max_retries = 10
     handle_exception(feluda, video_index_queue, indexer(feluda), retries, max_retries)
+    pg_manager.close_connection()

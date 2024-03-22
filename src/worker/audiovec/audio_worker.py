@@ -4,8 +4,11 @@ from core.operators import audio_vec_embedding
 import json
 from core.models.media import MediaType
 from core.models.media_factory import AudioFactory
+from core.store.postgresql import PostgreSQLManager
 from time import sleep
 from datetime import datetime
+import numpy as np
+import binascii
 
 log = Logger(__name__)
 
@@ -29,6 +32,12 @@ def make_report_failed(data, status):
 
 
 def indexer(feluda):
+
+    def calc_audio_vec_crc(audio_vector):
+        vec_arr = np.asarray(audio_vector)
+        arr_crc = binascii.crc32(vec_arr.tobytes(order='C'))
+        return arr_crc
+
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         file_content = json.loads(body)
@@ -37,6 +46,14 @@ def indexer(feluda):
             log.info("Processing File")
             media_type = MediaType.AUDIO
             audio_vec = audio_vec_embedding.run(audio_path)
+            audio_vec_crc = calc_audio_vec_crc(audio_vec)
+            log.debug("audio_vec_crc:{}".format(audio_vec_crc))
+            # write the crc into a table
+            pg_manager.store(
+                "user_message_inbox_perceptually_similar",
+                str(audio_vec_crc),
+                "audio_vector_crc")
+            log.info("CRC value added to PostgreSQL")
             doc = {
                 "e_kosh_id": str(1231231),
                 "dataset": "test-dataset-id",
@@ -80,9 +97,17 @@ def handle_exception(feluda, queue_name, worker_func, retries, max_retries):
         print("Failed to re-establish connection after maximum retries.")
 
 
+feluda = None
+pg_manager = None
+audio_index_queue = None
 try:
     feluda = Feluda("worker/audiovec/config.yml")
     feluda.setup()
+    pg_manager = PostgreSQLManager()
+    pg_manager.connect()
+    pg_manager.create_trigger_function()
+    pg_manager.create_table("user_message_inbox_perceptually_similar")
+    pg_manager.create_trigger("user_message_inbox_perceptually_similar")
     audio_index_queue = feluda.config.queue.parameters.queues[0]["name"]
     feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
@@ -93,3 +118,4 @@ except Exception as e:
     retries = 0
     max_retries = 10
     handle_exception(feluda, audio_index_queue, indexer(feluda), retries, max_retries)
+    pg_manager.close_connection()
