@@ -46,9 +46,11 @@ jobs:
 
       - name: Bandit Scan
         uses: shundor/python-bandit-scan@9cc5aa4a006482b8a7f91134412df6772dbda22c # v1.0
+        env:
+          EXIT_ZERO_VAL: ${{ (github.event_name == 'pull_request') && false || true }}
         with: # optional arguments
-          # exit with 0, even with results found
-          exit_zero: true # optional, default is DEFAULT
+          # exit with 1 on pull request, else exit with 0 even if results found (on push to main or cron job)
+          exit_zero: env.EXIT_ZERO_VAL # optional, default is DEFAULT
           # Github token of the repository (automatically created by Github)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information.
           # File or directory to run bandit on
