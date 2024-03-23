@@ -1,5 +1,5 @@
 ### TEST IMAGE ###
-FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS test
+FROM --platform=$TARGETPLATFORM python:3.12-slim-bullseye@sha256:c66cf219ac0083a9af2ff90e16530f16cd503c59eb7909feb3b8f3524dc1a87e AS test
 ARG UID
 ARG GID
 
