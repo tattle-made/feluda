@@ -65,8 +65,9 @@ WORKDIR /usr/app
 # Set venv path
 ENV PATH="/usr/app/venv/bin:$PATH"
 
-# install python packages
-RUN pip install --no-cache-dir debugpy nose2
+# dev requirements file
+COPY --chown=python:python dev_requirements.txt /usr/app/dev_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/dev_requirements.txt
 
 # Set unprivileged user with group membership
 USER python:python
