@@ -48,7 +48,10 @@ RUN apt-get purge -y --auto-remove \
     && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh wget
-RUN pip install --no-cache-dir numpy Pillow wget requests Werkzeug
+
+# dev requirements file
+COPY --chown=python:python ./benchmark/vidvec/dev_requirements.txt /usr/app/benchmark/vidvec/dev_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/benchmark/vidvec/dev_requirements.txt
 
 USER python:python
 CMD tail -f /dev/null
