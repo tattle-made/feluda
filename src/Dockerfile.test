@@ -24,13 +24,14 @@ RUN python -m venv /home/python/app/venv \
 # Set venv in path
 ENV PATH="/home/python/app/venv/bin:$PATH"
 
-# Copy core and operator requirements
+# Copy base, core and operator requirements
+COPY --chown=python:python base_requirements.txt /home/python/app/base_requirements.txt
 COPY --chown=python:python requirements.txt /home/python/app/requirements.txt
 COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /home/python/app/core/operators/vid_vec_rep_resnet_requirements.txt
 COPY --chown=python:python ./core/operators/audio_vec_embedding_requirements.txt /home/python/app/core/operators/audio_vec_embedding_requirements.txt
 
 # Run pip install
-RUN pip install --no-cache-dir --upgrade pip \
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/base_requirements.txt \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/requirements.txt \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/vid_vec_rep_resnet_requirements.txt \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/audio_vec_embedding_requirements.txt
