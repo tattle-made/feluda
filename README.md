@@ -39,7 +39,7 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
   ```
   # Install locally in venv
   $ cd src/api/
-  $ pip install -r requirements.txt
+  $ pip install  --require-hashes --no-deps -r requirements.txt
   ```
 
 
@@ -67,8 +67,8 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
   ```
   # Install locally in venv
   $ cd src/api/core/operators/
-  $ pip install -r image_vec_rep_resnet_requirements.txt
-  $ pip install -r vid_vec_rep_resnet_requirements.txt
+  $ pip install  --require-hashes --no-deps -r image_vec_rep_resnet_requirements.txt
+  $ pip install  --require-hashes --no-deps -r vid_vec_rep_resnet_requirements.txt
 ..
 # Create the docker containers
   $ cd src/api/
@@ -127,13 +127,13 @@ Note:
 ```bash
 $ cd src/
 $ pip install --upgrade pip-tools
-$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --emit-index-url --emit-find-links requirements.in
+$ TMPDIR=<temp_dir> pip-compile --verbose --allow-unsafe --generate-hashes --emit-index-url --emit-find-links requirements.in
 
 # Updating operators
 $ cd src/core/operators/
 # The link for torch is required since PyPi only hosts the GPU version of torch packages.
-$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html vid_vec_rep_resnet_requirements.in
-$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html audio_vec_embedding_requirements.in
+$ TMPDIR=<temp_dir> pip-compile --verbose --allow-unsafe --generate-hashes --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html vid_vec_rep_resnet_requirements.in
+$ TMPDIR=<temp_dir> pip-compile --verbose --allow-unsafe --generate-hashes --emit-index-url --emit-find-links --find-links https://download.pytorch.org/whl/torch_stable.html audio_vec_embedding_requirements.in
 ```
 
 #### Modify generated `requirements.txt` for platform specific torch packages
@@ -199,7 +199,7 @@ torchvision==0.17.0+cpu; platform_machine=='x86_64' \
 This is useful to update dependencies e.g. when using `pip-audit` 
 
 ```bash
-$ TMPDIR=<temp_dir> pip-compile --verbose --generate-hashes --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
+$ TMPDIR=<temp_dir> pip-compile --verbose --allow-unsafe --generate-hashes --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
 
 ```
 
