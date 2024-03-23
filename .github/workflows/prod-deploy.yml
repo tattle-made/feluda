@@ -88,6 +88,10 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: main
+      - name: "Setup Node version"
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: 16.20.2
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
         with:
@@ -97,7 +101,7 @@ jobs:
       - name: Install Packages
         run: |
           cd docs/ 
-          npm install --legacy-peer-deps
+          npm ci --legacy-peer-deps
 
       - name: Build Site
         run: |
