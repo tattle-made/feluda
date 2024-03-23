@@ -2,6 +2,79 @@
 
 
 
+## v0.5.1 (2024-03-23)
+
+### Chore
+
+* chore: Added security policy ([`2628ddb`](https://github.com/tattle-made/feluda/commit/2628ddbbaaf05bae7feb794a3c4c9fed53b650b7))
+
+### Ci
+
+* ci: Fix bandit to run from single workflow
+- Added bandit.yml to run on PR
+- Disabled bandit from pr-security.yml ([`e441f2e`](https://github.com/tattle-made/feluda/commit/e441f2e14291451d70b61ca955dae71ecc3646cd))
+
+* ci: Added ci test for media file hash operator ([`e5f6414`](https://github.com/tattle-made/feluda/commit/e5f64141f3c594f04e0d6f5701a3ae5d9c98bfff))
+
+### Fix
+
+* fix: Added pinned pip package
+- Added base requirements.in with pip
+- Created base requirements.txt with pip pinned by hash
+- Recreated requirements.txt with --allow-unsafe to get correct setuptools
+- Updated feluda core dockerfile to install pip using base requirements
+- Updated ci test dockerfile to install pip using base requirements
+- Updated all benchmark dockerfiles to install pip using base requirements
+- Updated all worker dockerfiles to install pip using base requirements
+- Updated readme pip install and pip-compile commands ([`810a45e`](https://github.com/tattle-made/feluda/commit/810a45eae4b681799173286b683e64b2d387e38f))
+
+### Unknown
+
+* Merge pull request #239 from tattle-made/hotfix
+
+Hotfix ([`3113756`](https://github.com/tattle-made/feluda/commit/31137560f3099895918e4e27d35d9537a8344074))
+
+* Merge pull request #238 from duggalsu/add_base_requirements
+
+Add base requirements ([`0391f2a`](https://github.com/tattle-made/feluda/commit/0391f2a5cbc6ab05d663332e3c35179581398479))
+
+* Merge pull request #237 from tattle-made/hotfix
+
+Hotfix ([`83e2efd`](https://github.com/tattle-made/feluda/commit/83e2efd7d643ccd89c1be9c9131e2428dae7aa5e))
+
+* Merge pull request #236 from duggalsu/fix_bandit_codeql_warning
+
+Fix bandit codeql warning ([`a7c05bb`](https://github.com/tattle-made/feluda/commit/a7c05bba72bbff11c5aac44f7e93959f09a3e557))
+
+* - Test inverted ternary operator ([`fe03cb5`](https://github.com/tattle-made/feluda/commit/fe03cb5059c53771f7d8f32098f678795be9037c))
+
+* - Modify env settings ([`2d48897`](https://github.com/tattle-made/feluda/commit/2d488971013c8cdccc0fd84f320ad012571a7f9e))
+
+* - Test switch conditional values ([`7f1315a`](https://github.com/tattle-made/feluda/commit/7f1315a3318f71cc4d915f974369a97c2e392f83))
+
+* - Set conditional falsy and truthy values ([`f85d164`](https://github.com/tattle-made/feluda/commit/f85d164d8237b8a01d2f3ffa72c82c383f5268cd))
+
+* - Fix env var boolean setting ([`68923a6`](https://github.com/tattle-made/feluda/commit/68923a683dffaeecb2697e51f7d5be16a7e51141))
+
+* - Added conditional exit_zero for bandit ([`764b8bb`](https://github.com/tattle-made/feluda/commit/764b8bbf79a9caa3f3445ad9d1981309739704ea))
+
+* Merge pull request #235 from tattle-made/hotfix
+
+Hotfix ([`650a379`](https://github.com/tattle-made/feluda/commit/650a379bbc6ecc92ae4cc5a0e397d17e04a69578))
+
+* Merge pull request #234 from duggalsu/add_ci_test_media_file_hash
+
+Add ci test media file hash ([`88f1d30`](https://github.com/tattle-made/feluda/commit/88f1d3062ef3ada6ecb767cb389c50db9ebfebf5))
+
+* Merge pull request #233 from tattle-made/hotfix
+
+Hotfix ([`13829a6`](https://github.com/tattle-made/feluda/commit/13829a6d4b72dbb49450572d5d827e0c2b88a952))
+
+* Merge pull request #232 from duggalsu/add_security_policy
+
+Add security policy ([`f0f6d70`](https://github.com/tattle-made/feluda/commit/f0f6d701dc3117c16c0e542c0201784c6ae8d7f9))
+
+
 ## v0.5.0 (2024-03-21)
 
 ### Chore
