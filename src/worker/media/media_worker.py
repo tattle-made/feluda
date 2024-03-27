@@ -90,9 +90,9 @@ def indexer(feluda):
                 doc = generate_document(video_path["path"], video_vec)
                 media_type = MediaType.VIDEO
                 # store in ES
-                # if feluda.config.store:
-                result = feluda.store.store(media_type, doc)
-                log.info(result)
+                if feluda.config.store:
+                    result = feluda.store.store(media_type, doc)
+                    log.info(result)
                 # send indexed report to report queue
                 report = make_report_indexed(file_content, "indexed")
                 feluda.queue.message(feluda.config.queue.parameters.queues[1]["name"], report)
