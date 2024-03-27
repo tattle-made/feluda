@@ -14,6 +14,7 @@ import binascii
 
 log = Logger(__name__)
 
+
 def make_report_indexed(data, status):
     report = {}
     report["indexer_id"] = 1
@@ -23,6 +24,7 @@ def make_report_indexed(data, status):
     report["status_code"] = 200
     return json.dumps(report)
 
+
 def make_report_failed(data, status):
     report = {}
     report["indexer_id"] = 1
@@ -31,6 +33,7 @@ def make_report_failed(data, status):
     report["status"] = status
     report["status_code"] = 400
     return json.dumps(report)
+
 
 def generate_document(post_id: str, representation: any):
     base_doc = {
@@ -51,6 +54,7 @@ def generate_document(post_id: str, representation: any):
 
     return generator_doc
 
+
 def calc_video_vec_crc(video_vec_gen):
     count = 0
     combined_vec = [[]]
@@ -63,16 +67,23 @@ def calc_video_vec_crc(video_vec_gen):
     # remove first list which is empty
     combined_vec = combined_vec[1:]
     combined_vec_arr = np.asarray(combined_vec)
-    arr_crc = binascii.crc32(combined_vec_arr.tobytes(order='C'))
+    arr_crc = binascii.crc32(combined_vec_arr.tobytes(order="C"))
     return arr_crc
+
+def calc_audio_vec_crc(audio_vector):
+    vec_arr = np.asarray(audio_vector)
+    arr_crc = binascii.crc32(vec_arr.tobytes(order='C'))
+    return arr_crc
+
 
 def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         global table_name
         file_content = json.loads(body)
-        media_type = file_content["media_type"]
-        if media_type == "video":
+        file_media_type = file_content["media_type"]
+        if file_media_type == "video":
+            log.info("Media Type is Video")
             try:
                 # download the video from url (supports s3)
                 video_path = VideoFactory.make_from_url(file_content["path"])
@@ -81,12 +92,9 @@ def indexer(feluda):
                 # add crc to database
                 if feluda.config.postgresql:
                     video_vec_crc = calc_video_vec_crc(video_vec)
-                    pg_manager.store(
-                        table_name,
-                        str(video_vec_crc),
-                        "video_vector_crc")
-                    log.info("CRC value added to PostgreSQL")
-                # generate document to report
+                    pg_manager.store(table_name, str(video_vec_crc), "video_vector_crc")
+                    log.info("Video CRC value added to PostgreSQL")
+                # generate document
                 doc = generate_document(video_path["path"], video_vec)
                 media_type = MediaType.VIDEO
                 # store in ES
@@ -95,18 +103,60 @@ def indexer(feluda):
                     log.info(result)
                 # send indexed report to report queue
                 report = make_report_indexed(file_content, "indexed")
-                feluda.queue.message(feluda.config.queue.parameters.queues[1]["name"], report)
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
+                )
                 # send ack
                 ch.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as e:
                 print("Error indexing media", e)
                 # send failed report to report queue
                 report = make_report_failed(file_content, "failed")
-                feluda.queue.message(feluda.config.queue.parameters.queues[1]["name"], report)
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
+                )
                 # requeue the media file
                 ch.basic_nack(delivery_tag=method.delivery_tag)
-        elif media_type == "audio":
-            pass
+        elif file_media_type == "audio":
+            log.info("Media Type is Audio")
+            try:
+                # download audio file from url (supports S3)
+                audio_path = AudioFactory.make_from_url(file_content["path"])
+                # generate audio vec
+                audio_vec = audio_vec_embedding.run(audio_path)
+                # add crc to database
+                if feluda.config.postgresql:
+                    audio_vec_crc = calc_audio_vec_crc(audio_vec)
+                    pg_manager.store(table_name, str(audio_vec_crc), "audio_vector_crc")
+                    log.info("Audio CRC value added to PostgreSQL")
+                # generate document
+                doc = {
+                    "e_kosh_id": str(1231231),
+                    "dataset": "test-dataset-id",
+                    "metadata": {},
+                    "audio_vec": audio_vec,
+                    "date_added": datetime.utcnow(),
+                }
+                media_type = MediaType.AUDIO
+                # store in ES
+                if feluda.config.store:
+                    result = feluda.store.store(media_type, doc)
+                    log.info(result)
+                # send indexed report to report queue
+                report = make_report_indexed(file_content, "indexed")
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
+                )
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+            except Exception as e:
+                print("Error indexing media", e)
+                # send failed report to report queue
+                report = make_report_failed(file_content, "failed")
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
+                )
+                # requeue the media file
+                ch.basic_nack(delivery_tag=method.delivery_tag)
         else:
             log.info("This media type is not supported currently")
             # TODO: send a customised report and then report it to the queue with a ack
@@ -156,6 +206,9 @@ try:
         feluda.start_component(ComponentType.STORE)
     else:
         log.info("Store (ES) is not defined in the config file")
+    # init all operators
+    vid_vec_rep_resnet.initialize(param=None)
+    audio_vec_embedding.initialize(param=None)
     # start listening to the queue
     feluda.queue.listen(media_index_queue, indexer(feluda))
 except Exception as e:
