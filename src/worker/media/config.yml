@@ -32,4 +32,4 @@ postgresql:
   type: "postgresql"
   parameters:
     table_names:
-      - name: "table_name_1"
+      - name: "user_message_inbox_perceptually_similar"

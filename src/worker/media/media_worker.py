@@ -14,7 +14,6 @@ import binascii
 
 log = Logger(__name__)
 
-
 def make_report_indexed(data, status):
     report = {}
     report["indexer_id"] = 1
@@ -70,6 +69,7 @@ def calc_video_vec_crc(video_vec_gen):
 def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
+        global table_name
         file_content = json.loads(body)
         media_type = file_content["media_type"]
         if media_type == "video":
@@ -82,7 +82,7 @@ def indexer(feluda):
                 if feluda.config.postgresql:
                     video_vec_crc = calc_video_vec_crc(video_vec)
                     pg_manager.store(
-                        "user_message_inbox_perceptually_similar",
+                        table_name,
                         str(video_vec_crc),
                         "video_vector_crc")
                     log.info("CRC value added to PostgreSQL")
@@ -90,9 +90,9 @@ def indexer(feluda):
                 doc = generate_document(video_path["path"], video_vec)
                 media_type = MediaType.VIDEO
                 # store in ES
-                if feluda.config.store:
-                    result = feluda.store.store(media_type, doc)
-                    log.info(result)
+                # if feluda.config.store:
+                result = feluda.store.store(media_type, doc)
+                log.info(result)
                 # send indexed report to report queue
                 report = make_report_indexed(file_content, "indexed")
                 feluda.queue.message(feluda.config.queue.parameters.queues[1]["name"], report)
@@ -143,8 +143,9 @@ try:
         pg_manager = PostgreSQLManager()
         pg_manager.connect()
         pg_manager.create_trigger_function()
-        pg_manager.create_table("user_message_inbox_perceptually_similar")
-        pg_manager.create_trigger("user_message_inbox_perceptually_similar")
+        table_name = feluda.config.postgresql.parameters.table_names[0]["name"]
+        pg_manager.create_table(table_name)
+        pg_manager.create_trigger(table_name)
     else:
         log.info("PostgreSQL is not defined in the config file")
     media_index_queue = feluda.config.queue.parameters.queues[0]["name"]
