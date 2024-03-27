@@ -69,6 +69,16 @@ class OperatorConfig:
     label: str
     parameters: List[OperatorParameters]
 
+@dataclass
+class PostgreParameters:
+    table_names: List[dict]
+
+@dataclass
+class PostgreSQLConfig:
+    label: str
+    type: str
+    parameters: PostgreParameters
+
 
 @dataclass
 class Config:
@@ -76,6 +86,7 @@ class Config:
     queue: Optional[QueueConfig]
     server: Optional[ServerConfig]
     operators: Optional[OperatorConfig]
+    postgresql: Optional[PostgreSQLConfig]
 
 
 def load(filepath) -> Config:
