@@ -23,9 +23,9 @@ operators:
     - name: "Video Vector Representation"
       type: "vid_vec_rep_resnet"
       parameters: { index_name: "video" }
-    - name: "Audio Vector Representation"
-      type: "audio_vec_embedding"
-      parameters: { index_name: "audio" }
+    # - name: "Audio Vector Representation"
+    #   type: "audio_vec_embedding"
+    #   parameters: { index_name: "audio" }
 
 postgresql:
   label: "PostgreSQL"
