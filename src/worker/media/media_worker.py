@@ -70,9 +70,10 @@ def calc_video_vec_crc(video_vec_gen):
     arr_crc = binascii.crc32(combined_vec_arr.tobytes(order="C"))
     return arr_crc
 
+
 def calc_audio_vec_crc(audio_vector):
     vec_arr = np.asarray(audio_vector)
-    arr_crc = binascii.crc32(vec_arr.tobytes(order='C'))
+    arr_crc = binascii.crc32(vec_arr.tobytes(order="C"))
     return arr_crc
 
 
@@ -160,6 +161,11 @@ def indexer(feluda):
         else:
             log.info("This media type is not supported currently")
             # TODO: send a customised report and then report it to the queue with a ack
+            report = make_report_failed(file_content, "failed")
+            feluda.queue.message(
+                feluda.config.queue.parameters.queues[1]["name"], report
+            )
+            ch.basic_ack(delivery_tag=method.delivery_tag)
 
     return worker
 
