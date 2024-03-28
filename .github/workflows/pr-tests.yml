@@ -6,6 +6,7 @@ permissions:
 on:
   pull_request:
     branches:
+      - main
       - development
       - hotfix
     types:
