@@ -56,7 +56,7 @@ class AmazonMQ:
                 routing_key=queue_name,
                 body=json.dumps(payload),
             )
-            print(f"Sent message")
+            print("Sent message")
         except Exception:
             log.exception("Error sending message")
             print("Error sending message")
