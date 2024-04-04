@@ -70,7 +70,7 @@ class TextFactory:
     def make_from_file_in_memory(image_data: FileStorage):
         pass
 
-class VideoFactory:
+class AWSS3Utils:
     aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
     aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
     aws_region = os.getenv('AWS_REGION')
@@ -81,13 +81,17 @@ class VideoFactory:
         region_name=aws_region
     )
     s3 = session.client('s3')
+
     @staticmethod
     def download_file_from_s3(bucket_name, file_key, local_file_path):
         try:
-            VideoFactory.s3.download_file(bucket_name, file_key, local_file_path)
+            AWSS3Utils.s3.download_file(bucket_name, file_key, local_file_path)
             print(f"File {file_key} downloaded successfully as {local_file_path}")
         except Exception as e:
             print(f"Error downloading file {file_key}: {e}")
+            raise Exception("Error Downloading file from S3")
+
+class VideoFactory:
 
     @staticmethod
     def make_from_url(video_url):
@@ -105,13 +109,13 @@ class VideoFactory:
                 print("Error downloading video:", e)
                 raise Exception("Error Downloading Video")
         else:
-            bucket_name = VideoFactory.aws_bucket
+            bucket_name = AWSS3Utils.aws_bucket
             file_key = video_url
             file_name = file_key.split("/")[-1]
             file_path = os.path.join(temp_dir, file_name)
             try:
                 print("Downloading video from S3")
-                VideoFactory.download_file_from_s3(bucket_name, file_key, file_path)
+                AWSS3Utils.download_file_from_s3(bucket_name, file_key, file_path)
                 print("Video downloaded")
             except Exception as e:
                 print("Error downloading video from S3:", e)
@@ -135,17 +139,32 @@ class AudioFactory:
     @staticmethod
     def make_from_url(audio_url):
         temp_dir = tempfile.gettempdir()
-        temp_url = audio_url.split("?")[0]
-        file_name = temp_url.split("/")[-1] + ".wav"
-        audio_file = temp_dir + os.sep + file_name
-        try:
-            print("Downloading audio from url")
-            wget.download(audio_url, out=audio_file)
-            print("audio downloaded")
-        except Exception as e:
-            log.exception("Error downloading audio:", e)
-            raise Exception("Error Downloading audio")
-        return {"path": audio_file}
+
+        if audio_url.startswith("http"):
+            temp_url = audio_url.split("?")[0]
+            file_name = temp_url.split("/")[-1] + ".wav"
+            file_path = os.path.join(temp_dir, file_name)
+            try:
+                print("Downloading audio from URL")
+                wget.download(audio_url, out=file_path)
+                print("Audio downloaded")
+            except Exception as e:
+                print("Error downloading audio:", e)
+                raise Exception("Error Downloading audio")
+        else:
+            bucket_name = AWSS3Utils.aws_bucket
+            file_key = audio_url
+            file_name = file_key.split("/")[-1]
+            file_path = os.path.join(temp_dir, file_name)
+            try:
+                print("Downloading audio from S3")
+                AWSS3Utils.download_file_from_s3(bucket_name, file_key, file_path)
+                print("Audio downloaded")
+            except Exception as e:
+                print("Error downloading audio from S3:", e)
+                raise Exception("Error Downloading audio")
+
+        return {"path": file_path}
     
     @staticmethod
     def make_from_url_to_wav(audio_url):
