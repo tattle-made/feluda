@@ -6,7 +6,7 @@
 #
 packaging==23.2
     # via pytesseract
-pillow==10.2.0
+pillow==10.3.0
     # via pytesseract
 pytesseract==0.3.10
     # via -r detect_text_in_image_tesseract_requirements.in

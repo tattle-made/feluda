@@ -56,7 +56,7 @@ packaging==23.2
     # via
     #   huggingface-hub
     #   transformers
-pillow==10.2.0
+pillow==10.3.0
     # via torchvision
 pyyaml==6.0.1
     # via
