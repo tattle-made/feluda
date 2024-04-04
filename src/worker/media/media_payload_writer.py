@@ -1,4 +1,4 @@
-from core.feluda import ComponentType, Feluda
+from core.feluda import Feluda
 from core.logger import Logger
 from core.queue.amazon_mq import AmazonMQ
 from time import sleep
