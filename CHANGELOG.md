@@ -2,6 +2,45 @@
 
 
 
+## v0.5.2 (2024-03-23)
+
+### Ci
+
+* ci: Added npm ci for pinned package installation
+- Added setup node version action ([`fd4a8f1`](https://github.com/tattle-made/feluda/commit/fd4a8f10d85aa2688589215a106224bfc7aead68))
+
+* ci: Added using ruff action for CI linting ([`ed89995`](https://github.com/tattle-made/feluda/commit/ed89995589dc55b2a251b3c49696c303891d17cf))
+
+### Fix
+
+* fix: Add pinned dev requirements
+- Added dev requirements for feluda core, video and audio benchmark
+- Fixed video benchmark not working without new boto3 dependency
+- Fixed audio benchmark not working without new wget dependency ([`d974e7e`](https://github.com/tattle-made/feluda/commit/d974e7e0ff262e46a779add1e4f1aeaef4e70f25))
+
+### Unknown
+
+* Merge pull request #244 from tattle-made/hotfix
+
+Hotfix ([`7bae56d`](https://github.com/tattle-made/feluda/commit/7bae56d6cbcf7896bdfe0c79d9e1e76869d04c3d))
+
+* Merge pull request #243 from duggalsu/add_dev_requirements
+
+Add dev requirements ([`aa2c09f`](https://github.com/tattle-made/feluda/commit/aa2c09f9d9607880e3e9eb1e418aa5044294c960))
+
+* Merge pull request #242 from tattle-made/hotfix
+
+Hotfix ([`efb06e5`](https://github.com/tattle-made/feluda/commit/efb06e57791e47b27303e0419307f8b8236669fb))
+
+* Merge pull request #241 from duggalsu/use_npm_pinned
+
+Use npm pinned ([`52a4bbf`](https://github.com/tattle-made/feluda/commit/52a4bbf4e7f24936ee8ed1703fbe806b93da62c9))
+
+* Merge pull request #240 from duggalsu/use_ci_ruff_action
+
+ci: Added using ruff action for CI linting ([`5d7137b`](https://github.com/tattle-made/feluda/commit/5d7137bb29e71a09d30ece4fc9e535bd9c8dd872))
+
+
 ## v0.5.1 (2024-03-23)
 
 ### Chore

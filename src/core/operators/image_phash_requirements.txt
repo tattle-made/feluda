@@ -11,7 +11,7 @@ numpy==1.26.3
     #   imagehash
     #   pywavelets
     #   scipy
-pillow==10.2.0
+pillow==10.3.0
     # via imagehash
 pywavelets==1.5.0
     # via imagehash
