@@ -1,5 +1,5 @@
-from core.models.media_factory import AudioFactory
-from core.operators import audio_vec_embedding
+# from core.models.media_factory import AudioFactory
+# from core.operators import audio_vec_embedding
 
 audio_url = "https://github.com/aatmanvaidya/audio-files/blob/main/audio30.wav"
 # audio_url = "https://github.com/aatmanvaidya/audio-files/blob/main/mp3-sample-audio.mp3"
