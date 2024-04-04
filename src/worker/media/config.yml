@@ -8,11 +8,11 @@ store:
     video_index_name: "video"
     audio_index_name: "audio"
 
-queue:
-  label: "Queue"
-  type: "rabbitmq"
+amazon_queue:
+  label: "Amazon Queue"
+  type: "amazonmq"
   parameters:
-    host_name: "rabbitmq"
+    host_name: "amazonmq"
     queues:
       - name: "media-index-queue"
       - name: "report-queue"
@@ -27,9 +27,9 @@ operators:
       type: "audio_vec_embedding"
       parameters: { index_name: "audio" }
 
-postgresql:
-  label: "PostgreSQL"
-  type: "postgresql"
-  parameters:
-    table_names:
-      - name: "user_message_inbox_perceptually_similar"
+# postgresql:
+#   label: "PostgreSQL"
+#   type: "postgresql"
+#   parameters:
+#     table_names:
+#       - name: "user_message_inbox_perceptually_similar"
