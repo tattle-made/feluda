@@ -8,11 +8,11 @@ store:
     video_index_name: "video"
     audio_index_name: "audio"
 
-amazon_queue:
-  label: "Amazon Queue"
-  type: "amazonmq"
+queue:
+  label: "Queue"
+  type: "rabbitmq"
   parameters:
-    host_name: "amazonmq"
+    host_name: "rabbitmq"
     queues:
       - name: "media-index-queue"
       - name: "report-queue"

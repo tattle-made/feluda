@@ -78,7 +78,7 @@ def calc_audio_vec_crc(audio_vector):
     return arr_crc
 
 
-def indexer(feluda, amazom_queue_manager):
+def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         global table_name
@@ -105,8 +105,8 @@ def indexer(feluda, amazom_queue_manager):
                     log.info(result)
                 # send indexed report to report queue
                 report = make_report_indexed(file_content, "indexed")
-                amazom_queue_manager.send_message(
-                    feluda.config.amazon_queue.parameters.queues[1]["name"], report
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
                 )
                 # send ack
                 ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -114,8 +114,8 @@ def indexer(feluda, amazom_queue_manager):
                 print("Error indexing media", e)
                 # send failed report to report queue
                 report = make_report_failed(file_content, "failed")
-                amazom_queue_manager.send_message(
-                    feluda.config.amazon_queue.parameters.queues[1]["name"], report
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
                 )
                 # requeue the media file
                 ch.basic_nack(delivery_tag=method.delivery_tag)
@@ -146,16 +146,16 @@ def indexer(feluda, amazom_queue_manager):
                     log.info(result)
                 # send indexed report to report queue
                 report = make_report_indexed(file_content, "indexed")
-                amazom_queue_manager.send_message(
-                    feluda.config.amazon_queue.parameters.queues[1]["name"], report
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
                 )
                 ch.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as e:
                 print("Error indexing media", e)
                 # send failed report to report queue
                 report = make_report_failed(file_content, "failed")
-                amazom_queue_manager.send_message(
-                    feluda.config.amazon_queue.parameters.queues[1]["name"], report
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
                 )
                 # requeue the media file
                 ch.basic_nack(delivery_tag=method.delivery_tag)
@@ -163,8 +163,8 @@ def indexer(feluda, amazom_queue_manager):
             log.info("This media type is not supported currently")
             # TODO: send a customised report and then report it to the queue with a ack
             report = make_report_failed(file_content, "failed")
-            amazom_queue_manager.send_message(
-                feluda.config.amazon_queue.parameters.queues[1]["name"], report
+            feluda.queue.message(
+                feluda.config.queue.parameters.queues[1]["name"], report
             )
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -176,10 +176,8 @@ def handle_exception(feluda, queue_name, worker_func, retries, max_retries):
     if retries < max_retries:
         print("Inside Handle Exception")
         try:
-            amazom_queue_manager = AmazonMQ(queue_config)
-            amazom_queue_manager.connect()
-            amazom_queue_manager.create_queue()
-            amazom_queue_manager.listen(queue_name, worker_func)
+            feluda.start_component(ComponentType.QUEUE)
+            feluda.queue.listen(queue_name, worker_func)
             return
         except Exception as e:
             print("Error handling exception:", e)
@@ -197,23 +195,20 @@ try:
     # Init Feluda and load config
     feluda = Feluda("worker/media/config.yml")
     feluda.setup()
-    queue_config = feluda.config.amazon_queue
-    media_index_queue = queue_config.parameters.queues[0]["name"]
-    # setup Amazon MQ
-    amazom_queue_manager = AmazonMQ(queue_config)
-    amazom_queue_manager.connect()
-    amazom_queue_manager.create_queue()
-    # check if postgresql exists in config
-    if feluda.config.postgresql:
-        pg_manager = PostgreSQLManager()
-        pg_manager.connect()
-        pg_manager.create_trigger_function()
-        table_name = feluda.config.postgresql.parameters.table_names[0]["name"]
-        pg_manager.create_table(table_name)
-        pg_manager.create_trigger(table_name)
-    else:
-        log.info("PostgreSQL is not defined in the config file")
-    # check if store is present in config and start component
+    media_index_queue = feluda.config.queue.parameters.queues[0]["name"]
+    # setup QUEUE
+    feluda.start_component(ComponentType.QUEUE)
+    # # check if postgresql exists in config
+    # if feluda.config.postgresql:
+    #     pg_manager = PostgreSQLManager()
+    #     pg_manager.connect()
+    #     pg_manager.create_trigger_function()
+    #     table_name = feluda.config.postgresql.parameters.table_names[0]["name"]
+    #     pg_manager.create_table(table_name)
+    #     pg_manager.create_trigger(table_name)
+    # else:
+    #     log.info("PostgreSQL is not defined in the config file")
+    # # check if store is present in config and start component
     if feluda.config.store:
         feluda.start_component(ComponentType.STORE)
     else:
@@ -222,9 +217,7 @@ try:
     vid_vec_rep_resnet.initialize(param=None)
     audio_vec_embedding.initialize(param=None)
     # start listening to the queue
-    amazom_queue_manager.listen(
-        media_index_queue, indexer(feluda, amazom_queue_manager)
-    )
+    feluda.queue.listen(media_index_queue, indexer(feluda))
 except Exception as e:
     print("Error Initializing Indexer", e)
     # Try connecting to Queue again
@@ -233,7 +226,7 @@ except Exception as e:
     handle_exception(
         feluda,
         media_index_queue,
-        indexer(feluda, amazom_queue_manager),
+        indexer(feluda),
         retries,
         max_retries,
     )

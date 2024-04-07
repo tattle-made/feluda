@@ -1,11 +1,13 @@
 import logging
 from . import rabbit_mq
+from . import amazon_mq
 from core.config import QueueConfig
+
 # from os import environ
 
 log = logging.getLogger(__name__)
 
-queues = {"rabbitmq": rabbit_mq.RabbitMQ}
+queues = {"rabbitmq": rabbit_mq.RabbitMQ, "amazonmq": amazon_mq.AmazonMQ}
 
 
 class Queue:

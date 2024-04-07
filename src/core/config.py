@@ -79,18 +79,6 @@ class PostgreSQLConfig:
     type: str
     parameters: PostgreParameters
 
-@dataclass
-class AmazonQueueParameters:
-    host_name: str
-    queues: List[dict]
-
-
-@dataclass
-class AmazonQueueConfig:
-    label: str
-    type: str
-    parameters: AmazonQueueParameters
-
 
 @dataclass
 class Config:
@@ -99,8 +87,6 @@ class Config:
     server: Optional[ServerConfig]
     operators: Optional[OperatorConfig]
     postgresql: Optional[PostgreSQLConfig]
-    amazon_queue: Optional[AmazonQueueConfig]
-
 
 def load(filepath) -> Config:
     log.info("Loading config from " + filepath)

@@ -1,4 +1,4 @@
-from core.feluda import Feluda
+from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 from core.queue.amazon_mq import AmazonMQ
 from time import sleep
@@ -10,11 +10,8 @@ log = Logger(__name__)
 try:
     feluda = Feluda("worker/media/config.yml")
     feluda.setup()
-    queue_config = feluda.config.amazon_queue
-    media_index_queue = queue_config.parameters.queues[0]["name"]
-    amazom_queue_manager = AmazonMQ(queue_config)
-    amazom_queue_manager.connect()
-    amazom_queue_manager.create_queue()
+    media_index_queue = feluda.config.queue.parameters.queues[0]["name"]
+    feluda.start_component(ComponentType.QUEUE)
     # take media_type from command line
     media_type = sys.argv[1] if len(sys.argv) > 1 else "video"
     media_paths = {
@@ -32,7 +29,7 @@ try:
             "path": path,
             "media_type": media_type,
         }
-        amazom_queue_manager.send_message(media_index_queue, dummy_payload)
+        feluda.queue.message(media_index_queue, dummy_payload)
         sleep(0.3)
 except Exception as e:
     print("Error Sending Payload", e)

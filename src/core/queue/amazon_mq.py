@@ -40,7 +40,7 @@ class AmazonMQ:
             print("Error Connecting to AmazonMQ")
             raise Exception("Error connecting to AmazonMQ")
 
-    def create_queue(self):
+    def initialize(self):
         for queue_name in self.queues:
             self.channel.queue_declare(queue=queue_name)
             print("Queue Declared : ", queue_name)
@@ -48,7 +48,7 @@ class AmazonMQ:
     def is_connected(self):
         return self.channel.is_open
 
-    def send_message(self, queue_name, payload):
+    def message(self, queue_name, payload):
         try:
             channel = self.connection.channel()
             channel.basic_publish(
