@@ -8,16 +8,15 @@ todo :
 """
 
 import logging
-from typing import List, Optional
+from typing import List, Optional, Union
 import yaml
 from dataclasses import dataclass
 from dacite import from_dict
 
 log = logging.getLogger(__name__)
 
-
 @dataclass
-class StoreParameters:
+class StoreESParameters:
     host_name: str
     image_index_name: str
     text_index_name: str
@@ -26,10 +25,20 @@ class StoreParameters:
 
 
 @dataclass
-class StoreConfig:
+class StorePostgresParameters:
+    table_names: List[str]
+
+
+@dataclass
+class StoreEntity:
     label: str
     type: str
-    parameters: StoreParameters
+    parameters: Union[StoreESParameters, StorePostgresParameters]
+
+
+@dataclass
+class StoreConfig:
+    entities: List[StoreEntity]
 
 
 @dataclass
@@ -69,16 +78,6 @@ class OperatorConfig:
     label: str
     parameters: List[OperatorParameters]
 
-@dataclass
-class PostgreParameters:
-    table_names: List[dict]
-
-@dataclass
-class PostgreSQLConfig:
-    label: str
-    type: str
-    parameters: PostgreParameters
-
 
 @dataclass
 class Config:
@@ -86,7 +85,7 @@ class Config:
     queue: Optional[QueueConfig]
     server: Optional[ServerConfig]
     operators: Optional[OperatorConfig]
-    postgresql: Optional[PostgreSQLConfig]
+
 
 def load(filepath) -> Config:
     log.info("Loading config from " + filepath)

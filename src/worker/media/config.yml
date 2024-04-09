@@ -1,12 +1,18 @@
 store:
-  label: "Data Store"
-  type: "es_vec"
-  parameters:
-    host_name: "es"
-    image_index_name: "image"
-    text_index_name: "text"
-    video_index_name: "video"
-    audio_index_name: "audio"
+  entities:
+    - label: "Data Store"
+      type: "es_vec"
+      parameters:
+        host_name: "es"
+        image_index_name: "image"
+        text_index_name: "text"
+        video_index_name: "video"
+        audio_index_name: "audio"
+    - label: "Postgres Store"
+      type: "postgresql"
+      parameters:
+        table_names:
+          - "user_message_inbox_perceptually_similar"
 
 queue:
   label: "Queue"
@@ -26,10 +32,3 @@ operators:
     - name: "Audio Vector Representation"
       type: "audio_vec_embedding"
       parameters: { index_name: "audio" }
-
-# postgresql:
-#   label: "PostgreSQL"
-#   type: "postgresql"
-#   parameters:
-#     table_names:
-#       - name: "user_message_inbox_perceptually_similar"
