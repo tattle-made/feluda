@@ -1,15 +1,17 @@
 import psycopg2
+from core.config import StoreConfig
 from dotenv import load_dotenv
 import os
 load_dotenv()
 
 class PostgreSQLManager:
-    def __init__(self, port=5432):
+    def __init__(self, param: StoreConfig, port=5432, ):
         self.host = os.getenv("PG_HOST")
         self.dbname = os.getenv("PG_DB")
         self.user = os.getenv("PG_USER")
         self.password = os.getenv("PG_PASS")
         self.port = port
+        self.table_name = param.parameters.table_names[0]
         self.conn = None
         self.cur = None
 
@@ -189,6 +191,10 @@ class PostgreSQLManager:
         else:
             print("Not connected to the database. Call connect() first.")
 
+    def initialise(self):
+        self.create_trigger_function()
+        self.create_table(self.table_name)
+        self.create_trigger(self.table_name)
 
 # if __name__ == "__main__":
 #     pg_manager = PostgreSQLManager()
