@@ -157,3 +157,6 @@ class ES:
     def stats(self):
         indices = self.get_indices()
         return indices
+    
+    def initialise(self):
+        self.optionally_create_index()

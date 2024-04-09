@@ -195,14 +195,3 @@ class PostgreSQLManager:
         self.create_trigger_function()
         self.create_table(self.table_name)
         self.create_trigger(self.table_name)
-
-# if __name__ == "__main__":
-#     pg_manager = PostgreSQLManager()
-#     pg_manager.connect()
-#     pg_manager.create_trigger_function()
-#     pg_manager.create_table("user_message_inbox_duplicate")
-#     pg_manager.create_trigger("user_message_inbox_duplicate")
-#     #pg_manager.store("user_message_inbox_duplicate", "hash_val", "blake2b_hash_value")
-#     pg_manager.update("user_message_inbox_duplicate", 1, "some_new_hash", "blake2b_hash_value")
-#     pg_manager.update("user_message_inbox_perceptually_similar", 1, "some_new_hash", "video_vector_crc")
-#     pg_manager.close_connection()

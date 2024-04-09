@@ -61,12 +61,9 @@ class Feluda:
         if component_type == ComponentType.SERVER and self.server:
             self.server.start()
         elif component_type == ComponentType.STORE and self.store:
-            if self.store["es_vec"]:
-                self.store["es_vec"].connect()
-                self.store["es_vec"].optionally_create_index()
-            if self.store["postgresql"]:
-                self.store["postgresql"].connect()
-                self.store["postgresql"].initialise()
+            for store in self.store:
+                self.store[store].connect()
+                self.store[store].initialise()
         elif component_type == ComponentType.QUEUE and self.queue:
             self.queue.connect()
             self.queue.initialize()
