@@ -103,13 +103,13 @@ class PostgreSQLManager:
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def store(self, table_name, value_column_value, worker_column_value):
+    def store(self, value_column_value, worker_column_value):
         if self.cur:
             try:
                 prepared_stmt = None
-                if table_name == "user_message_inbox_duplicate":
+                if self.table_name == "user_message_inbox_duplicate":
                     prepared_stmt = "INSERT INTO user_message_inbox_duplicate (value, worker_name) VALUES (%s, %s)"
-                elif table_name == "user_message_inbox_perceptually_similar":
+                elif self.table_name == "user_message_inbox_perceptually_similar":
                     prepared_stmt = "INSERT INTO user_message_inbox_perceptually_similar (value, worker_name) VALUES (%s, %s)"
 
                 self.cur.execute(
