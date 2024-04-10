@@ -14,13 +14,13 @@ import binascii
 log = Logger(__name__)
 
 
-def make_report_indexed(data, status):
+def make_report_indexed(data, status, crc_value=None):
     report = {}
     report["indexer_id"] = 1
     report["post_id"] = data["id"]
     report["media_type"] = data["media_type"]
-    # TODO: send crc value to report queue
-    # report["crc_value"] = data
+    if crc_value is not None:
+        report["crc_value"] = crc_value
     report["status"] = status
     report["status_code"] = 200
     return json.dumps(report)
@@ -81,6 +81,8 @@ def calc_audio_vec_crc(audio_vector):
 def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
+        video_vec_crc = None
+        audio_vec_crc = None
         file_content = json.loads(body)
         file_media_type = file_content["media_type"]
         if file_media_type == "video":
@@ -91,21 +93,21 @@ def indexer(feluda):
                 # extract video vectors
                 video_vec = vid_vec_rep_resnet.run(video_path)
                 # add crc to database
-                if feluda.store["postgresql"]:
+                if "postgresql" in feluda.store:
                     video_vec_crc = calc_video_vec_crc(video_vec)
                     feluda.store["postgresql"].store(
                         str(video_vec_crc), "video_vector_crc"
                     )
                     log.info("Video CRC value added to PostgreSQL")
                 # store in ES
-                if feluda.store["es_vec"]:
+                if "es_vec" in feluda.store:
                     # generate document
                     doc = generate_document(video_path["path"], video_vec)
                     media_type = MediaType.VIDEO
                     result = feluda.store["es_vec"].store(media_type, doc)
                     log.info(result)
                 # send indexed report to report queue
-                report = make_report_indexed(file_content, "indexed")
+                report = make_report_indexed(file_content, "indexed", video_vec_crc)
                 feluda.queue.message(
                     feluda.config.queue.parameters.queues[1]["name"], report
                 )
@@ -128,14 +130,14 @@ def indexer(feluda):
                 # generate audio vec
                 audio_vec = audio_vec_embedding.run(audio_path)
                 # add crc to database
-                if feluda.store["postgresql"]:
+                if "postgresql" in feluda.store:
                     audio_vec_crc = calc_audio_vec_crc(audio_vec)
                     feluda.store["postgresql"].store(
                         str(audio_vec_crc), "audio_vector_crc"
                     )
                     log.info("Audio CRC value added to PostgreSQL")
                 # store in ES
-                if feluda.store["es_vec"]:
+                if "es_vec" in feluda.store:
                     # generate document
                     doc = {
                         "e_kosh_id": str(1231231),
@@ -148,7 +150,7 @@ def indexer(feluda):
                     result = feluda.store["es_vec"].store(media_type, doc)
                     log.info(result)
                 # send indexed report to report queue
-                report = make_report_indexed(file_content, "indexed")
+                report = make_report_indexed(file_content, "indexed", audio_vec_crc)
                 feluda.queue.message(
                     feluda.config.queue.parameters.queues[1]["name"], report
                 )
@@ -218,8 +220,3 @@ except Exception as e:
         retries,
         max_retries,
     )
-
-
-### feluda.store
-### feluda.store["postgresql"].store
-### feluda.store["es_vec"].store
