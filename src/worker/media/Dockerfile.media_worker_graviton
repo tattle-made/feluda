@@ -25,18 +25,18 @@ RUN python -m venv /home/python/app/venv \
 # Set venv in path
 ENV PATH="/home/python/app/venv/bin:$PATH"
 
-# Copy base, core and operator requirements
-COPY --chown=python:python base_requirements.txt /home/python/app/base_requirements.txt
+# Copy core and operator requirements
 COPY --chown=python:python requirements.txt /home/python/app/requirements.txt
+COPY --chown=python:python ./core/operators/vid_vec_rep_resnet_requirements.txt /home/python/app/core/operators/vid_vec_rep_resnet_requirements.txt
 COPY --chown=python:python ./core/operators/audio_vec_embedding_requirements.txt /home/python/app/core/operators/audio_vec_embedding_requirements.txt
 
 # Run pip install
-RUN pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/base_requirements.txt \
+RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/vid_vec_rep_resnet_requirements.txt \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/audio_vec_embedding_requirements.txt
 
 #####################################
-
 
 
 ### PRODUCTION IMAGE ###
@@ -47,10 +47,11 @@ ARG GID
 # Update image, install required utils, and remove cache
 RUN apt-get update \
     && apt-get -y upgrade \
-    && apt-get install -y --no-install-recommends vim zsh curl wget \
+    && apt-get install -y --no-install-recommends vim zsh curl \
+    && apt-get install -y ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Set python group and user, create home dir, create app dir, change ownership of app to user
+# Set python group and user, create home dir, and create app dir for user
 RUN groupadd -g $GID python \
     && useradd --create-home -r -u $UID -g python python \
     && mkdir /home/python/app \
@@ -67,6 +68,30 @@ COPY --chown=python:python . /home/python/app
 
 # Set venv path
 ENV PATH="/home/python/app/venv/bin:$PATH"
+
+### AWS Graviton Optimization ###
+
+# Graviton3(E) (e.g. c7g, c7gn and Hpc7g instances) supports BF16 format for ML acceleration. This can be enabled in oneDNN by setting the below environment variable
+ENV DNNL_DEFAULT_FPMATH_MODE=BF16
+
+# Enable primitive caching to avoid the redundant primitive allocation
+# latency overhead. Please note this caching feature increases the
+# memory footprint. Tune this cache capacity to a lower value to
+# reduce the additional memory requirement.
+ENV LRU_CACHE_CAPACITY=1024
+
+# Enable Transparent huge page allocations from PyTorch C10 allocator
+ENV THP_MEM_ALLOC_ENABLE=1
+
+# Make sure the openmp threads are distributed across all the processes for multi process applications to avoid over subscription for the vcpus. For example if there is a single application process, then num_processes should be set to '1' so that all the vcpus are assigned to it with one-to-one mapping to omp threads
+# RUN num_vcpus=8
+# RUN num_processes=1
+# RUN temp = $((1 > ($num_vcpus/$num_processes) ? 1 : ($num_vcpus/$num_processes)))
+ENV OMP_NUM_THREADS=1
+ENV OMP_PROC_BIND=false
+ENV OMP_PLACES=cores
+###
+
 
 # Set unprivileged user with group membership
 USER python:python

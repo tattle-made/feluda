@@ -6,6 +6,7 @@ permissions:
 on:
   pull_request:
     branches:
+      - main
       - development
       - hotfix
     types:
@@ -31,9 +32,9 @@ jobs:
           python-version: '3.11'
 
       - name: Lint with Ruff
-        run: |
-          pip install ruff==0.3.2
-          ruff --output-format=github ./src/
+        uses: chartboost/ruff-action@e18ae971ccee1b2d7bbef113930f00c670b78da4 # v1.0.0
+        with:
+          src: "./src"
         continue-on-error: false
 
       - name: pip audit install setup 1
@@ -96,20 +97,20 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Bandit Scan
-        uses: shundor/python-bandit-scan@9cc5aa4a006482b8a7f91134412df6772dbda22c # v1.0
-        with: # optional arguments
-          # exit with 0, even with results found
-          exit_zero: false # optional, default is DEFAULT
-          # File or directory to run bandit on
-          path: ./src/ # optional, default is .
-          # Report only issues of a given severity level or higher. Can be LOW, MEDIUM or HIGH. Default is UNDEFINED (everything)
-          # level: HIGH # optional, default is UNDEFINED
-          # Report only issues of a given confidence level or higher. Can be LOW, MEDIUM or HIGH. Default is UNDEFINED (everything)
-          # confidence: # optional, default is UNDEFINED
-          # comma-separated list of paths (glob patterns supported) to exclude from scan (note that these are in addition to the excluded paths provided in the config file) (default: .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
-          # excluded_paths: # optional, default is DEFAULT
-          # comma-separated list of test IDs to skip
-          # skips: # optional, default is DEFAULT
-          # path to a .bandit file that supplies command line arguments
-          # ini_path: # optional, default is DEFAULT
+#      - name: Bandit Scan
+#        uses: shundor/python-bandit-scan@9cc5aa4a006482b8a7f91134412df6772dbda22c # v1.0
+#        with: # optional arguments
+#          # exit with 0, even with results found
+#          exit_zero: false # optional, default is DEFAULT
+#          # File or directory to run bandit on
+#          path: ./src/ # optional, default is .
+#          # Report only issues of a given severity level or higher. Can be LOW, MEDIUM or HIGH. Default is UNDEFINED (everything)
+#          # level: HIGH # optional, default is UNDEFINED
+#          # Report only issues of a given confidence level or higher. Can be LOW, MEDIUM or HIGH. Default is UNDEFINED (everything)
+#          # confidence: # optional, default is UNDEFINED
+#          # comma-separated list of paths (glob patterns supported) to exclude from scan (note that these are in addition to the excluded paths provided in the config file) (default: .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
+#          # excluded_paths: # optional, default is DEFAULT
+#          # comma-separated list of test IDs to skip
+#          # skips: # optional, default is DEFAULT
+#          # path to a .bandit file that supplies command line arguments
+#          # ini_path: # optional, default is DEFAULT

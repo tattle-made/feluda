@@ -1,6 +1,6 @@
 torch==2.1.2+cpu
 torchvision==0.16.2+cpu
 numpy==1.26.3
-Pillow==10.2.0  # dev
+Pillow==10.3.0  # dev
 memray==1.11.0
 pyinstrument==4.6.2

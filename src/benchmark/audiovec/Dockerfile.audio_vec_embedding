@@ -20,7 +20,9 @@ WORKDIR /usr/app
 RUN python -m venv /usr/app/venv && chown -R python:python /usr/app/venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
-RUN pip install --no-cache-dir --upgrade pip
+# base requirements file
+COPY --chown=python:python base_requirements.txt /usr/app/base_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/base_requirements.txt
 
 # audio requirments file
 COPY --chown=python:python ./core/operators/audio_vec_embedding_requirements.txt /usr/app/core/operators/audio_vec_embedding_requirements.txt
@@ -47,6 +49,10 @@ RUN apt-get purge -y --auto-remove \
 
 RUN apt-get update && apt-get install -y --no-install-recommends vim zsh
 RUN apt-get update && apt-get install -y --no-install-recommends wget
+
+# dev requirements file
+COPY --chown=python:python ./benchmark/audiovec/dev_requirements.txt /usr/app/benchmark/audiovec/dev_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/benchmark/audiovec/dev_requirements.txt
 
 USER python:python
 CMD tail -f /dev/null

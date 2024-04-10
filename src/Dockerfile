@@ -26,7 +26,10 @@ WORKDIR /usr/app
 RUN python -m venv /usr/app/venv && chown -R python:python /usr/app/venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
-RUN pip install --no-cache-dir --upgrade pip
+# base requirements file
+COPY --chown=python:python base_requirements.txt /usr/app/base_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/base_requirements.txt
+
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends vim curl
 # RUN apt-get install -y ffmpeg
 # RUN apt-get update && \
@@ -62,8 +65,9 @@ WORKDIR /usr/app
 # Set venv path
 ENV PATH="/usr/app/venv/bin:$PATH"
 
-# install python packages
-RUN pip install --no-cache-dir debugpy nose2
+# dev requirements file
+COPY --chown=python:python dev_requirements.txt /usr/app/dev_requirements.txt
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/dev_requirements.txt
 
 # Set unprivileged user with group membership
 USER python:python

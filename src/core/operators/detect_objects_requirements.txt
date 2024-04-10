@@ -85,7 +85,7 @@ pandas==2.2.0
     # via
     #   seaborn
     #   ultralytics
-pillow==10.2.0
+pillow==10.3.0
     # via
     #   matplotlib
     #   torchvision

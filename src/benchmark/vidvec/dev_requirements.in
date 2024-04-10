@@ -1,0 +1,6 @@
+numpy==1.26.4
+pillow==10.3.0
+wget==3.2
+requests==2.31.0
+Werkzeug==3.0.1
+boto3==1.34.64
