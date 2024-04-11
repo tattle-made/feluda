@@ -93,14 +93,14 @@ def indexer(feluda):
                 # extract video vectors
                 video_vec = vid_vec_rep_resnet.run(video_path)
                 # add crc to database
-                if "postgresql" in feluda.store:
+                if feluda.config.store and "postgresql" in feluda.store:
                     video_vec_crc = calc_video_vec_crc(video_vec)
                     feluda.store["postgresql"].store(
                         str(video_vec_crc), "video_vector_crc"
                     )
                     log.info("Video CRC value added to PostgreSQL")
                 # store in ES
-                if "es_vec" in feluda.store:
+                if feluda.config.store and "es_vec" in feluda.store:
                     # generate document
                     doc = generate_document(video_path["path"], video_vec)
                     media_type = MediaType.VIDEO
@@ -130,14 +130,14 @@ def indexer(feluda):
                 # generate audio vec
                 audio_vec = audio_vec_embedding.run(audio_path)
                 # add crc to database
-                if "postgresql" in feluda.store:
+                if feluda.config.store and "postgresql" in feluda.store:
                     audio_vec_crc = calc_audio_vec_crc(audio_vec)
                     feluda.store["postgresql"].store(
                         str(audio_vec_crc), "audio_vector_crc"
                     )
                     log.info("Audio CRC value added to PostgreSQL")
                 # store in ES
-                if "es_vec" in feluda.store:
+                if feluda.config.store and "es_vec" in feluda.store:
                     # generate document
                     doc = {
                         "e_kosh_id": str(1231231),
