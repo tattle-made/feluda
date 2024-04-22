@@ -15,7 +15,7 @@ jobs:
       api: ${{ steps.filter.outputs.api}}
       docs: ${{ steps.filter.outputs.docs }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
         with:
           ref: development
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
@@ -32,7 +32,7 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.api == 'true' }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
         with:
           ref: main
       - name: Declare some variables
@@ -85,7 +85,7 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.docs == 'true' }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
         with:
           ref: main
       - name: "Setup Node version"
