@@ -82,7 +82,7 @@ def indexer(feluda):
                     feluda.config.queue.parameters.queues[1]["name"], report
                 )
                 # requeue the media file
-                ch.basic_nack(delivery_tag=method.delivery_tag)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
         elif file_media_type == "audio":
             log.info("Media Type is Audio")
             try:
@@ -112,7 +112,7 @@ def indexer(feluda):
                     feluda.config.queue.parameters.queues[1]["name"], report
                 )
                 # requeue the media file
-                ch.basic_nack(delivery_tag=method.delivery_tag)
+                ch.basic_ack(delivery_tag=method.delivery_tag)
         else:
             log.info("This media type is not supported currently")
             # TODO: send a customised report and then report it to the queue with a ack
