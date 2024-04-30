@@ -2,6 +2,28 @@
 
 
 
+## v0.5.4 (2024-04-30)
+
+### Fix
+
+* fix: Fixed dependabot issues
+- Updated idna package
+- Updated transformers package
+- Updated torch and torchvision for python 3.12 compatibility ([`d027dfe`](https://github.com/tattle-made/feluda/commit/d027dfe90ce33b2a8be531bafdd21959a60f1a2b))
+
+### Unknown
+
+* Merge pull request #284 from tattle-made/hotfix
+
+Hotfix ([`9d679c0`](https://github.com/tattle-made/feluda/commit/9d679c021e955082bc280d80aa96c15b6b10daff))
+
+* Merge pull request #283 from duggalsu/fix_dependabot_20240430
+
+Fixed dependabot issues ([`1319f89`](https://github.com/tattle-made/feluda/commit/1319f89e87f7ec5abdfd8bd5dfc34b752843f1c0))
+
+* - Added ignore vuln until fix issued ([`9da6bc8`](https://github.com/tattle-made/feluda/commit/9da6bc827f94282399231b9ad1857feb244807ae))
+
+
 ## v0.5.3 (2024-04-04)
 
 ### Fix
