@@ -2,6 +2,23 @@
 
 
 
+## v0.5.3 (2024-04-04)
+
+### Fix
+
+* fix: Updated vulnerable pillow dependency in requirements ([`efd1be8`](https://github.com/tattle-made/feluda/commit/efd1be8bf979d27383e3c7cad2b11a26003ede39))
+
+### Unknown
+
+* Merge pull request #257 from tattle-made/hotfix
+
+Hotfix ([`67ac03a`](https://github.com/tattle-made/feluda/commit/67ac03aba15a1f7dbad0641f9539cec09a9b7bdb))
+
+* Merge pull request #256 from duggalsu/update_pillow
+
+Update pillow ([`44b0f88`](https://github.com/tattle-made/feluda/commit/44b0f88e4de6d566bbb6ed8fb6ab0a0db0fe5ec4))
+
+
 ## v0.5.2 (2024-03-23)
 
 ### Ci

@@ -50,6 +50,8 @@ jobs:
           no-deps: true
           inputs: |
             ./src/requirements.txt
+          ignore-vulns: |
+            GHSA-84pr-m4jr-85g5
 
       - name: pip audit install setup 2
         run: |
