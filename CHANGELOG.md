@@ -2,7 +2,55 @@
 
 
 
+## v0.6.0 (2024-05-01)
+
+### Chore
+
+* chore: fixing merge conflicts ([`4ce050e`](https://github.com/tattle-made/feluda/commit/4ce050ed0338fcf60680092a5d6fee656f81fb3a))
+
+### Unknown
+
+* Merge pull request #286 from tattle-made/development
+
+chore: merging development to main ([`bba03e4`](https://github.com/tattle-made/feluda/commit/bba03e4f6588ac1981ccb74cf048968e4760d98f))
+
+* Merge pull request #285 from aatmanvaidya/dev-2
+
+chore: fixing merge conflicts ([`6239cef`](https://github.com/tattle-made/feluda/commit/6239cefa03fec6e74806a2511faaaff64ec1b747))
+
+
 ## v0.5.4 (2024-04-30)
+
+### Chore
+
+* chore: sending ack on exception instead of nack ([`f6d9258`](https://github.com/tattle-made/feluda/commit/f6d9258eeedaa730365a7faea0ff517c78b20357))
+
+* chore: if statement checks for store in config inside media worker ([`435cf80`](https://github.com/tattle-made/feluda/commit/435cf800daddbdc5ed1e7009688de7c5f8cfca74))
+
+* chore: updating hash worker config ([`059d878`](https://github.com/tattle-made/feluda/commit/059d87801e4605f48e40e44c8548e2d1225deafc))
+
+* chore: adding init files for hash and media worker ([`a508c5a`](https://github.com/tattle-made/feluda/commit/a508c5a1386f9f6a3bd1102ae4be5e514555d7ff))
+
+* chore: fixing ruff lint error ([`82f85a6`](https://github.com/tattle-made/feluda/commit/82f85a60709fb30faaddb53becce99881c0ee224))
+
+* chore: deleting empty query.py file in store ([`8cf33fc`](https://github.com/tattle-made/feluda/commit/8cf33fccea43d73ecffed3193f6c55edbc71e3ae))
+
+* chore: fixing ruff lint error ([`8b920d5`](https://github.com/tattle-made/feluda/commit/8b920d548a002ade0c5c0217fb0759507a553172))
+
+* chore: deleting media test file ([`9ad98f7`](https://github.com/tattle-made/feluda/commit/9ad98f7f8d2f8b59878c206909fc164701489647))
+
+### Ci
+
+* ci: media worker staging workflow ([`a4280f4`](https://github.com/tattle-made/feluda/commit/a4280f49257b83b06731a130413a95e9545ef539))
+
+* ci: Added npm ci for pinned package installation
+- Added setup node version action ([`60c47e8`](https://github.com/tattle-made/feluda/commit/60c47e84171f88aa3e3df890c2f19b4af34dc01b))
+
+* ci: Added using ruff action for CI linting ([`246c6cd`](https://github.com/tattle-made/feluda/commit/246c6cdd50ff7f6cd09ffbc65e7686e4f9553e20))
+
+* ci: Fix bandit to run from single workflow
+- Added bandit.yml to run on PR
+- Disabled bandit from pr-security.yml ([`692503e`](https://github.com/tattle-made/feluda/commit/692503ecc328b9860905ef14cd295879d6044d3a))
 
 ### Fix
 
@@ -10,6 +58,49 @@
 - Updated idna package
 - Updated transformers package
 - Updated torch and torchvision for python 3.12 compatibility ([`d027dfe`](https://github.com/tattle-made/feluda/commit/d027dfe90ce33b2a8be531bafdd21959a60f1a2b))
+
+* fix: hash worker relies more on core feluda ([`d8aed50`](https://github.com/tattle-made/feluda/commit/d8aed50b4af1f9cfc9dbbac3894a92c80bc96902))
+
+* fix: hash payload writer can send audio/video both ([`502ad4e`](https://github.com/tattle-made/feluda/commit/502ad4e8413641002f17b1f33966d75ca483cb8d))
+
+* fix: sending crc value to report queue ([`a89990e`](https://github.com/tattle-made/feluda/commit/a89990ebe76b8cc507a9eefd1101c1f83537a9c7))
+
+* fix: making store component init more lean ([`3a63883`](https://github.com/tattle-made/feluda/commit/3a63883bf0e52a15092f377c946ad81e733b5586))
+
+* fix: media worker relies more on core feluda ([`0389a3a`](https://github.com/tattle-made/feluda/commit/0389a3af3c412f7bc45f44dcc661253b37fb90ed))
+
+* fix: store can init all components properly ([`9b5a6d9`](https://github.com/tattle-made/feluda/commit/9b5a6d9c84e60b02284b34d612d03dcc4aba14d1))
+
+* fix: store init can start postgresql ([`d9d1cb1`](https://github.com/tattle-made/feluda/commit/d9d1cb120c1391123674d593f9c71911dd292934))
+
+* fix: feluda core supports amazom mq ([`91783af`](https://github.com/tattle-made/feluda/commit/91783af357fbcfe1ccfc4e1e27cf976666c00d67))
+
+* fix: Updated vulnerable pillow dependency in requirements ([`2c60f67`](https://github.com/tattle-made/feluda/commit/2c60f67e8c8fe2f95405386b2df0b7405c8f4965))
+
+* fix: Add pinned dev requirements
+- Added dev requirements for feluda core, video and audio benchmark
+- Fixed video benchmark not working without new boto3 dependency
+- Fixed audio benchmark not working without new wget dependency ([`293d970`](https://github.com/tattle-made/feluda/commit/293d97093f9fe04ac3c20b60125d6190eb4e2a52))
+
+* fix: Added pinned pip package
+- Added base requirements.in with pip
+- Created base requirements.txt with pip pinned by hash
+- Recreated requirements.txt with --allow-unsafe to get correct setuptools
+- Updated feluda core dockerfile to install pip using base requirements
+- Updated ci test dockerfile to install pip using base requirements
+- Updated all benchmark dockerfiles to install pip using base requirements
+- Updated all worker dockerfiles to install pip using base requirements
+- Updated readme pip install and pip-compile commands ([`05e23b2`](https://github.com/tattle-made/feluda/commit/05e23b24101e5e4a937daa0e6399583004203286))
+
+* fix: adding contextmanager for hash worker ([`312ab3f`](https://github.com/tattle-made/feluda/commit/312ab3fd04046f6eb9fd157c75bf06a419bafdcb))
+
+* fix: audio factory supports s3 download ([`9834490`](https://github.com/tattle-made/feluda/commit/9834490a316aa2a97994f04939bf32f65b8bd12d))
+
+### Refactor
+
+* refactor: updating config structure for store ([`a2252f6`](https://github.com/tattle-made/feluda/commit/a2252f673b6197740839b5d1d59058024aa4214a))
+
+* refactor: s3 download to a new file ([`83ed5cf`](https://github.com/tattle-made/feluda/commit/83ed5cf33ba44006a91259e9b924769b0fdee777))
 
 ### Unknown
 
@@ -23,12 +114,66 @@ Fixed dependabot issues ([`1319f89`](https://github.com/tattle-made/feluda/commi
 
 * - Added ignore vuln until fix issued ([`9da6bc8`](https://github.com/tattle-made/feluda/commit/9da6bc827f94282399231b9ad1857feb244807ae))
 
+* Merge pull request #275 from aatmanvaidya/ack-fix
+
+chore: sending ack on exception instead of nack ([`0b93759`](https://github.com/tattle-made/feluda/commit/0b937598c87a68433154b6adcbd1278f1f469671))
+
+* Merge pull request #261 from aatmanvaidya/hash-worker-fix
+
+fix: hash worker relies more on core feluda ([`cbf1349`](https://github.com/tattle-made/feluda/commit/cbf13499e6f8a83f8da2ba603197d9122f980941))
+
+* Merge pull request #250 from aatmanvaidya/media-worker
+
+feat: media worker ([`0d97313`](https://github.com/tattle-made/feluda/commit/0d9731386387afda7e1b3e695a1776c55e663f0f))
+
+* - Test inverted ternary operator ([`c7e3e05`](https://github.com/tattle-made/feluda/commit/c7e3e052d94027f3f65602a5438522cfead0ccd2))
+
+* - Modify env settings ([`0e2a13b`](https://github.com/tattle-made/feluda/commit/0e2a13b22b332dea98d09ca328a25e685e9875ef))
+
+* - Test switch conditional values ([`f05fbea`](https://github.com/tattle-made/feluda/commit/f05fbea9f1672acc64e987650be7bfb6b27450b2))
+
+* - Set conditional falsy and truthy values ([`6a1e908`](https://github.com/tattle-made/feluda/commit/6a1e90838b2e26af981a6ee344b72a4e259b40a0))
+
+* - Fix env var boolean setting ([`f80d81e`](https://github.com/tattle-made/feluda/commit/f80d81eb951d68be59201408591552afdfe592de))
+
+* - Added conditional exit_zero for bandit ([`41036ad`](https://github.com/tattle-made/feluda/commit/41036adebe19c085beaad9bec865f52cb0dc4553))
+
 
 ## v0.5.3 (2024-04-04)
+
+### Chore
+
+* chore: amazon mq send_message lint fix ([`063096c`](https://github.com/tattle-made/feluda/commit/063096cecf0b980d1f95482fc189a7825c8ac917))
+
+* chore: adding else condition of media_type ([`4e6e4eb`](https://github.com/tattle-made/feluda/commit/4e6e4eb6c7c66a299bfcb43dabaeee36d825acbb))
+
+* chore: media_type is command line arg in payload writer ([`9d0fa4e`](https://github.com/tattle-made/feluda/commit/9d0fa4eaf2094201a15ee18c1c8c96d4c9ef9d4c))
+
+* chore: store check ([`2df0db6`](https://github.com/tattle-made/feluda/commit/2df0db66cc090cb4dce52deb632092d9168dd4e4))
+
+### Feature
+
+* feat: media worker supports amazon mq ([`8b92b7f`](https://github.com/tattle-made/feluda/commit/8b92b7fb19daefa83a80c263771dea29c3001417))
+
+* feat: Amazon MQ ([`766b805`](https://github.com/tattle-made/feluda/commit/766b8050e86e4eee23c10bf634b0c72e14091314))
+
+* feat: media worker supports audio ([`b92a4d4`](https://github.com/tattle-made/feluda/commit/b92a4d47b47abe3f6335e2011c5f9d760c12d6e8))
+
+* feat: media worker supports video ([`ffba9cd`](https://github.com/tattle-made/feluda/commit/ffba9cda73d4ec6baabbced19409d5dbdb33e7c4))
 
 ### Fix
 
 * fix: Updated vulnerable pillow dependency in requirements ([`efd1be8`](https://github.com/tattle-made/feluda/commit/efd1be8bf979d27383e3c7cad2b11a26003ede39))
+
+* fix: setting up payload for audio ([`3a87ce0`](https://github.com/tattle-made/feluda/commit/3a87ce03a3d7d21aa7f0a60a960d28516a7799a8))
+
+* fix: postgres media worker table ([`dd974d2`](https://github.com/tattle-made/feluda/commit/dd974d2837a0b01301f1d66933d99a3f66fcd581))
+
+* fix: media factory audio function update &amp; setting up media worker ([`2e0fda5`](https://github.com/tattle-made/feluda/commit/2e0fda53bf28ea7d652b60075a99ed6cdeb0b2b5))
+
+### Refactor
+
+* refactor: config supports postgres &amp; feat: setting up media payload writer ([`f43f205`](https://github.com/tattle-made/feluda/commit/f43f2057c695425f6c9fc1fc552910a85f7f1d79))
 
 ### Unknown
 
