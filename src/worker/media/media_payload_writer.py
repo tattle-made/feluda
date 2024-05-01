@@ -3,12 +3,13 @@ from core.logger import Logger
 from time import sleep
 import uuid
 import sys
+
 log = Logger(__name__)
 
 try:
-    feluda = Feluda("worker/hash/config.yml")
+    feluda = Feluda("worker/media/config.yml")
     feluda.setup()
-    count_queue = feluda.config.queue.parameters.queues[0]['name']
+    media_index_queue = feluda.config.queue.parameters.queues[0]["name"]
     feluda.start_component(ComponentType.QUEUE)
     # take media_type from command line
     media_type = sys.argv[1] if len(sys.argv) > 1 else "video"
@@ -16,7 +17,6 @@ try:
         "video": "https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/sample-cat-video.mp4",
         "audio": "https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/audio.wav",
     }
-    
     path = media_paths.get(media_type)
     if path is None:
         raise ValueError("Unsupported media type")
@@ -28,7 +28,7 @@ try:
             "path": path,
             "media_type": media_type,
         }
-        feluda.queue.message(count_queue, dummy_payload)
-        sleep(0.1)
+        feluda.queue.message(media_index_queue, dummy_payload)
+        sleep(0.3)
 except Exception as e:
-    print("Error Initializing Indexer", e)
+    print("Error Sending Payload", e)

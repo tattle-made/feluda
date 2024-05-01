@@ -880,6 +880,10 @@ psycopg2-binary==2.9.9 \
     --hash=sha256:f7fc5a5acafb7d6ccca13bfa8c90f8c51f13d8fb87d95656d3950f0158d3ce53 \
     --hash=sha256:f9b5571d33660d5009a8b3c25dc1db560206e2d2f89d3df1cb32d72c0d117d52
     # via -r requirements.in
+pydub==0.25.1 \
+    --hash=sha256:65617e33033874b59d87db603aa1ed450633288aefead953b30bded59cb599a6 \
+    --hash=sha256:980a33ce9949cab2a569606b65674d748ecbca4f0796887fd6f46173a7b0d30f
+    # via -r requirements.in
 pygments==2.17.2 \
     --hash=sha256:b27c2826c47d0f3219f29554824c30c5e8945175d888647acd804ddd04af846c \
     --hash=sha256:da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367

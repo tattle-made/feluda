@@ -1,15 +1,17 @@
 import psycopg2
+from core.config import StoreConfig
 from dotenv import load_dotenv
 import os
 load_dotenv()
 
 class PostgreSQLManager:
-    def __init__(self, port=5432):
+    def __init__(self, param: StoreConfig, port=5432, ):
         self.host = os.getenv("PG_HOST")
         self.dbname = os.getenv("PG_DB")
         self.user = os.getenv("PG_USER")
         self.password = os.getenv("PG_PASS")
         self.port = port
+        self.table_name = param.parameters.table_names[0]
         self.conn = None
         self.cur = None
 
@@ -101,13 +103,13 @@ class PostgreSQLManager:
         else:
             print("Not connected to the database. Call connect() first.")
 
-    def store(self, table_name, value_column_value, worker_column_value):
+    def store(self, value_column_value, worker_column_value):
         if self.cur:
             try:
                 prepared_stmt = None
-                if table_name == "user_message_inbox_duplicate":
+                if self.table_name == "user_message_inbox_duplicate":
                     prepared_stmt = "INSERT INTO user_message_inbox_duplicate (value, worker_name) VALUES (%s, %s)"
-                elif table_name == "user_message_inbox_perceptually_similar":
+                elif self.table_name == "user_message_inbox_perceptually_similar":
                     prepared_stmt = "INSERT INTO user_message_inbox_perceptually_similar (value, worker_name) VALUES (%s, %s)"
 
                 self.cur.execute(
@@ -189,14 +191,7 @@ class PostgreSQLManager:
         else:
             print("Not connected to the database. Call connect() first.")
 
-
-# if __name__ == "__main__":
-#     pg_manager = PostgreSQLManager()
-#     pg_manager.connect()
-#     pg_manager.create_trigger_function()
-#     pg_manager.create_table("user_message_inbox_duplicate")
-#     pg_manager.create_trigger("user_message_inbox_duplicate")
-#     #pg_manager.store("user_message_inbox_duplicate", "hash_val", "blake2b_hash_value")
-#     pg_manager.update("user_message_inbox_duplicate", 1, "some_new_hash", "blake2b_hash_value")
-#     pg_manager.update("user_message_inbox_perceptually_similar", 1, "some_new_hash", "video_vector_crc")
-#     pg_manager.close_connection()
+    def initialise(self):
+        self.create_trigger_function()
+        self.create_table(self.table_name)
+        self.create_trigger(self.table_name)
