@@ -13,7 +13,7 @@ memray==1.11.0  # dev
 pyinstrument==4.6.2
 numpy==1.26.4
 requests==2.31.0
-locust==2.23.1
+locust==2.26.0
 nose2==0.14.1
 psycopg2-binary==2.9.9
 boto3==1.34.64
