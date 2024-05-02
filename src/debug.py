@@ -5,14 +5,14 @@ from core.config import QueueConfig, QueueParameters, StoreConfig, StoreParamete
 from core import store
 from core.logger import Logger
 from core.queue import Queue
+import pika
+import os
 
 logger = Logger(__name__)
-
 
 @click.group()
 def cli():
     pass
-
 
 @cli.command()
 @click.option(
@@ -55,7 +55,6 @@ def ping(service):
             )
         )
         queue.connect()
-
 
 @cli.command()
 @click.option(
@@ -100,7 +99,6 @@ def reset(service):
         queue.connect()
         queue.reset()
 
-
 @cli.command()
 @click.option(
     "-s",
@@ -144,7 +142,6 @@ def seed(service):
         queue.connect()
         queue.initialize()
 
-
 @cli.command()
 @click.option(
     "-s",
@@ -172,9 +169,28 @@ def stats(service):
         stats = Store.stats()
         logger.prettyprint(stats)
     elif service == "queue":
-        print("function not implemented")
-        pass
+        rabbitmq_host = os.getenv('RABBITMQ_HOST', 'localhost')
+        rabbitmq_port = int(os.getenv('RABBITMQ_PORT', 5672))
+        rabbitmq_username = os.getenv('RABBITMQ_USERNAME', 'guest')
+        rabbitmq_password = os.getenv('RABBITMQ_PASSWORD', 'guest')
 
+        credentials = pika.PlainCredentials(rabbitmq_username, rabbitmq_password)
+        parameters = pika.ConnectionParameters(rabbitmq_host, rabbitmq_port, '/', credentials)
+        connection = pika.BlockingConnection(parameters)
+        channel = connection.channel()
+
+        queue_names = ["tattle-search-index-queue", "tattle-search-report-queue"]
+        total_messages = 0
+
+        for queue_name in queue_names:
+            queue_stats = channel.queue_declare(queue=queue_name, passive=True)
+            total_messages += queue_stats.method.message_count
+
+        click.echo(f"Total messages in queues: {total_messages}")
+
+        connection.close()
 
 if __name__ == "__main__":
     cli()
+
+   
