@@ -231,9 +231,9 @@ flask==2.3.2 \
     #   flask-cors
     #   flask-login
     #   locust
-flask-cors==3.0.10 \
-    --hash=sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438 \
-    --hash=sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de
+flask-cors==4.0.1 \
+    --hash=sha256:eeb69b342142fdbf4766ad99357a7f3876a2ceb77689dc10ff912aac06c389e4 \
+    --hash=sha256:f2a704e4458665580c074b714c4627dd5a306b333deb9074d0b1794dfa2fb677
     # via
     #   -r requirements.in
     #   locust
@@ -1133,7 +1133,6 @@ six==1.16.0 \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
     # via
-    #   flask-cors
     #   geventhttpclient
     #   python-dateutil
 textual==0.50.1 \
