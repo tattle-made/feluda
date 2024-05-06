@@ -838,9 +838,9 @@ torchvision==0.17.0+rocm5.7 \
     --hash=sha256:a8d38f9c9c6570738b6b4bd10bfd45ddd07c1366923adf49132b6fb11aa8f1bc \
     --hash=sha256:e99984aa473b28171bdc399ebbed9c84ec693d387958a5c03dd59667399a3d5d
     # via sentence-transformers
-tqdm==4.66.1 \
-    --hash=sha256:d302b3c5b53d47bce91fea46679d9c3c6508cf6332229aa1e7d8653723793386 \
-    --hash=sha256:d88e651f9db8d8551a62556d3cff9e3034274ca5d66e93197cf2490e2dcb69c7
+tqdm==4.66.4 \
+    --hash=sha256:b75ca56b413b030bc3f00af51fd2c1a1a5eac6a0c1cca83cbb37a5c52abce644 \
+    --hash=sha256:e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb
     # via
     #   -r text_vec_rep_paraphrase_lxml_requirements.in
     #   huggingface-hub

@@ -22,7 +22,7 @@ class Feluda:
         if self.config.store:
             from core import store
 
-            self.store = store.get_store(self.config.store)
+            self.store = store.get_stores(self.config.store)
         if self.config.queue:
             # print("---> 1", self.config.queue)
             from core.queue import Queue
@@ -61,8 +61,9 @@ class Feluda:
         if component_type == ComponentType.SERVER and self.server:
             self.server.start()
         elif component_type == ComponentType.STORE and self.store:
-            self.store.connect()
-            self.store.optionally_create_index()
+            for store in self.store:
+                self.store[store].connect()
+                self.store[store].initialise()
         elif component_type == ComponentType.QUEUE and self.queue:
             self.queue.connect()
             self.queue.initialize()
