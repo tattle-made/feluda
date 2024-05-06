@@ -2,6 +2,23 @@
 
 
 
+## v0.6.2 (2024-05-06)
+
+### Fix
+
+* fix: adding base requirements to media worker dockerfiles ([`bbddf70`](https://github.com/tattle-made/feluda/commit/bbddf704fb95ffaa900e7a9530648edb6834a286))
+
+### Unknown
+
+* Merge pull request #293 from tattle-made/hotfix
+
+Hotfix ([`31abc9d`](https://github.com/tattle-made/feluda/commit/31abc9d47f8dd2d4dba80efac780bbdccf82334d))
+
+* Merge pull request #292 from aatmanvaidya/pinned-dep-fix
+
+fix: adding base requirements to media worker dockerfiles ([`bd95984`](https://github.com/tattle-made/feluda/commit/bd959847a59035f177e5aafc2d7b52ed9b321dbc))
+
+
 ## v0.6.1 (2024-05-06)
 
 ### Fix
