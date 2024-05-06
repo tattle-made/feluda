@@ -2,6 +2,23 @@
 
 
 
+## v0.6.1 (2024-05-06)
+
+### Fix
+
+* fix: tqdm vulnerable version update ([`841a748`](https://github.com/tattle-made/feluda/commit/841a748aa5d87afa4df2ca225107100b422d50b5))
+
+### Unknown
+
+* Merge pull request #291 from tattle-made/hotfix
+
+Hotfix ([`4ed81ab`](https://github.com/tattle-made/feluda/commit/4ed81abf1d887743bb84687da109f67af4b6a3ca))
+
+* Merge pull request #290 from duggalsu/fix_dependabot_20240506
+
+Fix dependabot issues ([`444a06f`](https://github.com/tattle-made/feluda/commit/444a06fc19892fc8b5d675d0221d7f79c1ea95c3))
+
+
 ## v0.6.0 (2024-05-01)
 
 ### Chore
