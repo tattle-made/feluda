@@ -2,6 +2,23 @@
 
 
 
+## v0.6.3 (2024-05-07)
+
+### Fix
+
+* fix: config-server structure ([`831cf54`](https://github.com/tattle-made/feluda/commit/831cf5428fdae43467e32ad504497b5d67dfbf84))
+
+### Unknown
+
+* Merge pull request #303 from tattle-made/hotfix
+
+Hotfix ([`ce0f0e1`](https://github.com/tattle-made/feluda/commit/ce0f0e1efacba89c053a6136f5de2a9ac85f579f))
+
+* Merge pull request #302 from aatmanvaidya/config-fix
+
+fix: config-server structure ([`ed1c62b`](https://github.com/tattle-made/feluda/commit/ed1c62b679f628b89cbeb86b87eac78354b88a4b))
+
+
 ## v0.6.2 (2024-05-06)
 
 ### Fix
