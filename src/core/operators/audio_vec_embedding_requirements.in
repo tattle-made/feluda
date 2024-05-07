@@ -2,5 +2,5 @@ numpy==1.26.4
 librosa==0.10.1
 panns-inference==0.1.1
 torch==2.2.0+cpu
-memray==1.11.0
+memray==1.12.0
 pyinstrument==4.6.2
