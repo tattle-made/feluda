@@ -38,4 +38,7 @@ class Server:
 
         wsgi_host = environ.get("WSGI_HOST")
         wsgi_debug = environ.get("WSGI_DEBUG")
-        self.app.run(host=wsgi_host, port=self.param.parameters.port, debug=wsgi_debug)
+        try:
+            self.app.run(host=wsgi_host, port=self.param.parameters.port, debug=wsgi_debug)
+        except Exception as e:
+            log.exception("Failed to start server:", e)
