@@ -1,5 +1,5 @@
-flask==2.3.2
-flask_cors==3.0.10
+flask==3.0.3
+Flask-Cors==4.0.1
 Pillow==10.3.0
 elasticsearch==8.11.1
 wget==3.2
@@ -9,11 +9,11 @@ click==8.1.7
 pytest==7.4.4
 PyYAML==6.0.1
 dacite==1.8.1
-memray==1.11.0  # dev
+memray==1.12.0  # dev
 pyinstrument==4.6.2
 numpy==1.26.4
 requests==2.31.0
-locust==2.23.1
+locust==2.27.0
 nose2==0.14.1
 psycopg2-binary==2.9.9
 boto3==1.34.64
