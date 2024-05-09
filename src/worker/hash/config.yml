@@ -1,11 +1,3 @@
-store:
-  entities:
-    - label: "Postgres Store"
-      type: "postgresql"
-      parameters:
-        table_names:
-          - "user_message_inbox_duplicate"
-
 queue : 
   label : "Queue"
   type : "rabbitmq"
