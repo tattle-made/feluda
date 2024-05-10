@@ -133,7 +133,8 @@ try:
     feluda.setup()
     count_queue = feluda.config.queue.parameters.queues[0]["name"]
     # setup Components
-    feluda.start_component(ComponentType.STORE)
+    if feluda.config.store:
+        feluda.start_component(ComponentType.STORE)
     feluda.start_component(ComponentType.QUEUE)
     # init hash operator
     media_file_hash.initialize(param=None)

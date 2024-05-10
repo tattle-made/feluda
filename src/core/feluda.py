@@ -15,6 +15,7 @@ class ComponentType(Enum):
 class Feluda:
     def __init__(self, configPath):
         self.config = config.load(configPath)
+        self.store = None
         if self.config.operators:
             from core.operators import Operator
 
