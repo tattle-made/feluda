@@ -11,7 +11,7 @@ blinker==1.7.0 \
 boto3==1.34.64 \
     --hash=sha256:8c6fbd3d45399a4e4685010117fb2dc52fc6afdab5a9460957d463ae0c2cc55d \
     --hash=sha256:e5d681f443645e6953ed0727bf756bf16d85efefcb69cf051d04a070ce65e545
-    # via -r requirements.in
+    # via -r src/requirements.in
 botocore==1.34.64 \
     --hash=sha256:084f8c45216d62dc1add2350e236a2d5283526aacd0681e9818b37a6a5e5438b \
     --hash=sha256:0ab760908749fe82325698591c49755a5bb20307d85a419aca9cc74e783b9407
@@ -206,7 +206,7 @@ click==8.1.7 \
     --hash=sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28 \
     --hash=sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de
     # via
-    #   -r requirements.in
+    #   -r src/requirements.in
     #   flask
 configargparse==1.7 \
     --hash=sha256:d249da6591465c6c26df64a9f73d2536e743be2f244eb3ebe61114af2f94f86b \
@@ -214,7 +214,7 @@ configargparse==1.7 \
     # via locust
 dacite==1.8.1 \
     --hash=sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe
-    # via -r requirements.in
+    # via -r src/requirements.in
 elastic-transport==8.12.0 \
     --hash=sha256:48839b942fcce199eece1558ecea6272e116c58da87ca8d495ef12eb61effaf7 \
     --hash=sha256:87d9dc9dee64a05235e7624ed7e6ab6e5ca16619aa7a6d22e853273b9f1cfbee
@@ -222,12 +222,12 @@ elastic-transport==8.12.0 \
 elasticsearch==8.11.1 \
     --hash=sha256:360b721324ce4bc7d554afb8acbf4942370e73c5ef8c4dad5f5ba3bb2a70eeae \
     --hash=sha256:a98309cee11fef8d6750f388683e9a8005da94bdfd940b36ef85cb6cc53186c7
-    # via -r requirements.in
+    # via -r src/requirements.in
 flask==3.0.3 \
     --hash=sha256:34e815dfaa43340d1d15a5c3a02b8476004037eb4840b34910c6e21679d288f3 \
     --hash=sha256:ceb27b0af3823ea2737928a4d99d125a06175b8512c445cbd9a9ce200ef76842
     # via
-    #   -r requirements.in
+    #   -r src/requirements.in
     #   flask-cors
     #   flask-login
     #   locust
@@ -235,7 +235,7 @@ flask-cors==4.0.1 \
     --hash=sha256:eeb69b342142fdbf4766ad99357a7f3876a2ceb77689dc10ff912aac06c389e4 \
     --hash=sha256:f2a704e4458665580c074b714c4627dd5a306b333deb9074d0b1794dfa2fb677
     # via
-    #   -r requirements.in
+    #   -r src/requirements.in
     #   locust
 flask-login==0.6.3 \
     --hash=sha256:5e23d14a607ef12806c699590b89d0f0e0d67baeec599d75947bf9c147330333 \
@@ -441,7 +441,7 @@ linkify-it-py==2.0.3 \
 locust==2.27.0 \
     --hash=sha256:0c6d3d2523976dafe734012c41b2f7d9ad7120cbcea76d47d80cec5d6d139905 \
     --hash=sha256:c4db5747eb9a3851216deae8147143d335db41978a9291ac32e113fa9ec8ad39
-    # via -r requirements.in
+    # via -r src/requirements.in
 markdown-it-py[linkify,plugins]==3.0.0 \
     --hash=sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1 \
     --hash=sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb
@@ -559,7 +559,7 @@ memray==1.12.0 \
     --hash=sha256:f8031156adf4a4ab471c5b835bfa773e2d36a3bbf4338236969d8c0b9d76beda \
     --hash=sha256:fcfe985ce1b019987258a2edb71edc07a38d96d9c0ab28a91880b1e048b68d8e \
     --hash=sha256:ff94c5471d72e616d9b80f7d5b7839b9de740088f04b2b5a13eb457d571db073
-    # via -r requirements.in
+    # via -r src/requirements.in
 msgpack==1.0.7 \
     --hash=sha256:04ad6069c86e531682f9e1e71b71c1c3937d6014a7c3e9edd2aa81ad58842862 \
     --hash=sha256:0bfdd914e55e0d2c9e1526de210f6fe8ffe9705f2b1dfcc4aecc92a4cb4b533d \
@@ -621,7 +621,7 @@ msgpack==1.0.7 \
 nose2==0.14.1 \
     --hash=sha256:7f8f03a21c9de2c33015933afcef72bf8e4a2d5dfec3b40092287de6e41b093a \
     --hash=sha256:dfbf0d90c98b8d7bbf47d7721c7554ffcca86828ec074c985bb6ecc83c445a4e
-    # via -r requirements.in
+    # via -r src/requirements.in
 numpy==1.26.4 \
     --hash=sha256:03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b \
     --hash=sha256:08beddf13648eb95f8d867350f6a018a4be2e5ad54c8d8caed89ebca558b2818 \
@@ -659,7 +659,7 @@ numpy==1.26.4 \
     --hash=sha256:edd8b5fe47dab091176d21bb6de568acdd906d1887a4584a15a9a96a1dca06ef \
     --hash=sha256:f870204a840a60da0b12273ef34f7051e98c3b5961b61b0c2c1be6dfd64fbcd3 \
     --hash=sha256:ffa75af20b44f8dba823498024771d5ac50620e6915abac414251bd971b4529f
-    # via -r requirements.in
+    # via -r src/requirements.in
 packaging==23.2 \
     --hash=sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5 \
     --hash=sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7
@@ -667,7 +667,7 @@ packaging==23.2 \
 pika==1.3.2 \
     --hash=sha256:0779a7c1fafd805672796085560d290213a465e4f6f76a6fb19e378d8041a14f \
     --hash=sha256:b2a327ddddf8570b4965b3576ac77091b850262d34ce8c1d8cb4e4146aa4145f
-    # via -r requirements.in
+    # via -r src/requirements.in
 pillow==10.3.0 \
     --hash=sha256:048ad577748b9fa4a99a0548c64f2cb8d672d5bf2e643a739ac8faff1164238c \
     --hash=sha256:048eeade4c33fdf7e08da40ef402e748df113fd0b4584e32c4af74fe78baaeb2 \
@@ -738,7 +738,7 @@ pillow==10.3.0 \
     --hash=sha256:f0d0591a0aeaefdaf9a5e545e7485f89910c977087e7de2b6c388aec32011e9f \
     --hash=sha256:fdcbb4068117dfd9ce0138d068ac512843c52295ed996ae6dd1faf537b6dbc27 \
     --hash=sha256:ff61bfd9253c3915e6d41c651d5f962da23eda633cf02262990094a18a55371a
-    # via -r requirements.in
+    # via -r src/requirements.in
 pluggy==1.4.0 \
     --hash=sha256:7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981 \
     --hash=sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be
@@ -834,11 +834,11 @@ psycopg2-binary==2.9.9 \
     --hash=sha256:f7ae5d65ccfbebdfa761585228eb4d0df3a8b15cfb53bd953e713e09fbb12957 \
     --hash=sha256:f7fc5a5acafb7d6ccca13bfa8c90f8c51f13d8fb87d95656d3950f0158d3ce53 \
     --hash=sha256:f9b5571d33660d5009a8b3c25dc1db560206e2d2f89d3df1cb32d72c0d117d52
-    # via -r requirements.in
+    # via -r src/requirements.in
 pydub==0.25.1 \
     --hash=sha256:65617e33033874b59d87db603aa1ed450633288aefead953b30bded59cb599a6 \
     --hash=sha256:980a33ce9949cab2a569606b65674d748ecbca4f0796887fd6f46173a7b0d30f
-    # via -r requirements.in
+    # via -r src/requirements.in
 pygments==2.17.2 \
     --hash=sha256:b27c2826c47d0f3219f29554824c30c5e8945175d888647acd804ddd04af846c \
     --hash=sha256:da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367
@@ -904,11 +904,11 @@ pyinstrument==4.6.2 \
     --hash=sha256:edca46f04a573ac2fb11a84b937844e6a109f38f80f4b422222fb5be8ecad8cb \
     --hash=sha256:fdc0a53b27e5d8e47147489c7dab596ddd1756b1e053217ef5bc6718567099ff \
     --hash=sha256:feebcf860f955401df30d029ec8de7a0c5515d24ea809736430fd1219686fe14
-    # via -r requirements.in
+    # via -r src/requirements.in
 pytest==7.4.4 \
     --hash=sha256:2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280 \
     --hash=sha256:b090cdf5ed60bf4c45261be03239c2c1c22df034fbffe691abe93cd80cea01d8
-    # via -r requirements.in
+    # via -r src/requirements.in
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
@@ -916,7 +916,7 @@ python-dateutil==2.9.0.post0 \
 python-dotenv==1.0.0 \
     --hash=sha256:a8df96034aae6d2d50a4ebe8216326c61c3eb64836776504fcca410e5937a3ba \
     --hash=sha256:f5971a9226b701070a4bf2c38c89e5a3f0d64de8debda981d1db98583009122a
-    # via -r requirements.in
+    # via -r src/requirements.in
 pyyaml==6.0.1 \
     --hash=sha256:04ac92ad1925b2cff1db0cfebffb6ffc43457495c9b3c39d3fcae417d7125dc5 \
     --hash=sha256:062582fca9fabdd2c8b54a3ef1c978d786e0f6b3a1510e0ac93ef59e0ddae2bc \
@@ -969,7 +969,7 @@ pyyaml==6.0.1 \
     --hash=sha256:fca0e3a251908a499833aa292323f32437106001d436eca0e6e7833256674585 \
     --hash=sha256:fd1592b3fdf65fff2ad0004b5e363300ef59ced41c2e6b3a99d4089fa8c5435d \
     --hash=sha256:fd66fc5d0da6d9815ba2cebeb4205f95818ff4b79c3ebe268e75d961704af52f
-    # via -r requirements.in
+    # via -r src/requirements.in
 pyzmq==25.1.2 \
     --hash=sha256:004ff469d21e86f0ef0369717351073e0e577428e514c47c8480770d5e24a565 \
     --hash=sha256:00a06faa7165634f0cac1abb27e54d7a0b3b44eb9994530b8ec73cf52e15353b \
@@ -1065,11 +1065,11 @@ pyzmq==25.1.2 \
     --hash=sha256:faf79a302f834d9e8304fafdc11d0d042266667ac45209afa57e5efc998e3872 \
     --hash=sha256:fc31baa0c32a2ca660784d5af3b9487e13b61b3032cb01a115fce6588e1bed30
     # via locust
-requests==2.31.0 \
-    --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f \
-    --hash=sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1
+requests==2.32.0 \
+    --hash=sha256:f2c3881dddb70d056c5bd7600a4fae312b2a300e39be6a118d30b90bd27262b5 \
+    --hash=sha256:fa5490319474c82ef1d2c9bc459d3652e3ae4ef4c4ebdd18a21145a47ca4b6b8
     # via
-    #   -r requirements.in
+    #   -r src/requirements.in
     #   locust
 rich==13.7.0 \
     --hash=sha256:5cb5123b5cf9ee70584244246816e9114227e0b98ad9176eede6ad54bf5403fa \
@@ -1114,7 +1114,7 @@ werkzeug==3.0.3 \
     #   locust
 wget==3.2 \
     --hash=sha256:35e630eca2aa50ce998b9b1a127bb26b30dfee573702782aa982f875e3f16061
-    # via -r requirements.in
+    # via -r src/requirements.in
 zope-event==5.0 \
     --hash=sha256:2832e95014f4db26c47a13fdaef84cef2f4df37e66b59d8f1f4a8f319a632c26 \
     --hash=sha256:bac440d8d9891b4068e2b5a2c5e2c9765a9df762944bda6955f96bb9b91e67cd
