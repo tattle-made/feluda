@@ -2,7 +2,10 @@
 This operator uses OpenAI's whisper to detect spoken language in audio files.
 
 pip install :
-git+https://github.com/openai/whisper.git
+openai-whisper==20231117
+pydub==0.25.1
+torch==2.3.0
+torchaudio==2.3.0
 """
 
 LANGUAGES = {
