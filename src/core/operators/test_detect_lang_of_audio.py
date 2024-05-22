@@ -44,3 +44,11 @@ class Test(unittest.TestCase):
         lang = detect_lang_of_audio.run(audio_file_path)
         self.assertEqual(lang["id"], "te")
         self.assertEqual(lang["language"], "telugu")
+
+    def test_speech_extraction_in_heterogeneous_audio(self):
+        audio_file_path = AudioFactory.make_from_file_on_disk(
+            r"core/operators/sample_data/hi_speech_after_30s_music.wav"
+        )
+        lang = detect_lang_of_audio.run(audio_file_path)
+        self.assertEqual(lang["id"], "hi")
+        self.assertEqual(lang["language"], "hindi")
