@@ -147,10 +147,16 @@ def extract_speech(fname):
         global audio_segment
         audio_segment = AudioSegment.from_file(file, format="wav")
     segments = []
+    duration = 0
     for ts in merged_timestamps:
         start = ts["start"] * 1000
         end = ts["end"] * 1000
+        segment = audio_segment[start:end]
         segments.append(audio_segment[start:end])
+        duration += len(segment)
+        if duration > 30000:
+            # exit the loop if we have an audio atleast 30 seconds long
+            break
     final_audio = sum(segments, AudioSegment.empty())
 
     # Export audio as a tmp file...
