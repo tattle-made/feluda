@@ -1,12 +1,12 @@
 from core.feluda import ComponentType, Feluda
 from core.logger import Logger
 from core.operators import vid_vec_rep_resnet
-from core.operators import audio_vec_embedding
+# from core.operators import audio_vec_embedding
 import json
 from datetime import datetime
 from core.models.media import MediaType
 from core.models.media_factory import VideoFactory
-from core.models.media_factory import AudioFactory
+# from core.models.media_factory import AudioFactory
 from time import sleep
 import numpy as np
 import binascii
@@ -81,7 +81,7 @@ def indexer(feluda):
     def worker(ch, method, properties, body):
         print("MESSAGE RECEIVED")
         video_vec_crc = None
-        audio_vec_crc = None
+        # audio_vec_crc = None
         file_content = json.loads(body)
         file_media_type = file_content["media_type"]
         if file_media_type == "video":
