@@ -2,6 +2,25 @@
 
 
 
+## v0.6.6 (2024-05-24)
+
+### Fix
+
+* fix: Updated vulnerable requests package ([`4b97299`](https://github.com/tattle-made/feluda/commit/4b97299ba1ba9ff3b1363c3f4d4912443f907413))
+
+### Unknown
+
+* Merge pull request #334 from tattle-made/hotfix
+
+Hotfix ([`b9f921a`](https://github.com/tattle-made/feluda/commit/b9f921adf9c1e86ea24089d6ce5aaea29dd33edb))
+
+* Merge pull request #333 from duggalsu/fix_dependabot_20240524
+
+Fix dependabot 20240524 ([`e7704e1`](https://github.com/tattle-made/feluda/commit/e7704e17e3171246cd7426bab6af385aded62c13))
+
+* Regenerated src/requirements.txt ([`e25bd43`](https://github.com/tattle-made/feluda/commit/e25bd43893f034b139bc5d9ce707d531912c3231))
+
+
 ## v0.6.5 (2024-05-10)
 
 ### Chore
