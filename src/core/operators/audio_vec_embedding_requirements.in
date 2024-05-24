@@ -1,5 +1,5 @@
 numpy==1.26.4
-librosa==0.10.1
+librosa==0.10.2.post1
 panns-inference==0.1.1
 torch==2.2.0+cpu
 memray==1.12.0
