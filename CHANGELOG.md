@@ -2,6 +2,35 @@
 
 
 
+## v0.6.5 (2024-05-10)
+
+### Chore
+
+* chore: removing store from hash worker config ([`9f71faa`](https://github.com/tattle-made/feluda/commit/9f71faa723c559e9fd8b1592b77cde3b9ecf4788))
+
+### Fix
+
+* fix: adding store check in hash worker ([`73157e1`](https://github.com/tattle-made/feluda/commit/73157e197efc59a949bc02a4895b057fcb43f908))
+
+### Unknown
+
+* Merge pull request #309 from tattle-made/hotfix
+
+Hotfix ([`f21e2e6`](https://github.com/tattle-made/feluda/commit/f21e2e623038ec019ae8a7c17c437032eff6b9a9))
+
+* Merge pull request #308 from aatmanvaidya/hash-fix
+
+fix: adding store check in hash worker ([`4af10d9`](https://github.com/tattle-made/feluda/commit/4af10d9aeb549e0e64e624c9c131ea6eac27d250))
+
+* Merge pull request #307 from tattle-made/hotfix
+
+Hotfix ([`8723337`](https://github.com/tattle-made/feluda/commit/8723337ea173ab3a9e0e3ef1acf07af53908cb00))
+
+* Merge pull request #306 from aatmanvaidya/hash-config-hotfix
+
+chore: removing store from hash worker config ([`75c4a78`](https://github.com/tattle-made/feluda/commit/75c4a78e86312c5a51800d4f639402499ef4336d))
+
+
 ## v0.6.4 (2024-05-08)
 
 ### Fix
