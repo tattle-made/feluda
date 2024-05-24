@@ -618,9 +618,9 @@ msgpack==1.0.7 \
     --hash=sha256:f9a7c509542db4eceed3dcf21ee5267ab565a83555c9b88a8109dcecc4709002 \
     --hash=sha256:ff1d0899f104f3921d94579a5638847f783c9b04f2d5f229392ca77fba5b82fc
     # via locust
-nose2==0.14.1 \
-    --hash=sha256:7f8f03a21c9de2c33015933afcef72bf8e4a2d5dfec3b40092287de6e41b093a \
-    --hash=sha256:dfbf0d90c98b8d7bbf47d7721c7554ffcca86828ec074c985bb6ecc83c445a4e
+nose2==0.14.2 \
+    --hash=sha256:29e581efcef01a1aba391e817b121a681e9841b3299c1110bba8b1cd1d4074bf \
+    --hash=sha256:50cd5f5d025dcf4b6b7c8ada9849ba9a5ffb544fc46f8740da1059502c4b7f92
     # via -r requirements.in
 numpy==1.26.4 \
     --hash=sha256:03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b \
