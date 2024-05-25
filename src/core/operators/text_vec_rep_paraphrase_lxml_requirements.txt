@@ -119,9 +119,9 @@ fsspec==2023.12.2 \
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.20.3 \
-    --hash=sha256:94e7f8e074475fbc67d6a71957b678e1b4a74ff1b64a644fd6cbb83da962d05d \
-    --hash=sha256:d988ae4f00d3e307b0c80c6a05ca6dbb7edba8bba3079f74cda7d9c2e562a7b6
+huggingface-hub==0.23.1 \
+    --hash=sha256:4f62dbf6ae94f400c6d3419485e52bce510591432a5248a65d0cb72e4d479eb4 \
+    --hash=sha256:720a5bffd2b1b449deb793da8b0df7a9390a7e238534d5a08c9fbcdecb1dd3cb
     # via
     #   sentence-transformers
     #   tokenizers
@@ -213,9 +213,7 @@ networkx==3.2.1 \
 nltk==3.8.1 \
     --hash=sha256:1834da3d0682cba4f2cede2f9aad6b0fafb6461ba451db0efb6f9c39798d64d3 \
     --hash=sha256:fd5c9109f976fa86bcadba8f91e47f5e9293bd034474752e92a520f81c93dda5
-    # via
-    #   -r text_vec_rep_paraphrase_lxml_requirements.in
-    #   sentence-transformers
+    # via -r text_vec_rep_paraphrase_lxml_requirements.in
 numpy==1.26.3 \
     --hash=sha256:02f98011ba4ab17f46f80f7f8f1c291ee7d855fcef0a5a98db80767a468c85cd \
     --hash=sha256:0b7e807d6888da0db6e7e75838444d62495e2b588b99e90dd80c3459594e857b \
@@ -258,7 +256,6 @@ numpy==1.26.3 \
     #   scikit-learn
     #   scipy
     #   sentence-transformers
-    #   torchvision
     #   transformers
 packaging==23.2 \
     --hash=sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5 \
@@ -336,7 +333,7 @@ pillow==10.3.0 \
     --hash=sha256:f0d0591a0aeaefdaf9a5e545e7485f89910c977087e7de2b6c388aec32011e9f \
     --hash=sha256:fdcbb4068117dfd9ce0138d068ac512843c52295ed996ae6dd1faf537b6dbc27 \
     --hash=sha256:ff61bfd9253c3915e6d41c651d5f962da23eda633cf02262990094a18a55371a
-    # via torchvision
+    # via sentence-transformers
 pyyaml==6.0.1 \
     --hash=sha256:04ac92ad1925b2cff1db0cfebffb6ffc43457495c9b3c39d3fcae417d7125dc5 \
     --hash=sha256:062582fca9fabdd2c8b54a3ef1c978d786e0f6b3a1510e0ac93ef59e0ddae2bc \
@@ -489,12 +486,11 @@ regex==2023.12.25 \
     # via
     #   nltk
     #   transformers
-requests==2.31.0 \
-    --hash=sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f \
-    --hash=sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1
+requests==2.32.2 \
+    --hash=sha256:dd951ff5ecf3e3b3aa26b40703ba77495dab41da839ae72ef3c8e5d8e2433289 \
+    --hash=sha256:fc06670dd0ed212426dfeb94fc1b983d917c4f9847c863f313c9dfaaffb7c23c
     # via
     #   huggingface-hub
-    #   torchvision
     #   transformers
 safetensors==0.4.1 \
     --hash=sha256:04157d008385bea66d12fe90844a80d4a76dc25ec5230b5bd9a630496d1b7c03 \
@@ -656,56 +652,10 @@ scipy==1.11.4 \
     #   -r text_vec_rep_paraphrase_lxml_requirements.in
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==2.2.2 \
-    --hash=sha256:dbc60163b27de21076c9a30d24b5b7b6fa05141d68cf2553fa9a77bf79a29136
+sentence-transformers==2.7.0 \
+    --hash=sha256:2f7df99d1c021dded471ed2d079e9d1e4fc8e30ecb06f957be060511b36f24ea \
+    --hash=sha256:6a7276b05a95931581bbfa4ba49d780b2cf6904fa4a171ec7fd66c343f761c98
     # via -r text_vec_rep_paraphrase_lxml_requirements.in
-sentencepiece==0.1.99 \
-    --hash=sha256:004e6a621d4bc88978eecb6ea7959264239a17b70f2cbc348033d8195c9808ec \
-    --hash=sha256:019e7535108e309dae2b253a75834fc3128240aa87c00eb80732078cdc182588 \
-    --hash=sha256:0b0f55d0a0ee1719b4b04221fe0c9f0c3461dc3dabd77a035fa2f4788eb3ef9a \
-    --hash=sha256:0eaf3591dd0690a87f44f4df129cf8d05d8a4029b5b6709b489b8e27f9a9bcff \
-    --hash=sha256:0eb528e70571b7c02723e5804322469b82fe7ea418c96051d0286c0fa028db73 \
-    --hash=sha256:14b0eccb7b641d4591c3e12ae44cab537d68352e4d3b6424944f0c447d2348d5 \
-    --hash=sha256:189c48f5cb2949288f97ccdb97f0473098d9c3dcf5a3d99d4eabe719ec27297f \
-    --hash=sha256:18e800f206cd235dc27dc749299e05853a4e4332e8d3dfd81bf13d0e5b9007d9 \
-    --hash=sha256:27b866b5bd3ddd54166bbcbf5c8d7dd2e0b397fac8537991c7f544220b1f67bc \
-    --hash=sha256:2ae1c40cda8f9d5b0423cfa98542735c0235e7597d79caf318855cdf971b2280 \
-    --hash=sha256:2d95e19168875b70df62916eb55428a0cbcb834ac51d5a7e664eda74def9e1e0 \
-    --hash=sha256:33e6f690a1caebb4867a2e367afa1918ad35be257ecdb3455d2bbd787936f155 \
-    --hash=sha256:350e5c74d739973f1c9643edb80f7cc904dc948578bcb1d43c6f2b173e5d18dd \
-    --hash=sha256:38efeda9bbfb55052d482a009c6a37e52f42ebffcea9d3a98a61de7aee356a28 \
-    --hash=sha256:445b0ec381af1cd4eef95243e7180c63d9c384443c16c4c47a28196bd1cda937 \
-    --hash=sha256:47c378146928690d1bc106fdf0da768cebd03b65dd8405aa3dd88f9c81e35dba \
-    --hash=sha256:57efcc2d51caff20d9573567d9fd3f854d9efe613ed58a439c78c9f93101384a \
-    --hash=sha256:62e24c81e74bd87a6e0d63c51beb6527e4c0add67e1a17bac18bcd2076afcfeb \
-    --hash=sha256:6a904c46197993bd1e95b93a6e373dca2f170379d64441041e2e628ad4afb16f \
-    --hash=sha256:6c030b081dc1e1bcc9fadc314b19b740715d3d566ad73a482da20d7d46fd444c \
-    --hash=sha256:6d3c56f24183a1e8bd61043ff2c58dfecdc68a5dd8955dc13bab83afd5f76b81 \
-    --hash=sha256:77d7fafb2c4e4659cbdf303929503f37a26eabc4ff31d3a79bf1c5a1b338caa7 \
-    --hash=sha256:84dbe53e02e4f8a2e45d2ac3e430d5c83182142658e25edd76539b7648928727 \
-    --hash=sha256:85b476406da69c70586f0bb682fcca4c9b40e5059814f2db92303ea4585c650c \
-    --hash=sha256:8a1abff4d1ff81c77cac3cc6fefa34fa4b8b371e5ee51cb7e8d1ebc996d05983 \
-    --hash=sha256:8a321866c2f85da7beac74a824b4ad6ddc2a4c9bccd9382529506d48f744a12c \
-    --hash=sha256:9832f08bb372d4c8b567612f8eab9e36e268dff645f1c28f9f8e851be705f6d1 \
-    --hash=sha256:9ba142e7a90dd6d823c44f9870abdad45e6c63958eb60fe44cca6828d3b69da2 \
-    --hash=sha256:a2a0260cd1fb7bd8b4d4f39dc2444a8d5fd4e0a0c4d5c899810ef1abf99b2d45 \
-    --hash=sha256:b133e8a499eac49c581c3c76e9bdd08c338cc1939e441fee6f92c0ccb5f1f8be \
-    --hash=sha256:b7b1a9ae4d7c6f1f867e63370cca25cc17b6f4886729595b885ee07a58d3cec3 \
-    --hash=sha256:baed1a26464998f9710d20e52607c29ffd4293e7c71c6a1f83f51ad0911ec12c \
-    --hash=sha256:be9cf5b9e404c245aeb3d3723c737ba7a8f5d4ba262ef233a431fa6c45f732a0 \
-    --hash=sha256:c42f753bcfb7661c122a15b20be7f684b61fc8592c89c870adf52382ea72262d \
-    --hash=sha256:c6890ea0f2b4703f62d0bf27932e35808b1f679bdb05c7eeb3812b935ba02001 \
-    --hash=sha256:c84ce33af12ca222d14a1cdd37bd76a69401e32bc68fe61c67ef6b59402f4ab8 \
-    --hash=sha256:c8843d23a0f686d85e569bd6dcd0dd0e0cbc03731e63497ca6d5bacd18df8b85 \
-    --hash=sha256:cfbcfe13c69d3f87b7fcd5da168df7290a6d006329be71f90ba4f56bc77f8561 \
-    --hash=sha256:d0f644c9d4d35c096a538507b2163e6191512460035bf51358794a78515b74f7 \
-    --hash=sha256:d89adf59854741c0d465f0e1525b388c0d174f611cc04af54153c5c4f36088c4 \
-    --hash=sha256:db361e03342c41680afae5807590bc88aa0e17cfd1a42696a160e4005fcda03b \
-    --hash=sha256:ed6ea1819fd612c989999e44a51bf556d0ef6abfb553080b9be3d347e18bcfb7 \
-    --hash=sha256:f90d73a6f81248a909f55d8e6ef56fec32d559e1e9af045f0b0322637cb8e5c7 \
-    --hash=sha256:fa16a830416bb823fa2a52cbdd474d1f7f3bba527fd2304fb4b140dad31bb9bc \
-    --hash=sha256:fb71af492b0eefbf9f2501bec97bcd043b6812ab000d119eaf4bd33f9e283d03
-    # via sentence-transformers
 sympy==1.12 \
     --hash=sha256:c3588cd4295d0c0f603d0f2ae780587e64e2efeedb3521e46b9bb1d08d184fa5 \
     --hash=sha256:ebf595c8dac3e0fdc4152c51878b498396ec7f30e7a914d6071e674d49420fb8
@@ -830,14 +780,6 @@ torch==2.2.0+cpu \
     # via
     #   -r text_vec_rep_paraphrase_lxml_requirements.in
     #   sentence-transformers
-    #   torchvision
-torchvision==0.17.0+rocm5.7 \
-    --hash=sha256:5ab99a926e3b15a0c6ce51a36caa5e494629e7024c374b1787230ce06a920e0f \
-    --hash=sha256:7ef0cd2507b0575b1ffb17d45ab688212174aa6913a231600b7a582b4a180f80 \
-    --hash=sha256:9211e12c4f533c82744db73b5c03af30b272ff8f0eab1404a694c6bcfbd2624a \
-    --hash=sha256:a8d38f9c9c6570738b6b4bd10bfd45ddd07c1366923adf49132b6fb11aa8f1bc \
-    --hash=sha256:e99984aa473b28171bdc399ebbed9c84ec693d387958a5c03dd59667399a3d5d
-    # via sentence-transformers
 tqdm==4.66.4 \
     --hash=sha256:b75ca56b413b030bc3f00af51fd2c1a1a5eac6a0c1cca83cbb37a5c52abce644 \
     --hash=sha256:e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb
@@ -847,9 +789,9 @@ tqdm==4.66.4 \
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.40.1 \
-    --hash=sha256:55e1697e6f18b58273e7117bb469cdffc11be28995462d8d5e422fef38d2de36 \
-    --hash=sha256:9d5ee0c8142a60501faf9e49a0b42f8e9cb8611823bce4f195a9325a6816337e
+transformers==4.41.1 \
+    --hash=sha256:f0680e0b1a01067eccd11f62f0522409422c7d6f91d532fe0f50b136a406129d \
+    --hash=sha256:fa859e4c66f0896633a3bf534e0d9a29a9a88478a49f94c5d8270537dc61cc42
     # via
     #   -r text_vec_rep_paraphrase_lxml_requirements.in
     #   sentence-transformers
