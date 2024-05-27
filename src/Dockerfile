@@ -13,7 +13,7 @@ RUN apt-get update \
 #    && apt-get purge -y --auto-remove \
 #    gcc build-essential \
 #    libgl1-mesa-glx libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
 
 # Set python user
 RUN groupadd -f -g $GID python \
@@ -31,7 +31,7 @@ COPY --chown=python:python base_requirements.txt /usr/app/base_requirements.txt
 RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/base_requirements.txt
 
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends vim curl
-# RUN apt-get install -y ffmpeg
+RUN apt-get install -y ffmpeg
 # RUN apt-get update && \
 #     apt-get -y upgrade && \
 #     apt-get install -y tesseract-ocr tesseract-ocr-hin
@@ -44,9 +44,9 @@ EXPOSE 7000
 # RUN apt-get update \
 #     && apt-get -y upgrade \
 #     && apt-get purge -y --auto-remove \
-#     gcc build-essential vim curl \ 
+#     gcc build-essential vim curl \
 #     libgl1-mesa-glx libglib2.0-0 \
-#     && rm -rf /var/lib/apt/lists/* 
+#     && rm -rf /var/lib/apt/lists/*
 
 #### DEBUG IMAGE ####
 FROM base AS debug
