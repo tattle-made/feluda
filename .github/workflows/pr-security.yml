@@ -94,7 +94,7 @@ jobs:
           skip-dirs: '.vscode,docs'
           exit-code: '1'
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@9e39a05578dd315aad814d3c71bd03472cc5b815 # v.3.24.7
+        uses: github/codeql-action/upload-sarif@8c4bc43ead8029384d1969dafa5d7c904d17520f # v.3.24.7
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
