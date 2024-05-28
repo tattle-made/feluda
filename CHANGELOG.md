@@ -2,6 +2,24 @@
 
 
 
+## v0.7.2 (2024-05-28)
+
+### Fix
+
+* fix: Updated pr-security workflow
+fix: Removed ignored vulnerabilities that were fixed ([`fe9c26a`](https://github.com/tattle-made/feluda/commit/fe9c26a3e61babbae170d855196a4d47e1b45235))
+
+### Unknown
+
+* Merge pull request #344 from tattle-made/hotfix
+
+Hotfix ([`10a277c`](https://github.com/tattle-made/feluda/commit/10a277c96cc382d929e9f2fb21ac0c903abbf3dc))
+
+* Merge pull request #343 from duggalsu/update_pr_security_workflow
+
+Update pr security workflow ([`b26a03c`](https://github.com/tattle-made/feluda/commit/b26a03c3f8697a0e996ea3288ea8f880478d70ce))
+
+
 ## v0.7.1 (2024-05-28)
 
 ### Fix
