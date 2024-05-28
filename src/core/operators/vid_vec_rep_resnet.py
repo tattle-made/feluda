@@ -236,8 +236,8 @@ def run(file):
     #     fname = compress_video(fname)
     #     fsize = os.path.getsize(fname) / 1e6
     #     print("compressed video size: ", fsize)
-    if fsize > 10:
-        raise Exception("Video too large")
+    # if fsize > 10:
+    #     raise Exception("Video too large")
 
     @contextmanager
     def video_capture(fname):
@@ -252,10 +252,10 @@ def run(file):
         vid_analyzer = VideoAnalyzer(video)
         vid_analyzer.set_fsize(fsize)
 
-        doable, error_msg = vid_analyzer.check_constraints()
+        # doable, error_msg = vid_analyzer.check_constraints()
 
-        if not doable:
-            raise Exception("Unsupported Video. Cannot index video.")
+        # if not doable:
+        #     raise Exception("Unsupported Video. Cannot index video.")
 
         return gendata(vid_analyzer)
 

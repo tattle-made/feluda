@@ -8,11 +8,6 @@ store:
         text_index_name: "text"
         video_index_name: "video"
         audio_index_name: "audio"
-    - label: "Postgres Store"
-      type: "postgresql"
-      parameters:
-        table_names:
-          - "user_message_inbox_perceptually_similar"
 
 queue:
   label: "Queue"
@@ -20,8 +15,8 @@ queue:
   parameters:
     host_name: "rabbitmq"
     queues:
-      - name: "media-index-queue"
-      - name: "report-queue"
+      - name: "embedding-index-queue"
+      - name: "embedding-report-queue"
 
 operators:
   label: "Operators"
@@ -29,6 +24,3 @@ operators:
     - name: "Video Vector Representation"
       type: "vid_vec_rep_resnet"
       parameters: { index_name: "video" }
-    - name: "Audio Vector Representation"
-      type: "audio_vec_embedding"
-      parameters: { index_name: "audio" }
