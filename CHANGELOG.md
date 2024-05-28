@@ -2,11 +2,70 @@
 
 
 
+## v0.7.0 (2024-05-28)
+
+### Chore
+
+* chore: update Dockerfile ([`8ca692e`](https://github.com/tattle-made/feluda/commit/8ca692ed39051237a3f1922571f218569a6695e4))
+
+* chore: removing file size limit from vid_vec_rep_resnet ([`22b9f2a`](https://github.com/tattle-made/feluda/commit/22b9f2a9d36ff746572b447910ed2eb32b4d6765))
+
+### Ci
+
+* ci: prod github action for media worker ([`d4bb47f`](https://github.com/tattle-made/feluda/commit/d4bb47fe7e6567b341957c67d6ef34b9732e0394))
+
+### Unknown
+
+* Merge pull request #339 from tattle-made/development
+
+Merge Dev to Main ([`a1c22d3`](https://github.com/tattle-made/feluda/commit/a1c22d38a82e0f46caffec6a0dbfeaa24ca581ed))
+
+* Merge pull request #340 from tattle-made/aatmanvaidya-patch-1
+
+chore: update Dockerfile ([`eb018a8`](https://github.com/tattle-made/feluda/commit/eb018a8dc79bb328952049089d0e0a178e31b261))
+
+* Merge pull request #332 from aatmanvaidya/media-worker-for-es
+
+fix: updating media worker to index videos only ([`e6a8510`](https://github.com/tattle-made/feluda/commit/e6a851062c2cbfe89231a1ea558ec53dd4822f1b))
+
+* Merge pull request #324 from Snehil-Shah/language-detection
+
+feat: add operator to detect language in an audio file ([`acfa3a0`](https://github.com/tattle-made/feluda/commit/acfa3a0b1c3c9d82004e11b524cb10932c6c456e))
+
+* Merge remote-tracking branch &#39;upstream/main&#39; into media-worker-for-es ([`157508b`](https://github.com/tattle-made/feluda/commit/157508bc3a80d452de6ae644cceaa1a5396c487d))
+
+
 ## v0.6.6 (2024-05-24)
+
+### Chore
+
+* chore: fixing ruff lint errors ([`b655e96`](https://github.com/tattle-made/feluda/commit/b655e96c842d7fdd8623bf2655aa3fb5bb86ae0c))
+
+* chore: affix version &amp; generate hashed `requirements.txt` ([`7305560`](https://github.com/tattle-made/feluda/commit/7305560c409ff4bc714c20344e3b0ef087c5080b))
+
+### Documentation
+
+* docs: update module doc ([`14de2fa`](https://github.com/tattle-made/feluda/commit/14de2fab4520583c495e514b31efb7d528d20ed7))
+
+### Feature
+
+* feat: improve speech extraction&#39;s perfomance time ([`d105009`](https://github.com/tattle-made/feluda/commit/d105009835cfa5d934005764313b200dc7c1fa0e))
+
+* feat: add operator for language detection in audio
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`2744035`](https://github.com/tattle-made/feluda/commit/2744035d27499e98f9b9f21b3188fc4881390d46))
 
 ### Fix
 
 * fix: Updated vulnerable requests package ([`4b97299`](https://github.com/tattle-made/feluda/commit/4b97299ba1ba9ff3b1363c3f4d4912443f907413))
+
+* fix: updating media worker to index vidoes only ([`926044d`](https://github.com/tattle-made/feluda/commit/926044da78e20066bf3c4fd0eaced7dab9f99b5f))
+
+* fix: securely handle tmp for storage safety ([`8f3fa52`](https://github.com/tattle-made/feluda/commit/8f3fa526aac5f63a094fc815cb5fa6136cd96b94))
+
+### Test
+
+* test: add case for speech extraction from heterogeneous audio ([`b448a5b`](https://github.com/tattle-made/feluda/commit/b448a5b0d7136ab08cd1ff9d5d0dead8723bbe64))
 
 ### Unknown
 
