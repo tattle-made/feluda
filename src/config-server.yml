@@ -1,48 +1,38 @@
-store :
-  label : "Data Store"
-  type : "es_vec"
+store:
+  entities:
+    - label: "Data Store"
+      type: "es_vec"
+      parameters:
+        host_name: "es"
+        image_index_name: "image"
+        text_index_name: "text"
+        video_index_name: "video"
+        audio_index_name: "audio"
+
+queue:
+  label: "Queue"
+  type: "rabbitmq"
   parameters:
-    host_name : "es"
-    image_index_name : "image"
-    text_index_name : "text"
-    video_index_name : "video"
-    audio_index_name : "audio"
-
-queue : 
-  label : "Queue"
-  type : "rabbitmq"
-  parameters: 
-    host_name : "rabbitmq"
+    host_name: "rabbitmq"
     queues:
-      - name : "tattle-search-index-queue"
-      - name : "tattle-search-report-queue"
+      - name: "tattle-search-index-queue"
+      - name: "tattle-search-report-queue"
 
-server : 
-  label : "Server"
-  parameters :
-    port : 7000
-    type : "http"
+server:
+  label: "Server"
+  parameters:
+    port: 7000
+    type: "http"
 
-operators : 
-  label : "Operators"
-  parameters :
-    # - name : "Text Vector Representation"
-    #   type : "text_vec_rep_paraphrase_lxml"
+operators:
+  label: "Operators"
+  parameters:
+    # - name: "Image Vector Representation"
+    #   type: "image_vec_rep_resnet"
     #   parameters: {}
-#    - name : "Language Detection"
-#      type : "detect_lang_of_text"
-#      parameters: {}
-#    - name : "Named Entity Extraction"
-#      type : "ner_extraction"
-#      parameters: {}
-#    - name : "Text Extraction"
-#      type : "detect_text_in_image"
-#      parameters: {}
-#    - name : "Image Vector Representation"
-#      type : "image_vec_rep_resnet"
-#      parameters: {}
-    - name : "Video Vector Representation"
-      type : "vid_vec_rep_resnet"
-      parameters: {
-        index_name : "video"
-      }
+    - name: "Video Vector Representation"
+      type: "vid_vec_rep_resnet"
+      parameters: { index_name: "video" }
+    - name: "Audio Vector Representation"
+      type: "audio_vec_embedding"
+      parameters: { index_name: "audio" }
