@@ -2,6 +2,23 @@
 
 
 
+## v0.7.1 (2024-05-28)
+
+### Fix
+
+* fix: Updated github action versions to latest ([`44b46ad`](https://github.com/tattle-made/feluda/commit/44b46ad84d4b651a0f4ca264c21eab23d7defd4f))
+
+### Unknown
+
+* Merge pull request #342 from tattle-made/hotfix
+
+Hotfix ([`eecc55f`](https://github.com/tattle-made/feluda/commit/eecc55f07d397142f8980c3cc2fedecd15a186a5))
+
+* Merge pull request #341 from duggalsu/update_scorecard_workflow
+
+Update scorecard workflow ([`b2e2aa8`](https://github.com/tattle-made/feluda/commit/b2e2aa852f3377490f6cebd679706678b89e5c50))
+
+
 ## v0.7.0 (2024-05-28)
 
 ### Chore
