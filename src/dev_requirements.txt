@@ -28,7 +28,7 @@ debugpy==1.8.1 \
     --hash=sha256:f696d6be15be87aef621917585f9bb94b1dc9e8aced570db1b8a6fc14e8f9b42 \
     --hash=sha256:fd97ed11a4c7f6d042d320ce03d83b20c3fb40da892f994bc041bbc415d7a099
     # via -r dev_requirements.in
-nose2==0.14.1 \
-    --hash=sha256:7f8f03a21c9de2c33015933afcef72bf8e4a2d5dfec3b40092287de6e41b093a \
-    --hash=sha256:dfbf0d90c98b8d7bbf47d7721c7554ffcca86828ec074c985bb6ecc83c445a4e
+nose2==0.15.1 \
+    --hash=sha256:36770f519df5becd3cbfe0bee4abbfbf9b9f6b4eb4e03361d282b7efcfc4f0df \
+    --hash=sha256:564450c0c4f1602dfe171902ceb4726cc56658af7a620ae1826f1ffc86b09a86
     # via -r dev_requirements.in
