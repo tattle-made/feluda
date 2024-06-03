@@ -16,5 +16,5 @@ requests==2.32.2
 locust==2.27.0
 nose2==0.14.1
 psycopg2-binary==2.9.9
-boto3==1.34.64
+boto3==1.34.117
 pydub==0.25.1
