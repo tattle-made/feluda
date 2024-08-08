@@ -10,6 +10,7 @@ def initialize(param):
         param (dict): Parameters for initialization
     """
     print("Installing packages for vid_vec_rep_clip")
+    global os
     global VideoAnalyzer, gendata
 
     # Imports
@@ -147,8 +148,11 @@ def run(file):
         generator: Yields video and I-frame vector representations
     """
     fname = file["path"]
-    vid_analyzer = VideoAnalyzer(fname)
-    return gendata(vid_analyzer)
+    try:
+        vid_analyzer = VideoAnalyzer(fname)
+        return gendata(vid_analyzer)
+    finally:
+        os.remove(fname)
 
 def cleanup(param):
     pass
