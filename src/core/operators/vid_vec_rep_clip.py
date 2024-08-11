@@ -93,7 +93,6 @@ def initialize(param):
 
             # Extract I-frames and features
             self.frame_images = self.extract_frames(fname)
-            print(len(self.frame_images))
             self.feature_matrix = self.extract_features(self.frame_images)
 
         def extract_frames(self, fname):
