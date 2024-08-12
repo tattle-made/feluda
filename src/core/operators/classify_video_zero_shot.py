@@ -9,7 +9,7 @@ def initialize(param):
     Args:
         param (dict): Parameters for initialization
     """
-    print("Installing packages for classify_video")
+    print("Installing packages for classify_video_zero_shot")
     global os
     global VideoClassifier, gendata
 
