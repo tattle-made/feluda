@@ -1,5 +1,5 @@
 """
-Operator to extract video vector representations using CLIP-ViT-B-32.
+Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach.
 """
 
 def initialize(param):
@@ -9,9 +9,9 @@ def initialize(param):
     Args:
         param (dict): Parameters for initialization
     """
-    print("Installing packages for vid_vec_rep_clip")
+    print("Installing packages for classify_video_zero_shot")
     global os
-    global VideoAnalyzer, gendata
+    global VideoClassifier, gendata
 
     # Imports
     import os
@@ -31,55 +31,43 @@ def initialize(param):
 
     def gendata(vid_analyzer):
         """
-        Yields video vector representations from a `VideoAnalyzer` prototype.
+        Generates output dict with prediction and probabilities.
 
         Args:
-            vid_analyzer (VideoAnalyzer): `VideoAnalyzer` instance
+            vid_analyzer (VideoClassifier): `VideoClassifier` instance
 
-        Yields:
+        Returns:
             dict: A dictionary containing:
-                - `vid_vec` (list): Vector representation
-                - `is_avg` (bool): A flag indicating whether the vector is the average vector or a I-frame vector
+                - `prediction` (str): Predicted label
+                - `probs` (list): Label probabilities
         """
-        # average vector
-        yield {
-            "vid_vec": vid_analyzer.get_mean_feature().tolist(),
-            "is_avg": True,
+        return {
+            "prediction": vid_analyzer.getPredictedLabel(),
+            "probs": vid_analyzer.probs.tolist(),
         }
-        # I-frame vectors
-        for keyframe in vid_analyzer.feature_matrix:
-            yield {
-                "vid_vec": keyframe.tolist(),
-                "is_avg": False,
-            }
 
-    class VideoAnalyzer:
+    class VideoClassifier:
         """
-        A class for video feature extraction.
+        A class for video classification.
         """
-        def __init__(self, fname):
+        def __init__(self, fname, labels):
             """
-            Constructor for the `VideoAnalyzer` class.
+            Constructor for the `VideoClassifier` class.
 
             Args:
                 fname (str): Path to the video file
+                labels (list): List of labels
             """
             self.model = model
             self.device = device
+            self.labels = labels
             self.frame_images = []
             self.feature_matrix = []
             self.analyze(fname)
 
-        def get_mean_feature(self):
-            """
-            Returns:
-                torch.Tensor: Mean feature vector
-            """
-            return torch.mean(self.feature_matrix, dim=0)
-
         def analyze(self, fname):
             """
-            Analyzes the video file and extracts features.
+            Analyzes the video file and generates predictions.
 
             Args:
                 fname (str): Path to the video file
@@ -93,7 +81,7 @@ def initialize(param):
 
             # Extract I-frames and features
             self.frame_images = self.extract_frames(fname)
-            self.feature_matrix = self.extract_features(self.frame_images)
+            self.probs = self.predict(self.frame_images, self.labels)
 
         def extract_frames(self, fname):
             """
@@ -120,23 +108,40 @@ def initialize(param):
                             frames.append(img.copy())
                 return frames
 
-        def extract_features(self, images):
+        def predict(self, images, labels):
             """
-            Extracts features from a list of images using pre-trained CLIP-ViT-B-32.
+            Runs inference and gets label probabilities using a pre-trained CLIP-ViT-B-32.
 
             Args:
                 images (list): List of PIL Images
+                labels (list): List of labels
 
             Returns:
-                torch.Tensor: Feature matrix of shape (batch, 512)
+                torch.Tensor: Probability distribution across labels
             """
-            inputs = processor(images=images, return_tensors="pt", padding=True, truncation=True)
+            inputs = processor(text=labels, images=images, return_tensors="pt", padding=True, truncation=True)
             inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
             with torch.no_grad():
-                features = self.model.get_image_features(**inputs)
-                return features
+                output = self.model(**inputs)
+                logits_per_image = output.logits_per_image
+                probs = logits_per_image.softmax(dim=1)
+                return probs.mean(dim=0)
 
-def run(file):
+        def getPredictedLabel(self):
+            """
+            Returns the predicted label.
+
+            Args:
+                probs (torch.Tensor): Probability distribution across labels
+                labels (list): List of labels
+
+            Returns:
+                str: Predicted label
+            """
+            max_prob_index = self.probs.argmax().item()
+            return self.labels[max_prob_index]
+
+def run(file, labels):
     """
     Runs the operator.
 
@@ -144,14 +149,11 @@ def run(file):
         file (dict): `VideoFactory` file object
 
     Returns:
-        generator: Yields video and I-frame vector representations
+        dict: A dictionary containing prediction and probabilities
     """
     fname = file["path"]
-    try:
-        vid_analyzer = VideoAnalyzer(fname)
-        return gendata(vid_analyzer)
-    finally:
-        os.remove(fname)
+    vid_analyzer = VideoClassifier(fname, labels)
+    return gendata(vid_analyzer)
 
 def cleanup(param):
     pass
