@@ -215,13 +215,13 @@ configargparse==1.7 \
 dacite==1.8.1 \
     --hash=sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe
     # via -r requirements.in
-elastic-transport==8.12.0 \
-    --hash=sha256:48839b942fcce199eece1558ecea6272e116c58da87ca8d495ef12eb61effaf7 \
-    --hash=sha256:87d9dc9dee64a05235e7624ed7e6ab6e5ca16619aa7a6d22e853273b9f1cfbee
+elastic-transport==8.13.1 \
+    --hash=sha256:16339d392b4bbe86ad00b4bdeecff10edf516d32bc6c16053846625f2c6ea250 \
+    --hash=sha256:5d4bb6b8e9d74a9c16de274e91a5caf65a3a8d12876f1e99152975e15b2746fe
     # via elasticsearch
-elasticsearch==8.11.1 \
-    --hash=sha256:360b721324ce4bc7d554afb8acbf4942370e73c5ef8c4dad5f5ba3bb2a70eeae \
-    --hash=sha256:a98309cee11fef8d6750f388683e9a8005da94bdfd940b36ef85cb6cc53186c7
+elasticsearch==8.14.0 \
+    --hash=sha256:aa2490029dd96f4015b333c1827aa21fd6c0a4d223b00dfb0fe933b8d09a511b \
+    --hash=sha256:cef8ef70a81af027f3da74a4f7d9296b390c636903088439087b8262a468c130
     # via -r requirements.in
 flask==3.0.3 \
     --hash=sha256:34e815dfaa43340d1d15a5c3a02b8476004037eb4840b34910c6e21679d288f3 \
