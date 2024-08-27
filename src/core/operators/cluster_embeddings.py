@@ -89,7 +89,7 @@ def run(input_data, n_clusters=None, modality='audio'):
         dict: A dictionary mapping cluster labels to corresponding array of payloads
 
     Raises:
-        ValueError: Modality should be either `audio` or `visual`
+        ValueError: Modality should be either `audio` or `video`
         KeyError: Each data point in input must have `embedding` and `payload` properties
     """
     # Parse data:
@@ -103,10 +103,10 @@ def run(input_data, n_clusters=None, modality='audio'):
         n_clusters = int(n_clusters) # cast it to int
         if modality == 'audio':
             labels = KMeans_clustering(matrix=matrix, n_clusters=n_clusters)
-        elif modality == 'visual':
+        elif modality == 'video':
             labels = Agglomerative_clustering(matrix=matrix, n_clusters=n_clusters)
         else:
-            raise ValueError("Invalid modality. Modality should be either `audio` or `visual`.")
+            raise ValueError("Invalid modality. Modality should be either `audio` or `video`.")
     else:
         labels = AffinityPropagation_clustering(matrix=matrix)
     return gen_data(payloads=payloads, labels=labels) # format output

@@ -30,7 +30,7 @@ class Test(unittest.TestCase):
         self.assertCountEqual([result["cluster_0"], result["cluster_1"]], EXPECTED_CLUSTERS)
 
     def test_agglomerative_clustering(self):
-        result = cluster_embeddings.run(input_data=MOCK_DATA, n_clusters=2, modality="visual")
+        result = cluster_embeddings.run(input_data=MOCK_DATA, n_clusters=2, modality="video")
         self.assertIn("cluster_0", result)
         self.assertIn("cluster_1", result)
         self.assertEqual(len(result), 2)
