@@ -32,6 +32,7 @@ COPY --chown=python:python ./core/operators/audio_vec_embedding_clap_requirement
 COPY --chown=python:python ./core/operators/vid_vec_rep_clip_requirements.txt /home/python/app/core/operators/vid_vec_rep_clip_requirements.txt
 COPY --chown=python:python ./core/operators/classify_video_zero_shot_requirements.txt /home/python/app/core/operators/classify_video_zero_shot_requirements.txt
 COPY --chown=python:python ./core/operators/cluster_embeddings_requirements.txt /home/python/app/core/operators/cluster_embeddings_requirements.txt
+COPY --chown=python:python ./core/operators/dimension_reduction_requirements.txt /home/python/app/core/operators/dimension_reduction_requirements.txt
 
 # Run pip install
 RUN pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/base_requirements.txt \
@@ -39,7 +40,8 @@ RUN pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/ba
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/audio_vec_embedding_clap_requirements.txt \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/vid_vec_rep_clip_requirements.txt \
     && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/classify_video_zero_shot_requirements.txt \
-    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/cluster_embeddings_requirements.txt
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/cluster_embeddings_requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/dimension_reduction_requirements.txt
 
 #####################################
 
