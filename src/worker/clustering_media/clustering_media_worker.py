@@ -95,14 +95,14 @@ def clustering_worker(feluda):
 
             elif media_type == "video":
                 pass
-
-        else:
-            log.info("This media type is not supported currently")
-            report = make_report_failed_unsupported_media_type(media_type, "failed", file_id)
-            feluda.queue.message(
-                feluda.config.queue.parameters.queues[1]["name"], report
-            )
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+            
+            else:
+                log.info("This media type is not supported currently")
+                report = make_report_failed_unsupported_media_type(media_type, "failed", file_id)
+                feluda.queue.message(
+                    feluda.config.queue.parameters.queues[1]["name"], report
+                    )
+                ch.basic_ack(delivery_tag=method.delivery_tag)
 
         clustering_results_json = cluster_embeddings.run(input_data=audio_embeddings, n_clusters=2, modality='audio')
         dim_reduction_results_json = dimension_reduction.perform_reduction(audio_embeddings)
