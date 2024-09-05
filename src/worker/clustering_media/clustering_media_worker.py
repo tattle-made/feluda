@@ -9,10 +9,10 @@ from time import sleep
 
 log = Logger(__name__)
 
-def make_report_indexed(clustering_results_json,dim_reduction_results_json, status):
+def make_report_indexed(clustering_results_json, status):
     report = {}
     report["clustering_results"] = clustering_results_json
-    report["dim_reduction_results"] = dim_reduction_results_json
+    # report["dim_reduction_results"] = dim_reduction_results_json
     report["status"] = status
     report["status_code"] = 200
     return json.dumps(report)
@@ -46,10 +46,10 @@ def clustering_worker(feluda):
         print("MESSAGE RECEIVED")
 
         # Parse payload:
-        input = json.loads(body)
-        json_path = input["path"]
-        video_config = input["video"]
-        audio_config = input["audio"]
+        input_payload = json.loads(body)
+        json_path = input_payload["path"]
+        video_config = input_payload["video"]
+        audio_config = input_payload["audio"]
 
         # Fetch the file list:
         response = requests.get(json_path)
@@ -77,7 +77,7 @@ def clustering_worker(feluda):
                     # send failed report to report queue
                     report = make_report_failed(media_type, "failed", file_id)
                     feluda.queue.message(
-                    feluda.config.queue.parameters.queues[1]["name"], report
+                        feluda.config.queue.parameters.queues[1]["name"], report
                     )
                     # requeue the media file
                     ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -93,11 +93,17 @@ def clustering_worker(feluda):
                             video_classifications[pred] = []
                         video_classifications[pred].append(file_id)
                         if video_config.get("tsne"):
-                            embedding = vid_vec_rep_clip.run(file_path)
-                            video_embeddings.append(embedding)
+                            embedding = vid_vec_rep_clip.run(video_path)
+                            video_embeddings.append({
+                                "embedding": next(embedding)["vid_vec"],
+                                "payload": file_id
+                            })
                     else:
-                        embedding = vid_vec_rep_clip.run(file_path)
-                        video_embeddings.append(embedding)
+                        embedding = vid_vec_rep_clip.run(video_path)
+                        video_embeddings.append({
+                            "embedding": next(embedding)["vid_vec"],
+                            "payload": file_id
+                        })
 
                 except Exception as e:
                     print("Error in generating embeddings", e)
@@ -120,12 +126,12 @@ def clustering_worker(feluda):
             "audio": clustering_results_audio,
             "video": clustering_results_video
         }
-        dim_reduction_results_json = []
-        if audio_config.get("tsne"):
-            dim_reduction_results_json.extend(dimension_reduction.perform_reduction(audio_embeddings))
-        if video_config.get("tsne"):
-            dim_reduction_results_json.extend(dimension_reduction.perform_reduction(video_embeddings))
-        report = make_report_indexed(clustering_results_json, dim_reduction_results_json, "indexed")
+        # dim_reduction_results_json = []
+        # if audio_config.get("tsne"):
+        #     dim_reduction_results_json.extend(dimension_reduction.perform_reduction(audio_embeddings))
+        # if video_config.get("tsne"):
+        #     dim_reduction_results_json.extend(dimension_reduction.perform_reduction(video_embeddings))
+        report = make_report_indexed(clustering_results_json, "indexed")
         feluda.queue.message(
             feluda.config.queue.parameters.queues[1]["name"], report
         )
@@ -148,7 +154,7 @@ try:
     vid_vec_rep_clip.initialize(param={})
     classify_video_zero_shot.initialize(param={})
     cluster_embeddings.initialize(param={})
-    dimension_reduction.setup_reduction(model_type='tsne', params={})
+    # dimension_reduction.setup_reduction(model_type='tsne', params={})
 
     # start listening to the queue
     feluda.queue.listen(clustering_media_index_queue, clustering_worker(feluda))
