@@ -59,6 +59,7 @@ def clustering_worker(feluda):
         video_embeddings = []
         video_classifications = {}
 
+        log.info("Processing files")
         for file in file_list:
             file_id = file["id"]
             file_path = file["path"]
@@ -117,6 +118,7 @@ def clustering_worker(feluda):
             else:
                 pass
 
+        log.info("Clustering embeddings")
         clustering_results_audio = cluster_embeddings.run(input_data=audio_embeddings, n_clusters=audio_config.get("n_clusters"), modality='audio')
         if "labels" in video_config:
             clustering_results_video = video_classifications
@@ -126,12 +128,14 @@ def clustering_worker(feluda):
             "audio": clustering_results_audio,
             "video": clustering_results_video
         }
+        # log.info("Calculating t-SNE co-ordinates")
         # dim_reduction_results_json = []
         # if audio_config.get("tsne"):
         #     dim_reduction_results_json.extend(dimension_reduction.perform_reduction(audio_embeddings))
         # if video_config.get("tsne"):
         #     dim_reduction_results_json.extend(dimension_reduction.perform_reduction(video_embeddings))
         report = make_report_indexed(clustering_results_json, "indexed")
+        log.info("Report generated")
         feluda.queue.message(
             feluda.config.queue.parameters.queues[1]["name"], report
         )
