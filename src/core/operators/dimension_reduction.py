@@ -31,6 +31,7 @@ class TSNEReduction(DimensionReduction):
                 - learning_rate (float): Learning rate for t-SNE. Default is 150.
                 - n_iter (int): Number of iterations for optimization. Default is 1000.
                 - random_state (int): Seed for random number generation. Default is 42.
+                - method (str): Algorithm to use for gradient calculation. Default is barnes_hut
 
         Raises:
             ValueError: If the t-SNE model fails to initialize.
@@ -109,26 +110,25 @@ def gen_data(payloads, reduced_embeddings):
     for payload, reduced_embedding in zip(payloads, reduced_embeddings):
         tmp_dict = {}
         tmp_dict['payload'] = payload
-        tmp_dict['reduced_embedding'] = reduced_embedding
+        tmp_dict['reduced_embedding'] = reduced_embedding.tolist()
         out.append(tmp_dict)
     return out
 
 
-def setup_reduction(model_type, params):
+def initialize(params):
     """
     Initialize the dimension reduction model with provided type and parameters.
 
     Args:
-        model_type (str): String indicating the type of model (e.g., 'tsne').
         params (dict): Dictionary of parameters for the model initialization.
 
     """
     global reduction_model
-    reduction_model = DimensionReductionFactory.get_reduction_model(model_type)
+    reduction_model = DimensionReductionFactory.get_reduction_model(params.get('model_type', 'tsne'))
     reduction_model.initialize(params)
 
 
-def perform_reduction(input_data):
+def run(input_data):
     """
     Reduce the dimensionality of the provided embeddings using the initialized model.
 
