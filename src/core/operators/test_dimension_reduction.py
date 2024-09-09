@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from core.operators.dimension_reduction import setup_reduction, perform_reduction
+from core.operators.dimension_reduction import initialize, run
 
 
 class TestDimensionReductionOperator(unittest.TestCase):
@@ -8,6 +8,7 @@ class TestDimensionReductionOperator(unittest.TestCase):
     def setUpClass(cls):
         # Initialize operator
         cls.initial_params = {
+            'model_type': 'tsne',
             'n_components': 2,
             'perplexity': 30,
             'learning_rate': 200,
@@ -15,7 +16,7 @@ class TestDimensionReductionOperator(unittest.TestCase):
             'random_state': 42,
             'method': 'barnes_hut'
         }
-        setup_reduction('tsne', cls.initial_params)
+        initialize(cls.initial_params)
 
     @classmethod
     def tearDownClass(cls):
@@ -29,7 +30,7 @@ class TestDimensionReductionOperator(unittest.TestCase):
         input_data = [{'payload': str(i), 'embedding': embedding} for i, embedding in enumerate(sample_embeddings)]
 
         # Perform reduction
-        reduced_data = perform_reduction(input_data)
+        reduced_data = run(input_data)
         reduced_embeddings = np.array([d['reduced_embedding'] for d in reduced_data])
 
         # Check output shape
@@ -38,12 +39,12 @@ class TestDimensionReductionOperator(unittest.TestCase):
     def test_invalid_input(self):
         # Test with empty list
         with self.assertRaises(ValueError):
-            perform_reduction([])
+            run([])
 
         # Test with non-list input
         with self.assertRaises(ValueError):
-            perform_reduction("not a list")
+            run("not a list")
 
         # Test with missing keys in input data
         with self.assertRaises(KeyError):
-            perform_reduction([{'payload': '123'}])
+            run([{'payload': '123'}])

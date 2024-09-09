@@ -1,0 +1,28 @@
+queue :
+  label : "Queue"
+  type : "rabbitmq"
+  parameters:
+    host_name : "rabbitmq"
+    queues:
+      - name : "clustering-media-index-queue"
+      - name : "clustering-media-report-queue"
+
+operators :
+  label : "Operators"
+  parameters :
+    - name : "Video embeddings"
+      type : "vid_vec_rep_clip"
+      parameters: {}
+    - name: "Audio embeddings"
+      type: "audio_vec_embedding_clap"
+      parameters: {}
+    - name: "Video classifier"
+      type: "classify_video_zero_shot"
+      parameters: {}
+    - name: "Clustering"
+      type: "cluster_embeddings"
+      parameters: {}
+    - name: "tSNE"
+      type: "dimension_reduction"
+      parameters: {}
+

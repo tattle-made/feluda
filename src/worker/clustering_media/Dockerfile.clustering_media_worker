@@ -1,0 +1,82 @@
+### BUILDER IMAGE ###
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS builder
+ARG UID
+ARG GID
+
+# Fetch OS packages updates, upgrade packages, and install packages required for build
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get install -y \
+    --no-install-recommends gcc build-essential \
+    --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
+    --no-install-recommends python3-dev
+
+# Set python user
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /home/python/app \
+    && chown -R python:python /home/python/app/
+# Set working dir
+WORKDIR /home/python/app
+
+# Create venv and change ownership recursively
+RUN python -m venv /home/python/app/venv \
+    && chown -R python:python /home/python/app/venv
+# Set venv in path
+ENV PATH="/home/python/app/venv/bin:$PATH"
+
+# Copy base, core and operator requirements
+COPY --chown=python:python base_requirements.txt /home/python/app/base_requirements.txt
+COPY --chown=python:python requirements.txt /home/python/app/requirements.txt
+COPY --chown=python:python ./core/operators/audio_vec_embedding_clap_requirements.txt /home/python/app/core/operators/audio_vec_embedding_clap_requirements.txt
+COPY --chown=python:python ./core/operators/vid_vec_rep_clip_requirements.txt /home/python/app/core/operators/vid_vec_rep_clip_requirements.txt
+COPY --chown=python:python ./core/operators/classify_video_zero_shot_requirements.txt /home/python/app/core/operators/classify_video_zero_shot_requirements.txt
+COPY --chown=python:python ./core/operators/cluster_embeddings_requirements.txt /home/python/app/core/operators/cluster_embeddings_requirements.txt
+COPY --chown=python:python ./core/operators/dimension_reduction_requirements.txt /home/python/app/core/operators/dimension_reduction_requirements.txt
+
+# Run pip install
+RUN pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/base_requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/audio_vec_embedding_clap_requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/vid_vec_rep_clip_requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/classify_video_zero_shot_requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/cluster_embeddings_requirements.txt \
+    && pip install --no-cache-dir --require-hashes --no-deps -r /home/python/app/core/operators/dimension_reduction_requirements.txt
+
+#####################################
+
+
+
+### PRODUCTION IMAGE ###
+FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS production
+ARG UID
+ARG GID
+
+# Update image, install required utils, and remove cache
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get install -y --no-install-recommends vim zsh curl wget ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set python group and user, create home dir, create app dir, change ownership of app to user
+RUN groupadd -g $GID python \
+    && useradd --create-home -r -u $UID -g python python \
+    && mkdir /home/python/app \
+    && chown -R python:python /home/python/app/
+
+# Set working dir
+WORKDIR /home/python/app
+
+# Copy output from builder stage
+COPY --from=builder /home/python/app /home/python/app
+
+# Copy all files and change ownership to unprivileged user
+COPY --chown=python:python . /home/python/app
+
+# Set venv path
+ENV PATH="/home/python/app/venv/bin:$PATH"
+
+# Set unprivileged user with group membership
+USER python:python
+
+#################################
