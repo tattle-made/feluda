@@ -162,7 +162,7 @@ try:
     vid_vec_rep_clip.initialize(param={})
     classify_video_zero_shot.initialize(param={})
     cluster_embeddings.initialize(param={})
-    dimension_reduction.initialize(params={})
+    dimension_reduction.initialize(params={"perplexity": 5})
 
     # start listening to the queue
     feluda.queue.listen(clustering_media_index_queue, clustering_worker(feluda))
