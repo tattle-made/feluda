@@ -9,10 +9,10 @@ from time import sleep
 
 log = Logger(__name__)
 
-def make_report_indexed(clustering_results_json, status):
+def make_report_indexed(clustering_results_json, dim_reduction_results_json, status):
     report = {}
     report["clustering_results"] = clustering_results_json
-    # report["dim_reduction_results"] = dim_reduction_results_json
+    report["dim_reduction_results"] = dim_reduction_results_json
     report["status"] = status
     report["status_code"] = 200
     return json.dumps(report)
@@ -128,13 +128,17 @@ def clustering_worker(feluda):
             "audio": clustering_results_audio,
             "video": clustering_results_video
         }
-        # log.info("Calculating t-SNE co-ordinates")
-        # dim_reduction_results_json = []
-        # if audio_config.get("tsne"):
-        #     dim_reduction_results_json.extend(dimension_reduction.perform_reduction(audio_embeddings))
-        # if video_config.get("tsne"):
-        #     dim_reduction_results_json.extend(dimension_reduction.perform_reduction(video_embeddings))
-        report = make_report_indexed(clustering_results_json, "indexed")
+        log.info("Calculating t-SNE co-ordinates")
+        if audio_config.get("tsne"):
+            dim_reduction_results_audio = dimension_reduction.run(audio_embeddings)
+        if video_config.get("tsne"):
+            dim_reduction_results_video = dimension_reduction.run(video_embeddings)
+
+        dim_reduction_results_json = {
+            "audio": dim_reduction_results_audio,
+            "video": dim_reduction_results_video
+        }
+        report = make_report_indexed(clustering_results_json, dim_reduction_results_json, "indexed")
         log.info("Report generated")
         feluda.queue.message(
             feluda.config.queue.parameters.queues[1]["name"], report
@@ -158,7 +162,7 @@ try:
     vid_vec_rep_clip.initialize(param={})
     classify_video_zero_shot.initialize(param={})
     cluster_embeddings.initialize(param={})
-    # dimension_reduction.setup_reduction(model_type='tsne', params={})
+    dimension_reduction.initialize(params={})
 
     # start listening to the queue
     feluda.queue.listen(clustering_media_index_queue, clustering_worker(feluda))

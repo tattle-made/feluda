@@ -22,7 +22,7 @@ operators :
     - name: "Clustering"
       type: "cluster_embeddings"
       parameters: {}
-    # - name: "tSNE"
-    #   type: "dimension_reduction"
-    #   parameters: {}
+    - name: "tSNE"
+      type: "dimension_reduction"
+      parameters: {}
 

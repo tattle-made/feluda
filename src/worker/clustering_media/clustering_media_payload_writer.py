@@ -10,10 +10,12 @@ try:
     dummy_input = {
         "path": "https://raw.githubusercontent.com/aatmanvaidya/audio-files/main/clustering-media/media_payload.json",
         "video": {
-            "n_clusters": 3
+            "n_clusters": 3,
+            "tsne": True
         },
         "audio": {
-            "n_clusters": 3
+            "n_clusters": 3,
+            "tsne": True
         }
     }
     feluda.queue.message(clustering_media_index_queue, dummy_input)
