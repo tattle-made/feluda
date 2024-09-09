@@ -111,7 +111,7 @@ def clustering_worker(feluda):
                     # send failed report to report queue
                     report = make_report_failed(media_type, "failed", file_id)
                     feluda.queue.message(
-                    feluda.config.queue.parameters.queues[1]["name"], report
+                        feluda.config.queue.parameters.queues[1]["name"], report
                     )
                     # requeue the media file
                     ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -119,30 +119,50 @@ def clustering_worker(feluda):
                 pass
 
         log.info("Clustering embeddings")
-        clustering_results_audio = cluster_embeddings.run(input_data=audio_embeddings, n_clusters=audio_config.get("n_clusters"), modality='audio')
-        if "labels" in video_config:
-            clustering_results_video = video_classifications
-        else:
-            clustering_results_video = cluster_embeddings.run(input_data=video_embeddings, n_clusters=video_config.get("n_clusters"), modality='video')
-        clustering_results_json = {
-            "audio": clustering_results_audio,
-            "video": clustering_results_video
-        }
+        try:
+            clustering_results_audio = cluster_embeddings.run(input_data=audio_embeddings, n_clusters=audio_config.get("n_clusters"), modality='audio')
+            if "labels" in video_config:
+                clustering_results_video = video_classifications
+            else:
+                clustering_results_video = cluster_embeddings.run(input_data=video_embeddings, n_clusters=video_config.get("n_clusters"), modality='video')
+                clustering_results_json = {
+                    "audio": clustering_results_audio,
+                    "video": clustering_results_video
+                    }
+        except Exception as e:
+            print("Error in clustering:", e)
+            report = make_report_failed("clustering", "failed")
+            feluda.queue.message(
+                feluda.config.queue.parameters.queues[1]["name"], report
+            )
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        
         log.info("Calculating t-SNE co-ordinates")
-        if audio_config.get("tsne"):
-            dim_reduction_results_audio = dimension_reduction.run(audio_embeddings)
-        if video_config.get("tsne"):
-            dim_reduction_results_video = dimension_reduction.run(video_embeddings)
-
-        dim_reduction_results_json = {
-            "audio": dim_reduction_results_audio,
-            "video": dim_reduction_results_video
-        }
+        try:
+            dim_reduction_results_audio = None
+            dim_reduction_results_video = None
+            if audio_config.get("tsne"):
+                dim_reduction_results_audio = dimension_reduction.run(audio_embeddings)
+            if video_config.get("tsne"):
+                dim_reduction_results_video = dimension_reduction.run(video_embeddings)
+            
+            dim_reduction_results_json = {
+                "audio": dim_reduction_results_audio,
+                "video": dim_reduction_results_video
+                }
+        except Exception as e:
+            print("Error in dimension reduction:", e)
+            report = make_report_failed("dimension reduction", "failed")
+            feluda.queue.message(
+                feluda.config.queue.parameters.queues[1]["name"], report
+            )
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        
         report = make_report_indexed(clustering_results_json, dim_reduction_results_json, "indexed")
         log.info("Report generated")
         feluda.queue.message(
             feluda.config.queue.parameters.queues[1]["name"], report
-        )
+            )
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
     return worker
