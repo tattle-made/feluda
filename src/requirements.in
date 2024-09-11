@@ -18,3 +18,6 @@ nose2==0.15.1
 psycopg2-binary==2.9.9
 boto3==1.35.16
 pydub==0.25.1
+# not direct requirments, but added because of pip-audit report
+certifi==2024.7.4
+urllib3==2.2.2
