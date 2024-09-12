@@ -83,7 +83,7 @@ class VideoFactory:
             try:
                 print("Downloading video from URL")
                 wget.download(video_url, out=file_path)
-                print("Video downloaded")
+                print("\nVideo downloaded")
             except Exception as e:
                 print("Error downloading video:", e)
                 raise Exception("Error Downloading Video")
@@ -95,7 +95,7 @@ class VideoFactory:
             try:
                 print("Downloading video from S3")
                 AWSS3Utils.download_file_from_s3(bucket_name, file_key, file_path)
-                print("Video downloaded")
+                print("\nVideo downloaded")
             except Exception as e:
                 print("Error downloading video from S3:", e)
                 raise Exception("Error Downloading Video")
@@ -126,7 +126,7 @@ class AudioFactory:
             try:
                 print("Downloading audio from URL")
                 wget.download(audio_url, out=file_path)
-                print("Audio downloaded")
+                print("\nAudio downloaded")
             except Exception as e:
                 print("Error downloading audio:", e)
                 raise Exception("Error Downloading audio")
@@ -138,13 +138,13 @@ class AudioFactory:
             try:
                 print("Downloading audio from S3")
                 AWSS3Utils.download_file_from_s3(bucket_name, file_key, file_path)
-                print("Audio downloaded")
+                print("\nAudio downloaded")
             except Exception as e:
                 print("Error downloading audio from S3:", e)
                 raise Exception("Error Downloading audio")
 
         return {"path": file_path}
-    
+
     @staticmethod
     def make_from_url_to_wav(audio_url):
         temp_dir = tempfile.gettempdir()
@@ -156,7 +156,7 @@ class AudioFactory:
             print("Downloading audio from URL")
             wget.download(audio_url, out=audio_file)
             print("\naudio downloaded")
-            
+
             _, file_extension = os.path.splitext(file_name)
             if file_extension != '.wav':
                 audio = AudioSegment.from_file(audio_file, format=file_extension[1:])
@@ -172,7 +172,7 @@ class AudioFactory:
     @staticmethod
     def make_from_file_on_disk(audio_path):
         return {"path": audio_path}
-    
+
 
 
 media_factory = {
