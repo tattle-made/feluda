@@ -2,6 +2,158 @@
 
 
 
+## v0.8.0 (2024-09-12)
+
+### Chore
+
+* chore: updating vid vec rep resenet packages ([`9f212c2`](https://github.com/tattle-made/feluda/commit/9f212c2d21cb7ad33a41330f203dab3d41f04d69))
+
+* chore: updating audio vec embedding pacakges ([`a41f996`](https://github.com/tattle-made/feluda/commit/a41f996f40af1b5f9c70786ee376c6a5f2348b32))
+
+* chore: updating audio vec embedding pacakges ([`6e50e06`](https://github.com/tattle-made/feluda/commit/6e50e0683702cc9549773ab6bffa742a43105835))
+
+* chore: fix conflict in updating requirements packages ([`acf1a56`](https://github.com/tattle-made/feluda/commit/acf1a564d872c26575f0d23abe5a7a7b56df8c94))
+
+* chore: updating requirements packages ([`5390073`](https://github.com/tattle-made/feluda/commit/5390073e3a848e0984ef6049d1500991d27583aa))
+
+* chore: fix ruff lint warnings ([`5f73898`](https://github.com/tattle-made/feluda/commit/5f738980d18eb9572d61b26aaf7a6f23ac016aaa))
+
+* chore: add error handling to clustering and reduction operations ([`ba01287`](https://github.com/tattle-made/feluda/commit/ba01287cd7cbb175b516874fcc489e5b0261ebc7))
+
+* chore: hardcode perplexity value for t-SNE ([`60315b5`](https://github.com/tattle-made/feluda/commit/60315b5fe96e445831c8c84641b8eb95f2d0e701))
+
+* chore: change operator name to be more verbose
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`45bef72`](https://github.com/tattle-made/feluda/commit/45bef72d74617bff5915429e3802fc88b9ed595a))
+
+* chore: remove obsolete `print` statement
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`92d02e2`](https://github.com/tattle-made/feluda/commit/92d02e219ecb0844de261b35fa2801adca139f04))
+
+* chore: remove the file after the operation has ended
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`4a384f5`](https://github.com/tattle-made/feluda/commit/4a384f57b6f4daa41861162898415fa981dc73e0))
+
+* chore: removing docs gatsby website ([`03f5ac0`](https://github.com/tattle-made/feluda/commit/03f5ac078952851fdf17954484f34eccd066ca72))
+
+### Ci
+
+* ci: fix trivy github action ([`a5d4df8`](https://github.com/tattle-made/feluda/commit/a5d4df8d2e5f0b9b1654134557509df0a45c4583))
+
+* ci: update dependabot yml file ([`8a6b007`](https://github.com/tattle-made/feluda/commit/8a6b007235c957e76e369bc3d2346a45f50aa337))
+
+### Feature
+
+* feat: add config
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`73731ec`](https://github.com/tattle-made/feluda/commit/73731eceaad6e33c78052654012b1927e3682e5d))
+
+* feat: add dimensionality reduction operator ([`2caf4a4`](https://github.com/tattle-made/feluda/commit/2caf4a4398383ae95731ce167c3d7d5391a49284))
+
+* feat: improve exception handling and logic
+
+Co-authored-by: Chaithanya512 &lt;chay5522kalyan@gmail.com&gt;
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`5756a59`](https://github.com/tattle-made/feluda/commit/5756a59d2a8f2e7395ff566f07213fbb6bb75bcd))
+
+* feat: add `cluster_embeddings` operator
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`4e08e35`](https://github.com/tattle-made/feluda/commit/4e08e35309c415b1bae0f65732d9df635da342a4))
+
+* feat: add audio embedding operator using CLAP model ([`233cfd4`](https://github.com/tattle-made/feluda/commit/233cfd4065f2e43d6cf533ade3002270f02f5eb2))
+
+* feat: add `classify_video` operator
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`2001dab`](https://github.com/tattle-made/feluda/commit/2001dab2f38b0892b31cb269d85a118d16c0210f))
+
+* feat: add `vid_vec_rep_clip` operator
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`8874ce5`](https://github.com/tattle-made/feluda/commit/8874ce58d5ee77df7844c6b49ae5180736fee00e))
+
+### Fix
+
+* fix: es_vec test ([`08b3085`](https://github.com/tattle-made/feluda/commit/08b308587029507136cdc4fe68719a1357b84917))
+
+* fix: enable worker support for dimension reductionn ([`89df059`](https://github.com/tattle-made/feluda/commit/89df059b251cd2ed7cddb46e39d60fe2d8b45e48))
+
+* fix: update logic as per clustering spec
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`0bea260`](https://github.com/tattle-made/feluda/commit/0bea260224c49cb6c2e0f0a47832789ff8b6591b))
+
+* fix: correct indentation logic ([`d208d17`](https://github.com/tattle-made/feluda/commit/d208d17ba7f2c2914ca3666f1b25295d50524eab))
+
+* fix: correct naming and add dimension reduction requirements ([`0334a4b`](https://github.com/tattle-made/feluda/commit/0334a4b20a5555c8278ba8fc99c55327c0c27b8b))
+
+### Refactor
+
+* refactor: migrate CLAP operator to Hugging Face Transformers ([`9e5195a`](https://github.com/tattle-made/feluda/commit/9e5195aa8ddf2c86d54333ee6e9c01a5576b32f4))
+
+* refactor: align dimension reduction with feluda interface ([`0acfdb7`](https://github.com/tattle-made/feluda/commit/0acfdb74befae505f20ebf112bb3a58b087ca980))
+
+* refactor: change modality to `video`
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`a1506ba`](https://github.com/tattle-made/feluda/commit/a1506ba879444458f09f286d34baec94b38c3744))
+
+### Style
+
+* style: prepend newline for clearer output in logs
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`bacafdd`](https://github.com/tattle-made/feluda/commit/bacafdd95142078626e1b996258859f13bbf8d97))
+
+### Test
+
+* test: add payload writer for the worker
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`57803e0`](https://github.com/tattle-made/feluda/commit/57803e07451e8263544cc8d239f2e95a99c303e0))
+
+### Unknown
+
+* Merge pull request #381 from tattle-made/development
+
+merge dev to main ([`48bfc87`](https://github.com/tattle-made/feluda/commit/48bfc87b813f5a34ea59c7bc9e7d7316000ce1ee))
+
+* Merge pull request #380 from aatmanvaidya/update-fel
+
+Update Packages and Fix minor Issues ([`cf64f4d`](https://github.com/tattle-made/feluda/commit/cf64f4d5ead811883d5012656222a3459cae4f09))
+
+* Merge pull request #379 from Snehil-Shah/worker
+
+worker for clustering media ([`4abae4d`](https://github.com/tattle-made/feluda/commit/4abae4dff4cd0d50c20eeb152c5a7220d2385923))
+
+* nit: add logs
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`1ba6de1`](https://github.com/tattle-made/feluda/commit/1ba6de164563dd086ab4797586a44c62770d8dd1))
+
+* draft: implement initial clustering worker ([`7129ac3`](https://github.com/tattle-made/feluda/commit/7129ac3ee76993bd97eb10ac2df6ff703da86dcb))
+
+* init: add Dockerfile for worker
+
+Signed-off-by: Snehil Shah &lt;snehilshah.989@gmail.com&gt; ([`777994b`](https://github.com/tattle-made/feluda/commit/777994b597b1554a7bbfb77dd3eed8967a3757a5))
+
+* Merge pull request #375 from Snehil-Shah/clustering
+
+[81] - add operator to cluster embeddings ([`1da1c27`](https://github.com/tattle-made/feluda/commit/1da1c275fe840327c88623ef8d6b968338ebfc89))
+
+* Merge pull request #376 from Chaithanya512/dim-reduction-operator
+
+feat: add dimensionality reduction operator ([`cb76d85`](https://github.com/tattle-made/feluda/commit/cb76d85c0cb1e32295b0cf1e39d765bf4b1efb0b))
+
+* Merge pull request #372 from Chaithanya512/audio_vec_emb_clap
+
+feat: audio embedding operator using CLAP model ([`faa9727`](https://github.com/tattle-made/feluda/commit/faa9727eec8c4639ea61615c69c006384dbb5665))
+
+* Merge pull request #370 from Snehil-Shah/classify-video
+
+[81] - add operator to classify videos using a zero-shot approach ([`91f604b`](https://github.com/tattle-made/feluda/commit/91f604b5e04e109645c0e55f1c691ddd7d9fb681))
+
+* Merge pull request #369 from Snehil-Shah/vid_vec_rep_clip
+
+[81] - add operator to encode videos into vector embeddings using `CLIP-ViT-B-32` ([`c5f09de`](https://github.com/tattle-made/feluda/commit/c5f09de7dba47eed1ef8efe4eae1cf5d7c16def5))
+
+* Merge pull request #367 from aatmanvaidya/remove-docs
+
+chore: removing docs gatsby website ([`2b9275a`](https://github.com/tattle-made/feluda/commit/2b9275a134677a1338dfbd5f7c9fcd9922c7b447))
+
+
 ## v0.7.2 (2024-05-28)
 
 ### Fix
