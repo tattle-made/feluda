@@ -3,7 +3,8 @@ from core.logger import Logger
 from core.operators import audio_vec_embedding_clap
 from core.operators import vid_vec_rep_clip, classify_video_zero_shot
 from core.operators import cluster_embeddings, dimension_reduction
-import requests, json
+import requests
+import json
 from core.models.media_factory import AudioFactory, VideoFactory
 from time import sleep
 

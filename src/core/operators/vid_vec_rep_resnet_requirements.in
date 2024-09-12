@@ -1,8 +1,12 @@
-torch==2.2.0+cpu
-torchvision==0.17.0+cpu
-numpy==1.26.4
-Pillow==10.3.0
-scipy==1.11.4
-opencv-python-headless==4.9.0.80
-memray==1.12.0
-pyinstrument==4.6.2
+# torch==2.2.0+cpu
+# torchvision==0.17.0+cpu
+numpy==2.1.1
+torch==2.4.1
+Pillow==10.4.0
+scipy==1.14.1
+opencv-python-headless==4.10.0.84
+memray==1.14.0
+pyinstrument==4.7.3
+# not direct requirments, but added because of pip-audit report
+certifi==2024.7.4
+urllib3==2.2.2

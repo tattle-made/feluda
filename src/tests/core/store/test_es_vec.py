@@ -3,7 +3,7 @@ from unittest.case import skip
 import requests
 from requests.exceptions import ConnectTimeout
 from core.store.es_vec import ES
-from core.config import StoreConfig, StoreParameters
+from core.config import StoreConfig, StoreEntity, StoreESParameters
 from core.models.media import MediaType
 import pprint
 from datetime import datetime
@@ -33,15 +33,19 @@ class TestES(unittest.TestCase):
                 "audio_index_name": "test_audio",
             }
             cls.param = StoreConfig(
-                label="test",
-                type="es",
-                parameters=StoreParameters(
-                    host_name=param_dict["host_name"],
-                    image_index_name=param_dict["image_index_name"],
-                    text_index_name=param_dict["text_index_name"],
-                    video_index_name=param_dict["video_index_name"],
-                    audio_index_name=param_dict["audio_index_name"],
-                ),
+                entities=[
+                    StoreEntity(
+                        label="test",
+                        type="es",
+                        parameters=StoreESParameters(
+                            host_name=param_dict["host_name"],
+                            image_index_name=param_dict["image_index_name"],
+                            text_index_name=param_dict["text_index_name"],
+                            video_index_name=param_dict["video_index_name"],
+                            audio_index_name=param_dict["audio_index_name"],
+                        ),
+                    )
+                ]
             )
         except ConnectTimeout:
             print('Request has timed out')
@@ -56,8 +60,8 @@ class TestES(unittest.TestCase):
 
     # @skip
     def test_create_indices(self):
-        print(self.param)
-        es = ES(self.param)
+        print(self.param.entities[0])
+        es = ES(self.param.entities[0])
         es.connect()
         es.optionally_create_index()
         indices = es.get_indices()
@@ -96,7 +100,7 @@ class TestES(unittest.TestCase):
 
     # @skip
     def test_store_and_search_vectors(self):
-        es = ES(self.param)
+        es = ES(self.param.entities[0])
         es.connect()
         es.optionally_create_index()
         vec = np.random.randn(512).tolist()
@@ -133,7 +137,7 @@ class TestES(unittest.TestCase):
 
     def delete_indices(self):
         print("DELETING INDICES")
-        es = ES(self.param)
+        es = ES(self.param.entities[0])
         es.connect()
         es.delete_indices()
         print("INDICES DELETED")

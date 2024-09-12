@@ -84,7 +84,7 @@ class ES:
             self.client.indices.refresh()
 
     def find(self, index_name, vec):
-        if type(vec) == np.ndarray:
+        if isinstance(vec, np.ndarray):
             vec = vec.tolist()
 
         calculation = ""

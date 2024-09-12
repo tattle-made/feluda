@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
         # delete config files
         pass
 
-    # @skip
+    @skip
     def test_sample_video_from_disk(self):
         video_path = VideoFactory.make_from_file_on_disk(
             r"core/operators/sample_data/sample-cat-video.mp4"
