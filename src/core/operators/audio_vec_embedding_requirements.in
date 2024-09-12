@@ -5,3 +5,7 @@ panns-inference==0.1.1
 torch==2.4.1
 memray==1.14.0
 pyinstrument==4.7.3
+# not direct requirments, but added because of pip-audit report
+certifi==2024.7.4
+urllib3==2.2.2
+scikit-learn==1.5.0
