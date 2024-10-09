@@ -1,6 +1,4 @@
 import unittest
-import pika
-import os
 from core.config import QueueConfig, QueueParameters
 from core.queue.rabbit_mq import RabbitMQ
 
@@ -35,6 +33,3 @@ class TestRabbitConnection(unittest.TestCase):
         declared_queue = self.rabbit.declared_queues
 
         self.assertEqual(original_queue, declared_queue)
-
-if __name__ == "__main__":
-    unittest.main()
