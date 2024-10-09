@@ -8,7 +8,7 @@ class TestRabbitConnection(unittest.TestCase):
 
     def setUp(self):
     
-        mock_param = QueueConfig(
+        self.mock_param = QueueConfig(
             label='RabbitMQ',
             type='RabbitMQ',
             parameters=QueueParameters(
@@ -20,7 +20,7 @@ class TestRabbitConnection(unittest.TestCase):
             )
         )
 
-        self.rabbit = RabbitMQ(mock_param)
+        self.rabbit = RabbitMQ(self.mock_param)
 
     def test_connection(self):
         self.rabbit.connect()
@@ -29,6 +29,12 @@ class TestRabbitConnection(unittest.TestCase):
     def test_queue_declaration(self):
         self.rabbit.connect()
         self.rabbit.initialize() 
+
+        original_queue = [queue['name'] for queue in self.mock_param.parameters.queues]
+        
+        declared_queue = self.rabbit.declared_queues
+
+        self.assertEqual(original_queue, declared_queue)
 
 if __name__ == "__main__":
     unittest.main()
