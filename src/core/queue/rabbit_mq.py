@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 class RabbitMQ:
     def __init__(self, param: QueueConfig):
         try:
+            self.declared_queues = []
             self.mq_username = environ.get("MQ_USERNAME")
             self.mq_password = environ.get("MQ_PASSWORD")
             # self.mq_host = param.parameters.host_name
@@ -44,6 +45,7 @@ class RabbitMQ:
     def initialize(self):
         for queue in self.queues:
             self.declare_queue(queue["name"])
+            self.declared_queues.append(queue["name"])
             print("Queue Declared : ", queue)
 
     def is_connected(self):
