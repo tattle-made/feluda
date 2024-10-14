@@ -6,6 +6,7 @@ openai-whisper==20231117
 pydub==0.25.1
 torch==2.3.0
 torchaudio==2.3.0
+ffmpeg-python-0.2.0
 """
 
 LANGUAGES = {
@@ -111,6 +112,25 @@ LANGUAGES = {
     "yue": "cantonese",
 }
 
+def extract_audio_from_video(video_file):
+
+    import ffmeg
+    """Extract audio from a video file using ffmeg
+
+    Args:
+        video_file (str): Path to video file.
+
+    Returns:
+        Nothing but saves file to disk.
+    """
+    audio_file_path = video_file.split(".")[0] + ".wav"
+    (
+        ffmpeg
+        .input(video_file)
+        .output(audio_file_path,format='wav', acodec='pcm_s16le', ac=1, ar='16000')
+        .run(quiet=True,overwrite_output=True)
+    )
+
 def extract_speech(fname):
     """Detect and export voice activity from an audio file.
 
@@ -120,6 +140,12 @@ def extract_speech(fname):
     Returns:
         str or bool: Name of the audio file with the extracted speech, False if no voice activity detected.
     """
+    extension_of_file = fname.split(".")[-1]
+    if extension_of_file != "wav":
+        # convert the file to wav
+        extract_audio_from_video(fname)
+        fname = fname.split(".")[0] + ".wav"
+
     # get speech timestamps using our VAD model...
     get_speech_timestamps, _, read_audio, *_ = utils
     audio = read_audio(fname, sampling_rate=16000)
