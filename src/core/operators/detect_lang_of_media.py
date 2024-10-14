@@ -113,9 +113,8 @@ LANGUAGES = {
 }
 
 def extract_audio_from_video(video_file):
-
-    import ffmeg
-    """Extract audio from a video file using ffmeg
+    import ffmpeg
+    """Extract audio from a video file using ffmpeg
 
     Args:
         video_file (str): Path to video file.
@@ -124,12 +123,16 @@ def extract_audio_from_video(video_file):
         Nothing but saves file to disk.
     """
     audio_file_path = video_file.split(".")[0] + ".wav"
-    (
-        ffmpeg
-        .input(video_file)
-        .output(audio_file_path,format='wav', acodec='pcm_s16le', ac=1, ar='16000')
-        .run(quiet=True,overwrite_output=True)
-    )
+    try:
+        (
+            ffmpeg
+            .input(video_file)
+            .output(audio_file_path, format='wav', acodec='pcm_s16le', ac=1, ar='16000')
+            .run(quiet=True, overwrite_output=True)
+        )
+    except ffmpeg.Error as e:
+        print("Error extracting audio:", e)
+        raise
 
 def extract_speech(fname):
     """Detect and export voice activity from an audio file.
