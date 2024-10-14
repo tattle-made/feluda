@@ -144,8 +144,13 @@ def extract_speech(fname):
         str or bool: Name of the audio file with the extracted speech, False if no voice activity detected.
     """
     extension_of_file = fname.split(".")[-1]
+
+    accepted_formats = ["wav", "mp4"]
+
+    if extension_of_file not in accepted_formats:
+        raise ValueError(f"Invalid file format: {fname}. Expected .wav or .mp4 format.")
+
     if extension_of_file != "wav":
-        # convert the file to wav
         extract_audio_from_video(fname)
         fname = fname.split(".")[0] + ".wav"
 
