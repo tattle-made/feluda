@@ -16,7 +16,7 @@ requests==2.32.2
 locust==2.31.5
 nose2==0.15.1
 psycopg2-binary==2.9.9
-boto3==1.35.16
+boto3==1.35.39
 pydub==0.25.1
 # not direct requirments, but added because of pip-audit report
 certifi==2024.7.4
