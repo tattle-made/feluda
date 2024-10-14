@@ -6,7 +6,7 @@ openai-whisper==20231117
 pydub==0.25.1
 torch==2.3.0
 torchaudio==2.3.0
-ffmpeg-python-0.2.0
+ffmpeg-python==0.2.0
 """
 
 LANGUAGES = {
