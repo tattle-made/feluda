@@ -1,12 +1,12 @@
 import unittest
 from core.models.media_factory import AudioFactory
-from core.operators import detect_lang_of_audio
+from core.operators import detect_lang_of_media
 
 class Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # initialize operator
-        detect_lang_of_audio.initialize(param={})
+        detect_lang_of_media.initialize(param={})
 
     @classmethod
     def tearDownClass(cls):
