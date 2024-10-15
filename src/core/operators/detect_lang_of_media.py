@@ -122,6 +122,10 @@ def extract_audio_from_video(video_file):
     Returns:
         Nothing but saves file to disk.
     """
+
+    if video_file.split(".")[-1] != "mp4":
+        raise ValueError(f"Invalid file format: {video_file}. Expected .mp4 format.")
+
     audio_file_path = video_file.split(".")[0] + ".wav"
     try:
         (
@@ -145,14 +149,9 @@ def extract_speech(fname):
     """
     extension_of_file = fname.split(".")[-1]
 
-    accepted_formats = ["wav", "mp4"]
-
-    if extension_of_file not in accepted_formats:
-        raise ValueError(f"Invalid file format: {fname}. Expected .wav or .mp4 format.")
 
     if extension_of_file != "wav":
-        extract_audio_from_video(fname)
-        fname = fname.split(".")[0] + ".wav"
+        raise ValueError(f"Invalid file format: {fname}. Expected .wav format.")
 
     # get speech timestamps using our VAD model...
     get_speech_timestamps, _, read_audio, *_ = utils
@@ -227,8 +226,15 @@ def initialize(param):
     model = whisper.load_model("base")
     vad, utils = torch.hub.load(repo_or_dir="snakers4/silero-vad", model="silero_vad")
 
-def run(audio_file):
-    audio = audio_file["path"]
+def run(audio_file,media_type):
+
+    if media_type == "video":
+        extract_audio_from_video(audio_file["path"])
+        audio_file_path = audio_file["path"].split(".")[0] + ".wav"
+    elif media_type == "audio":
+        audio_file_path = audio_file["path"]
+
+    audio = audio_file_path
     speech = extract_speech(audio)
     if speech:
         # audio contains voice activity
