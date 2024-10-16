@@ -14,9 +14,10 @@ def initialize(param):
 
 
 def run(image_path):
+    print(pytesseract.get_languages(config=''))
     with Image.open(image_path) as load_image:
         data = pytesseract.image_to_string(
-            load_image, lang="eng+hin", config="--psm 6 --oem 1"
+            load_image, lang="eng+hin+tam+tel", config="--psm 6 --oem 1"
         )
     return data
 
@@ -29,11 +30,11 @@ def state():
     pass
 
 
-# if __name__ == "__main__":
-#     initialize(param={})
-#     image_path = 'sample_data/hindi-text.png'
-#     text_data = run(image_path)
-#     print(text_data)
+if __name__ == "__main__":
+    initialize(param={})
+    image_path = 'sample_data/hindi-text.png'
+    text_data = run(image_path)
+    print(text_data)
 # image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
 # response = requests.get(image_url)
 # response.raise_for_status()

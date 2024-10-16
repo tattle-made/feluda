@@ -31,9 +31,9 @@ COPY --chown=python:python base_requirements.txt /usr/app/base_requirements.txt
 RUN pip install --no-cache-dir --require-hashes --no-deps -r /usr/app/base_requirements.txt
 
 RUN apt-get update --fix-missing && apt-get -y upgrade && apt-get install -y --no-install-recommends vim curl ffmpeg
-# RUN apt-get update && \
-#     apt-get -y upgrade && \
-#     apt-get install -y tesseract-ocr tesseract-ocr-hin
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel
 RUN apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends wget
 COPY --chown=python:python requirements.txt /usr/app/requirements.txt
 RUN pip install --no-cache-dir --require-hashes --no-deps -r requirements.txt
