@@ -254,7 +254,11 @@ def run(media_file,media_type):
             language = LANGUAGES[language_id] # get the generic name from id
             return {"id": language_id, "language": language}
         finally:
-            if audio:
+            if media_type == "video":
+                if os.path.exits(media_file["path"]):
+                    os.remove(media_file["path"])
+                os.remove(audio_file_path)
+            elif media_type == "audio":
                 os.remove(speech)
             
     return {"id": "und", "language": "undefined"}

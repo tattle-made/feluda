@@ -1,5 +1,5 @@
 import unittest
-from core.models.media_factory import AudioFactory
+from core.models.media_factory import AudioFactory,VideoFactory
 from core.operators import detect_lang_of_media
 
 class Test(unittest.TestCase):
@@ -14,8 +14,8 @@ class Test(unittest.TestCase):
         pass
 
     def test_english_detection_audio(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/en_speech.wav"
+        audio_file_path = AudioFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/en_speech.wav"
             
         )
         lang = detect_lang_of_media.run(audio_file_path,'audio')
@@ -23,8 +23,8 @@ class Test(unittest.TestCase):
         self.assertEqual(lang["language"], "english")
 
     def test_english_detection_video(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/en_speech.mp4"
+        audio_file_path = VideoFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/en-speech.mp4"
         )
         lang = detect_lang_of_media.run(audio_file_path,'video')
         self.assertEqual(lang["id"], "en")
@@ -32,8 +32,8 @@ class Test(unittest.TestCase):
 
 
     def test_hindi_detection_video(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/hi_speech.mp4"
+        audio_file_path = VideoFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/hi-speech.mp4"
             
         )
         lang = detect_lang_of_media.run(audio_file_path,'video')
@@ -41,8 +41,8 @@ class Test(unittest.TestCase):
         self.assertEqual(lang["language"], "hindi")
 
     def test_hindi_detection_audio(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/hi_speech.wav"
+        audio_file_path = AudioFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/hi_speech.wav"
         )
         lang = detect_lang_of_media.run(audio_file_path,'audio')
         self.assertEqual(lang["id"], "hi")
@@ -50,40 +50,40 @@ class Test(unittest.TestCase):
 
 
     def test_tamil_detection_audio(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/ta_speech.wav"
+        audio_file_path = AudioFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/ta_speech.wav"
         )
         lang = detect_lang_of_media.run(audio_file_path,'audio')
         self.assertEqual(lang["id"], "ta")
         self.assertEqual(lang["language"], "tamil")
 
     def test_tamil_detection_video(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/ta_speech.mp4"
+        audio_file_path = VideoFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/ta_speech.mp4"
         )
         lang = detect_lang_of_media.run(audio_file_path,'video')
         self.assertEqual(lang["id"], "ta")
         self.assertEqual(lang["language"], "tamil")
 
     def test_telugu_detection_audio(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/te_speech.wav"
+        audio_file_path = AudioFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/te_speech.wav"
         )
         lang = detect_lang_of_media.run(audio_file_path,'audio')
         self.assertEqual(lang["id"], "te")
         self.assertEqual(lang["language"], "telugu")
 
     def test_telugu_detection_video(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/te_speech.mp4"
+        audio_file_path = VideoFactory.make_from_file_on_disk(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/te_speech.mp4"
         )
         lang = detect_lang_of_media.run(audio_file_path,'video')
         self.assertEqual(lang["id"], "te")
         self.assertEqual(lang["language"], "telugu")
 
     def test_speech_extraction_in_heterogeneous_audio(self):
-        audio_file_path = AudioFactory.make_from_file_on_disk(
-            r"core/operators/sample_data/hi_speech_after_30s_music.wav"
+        audio_file_path = AudioFactory.make_from_url(
+            r"https://github.com/aatmanvaidya/audio-files/raw/main/feluda-media/hi_speech_after_30s_music.wav"
         )
         lang = detect_lang_of_media.run(audio_file_path,'audio')
         self.assertEqual(lang["id"], "hi")
