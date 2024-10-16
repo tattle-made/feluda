@@ -257,9 +257,8 @@ def run(media_file,media_type):
             if media_type == "video":
                 if os.path.exits(media_file["path"]):
                     os.remove(media_file["path"])
-                os.remove(audio_file_path)
-            elif media_type == "audio":
-                os.remove(speech)
+            os.remove(audio_file_path)
+            os.remove(speech)
             
     return {"id": "und", "language": "undefined"}
 
