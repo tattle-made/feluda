@@ -14,7 +14,7 @@ def initialize(param):
 
 
 def run(image_path):
-    print(pytesseract.get_languages(config=''))
+    
     with Image.open(image_path) as load_image:
         data = pytesseract.image_to_string(
             load_image, lang="eng+hin+tam+tel", config="--psm 6 --oem 1"
