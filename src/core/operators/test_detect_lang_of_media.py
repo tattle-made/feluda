@@ -16,6 +16,7 @@ class Test(unittest.TestCase):
     def test_english_detection_audio(self):
         audio_file_path = AudioFactory.make_from_file_on_disk(
             r"core/operators/sample_data/en_speech.wav"
+            
         )
         lang = detect_lang_of_media.run(audio_file_path,'audio')
         self.assertEqual(lang["id"], "en")
@@ -33,6 +34,7 @@ class Test(unittest.TestCase):
     def test_hindi_detection_video(self):
         audio_file_path = AudioFactory.make_from_file_on_disk(
             r"core/operators/sample_data/hi_speech.mp4"
+            
         )
         lang = detect_lang_of_media.run(audio_file_path,'video')
         self.assertEqual(lang["id"], "hi")
@@ -83,6 +85,6 @@ class Test(unittest.TestCase):
         audio_file_path = AudioFactory.make_from_file_on_disk(
             r"core/operators/sample_data/hi_speech_after_30s_music.wav"
         )
-        lang = detect_lang_of_media.run(audio_file_path)
+        lang = detect_lang_of_media.run(audio_file_path,'audio')
         self.assertEqual(lang["id"], "hi")
         self.assertEqual(lang["language"], "hindi")
