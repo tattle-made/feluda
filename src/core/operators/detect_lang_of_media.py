@@ -226,25 +226,27 @@ def initialize(param):
     model = whisper.load_model("base")
     vad, utils = torch.hub.load(repo_or_dir="snakers4/silero-vad", model="silero_vad")
 
-def run(audio_file,media_type):
+def run(media_file,media_type):
     """
         Runs the operator
 
         Args:
-            audio_file (dict): `AudioFactory` file object -> Format {'path': 'path/to/audio/file'}
+            media_file (dict): `AudioFactory` file object -> Format {'path': 'path/to/audio/file'}
             media_type (str): Type of media file
 
         Returns:
             dict: A dictionary containing language id and language name
     """
+
     if media_type == "video":
-        extract_audio_from_video(audio_file["path"])
-        audio_file_path = audio_file["path"].split(".")[0] + ".wav"
+        extract_audio_from_video(media_file["path"])
+        audio_file_path = media_file["path"].split(".")[0] + ".wav"
     elif media_type == "audio":
-        audio_file_path = audio_file["path"]
+        audio_file_path = media_file["path"]
 
     audio = audio_file_path
     speech = extract_speech(audio)
+
     if speech:
         # audio contains voice activity
         try:
@@ -252,5 +254,8 @@ def run(audio_file,media_type):
             language = LANGUAGES[language_id] # get the generic name from id
             return {"id": language_id, "language": language}
         finally:
-            os.remove(speech)
+            if audio:
+                os.remove(speech)
+            
     return {"id": "und", "language": "undefined"}
+
