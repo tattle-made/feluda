@@ -57,7 +57,9 @@ services:
     ports:
       - 7000:7000
       - 5678:5678
-    command: tail -f /dev/null
+      - 8888:8888
+    # command: tail -f /dev/null
+    command: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root 
     depends_on:
       store:
         condition: service_started
