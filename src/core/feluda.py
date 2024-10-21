@@ -23,6 +23,7 @@ class Feluda:
             from core.operators import Operator
 
             self.operators = Operator(self.config.operators)
+
         if self.config.store:
             from core import store
 
@@ -58,13 +59,13 @@ class Feluda:
     def store_video(self,video_url):
         filename = video_url.split('/')[-1]
         video = VideoFactory.make_from_url(video_url)
-        operator = self.operators.get()["vid_vec_rep_clip"]
+        operator = self.operators.get()[self.config.operators.parameters[0].type]
         embedding = operator.run(video)
 
         if self.store:
             doc = self.generate_document(filename,embedding)
             media_type = MediaType.VIDEO
-            result = self.store['es_vec'].store(media_type,doc)
+            result = self.store[self.config.store.entities[0].type].store(media_type,doc)
             return("result:",result)
         else:
             raise Exception("Store is not Configured")
@@ -72,12 +73,12 @@ class Feluda:
     def search_video(self,video_url):
         file_name = video_url.split('/')[-1]
         video = VideoFactory.make_from_url(video_url)
-        operator = self.operators.get()["vid_vec_rep_clip"]
+        operator = self.operators.get()[self.config.operators.parameters[0].type]
         embedding = operator.run(video)
         average_vector = next(embedding)
 
         if self.store:
-            result = self.store['es_vec'].find("video",average_vector.get("vid_vec"))
+            result = self.store[self.config.store.entities[0].type].find("video",average_vector.get("vid_vec"))
             return result
         else:
             raise Exception("Store is not Configured")
