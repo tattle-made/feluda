@@ -1,9 +1,6 @@
 import logging
 from core import config
 from enum import Enum
-from core.models.media import MediaType
-from core.models.media_factory import VideoFactory
-from datetime import datetime
 
 log = logging.getLogger(__name__)
 
