@@ -39,6 +39,7 @@ COPY --chown=python:python requirements.txt /usr/app/requirements.txt
 RUN pip install --no-cache-dir --require-hashes --no-deps -r requirements.txt
 COPY --chown=python:python . /usr/app
 EXPOSE 7000
+EXPOSE 8888
 
 # RUN apt-get update \
 #     && apt-get -y upgrade \

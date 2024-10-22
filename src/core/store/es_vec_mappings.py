@@ -101,7 +101,7 @@ mappings = {
                         },
                         "audio_vec": {
                             "type":"dense_vector",
-                            "dims": 2048
+                            "dims": 512
                         },
                         "date_added": {
                             "type": "date"
