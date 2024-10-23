@@ -1,0 +1,17 @@
+store:
+  entities:
+    - label: "Data Store"
+      type: "es_vec"
+      parameters:
+        host_name: "es"
+        image_index_name: "image"
+        text_index_name: "text"
+        video_index_name: "video"
+        audio_index_name: "audio"
+
+operators : 
+  label : "Operators"
+  parameters :
+    - name : "Audio Vector Representation"
+      type : "audio_vec_embedding_clap"
+      parameters: { index_name : "audio" }
