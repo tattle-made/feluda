@@ -14,4 +14,7 @@ operators:
   parameters:
     - name: "Text Vector Representation"
       type: "text_vec_rep_paraphrase_lxml"
-      parameters: { index_name: "video" }
+      parameters: { index_name: "text" }
+    - name: "Detect Text from Image"
+      type: "detect_text_in_image_tesseract"
+      parameters: { index_name: "image"}
