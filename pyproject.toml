@@ -20,6 +20,9 @@ include = [{from = "src", path = "core"}]
 [tool.hatch.build.targets.wheel]
 packages = ["src/core"]
 
+[tool.uv.workspace]
+members = ["operators/image_vec_rep_resnet"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
