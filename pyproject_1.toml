@@ -1,0 +1,11 @@
+[tool.semantic_release]
+version_variable = [
+    "src/__init__.py:__version__",
+]
+assets = ["src/worker/vidvec/Dockerfile.video_worker",
+    "src/worker/audiovec/Dockerfile.audio_worker",
+    "src/worker/hash/Dockerfile.hash_worker"]
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false

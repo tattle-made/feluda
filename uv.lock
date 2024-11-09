@@ -1,0 +1,7 @@
+version = 1
+requires-python = ">=3.10"
+
+[[package]]
+name = "feluda"
+version = "1.0.0"
+source = { editable = "." }
