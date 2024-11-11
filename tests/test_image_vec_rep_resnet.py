@@ -1,7 +1,7 @@
 import unittest
 from core.feluda import Feluda
 from core.models.media_factory import ImageFactory
-
+from unittest.case import skip
 
 class Test(unittest.TestCase):
     @classmethod
