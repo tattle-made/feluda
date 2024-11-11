@@ -5,7 +5,6 @@ from  core.models.media_factory import ImageFactory
 feluda = Feluda('config.yaml')
 feluda.setup()
 
-feluda.setup()
 operator = feluda.operators.get()["image_vec_rep_resnet"]
 
 embeddings = []

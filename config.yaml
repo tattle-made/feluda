@@ -1,6 +1,0 @@
-operators:
-  label: "Operators"
-  parameters:
-    - name: "image vectors"
-      type: "image_vec_rep_resnet"
-      parameters: { index_name: "text" }
