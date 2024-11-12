@@ -1,11 +1,29 @@
-[tool.semantic_release]
-version_variable = [
-    "src/__init__.py:__version__",
-]
-assets = ["src/worker/vidvec/Dockerfile.video_worker",
-    "src/worker/audiovec/Dockerfile.audio_worker",
-    "src/worker/hash/Dockerfile.hash_worker"]
+[project]
+name = "feluda"
+version = "1.0.0"
+readme = "README.md"
 
-[tool.semantic_release.branches.main]
-match = "main"
-prerelease = false
+requires-python = ">=3.10"
+dependencies = [
+    "boto3==1.35.16",
+    "dacite==1.8.1",
+    "pydub==0.25.1",
+    "pyyaml==6.0.2",
+    "requests>=2.32.3",
+    "werkzeug==3.0.3",
+    "wget==3.2",
+]
+
+[project.packages]
+include = [{from = "src", path = "core"}]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/core"]
+
+[tool.uv.workspace]
+members = ["operators/image_vec_rep_resnet"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
