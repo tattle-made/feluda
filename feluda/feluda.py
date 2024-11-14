@@ -9,7 +9,7 @@ class Feluda:
         self.config = config.load(configPath)
         self.store = None
         if self.config.operators:
-            from feluda.operators import Operator
+            from feluda.operator import Operator
             self.operators = Operator(self.config.operators)
 
     def setup(self):
