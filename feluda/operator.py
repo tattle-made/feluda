@@ -12,7 +12,7 @@ class Operator:
     def setup(self):
         for operator in self.operators:
             log.info(operator.type)
-            module_path = f"{operator.type}.{operator.type}"
+            module_path = f"{operator.type}"
             module = importlib.import_module(module_path)
             module.initialize(operator.parameters)
             self.active_operators[operator.type] = module
