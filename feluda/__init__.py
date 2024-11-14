@@ -1,1 +1,1 @@
-
+from .feluda import Feluda

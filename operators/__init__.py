@@ -4,7 +4,7 @@ from feluda.config import OperatorConfig
 
 log = logging.getLogger(__name__)
 
-PACKAGE = "feluda.operators"
+PACKAGE = "operators"
 
 
 class Operator:
