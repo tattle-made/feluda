@@ -176,7 +176,7 @@ wheels = [
 [[package]]
 name = "image-vec-rep-resnet"
 version = "0.1.0"
-source = { virtual = "src/feluda/operators/image_vec_rep_resnet" }
+source = { editable = "operators/image_vec_rep_resnet" }
 dependencies = [
     { name = "memray" },
     { name = "numpy" },
