@@ -14,11 +14,8 @@ dependencies = [
     "wget==3.2",
 ]
 
-[project.packages]
-include = [{ from = ".", path = "feluda" }]
-
 [tool.hatch.build.targets.wheel]
-packages = ["feluda"]
+packages = [{ include = "feluda" }]
 
 [tool.uv.workspace]
 members = ["operators/image_vec_rep_resnet"]
