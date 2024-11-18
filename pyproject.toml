@@ -11,13 +11,8 @@ dependencies = [
     "requests>=2.32.3",
     "werkzeug==3.0.3",
     "wget==3.2",
+    "toml==0.10.2",
 ]
-
-[tool.hatch.build.targets.wheel]
-packages = ["feluda"]
-
-[tool.uv.workspace]
-members = ["operators/image_vec_rep_resnet"]
 
 [build-system]
 requires = ["hatchling"]
@@ -31,6 +26,12 @@ assets = [
     "src/worker/hash/Dockerfile.hash_worker",
 ]
 
+[tool.uv.workspace]
+members = ["operators/image_vec_rep_resnet"]
+
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
+
+[tool.hatch.build.targets.wheel]
+packages = ["feluda"]

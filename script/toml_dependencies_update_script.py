@@ -2,10 +2,13 @@ import os
 import toml
 
 def find_pyproject_files():
-    current_dir = os.path.abspath(os.path.dirname(__file__))
+    current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     pyproject_files = []
 
     for root, dirs, files in os.walk(current_dir):
+        # Ignore "dist" and ".venv" folders
+        dirs[:] = [d for d in dirs if d not in {"dist", ".venv"}]
+
         if "pyproject.toml" in files:
             pyproject_files.append(os.path.join(root, "pyproject.toml"))
 
@@ -37,11 +40,13 @@ def update_pyproject_versions(toml_file_path, lock_data):
 
 if __name__ == "__main__":
     toml_file_paths = find_pyproject_files()
-    lock_file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uv.lock')
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    lock_file_path = os.path.join(project_root, "uv.lock")
 
     lock_data = load_lock_file(lock_file_path)
 
+    print(f"Updating TOML file packages...")
     for toml_file_path in toml_file_paths:
-        print(f"Updating {toml_file_path}...")
         update_pyproject_versions(toml_file_path, lock_data)
-        print(f"Updated {toml_file_path}")
+    
+    print(f"Updating Done")
