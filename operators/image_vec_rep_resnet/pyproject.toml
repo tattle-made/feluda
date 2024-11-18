@@ -14,7 +14,6 @@ dependencies = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
-include = ["image_vec_rep_resnet.py", "__init__.py"]
 
 [build-system]
 requires = ["hatchling"]
