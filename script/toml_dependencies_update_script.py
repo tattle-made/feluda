@@ -1,5 +1,6 @@
 import os
 import toml
+import re
 
 def find_pyproject_files():
     current_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -25,14 +26,21 @@ def update_pyproject_versions(toml_file_path, lock_data):
     with open(toml_file_path, 'r') as file:
         toml_data = toml.load(file)
 
-    for dependency in toml_data['project']['dependencies']:
-        dep_name = dependency.split('>=')[0] 
-        for pkg in lock_data['package']:
-            if pkg['name'] == dep_name:
-                new_version = pkg['version']
-                toml_data['project']['dependencies'] = [
-                    f"{dep_name}>={new_version}" if dep_name in dep else dep for dep in toml_data['project']['dependencies']
-                ]
+    for idx, dependency in enumerate(toml_data['project']['dependencies']):
+        dep_match = re.match(r"([a-zA-Z0-9\-_]+)([><=~!]*[\d\.]+)?", dependency)
+        
+        if dep_match:
+            dep_name = dep_match.group(1)  # Get the package name
+            dep_version_spec = dep_match.group(2)  # Get the version specifier (if any)
+            
+            for pkg in lock_data['package']:
+                # If the lock file package name matches, update the version
+                if pkg['name'] == dep_name:
+                    new_version = pkg['version']
+                    if dep_version_spec:
+                        toml_data['project']['dependencies'][idx] = f"{dep_name}{dep_version_spec.replace(dep_version_spec, f'>={new_version}')}"
+                    else:
+                        toml_data['project']['dependencies'][idx] = f"{dep_name}>={new_version}"
 
     with open(toml_file_path, 'w') as file:
         toml.dump(toml_data, file)
