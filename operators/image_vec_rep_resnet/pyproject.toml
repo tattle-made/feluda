@@ -1,20 +1,19 @@
 [project]
-name = "image-vec-rep-resnet"
+name = "feluda-image-vec-rep-resnet"
 version = "0.1.0"
-readme = "README.md"
 
 requires-python = ">=3.10"
 dependencies = [
     "torch==2.2.0",
     "torchvision==0.17.0",
     "numpy==1.26.3",
-    "Pillow==10.3.0",
+    "pillow==11.0.0",
     "memray==1.12.0",
-    "pyinstrument==4.6.2"
+    "pyinstrument==4.6.2",
 ]
 
-[project.scripts]
-image-vec-rep-resnet = "image_vec_rep_resnet:main"
+[tool.hatch.build.targets.wheel]
+packages = ["."]
 
 [build-system]
 requires = ["hatchling"]

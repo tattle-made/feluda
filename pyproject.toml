@@ -1,6 +1,6 @@
 [project]
 name = "feluda"
-version = "1.0.0"
+version = "0.9.0"
 readme = "README.md"
 
 requires-python = ">=3.10"
@@ -14,11 +14,8 @@ dependencies = [
     "wget==3.2",
 ]
 
-[project.packages]
-include = [{from = "src", path = "core"}]
-
 [tool.hatch.build.targets.wheel]
-packages = ["src/core"]
+packages = ["feluda"]
 
 [tool.uv.workspace]
 members = ["operators/image_vec_rep_resnet"]
@@ -27,3 +24,14 @@ members = ["operators/image_vec_rep_resnet"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.semantic_release]
+version_variable = ["src/__init__.py:__version__"]
+assets = [
+    "src/worker/vidvec/Dockerfile.video_worker",
+    "src/worker/audiovec/Dockerfile.audio_worker",
+    "src/worker/hash/Dockerfile.hash_worker",
+]
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
