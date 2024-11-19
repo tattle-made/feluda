@@ -38,49 +38,43 @@ jobs:
       - name: Install python-semantic-release
         run: pip install python-semantic-release
 
-      # - name: Detect Modified Packages
-      #   id: detect_changes
-      #   run: |
-      #     # Print the base and head SHAs
-      #     echo "Base SHA: ${{ github.event.pull_request.base.sha }}"
-      #     echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
-
-      #     # Initialize an empty list for modified packages
-      #     modified_packages=""
-
-      #     # Loop through each modified file
-      #     for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}); do
-      #       # Check if the file is inside the feluda/ directory
-      #       if [[ "$file" == feluda/* ]]; then
-      #         # Add 'feluda' to the modified packages list (comma-separated)
-      #         if [[ -z "$modified_packages" ]]; then
-      #           modified_packages="feluda"
-      #         else
-      #           modified_packages+=",feluda"
-      #         fi
-      #       # Check if the file is inside any operator directory
-      #       elif [[ "$file" == operators/*/* ]]; then
-      #         # Extract the operator name from the file path
-      #         operator_name=$(echo "$file" | cut -d/ -f2)
-      #         # Add the operator name to the modified packages list (comma-separated)
-      #         if [[ -z "$modified_packages" ]]; then
-      #           modified_packages="$operator_name"
-      #         else
-      #           modified_packages+=",${operator_name}"
-      #         fi
-      #       fi
-      #     done
-
-      #     # Print modified packages
-      #     echo "Modified packages: $modified_packages"
-
-      #     # Set output for modified packages
-      #     echo "::set-output name=packages::$modified_packages"
       - name: Detect Modified Packages
         id: detect_changes
         run: |
-          modified_packages=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | awk -F'/' '{if ($1 == "feluda" || $1 == "operators") print $1 "/" $2}' | sort -u | tr '\n' ',' | sed 's/,$//')
+          # Print the base and head SHAs
+          echo "Base SHA: ${{ github.event.pull_request.base.sha }}"
+          echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
+
+          # Initialize an empty list for modified packages
+          modified_packages=""
+
+          # Loop through each modified file
+          for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}); do
+            # Check if the file is inside the feluda/ directory
+            if [[ "$file" == feluda/* ]]; then
+              # Add 'feluda' to the modified packages list (comma-separated)
+              if [[ -z "$modified_packages" ]]; then
+                modified_packages="feluda"
+              else
+                modified_packages+=",feluda"
+              fi
+            # Check if the file is inside any operator directory
+            elif [[ "$file" == operators/*/* ]]; then
+              # Extract the operator name from the file path
+              operator_name=$(echo "$file" | cut -d/ -f2)
+              # Add the operator name to the modified packages list (comma-separated)
+              if [[ -z "$modified_packages" ]]; then
+                modified_packages="$operator_name"
+              else
+                modified_packages+=",${operator_name}"
+              fi
+            fi
+          done
+
+          # Print modified packages
           echo "Modified packages: $modified_packages"
+
+          # Set output for modified packages
           echo "::set-output name=packages::$modified_packages"
 
 # jobs:
