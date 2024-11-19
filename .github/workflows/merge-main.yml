@@ -35,12 +35,16 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install python-semantic-release
         run: pip install python-semantic-release
 
       - name: Determine Modified Packages
         id: detect_changes
         run: |
+          # Print the base and head SHAs
+          echo "Base SHA: ${{ github.event.pull_request.base.sha }}"
+          echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
+          
           # Find modified packages
           modified_packages=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | \
           grep -E '^feluda/|^operators/' | \
