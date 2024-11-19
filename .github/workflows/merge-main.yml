@@ -54,7 +54,7 @@ jobs:
           echo "Modified packages: $modified_packages"
 
           # Set output for modified packages
-          echo "::set-output name=packages::$modified_packages"
+          echo "packages=$modified_packages" >> $GITHUB_OUTPUT
 
 # jobs:
 #   release:
