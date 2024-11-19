@@ -38,23 +38,34 @@ jobs:
       - name: Install python-semantic-release
         run: pip install python-semantic-release
 
-      - name: Determine Modified Packages
+      - name: Detect Modified Packages
         id: detect_changes
         run: |
           # Print the base and head SHAs
           echo "Base SHA: ${{ github.event.pull_request.base.sha }}"
-          echo "Head SHA: ${{ github.event.pull_request.head.sha }}"
+          echo "Head SHA: ${{ github.event.pull_request.head.sha }}
           
-          # Find modified packages
-          modified_packages=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | \
-          grep -E '^feluda/|^operators/' | \
-          uniq)
+          # Initialize an empty list for modified packages
+          modified_packages=""
+
+          # Loop through each modified file
+          for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}); do
+            # Check if the file is inside the feluda/ directory
+            if [[ "$file" == feluda/* ]]; then
+              modified_packages+="feluda "
+            # Check if the file is inside any operator directory
+            elif [[ "$file" == operators/*/* ]]; then
+              # Extract the operator name from the file path
+              operator_name=$(echo "$file" | cut -d/ -f2)
+              modified_packages+="$operator_name"
+            fi
+          done
 
           # Print modified packages
           echo "Modified packages: $modified_packages"
 
           # Set output for modified packages
-          echo "packages=$modified_packages" >> $GITHUB_OUTPUT
+          echo "::set-output name=packages::$modified_packages"
 
 # jobs:
 #   release:
