@@ -49,15 +49,25 @@ jobs:
           modified_packages=""
 
           # Loop through each modified file
-          for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '^feluda/|^operators/'); do
+          for file in $(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}); do
             # Check if the file is inside the feluda/ directory
             if [[ "$file" == feluda/* ]]; then
-              modified_packages+="feluda "
+              # Add 'feluda' to the modified packages list (comma-separated)
+              if [[ -z "$modified_packages" ]]; then
+                modified_packages="feluda"
+              else
+                modified_packages+=",feluda"
+              fi
             # Check if the file is inside any operator directory
             elif [[ "$file" == operators/*/* ]]; then
               # Extract the operator name from the file path
               operator_name=$(echo "$file" | cut -d/ -f2)
-              modified_packages+="$operator_name"
+              # Add the operator name to the modified packages list (comma-separated)
+              if [[ -z "$modified_packages" ]]; then
+                modified_packages="$operator_name"
+              else
+                modified_packages+=",${operator_name}"
+              fi
             fi
           done
 
