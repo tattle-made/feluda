@@ -48,7 +48,7 @@ jobs:
           # Find modified packages
           modified_packages=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | \
           grep -E '^feluda/|^operators/' | \
-          cut -d/ -f1,2 | uniq)
+          uniq)
 
           # Print modified packages
           echo "Modified packages: $modified_packages"
