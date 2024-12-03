@@ -49,5 +49,5 @@ class TestTextVecRepParaphraseLxml(unittest.TestCase):
         self.assertTrue(all(isinstance(num, (float, int)) for num in result))
 
 
-if __name__ == "__main__":
-    unittest.main()
+
+unittest.main()
