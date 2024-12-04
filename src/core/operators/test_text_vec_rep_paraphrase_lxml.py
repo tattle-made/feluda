@@ -47,7 +47,3 @@ class TestTextVecRepParaphraseLxml(unittest.TestCase):
         result = text_vec_rep_paraphrase_lxml.run(input_text)
         self.assertEqual(len(result), 768)
         self.assertTrue(all(isinstance(num, (float, int)) for num in result))
-
-
-
-unittest.main()
