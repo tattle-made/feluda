@@ -5,11 +5,11 @@ permission:
 
 on:
   push:
-    branchs:
+    branches:
       - test1
 
 jobs:
-  -name: Version Bump
+  version_bump:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
