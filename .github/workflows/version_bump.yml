@@ -1,0 +1,35 @@
+name: Version Bump
+
+permission:
+  contents: write
+
+on:
+  push:
+    branchs:
+      - test1
+
+jobs:
+  -name: Version Bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python version
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        with:
+          python-version: '3.11'
+
+      - name: Release main project
+        uses: python-semantic-release/python-semantic-release@v9.12.0
+        with:
+          directory: ./feluda
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release operator 
+        uses: python-semantic-release/python-semantic-release@v9.12.0
+        with:
+          directory: ./operators/image_vec_rep_resnet
+          github_token: ${{ secrets.GITHUB_TOKEN }}
