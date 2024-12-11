@@ -42,3 +42,5 @@ def run(image_obj):
     image = image.convert("RGB")
     image_vec = resnet18.extract_feature(image)
     return image_vec
+
+### Something important here!
