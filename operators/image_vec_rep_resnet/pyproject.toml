@@ -11,6 +11,12 @@ dependencies = [
     "pyinstrument>=5.0.0",
 ]
 
+[tool.semantic_release]
+version_variable = ["pyproject.toml:project.version"]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+tag_format = "image_vec_rep_resnet-{version}"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

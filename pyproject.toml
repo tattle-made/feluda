@@ -30,8 +30,10 @@ assets = [
 members = ["operators/image_vec_rep_resnet"]
 
 [tool.semantic_release.branches.main]
-match = "main"
-prerelease = false
+version_variable = ["pyproject.toml:project.version"]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+tag_format = "feluda-{version}"
 
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
