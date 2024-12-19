@@ -7,215 +7,105 @@ on:
   pull_request:
     types:
       - closed
+      # - opened
+      # - reopened
+      # - synchronize
     branches:
       - main
 
+
 jobs:
   release:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     concurrency: release
     permissions:
       contents: write
-    # Map a step output to a job output
-    outputs:
-      released: ${{ steps.release.outputs.released }}
-      tag: ${{ steps.release.outputs.tag }}
 
+    if: github.event.pull_request.merged == true  # Ensure the PR was merged
     steps:
       - name: Checkout code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Python version
-        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Python Semantic Release
-        id: release
-        uses: python-semantic-release/python-semantic-release@c82bd673c30da94a02e039963c8c4c8a51758096 # v9.1.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  version_bump:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.1.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - name: Check for changes in feluda
-        id: check_feluda
+      - name: Install dependencies for Semantic Versioning
         run: |
-          CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- feluda)
-          if [ -n "$CHANGES" ]; then
-            echo "Changes detected in feluda"
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "No changes in feluda"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
+          python -m pip install --upgrade pip
+          pip install tomli tomli-w
 
-      - name: Check for changes in operators/image_vec_rep_resnet
-        id: check_image_vec_rep_resnet
+      - name: Get Base and Latest Commits of the Merged PR
+        id: commit-range
         run: |
-          CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- operators/image_vec_rep_resnet)
-          if [ -n "$CHANGES" ]; then
-            echo "Changes detected in operators/image_vec_rep_resnet"
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "No changes in operators/image_vec_rep_resnet"
-            echo "has_changes=false" >> $GITHUB_OUTPUT
+          # Get the base commit of the PR (the commit where it diverged from the main branch)
+          BASE_COMMIT=$(git merge-base HEAD^ origin/main)
+
+          # Get the commits introduced by this PR
+          COMMITS=$(git rev-list --reverse $BASE_COMMIT..HEAD)
+
+          # Extract the first and last commits
+          FIRST_COMMIT=$(echo "$COMMITS" | head -n 1)
+          LATEST_COMMIT=$(echo "$COMMITS" | tail -n 1)
+
+          # Set outputs for later steps
+          echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
+          echo "first_commit=$FIRST_COMMIT" >> $GITHUB_OUTPUT
+          echo "latest_commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
+
+          # Log for debugging
+          echo "Base Commit: $BASE_COMMIT"
+          echo "First Commit in PR: $FIRST_COMMIT"
+          echo "Latest Commit in PR: $LATEST_COMMIT"
+
+      - name: Run Dynamic Semantic Release Script
+        env:
+          FIRST_COMMIT: ${{ steps.commit-range.outputs.first_commit }}
+          LATEST_COMMIT: ${{ steps.commit-range.outputs.latest_commit }}
+        run: |
+          pwd
+          # run the script
+          python -m scripts.bump "$FIRST_COMMIT" "$LATEST_COMMIT"
+
+      - name: Commit and Push Changes
+        run: |
+          # Configure git user
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Check if there are any changes
+          if [[ -n $(git status -s) ]]; then
+            # Add all changes
+            git add .
+            # Commit changes
+            git commit -m "chore: bump version and update related files"
+            # Push changes
+            git push
+
+            git fetch --tags
+
+            UNPUSHED_TAGS=$(comm -23 \
+            <(git tag | grep -E '^feluda-[0-9]+\.[0-9]+\.[0-9]+$' | sort) \
+            <(git ls-remote --tags origin | awk -F'/' '{print $NF}' | grep -E '^feluda-[0-9]+\.[0-9]+\.[0-9]+$' | sort))
+
+            # Debug: Log the unpushed tags
+            echo "Unpushed tags: $UNPUSHED_TAGS"
+
+            # push tags
+            git push --tags
+
+            # Releasing the package
+            gh release create "$UNPUSHED_TAGS" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="$UNPUSHED_TAGS" \
+              --generate-notes \
           fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+     
 
-      # - name: Setup Python version
-      #   uses: actions/setup-python@v5.0.0
-      #   with:
-      #     python-version: '3.11'
-
-      # - name: Install semantic-release
-      #   run: |
-      #     pip install python-semantic-release
-
-      - name: Release feluda
-        if: steps.check_feluda.outputs.has_changes == 'true'
-        uses: python-semantic-release/python-semantic-release@v9.12.0
-        with:
-          directory: ./
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Release image_vec_rep_resnet
-        if: steps.check_image_vec_rep_resnet.outputs.has_changes == 'true'
-        uses: python-semantic-release/python-semantic-release@v9.12.0
-        with:
-          directory: ./operators/image_vec_rep_resnet
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-  docker:
-    needs: release
-    if: needs.release.outputs.released == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20 # v3.2.0
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v.3.1.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Publish vidvec amd64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/vidvec/Dockerfile.video_worker
-          platforms: linux/amd64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-vidvec:worker-amd64-${{ needs.release.outputs.tag }}
-
-      - name: Publish vidvec arm64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/vidvec/Dockerfile.video_worker_graviton
-          platforms: linux/arm64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-vidvec:worker-arm64-${{ needs.release.outputs.tag }}
-
-      - name: Publish audiovec amd64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/audiovec/Dockerfile.audio_worker
-          platforms: linux/amd64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-audiovec:worker-amd64-${{ needs.release.outputs.tag }}
-
-      - name: Publish audiovec arm64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/audiovec/Dockerfile.audio_worker_graviton
-          platforms: linux/arm64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-audiovec:worker-arm64-${{ needs.release.outputs.tag }}
-
-      - name: Publish media hash amd64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/hash/Dockerfile.hash_worker
-          platforms: linux/amd64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-hash:worker-amd64-${{ needs.release.outputs.tag }}
-
-      - name: Publish media hash arm64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/hash/Dockerfile.hash_worker_graviton
-          platforms: linux/arm64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-hash:worker-arm64-${{ needs.release.outputs.tag }}
-
-      - name: Publish media worker amd64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/media/Dockerfile.media_worker
-          platforms: linux/amd64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-media:worker-amd64-${{ needs.release.outputs.tag }}
-
-      - name: Publish media worker arm64 worker to dockerhub
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
-        with:
-          context: "{{defaultContext}}:src/"
-          file: worker/media/Dockerfile.media_worker_graviton
-          platforms: linux/arm64
-          build-args: |
-            "UID=1000"
-            "GID=1000"
-          push: true
-          tags: tattletech/feluda-operator-media:worker-arm64-${{ needs.release.outputs.tag }}
-
-#      - name: deploy to cluster
-#        uses: steebchen/kubectl@v2.0.0
-#        with: # defaults to latest kubectl binary version
-#          config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
-#          command: set image --record deployment/feluda-server feluda-server=tattletech/feluda-server:${{ steps.vars.outputs.sha_short }}
-#      - name: verify deployment
-#        uses: steebchen/kubectl@v2.0.0
-#        with:
-#          config: ${{ secrets.PROD_KUBE_CONFIG_DATA }}
-#          version: v1.21.0 # specify kubectl binary version explicitly
-#          command: rollout status deployment/feluda-server
