@@ -23,15 +23,3 @@ repos:
         # args: [--fix]
       # Run the formatter.
     #   - id: ruff-format
-
-  - repo: https://github.com/rcmdnk/pyproject-pre-commit
-    rev: v0.3.0
-    hooks:
-      - id: ruff-lint-diff
-      - id: ruff-lint
-      - id: ruff-format-diff
-      - id: ruff-format
-      - id: mypy
-      - id: shellcheck
-      - id: mdformat-check
-      - id: mdformat
