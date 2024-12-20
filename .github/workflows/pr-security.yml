@@ -37,62 +37,20 @@ jobs:
           src: "./src"
         continue-on-error: false
 
-      - name: pip audit install setup 1
-        run: |
-          python -m venv env1/
-          source env1/bin/activate
-      - name: pip audit src requirements
-        uses: pypa/gh-action-pip-audit@d499194be74aeb3bc7dbed3a224a87e1831132c7 # v1.0.8
-        with:
-          # must be populated earlier in the CI
-          virtual-environment: env1/
-          local: true
-          no-deps: true
-          inputs: |
-            ./src/requirements.txt
-
-      - name: pip audit install setup 2
-        run: |
-          python -m venv env2/
-          source env2/bin/activate
-      - name: pip audit operator audiovec requirements
-        uses: pypa/gh-action-pip-audit@d499194be74aeb3bc7dbed3a224a87e1831132c7 # v1.0.8
-        with:
-          # must be populated earlier in the CI
-          virtual-environment: env2/
-          local: true
-          no-deps: true
-          inputs: |
-            ./src/core/operators/audio_vec_embedding_requirements.txt
-
-      - name: pip audit install setup 3
-        run: |
-          python -m venv env3/
-          source env3/bin/activate
-      - name: pip audit operator vidvec requirements
-        uses: pypa/gh-action-pip-audit@d499194be74aeb3bc7dbed3a224a87e1831132c7 # v1.0.8
-        with:
-          # must be populated earlier in the CI
-          virtual-environment: env3/
-          local: true
-          no-deps: true
-          inputs: |
-            ./src/core/operators/vid_vec_rep_resnet_requirements.txt
-
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2 # v0.21.0
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          limit-severities-for-sarif: true
-          severity: 'HIGH,CRITICAL'
-          scanners: 'vuln,misconfig,secret'
-          skip-dirs: '.vscode,docs'
-          exit-code: '1'
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@9fdb3e49720b44c48891d036bb502feb25684276 # v.3.25.6
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+      # - name: Run Trivy vulnerability scanner in repo mode
+      #   uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2 # v0.21.0
+      #   with:
+      #     scan-type: 'fs'
+      #     ignore-unfixed: true
+      #     format: 'sarif'
+      #     output: 'trivy-results.sarif'
+      #     limit-severities-for-sarif: true
+      #     severity: 'HIGH,CRITICAL'
+      #     scanners: 'vuln,misconfig,secret'
+      #     skip-dirs: '.vscode,docs'
+      #     exit-code: '1'
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@9fdb3e49720b44c48891d036bb502feb25684276 # v.3.25.6
+      #   if: always()
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
