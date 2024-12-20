@@ -13,7 +13,6 @@ on:
     branches:
       - main
 
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -21,7 +20,7 @@ jobs:
     permissions:
       contents: write
 
-    if: github.event.pull_request.merged == true  # Ensure the PR was merged
+    if: github.event.pull_request.merged == true # Ensure the PR was merged
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -62,6 +61,13 @@ jobs:
           echo "First Commit in PR: $FIRST_COMMIT"
           echo "Latest Commit in PR: $LATEST_COMMIT"
 
+      - name: Get Latest Feluda Tag
+        id: latest-tag
+        run: |
+          LATEST_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | tail -n1)
+          echo "current_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "current feluda tag: $LATEST_TAG"
+
       - name: Run Dynamic Semantic Release Script
         env:
           FIRST_COMMIT: ${{ steps.commit-range.outputs.first_commit }}
@@ -69,45 +75,101 @@ jobs:
         run: |
           pwd
           # run the script
-          python -m scripts.bump "$FIRST_COMMIT" "$LATEST_COMMIT"
+          python -m scripts.semantic_release_workflow "$FIRST_COMMIT" "$LATEST_COMMIT"
 
       - name: Commit and Push Changes
+        id: push-changes
         run: |
-          # Configure git user
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions [Bot]"
 
-          # Check if there are any changes
           if [[ -n $(git status -s) ]]; then
-            # Add all changes
             git add .
-            # Commit changes
-            git commit -m "chore: semantic versioning and update related files"
-            # Push changes
+            git commit -m "chore: semantic versioning workflow and update related files"
             git push
+            git push --tags
 
-            git fetch --tags
-
-            UNPUSHED_TAGS=$(comm -23 \
-            <(git tag | grep -E '^feluda-[0-9]+\.[0-9]+\.[0-9]+$' | sort) \
-            <(git ls-remote --tags origin | awk -F'/' '{print $NF}' | grep -E '^feluda-[0-9]+\.[0-9]+\.[0-9]+$' | sort))
-
-            # Debug: Log the unpushed tags
-            echo "Unpushed tags: $UNPUSHED_TAGS"
-
-            if [[ -n "$UNPUSHED_TAGS" ]]; then
-              # push tags
-              git push --tags
-
-              # Releasing the package
-              gh release create "$UNPUSHED_TAGS" \
-                --repo="$GITHUB_REPOSITORY" \
-                --title="$UNPUSHED_TAGS" \
-                --generate-notes
+            # Check if new feluda tag was created
+            NEW_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | tail -n1)
+            if [ "$NEW_TAG" != "${{ steps.latest-tag.outputs.current_tag }}" ]; then
+              echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+              echo "tag_created=true" >> $GITHUB_OUTPUT
+            else
+              echo "tag_created=false" >> $GITHUB_OUTPUT
             fi
+          else
+            echo "tag_created=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Create GitHub Release
+        if: steps.push-changes.outputs.tag_created == 'true'
+        run: |
+          gh release create "${{ steps.push-changes.outputs.new_tag }}" \
+            --repo="${GITHUB_REPOSITORY}" \
+            --title="Release ${{ steps.push-changes.outputs.new_tag }}" \
+            --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # rough logic for generating custom changelog's
+      # - name: Generate Release Notes and Update Changelog
+      #   if: steps.push-changes.outputs.tag_created == 'true'
+      #   id: release-notes
+      #   run: |
+      #     # Get the previous feluda tag
+      #     PREV_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | grep -B1 "${{ steps.push-changes.outputs.new_tag }}" | head -n1)
+      #     echo "Prev feluda tag: $PREV_TAG"
+      #     echo "New feluda tag: ${{ steps.push-changes.outputs.new_tag }}"
+
+      #     # Create release notes file with header
+      #     echo "# Release ${{ steps.push-changes.outputs.new_tag }}" > release_notes.md
+      #     echo "" >> release_notes.md
+
+      #     # Function to add section if commits exist
+      #     add_section() {
+      #       local title="$1"
+      #       local pattern="$2"
+      #       local commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" | grep "^* $pattern" || true)
+      #       if [ ! -z "$commits" ]; then
+      #         echo "## $title" >> release_notes.md
+      #         echo "$commits" >> release_notes.md
+      #         echo "" >> release_notes.md
+      #       fi
+      #     }
+
+      #     # Add sections only if they have commits
+      #     add_section "Features" "feat"
+      #     add_section "Bug Fixes" "fix"
+      #     add_section "Chores" "chore"
+      #     add_section "Documentation" "docs"
+
+      #     # Add miscellaneous section for other commits
+      #     misc_commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" |
+      #       grep -v "^* feat" |
+      #       grep -v "^* fix" |
+      #       grep -v "^* chore" |
+      #       grep -v "^* docs" || true)
+
+      #     if [ ! -z "$misc_commits" ]; then
+      #       echo "## Miscellaneous" >> release_notes.md
+      #       echo "$misc_commits" >> release_notes.md
+      #       echo "" >> release_notes.md
+      #     fi
+
+      #     # Update CHANGELOG.md
+      #     if [ -f CHANGELOG.md ]; then
+      #       cat release_notes.md > temp_changelog
+      #       echo "" >> temp_changelog
+      #       cat CHANGELOG.md >> temp_changelog
+      #       mv temp_changelog CHANGELOG.md
+      #     else
+      #       cat release_notes.md > CHANGELOG.md
+      #     fi
+
+      #     # Commit the updated CHANGELOG
+      #     git add CHANGELOG.md
+      #     git commit -m "docs: update CHANGELOG.md for ${{ steps.push-changes.outputs.new_tag }}"
+      #     git push
 
      
 
