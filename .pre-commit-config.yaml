@@ -7,13 +7,6 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
 
-  #   - repo: https://github.com/compilerla/conventional-pre-commit
-  #     rev: v3.6.0
-  #     hooks:
-  #       - id: conventional-pre-commit
-  #       - stages: [commit-msg]
-  #       - args: []
-
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v3.9.1 # Use the latest version available
     hooks:
@@ -30,3 +23,15 @@ repos:
         # args: [--fix]
       # Run the formatter.
     #   - id: ruff-format
+
+  - repo: https://github.com/rcmdnk/pyproject-pre-commit
+    rev: v0.3.0
+    hooks:
+      - id: ruff-lint-diff
+      - id: ruff-lint
+      - id: ruff-format-diff
+      - id: ruff-format
+      - id: mypy
+      - id: shellcheck
+      - id: mdformat-check
+      - id: mdformat
