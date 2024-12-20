@@ -95,14 +95,18 @@ jobs:
             # Debug: Log the unpushed tags
             echo "Unpushed tags: $UNPUSHED_TAGS"
 
-            # push tags
-            git push --tags
+            if [[ -n "$UNPUSHED_TAGS" ]]; then
+              # push tags
+              git push --tags
 
-            # Releasing the package
-            gh release create "$UNPUSHED_TAGS" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="$UNPUSHED_TAGS" \
-              --generate-notes \
+              # Releasing the package
+              gh release create "$UNPUSHED_TAGS" \
+                --repo="$GITHUB_REPOSITORY" \
+                --title="$UNPUSHED_TAGS" \
+                --generate-notes \
+            else:
+              echo "No tags to push"
+            fi
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
