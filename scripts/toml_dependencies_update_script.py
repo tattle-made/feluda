@@ -53,8 +53,8 @@ if __name__ == "__main__":
 
     lock_data = load_lock_file(lock_file_path)
 
-    print(f"Updating TOML file packages...")
+    print("Updating TOML file packages...")
     for toml_file_path in toml_file_paths:
         update_pyproject_versions(toml_file_path, lock_data)
     
-    print(f"Updating Done")
+    print("Updating Done")
