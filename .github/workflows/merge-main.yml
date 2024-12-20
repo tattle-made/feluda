@@ -82,7 +82,7 @@ jobs:
             # Add all changes
             git add .
             # Commit changes
-            git commit -m "chore: bump version and update related files"
+            git commit -m "chore: semantic versioning and update related files"
             # Push changes
             git push
 
@@ -103,13 +103,11 @@ jobs:
               gh release create "$UNPUSHED_TAGS" \
                 --repo="$GITHUB_REPOSITORY" \
                 --title="$UNPUSHED_TAGS" \
-                --generate-notes \
-            else:
-              echo "No tags to push"
+                --generate-notes
             fi
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
      
 
