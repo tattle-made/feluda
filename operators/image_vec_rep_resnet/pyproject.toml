@@ -1,6 +1,6 @@
 [project]
 name = "feluda-image-vec-rep-resnet"
-version = "0.0.0"
+version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
     "torch>=2.5.1",
@@ -11,13 +11,16 @@ dependencies = [
     "pyinstrument>=5.0.0",
 ]
 
-
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+]
 build-backend = "hatchling.build"
 
 [tool.semantic_release]
-version_variable = ["pyproject.toml:project.version"]
+version_variable = [
+    "pyproject.toml:project.version",
+]
 
 [tool.semantic_release.branches.main]
 match = "main"
@@ -25,4 +28,6 @@ prerelease = false
 tag_format = "{name}-{version}"
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+packages = [
+    ".",
+]
