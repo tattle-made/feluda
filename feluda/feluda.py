@@ -1,6 +1,5 @@
 import logging
 from feluda import config
-from enum import Enum
 
 log = logging.getLogger(__name__)
 

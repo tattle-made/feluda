@@ -154,3 +154,6 @@ src/core/operators/yolov8n-seg.pt
 
 # Audio CNN model
 src/core/operators/cnn/panns_data
+
+# uv
+uv.lock

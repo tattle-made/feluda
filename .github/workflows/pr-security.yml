@@ -34,7 +34,7 @@ jobs:
       - name: Lint with Ruff
         uses: chartboost/ruff-action@e18ae971ccee1b2d7bbef113930f00c670b78da4 # v1.0.0
         with:
-          src: "./src"
+          src: "."
         continue-on-error: false
 
       # - name: Run Trivy vulnerability scanner in repo mode
