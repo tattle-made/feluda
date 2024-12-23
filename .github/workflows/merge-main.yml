@@ -65,8 +65,8 @@ jobs:
         id: latest-tag
         run: |
           LATEST_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | tail -n1)
-          echo "current_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           echo "current feluda tag: $LATEST_TAG"
+          echo "current_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
       - name: Run Dynamic Semantic Release Script
         env:
@@ -170,6 +170,3 @@ jobs:
       #     git add CHANGELOG.md
       #     git commit -m "docs: update CHANGELOG.md for ${{ steps.push-changes.outputs.new_tag }}"
       #     git push
-
-     
-
