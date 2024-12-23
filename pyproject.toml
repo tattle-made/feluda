@@ -22,19 +22,15 @@ dev = [
     "tomli-w>=1.1.0",
     "ruff>=0.8.3",
     "pre-commit>=4.0.1",
-    "pyproject-pre-commit[ruff]>=0.3.6"
+    "pyproject-pre-commit[ruff]>=0.3.6",
 ]
 
 [build-system]
-requires = [
-    "hatchling",
-]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.semantic_release]
-version_variable = [
-    "pyproject.toml:project.version",
-]
+version_variable = ["pyproject.toml:project.version"]
 
 [tool.semantic_release.branches.main]
 match = "main"
@@ -42,11 +38,7 @@ prerelease = false
 tag_format = "{name}-{version}"
 
 [tool.uv.workspace]
-members = [
-    "operators/image_vec_rep_resnet",
-]
+members = ["operators/image_vec_rep_resnet"]
 
 [tool.hatch.build.targets.wheel]
-packages = [
-    "feluda",
-]
+packages = ["feluda"]
