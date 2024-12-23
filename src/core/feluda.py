@@ -20,6 +20,7 @@ class Feluda:
             from core.operators import Operator
 
             self.operators = Operator(self.config.operators)
+
         if self.config.store:
             from core import store
 

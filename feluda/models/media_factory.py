@@ -5,8 +5,8 @@ from io import BytesIO
 import numpy as np
 from werkzeug.datastructures import FileStorage
 import wget
-from core.models.media import MediaType
-from core.models.s3_utils import AWSS3Utils
+from feluda.models.media import MediaType
+from feluda.models.s3_utils import AWSS3Utils
 import logging
 import os
 import tempfile
@@ -24,13 +24,17 @@ class ImageFactory:
             image_bytes = resp.content
             image = PIL.Image.open(BytesIO(image_bytes))
             image_array = np.array(image)
-            return {"image": image, "image_array": image_array, "image_bytes": image_bytes}
+            return {
+                "image": image,
+                "image_array": image_array,
+                "image_bytes": image_bytes,
+            }
         except ConnectTimeout:
-            print('Request has timed out')
+            print("Request has timed out")
 
     @staticmethod
     def make_from_url_to_path(image_url):
-        
+
         temp_dir = tempfile.gettempdir()
         temp_url = image_url.split("?")[0]
         file_name = temp_url.split("/")[-1]
@@ -44,7 +48,6 @@ class ImageFactory:
             raise Exception("Error Downloading Image")
         return {"path": image_path}
 
-
     @staticmethod
     def make_from_file_on_disk(image_path):
         with open(image_path, mode="rb") as file:
@@ -56,6 +59,10 @@ class ImageFactory:
                 "image_array": image_array,
                 "image_bytes": image_bytes,
             }
+
+    @staticmethod
+    def make_from_file_on_disk_to_path(image_path):
+        return {"path": image_path}
 
     @staticmethod
     def make_from_file_in_memory(image_data: FileStorage):
@@ -77,7 +84,7 @@ class TextFactory:
             text = response.text
             return {"text": text}
         except ConnectTimeout:
-            print('Request has timed out')
+            print("Request has timed out")
 
     @staticmethod
     def make_from_file_on_disk(image_path):
@@ -86,6 +93,7 @@ class TextFactory:
     @staticmethod
     def make_from_file_in_memory(image_data: FileStorage):
         pass
+
 
 class VideoFactory:
 
@@ -175,10 +183,10 @@ class AudioFactory:
             print("\naudio downloaded")
 
             _, file_extension = os.path.splitext(file_name)
-            if file_extension != '.wav':
+            if file_extension != ".wav":
                 audio = AudioSegment.from_file(audio_file, format=file_extension[1:])
-                wav_file = os.path.splitext(audio_file)[0] + '.wav'
-                audio.export(wav_file, format='wav')
+                wav_file = os.path.splitext(audio_file)[0] + ".wav"
+                audio.export(wav_file, format="wav")
                 os.remove(audio_file)
                 audio_file = wav_file
         except Exception as e:
@@ -189,7 +197,6 @@ class AudioFactory:
     @staticmethod
     def make_from_file_on_disk(audio_path):
         return {"path": audio_path}
-
 
 
 media_factory = {

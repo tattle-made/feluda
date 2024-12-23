@@ -15,6 +15,10 @@ mappings = {
                             "type": "text",
                             "analyzer": "standard"
                         },
+                        "text_vec": {
+                            "type":"dense_vector",
+                            "dims": 768
+                        },
                         "suggestion": {
                             "type" : "completion"
                         },
@@ -101,7 +105,7 @@ mappings = {
                         },
                         "audio_vec": {
                             "type":"dense_vector",
-                            "dims": 2048
+                            "dims": 512
                         },
                         "date_added": {
                             "type": "date"

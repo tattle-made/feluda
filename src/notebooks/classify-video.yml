@@ -1,0 +1,6 @@
+operators:
+  label: "Operators"
+  parameters:
+    - name: "Classify Video"
+      type: "classify_video_zero_shot"
+      parameters: { index_name: "video" }

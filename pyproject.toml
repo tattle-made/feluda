@@ -1,11 +1,44 @@
-[tool.semantic_release]
-version_variable = [
-    "src/__init__.py:__version__",
+[project]
+name = "feluda"
+version = "0.8.0"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "boto3>=1.35.63",
+    "dacite>=1.8.1",
+    "pydub>=0.25.1",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.3",
+    "werkzeug>=3.1.3",
+    "wget>=3.2",
+    "toml>=0.10.2",
 ]
-assets = ["src/worker/vidvec/Dockerfile.video_worker",
-    "src/worker/audiovec/Dockerfile.audio_worker",
-    "src/worker/hash/Dockerfile.hash_worker"]
+
+[project.optional-dependencies]
+dev = [
+    "python-semantic-release>=9.14.0",
+    "toml>=0.10.2",
+    "tomli>=2.2.1",
+    "tomli-w>=1.1.0",
+    "ruff>=0.8.3",
+    "pre-commit>=4.0.1",
+    "pyproject-pre-commit[ruff]>=0.3.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.semantic_release]
+version_variable = ["pyproject.toml:project.version"]
 
 [tool.semantic_release.branches.main]
 match = "main"
 prerelease = false
+tag_format = "{name}-{version}"
+
+[tool.uv.workspace]
+members = ["operators/image_vec_rep_resnet"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["feluda"]

@@ -6,6 +6,7 @@ openai-whisper==20231117
 pydub==0.25.1
 torch==2.3.0
 torchaudio==2.3.0
+ffmpeg-python==0.2.0
 """
 
 LANGUAGES = {
@@ -111,6 +112,32 @@ LANGUAGES = {
     "yue": "cantonese",
 }
 
+def extract_audio_from_video(video_file):
+    import ffmpeg
+    """Extract audio from a video file using ffmpeg
+
+    Args:
+        video_file (str): Path to video file.
+
+    Returns:
+        Nothing but saves file to disk.
+    """
+
+    if video_file.split(".")[-1] != "mp4":
+        raise ValueError(f"Invalid file format: {video_file}. Expected .mp4 format.")
+
+    audio_file_path = video_file.split(".")[0] + ".wav"
+    try:
+        (
+            ffmpeg
+            .input(video_file)
+            .output(audio_file_path, format='wav', acodec='pcm_s16le', ac=1, ar='16000')
+            .run(quiet=True, overwrite_output=True)
+        )
+    except ffmpeg.Error as e:
+        print("Error extracting audio:", e)
+        raise
+
 def extract_speech(fname):
     """Detect and export voice activity from an audio file.
 
@@ -120,6 +147,12 @@ def extract_speech(fname):
     Returns:
         str or bool: Name of the audio file with the extracted speech, False if no voice activity detected.
     """
+    extension_of_file = fname.split(".")[-1]
+
+
+    if extension_of_file != "wav":
+        raise ValueError(f"Invalid file format: {fname}. Expected .wav format.")
+
     # get speech timestamps using our VAD model...
     get_speech_timestamps, _, read_audio, *_ = utils
     audio = read_audio(fname, sampling_rate=16000)
@@ -193,9 +226,27 @@ def initialize(param):
     model = whisper.load_model("base")
     vad, utils = torch.hub.load(repo_or_dir="snakers4/silero-vad", model="silero_vad")
 
-def run(audio_file):
-    audio = audio_file["path"]
+def run(media_file,media_type):
+    """
+        Runs the operator
+
+        Args:
+            media_file (dict): `AudioFactory` file object -> Format {'path': 'path/to/audio/file'}
+            media_type (str): Type of media file
+
+        Returns:
+            dict: A dictionary containing language id and language name
+    """
+
+    if media_type == "video":
+        extract_audio_from_video(media_file["path"])
+        audio_file_path = media_file["path"].split(".")[0] + ".wav"
+    elif media_type == "audio":
+        audio_file_path = media_file["path"]
+
+    audio = audio_file_path
     speech = extract_speech(audio)
+
     if speech:
         # audio contains voice activity
         try:
@@ -203,5 +254,11 @@ def run(audio_file):
             language = LANGUAGES[language_id] # get the generic name from id
             return {"id": language_id, "language": language}
         finally:
+            if media_type == "video":
+                if os.path.exits(media_file["path"]):
+                    os.remove(media_file["path"])
+            os.remove(audio_file_path)
             os.remove(speech)
+            
     return {"id": "und", "language": "undefined"}
+

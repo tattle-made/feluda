@@ -57,6 +57,7 @@ services:
     ports:
       - 7000:7000
       - 5678:5678
+      - 8888:8888
     command: tail -f /dev/null
     depends_on:
       store:
@@ -105,3 +106,4 @@ volumes:
 #  default:
 #    external: true
 #    name: kosh-v2_tattle
+
