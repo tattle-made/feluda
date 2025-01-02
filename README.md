@@ -10,11 +10,11 @@ While flexible, we built it to analyse data collected from social media - images
 - [Crowdsourcing Aid : A Case Study of the Information Chaos During India's Second Covid-19 Wave](https://tattle.co.in/articles/covid-whatsapp-public-groups/) : Analysis of whatsapp messages related to relief work collected from public whatsapp group during the second wave of Covid-19 in India.
 
 ## Understanding Operators in Feluda
-When we built Feluda, we were focusing on the unique challenges of social media data that was found in India. We needed to process data in various modalities (text, audio, video, images, hybrid) and various languages. There would often be very different technologies that needed to be evaluated for each. So we built Feluda around a concept of operators. You can think of operators as plugins that you can mix and match to perform different analyses on your data (see Features section below). When you start feluda, you [configure which operators](https://github.com/tattle-made/feluda/tree/master/src/api/core/operators) you want to use and then feluda loads it. While in its current iteration Feluda comes with certain operators in its source code, the operators are defined in a way that anyone can create their own operators and use it with Feluda. Operators are easy to swap in and out. Not only does this allow you to try out various different analysis techniques, it also means you aren't tied to any one implementation for an operation. Some use cases for operators that we've tried out are following : 
+When we built Feluda, we were focusing on the unique challenges of social media data that was found in India. We needed to process data in various modalities (text, audio, video, images, hybrid) and various languages. There would often be very different technologies that needed to be evaluated for each. So we built Feluda around a concept of operators. You can think of operators as plugins that you can mix and match to perform different analyses on your data (see Features section below). When you start feluda, you [configure which operators](https://github.com/tattle-made/feluda/tree/master/src/api/core/operators) you want to use and then feluda loads it. While in its current iteration Feluda comes with certain operators in its source code, the operators are defined in a way that anyone can create their own operators and use it with Feluda. Operators are easy to swap in and out. Not only does this allow you to try out various different analysis techniques, it also means you aren't tied to any one implementation for an operation. Some use cases for operators that we've tried out are following :
 1. If someone wants to run image data aggregation on a budget, instead of using an operator that uses a heavy machine learning model, they can use an operator that uses hashing instead.
 2. If someone wants to extract text from images and don't want to use a google product, they could use an operator that uses openCV as opposed to google cloud vision API.
-    
-## Features Enabled 
+
+## Features Enabled
 - Support for Vector based embeddings using ResNet models and Sentence Transformers
 - Support for hash based search using pHash
 - Text extraction from images and indexing into the engine
@@ -23,7 +23,7 @@ When we built Feluda, we were focusing on the unique challenges of social media 
 
 
 ## Contributing
-Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/discussions) describing what you'd like to do and we'll follow up. 
+Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/discussions) describing what you'd like to do and we'll follow up.
 
 ## Setup for Developing Locally
 
@@ -81,7 +81,7 @@ Please create a new Discussion [here](https://github.com/tattle-made/tattle-api/
 
 
 6. Then, in a new terminal, start the server with:
-  
+
   ```
   $ cd src/api
   $ docker exec -it feluda_api python server.py
@@ -102,14 +102,14 @@ http://localhost:7000/upload_text : Receives a text document via a POST request 
 
 The `/upload_image`, `/upload_video` and `/upload_text` endpoints index data directly (bypassing RabbitMQ) and are suitable for development / testing. Indices are defined and accessed according to the names specified in `.env` and the mappings specified in `indices.py`.
 
-http://localhost:7000/search : Receives a query image / video / text and returns the top 10 matches found in the Elasticsearch index in descending order.  
+http://localhost:7000/search : Receives a query image / video / text and returns the top 10 matches found in the Elasticsearch index in descending order.
 Note: A text search returns two sets of matches: `simple_text_matches` and `text_vector_matches`. The former is useful for same-language search and the latter for multilingual search.
 
 
 #### Bulk indexing
 
 Bulk indexing scripts for the data collected by various Tattle services should be located in the service repository, such as [this one](https://github.com/tattle-made/sharechat-scraper/blob/development/workers/indexer/tattlesearch_indexer.py) and triggered as required. This makes the data searchable via this search API.
-The indexing status of each record can be updated via a [reporter](https://github.com/tattle-made/sharechat-scraper/blob/development/workers/reporter/tattlesearch_reporter.py).  
+The indexing status of each record can be updated via a [reporter](https://github.com/tattle-made/sharechat-scraper/blob/development/workers/reporter/tattlesearch_reporter.py).
 While the former fetches data from the service's MongoDB and sends it to the API via HTTP requests, the latter is a RabbitMQ consumer that consumes reports generated by `receive.py` and adds them to the DB.
 
 
@@ -196,7 +196,7 @@ torchvision==0.17.0+cpu; platform_machine=='x86_64' \
 
 #### Updating specific packages in `requirements.txt`
 
-This is useful to update dependencies e.g. when using `pip-audit` 
+This is useful to update dependencies e.g. when using `pip-audit`
 
 ```bash
 $ TMPDIR=<temp_dir> pip-compile --verbose --allow-unsafe --generate-hashes --find-links https://download.pytorch.org/whl/torch_stable.html --upgrade-package <package>==<version> --upgrade-package <package>
@@ -205,7 +205,7 @@ $ TMPDIR=<temp_dir> pip-compile --verbose --allow-unsafe --generate-hashes --fin
 
 ### Running Tests
 
-To run a test, implement the following command
+To run a test, implement the following command.
 
 ```bash
 python -m unittest <FILE_NAME>.py
