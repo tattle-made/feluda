@@ -1,14 +1,12 @@
 [project]
-name = "feluda-image-vec-rep-resnet"
-version = "0.1.0"
+name = "feluda-vid-vec-rep-clip"
+version = "0.0.0"
 requires-python = ">=3.10"
 dependencies = [
     "torch>=2.5.1",
     "torchvision>=0.20.1",
-    "numpy>=2.2.1",
+    "transformers>=4.44.0",
     "pillow>=11.1.0",
-    "memray>=1.15.0",
-    "pyinstrument>=5.0.0",
 ]
 
 [build-system]
