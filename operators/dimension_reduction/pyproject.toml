@@ -1,15 +1,22 @@
 [project]
 name = "feluda-dimension-reduction"
-version = "0.0.0"
+version = "0.1.0"
 requires-python = ">=3.10"
-dependencies = ["scikit-learn>=1.5.1", "numpy>=2.2.1"]
+dependencies = [
+    "scikit-learn>=1.5.1",
+    "numpy>=2.2.1",
+]
 
 [build-system]
-requires = ["hatchling"]
+requires = [
+    "hatchling",
+]
 build-backend = "hatchling.build"
 
 [tool.semantic_release]
-version_variable = ["pyproject.toml:project.version"]
+version_variable = [
+    "pyproject.toml:project.version",
+]
 
 [tool.semantic_release.branches.main]
 match = "main"
@@ -17,4 +24,6 @@ prerelease = false
 tag_format = "{name}-{version}"
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+packages = [
+    ".",
+]
