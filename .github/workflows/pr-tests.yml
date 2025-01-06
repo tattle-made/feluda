@@ -1,0 +1,42 @@
+name: Run tests on PR
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      - hotfix
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run all tests in feluda_unit_tests
+        run: |
+          echo "Running tests in feluda_unit_tests folder..."
+          for test_file in $(find feluda/feluda_unit_tests -type f -name "test_*.py"); do
+            echo "Running test file: $test_file"
+            python -m unittest $test_file
+          done
