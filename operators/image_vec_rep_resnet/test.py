@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
         # delete config files
         pass
 
-    # @skip
+    @skip
     def test_sample_image_from_disk(self):
         image_path = r"src/core/operators/sample_data/text.png"
         image_obj = ImageFactory.make_from_file_on_disk(image_path)
@@ -24,7 +24,7 @@ class Test(unittest.TestCase):
         print(len(image_vec))
         self.assertEqual(len(image_vec), 512)
 
-    @skip
+    # @skip
     def test_sample_image_from_url(self):
         image_obj = ImageFactory.make_from_url(
             "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
