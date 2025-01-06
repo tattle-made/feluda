@@ -1,6 +1,6 @@
 [project]
 name = "feluda"
-version = "0.9.0"
+version = "0.9.1"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -14,10 +14,6 @@ dependencies = [
     "toml>=0.10.2",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project.optional-dependencies]
 dev = [
     "python-semantic-release>=9.14.0",
@@ -29,8 +25,21 @@ dev = [
     "pyproject-pre-commit[ruff]>=0.3.6",
 ]
 
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
+
 [tool.semantic_release]
-version_variable = ["pyproject.toml:project.version"]
+version_variable = [
+    "pyproject.toml:project.version",
+]
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+tag_format = "{name}-{version}"
 
 [tool.uv.workspace]
 members = [
@@ -40,10 +49,7 @@ members = [
     "operators/dimension_reduction",
 ]
 
-[tool.semantic_release.branches.main]
-match = "main"
-prerelease = false
-tag_format = "{name}-{version}"
-
 [tool.hatch.build.targets.wheel]
-packages = ["feluda"]
+packages = [
+    "feluda",
+]
