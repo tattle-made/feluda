@@ -201,25 +201,35 @@ class PackageVersionManager:
             Git command runs successfully, and commits are returned.
         Failure Path:
             Git command fails due to invalid commit range or other issues.
-            TODO: Handle git log when its empty
-            TODO: handle cases when prev commit and current commit is the same
         """
         try:
-            # Get commits that modified files in this package between two commits
-            cmd = [
-                "git",
-                "log",
-                f"{self.prev_commit}^..{self.current_commit}",
-                "--pretty=format:%s",
-                "--",
-                package_path,
-            ]
+            paths_to_check = [package_path]
 
-            result = subprocess.run(
-                cmd, cwd=self.repo_root, capture_output=True, text=True, check=True
-            )
+            # Special handling for feluda package to include root pyproject.toml
+            if package_path == "feluda":
+                paths_to_check.append("pyproject.toml")
 
-            return result.stdout.splitlines()
+            all_commits = []
+            for path in paths_to_check:
+                # Get commits that modified files in this path between two commits
+                cmd = [
+                    "git",
+                    "log",
+                    f"{self.prev_commit}^..{self.current_commit}",
+                    "--pretty=format:%s",
+                    "--",
+                    path,
+                ]
+
+                result = subprocess.run(
+                    cmd, cwd=self.repo_root, capture_output=True, text=True, check=True
+                )
+
+                # Add commits for this path to the total list
+                all_commits.extend(result.stdout.splitlines())
+
+            # Remove duplicates while preserving order
+            return list(dict.fromkeys(all_commits))
         except subprocess.CalledProcessError as e:
             print(f"Error getting commits for {package_path}: {e}")
             return []
