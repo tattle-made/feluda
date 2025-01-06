@@ -38,12 +38,12 @@ class TSNEReduction(DimensionReduction):
         """
         try:
             self.model = TSNE(
-                n_components=params.get('n_components', 2),
-                perplexity=params.get('perplexity', 30),
-                learning_rate=params.get('learning_rate', 150),
-                max_iter=params.get('max_iter', 1000),
-                random_state=params.get('random_state', 42),
-                method=params.get('method', 'barnes_hut')
+                n_components=params.get("n_components", 2),
+                perplexity=params.get("perplexity", 30),
+                learning_rate=params.get("learning_rate", 150),
+                max_iter=params.get("max_iter", 1000),
+                random_state=params.get("random_state", 42),
+                method=params.get("method", "barnes_hut"),
             )
             print("t-SNE model successfully initialized")
         except Exception as e:
@@ -88,7 +88,7 @@ class DimensionReductionFactory:
         Raises:
             ValueError: If the specified model type is unsupported.
         """
-        if model_type.lower() == 'tsne':
+        if model_type.lower() == "tsne":
             return TSNEReduction()
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
@@ -109,8 +109,8 @@ def gen_data(payloads, reduced_embeddings):
 
     for payload, reduced_embedding in zip(payloads, reduced_embeddings):
         tmp_dict = {}
-        tmp_dict['payload'] = payload
-        tmp_dict['reduced_embedding'] = reduced_embedding.tolist()
+        tmp_dict["payload"] = payload
+        tmp_dict["reduced_embedding"] = reduced_embedding.tolist()
         out.append(tmp_dict)
     return out
 
@@ -124,7 +124,9 @@ def initialize(params):
 
     """
     global reduction_model
-    reduction_model = DimensionReductionFactory.get_reduction_model(params.get('model_type', 'tsne'))
+    reduction_model = DimensionReductionFactory.get_reduction_model(
+        params.get("model_type", "tsne")
+    )
     reduction_model.initialize(params)
 
 
@@ -168,12 +170,16 @@ def run(input_data):
     """
     if not isinstance(input_data, list) or len(input_data) == 0:
         raise ValueError("Input should be a non-empty list.")
-    
+
     try:
-        embeddings, payloads = zip(*[(data['embedding'], data['payload']) for data in input_data])
+        embeddings, payloads = zip(
+            *[(data["embedding"], data["payload"]) for data in input_data]
+        )
     except KeyError as e:
-        raise KeyError(f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}.")
-    
+        raise KeyError(
+            f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}."
+        )
+
     reduced_embeddings = reduction_model.run(np.array(embeddings))
 
     return gen_data(payloads, reduced_embeddings)

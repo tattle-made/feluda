@@ -34,7 +34,6 @@ class ImageFactory:
 
     @staticmethod
     def make_from_url_to_path(image_url):
-
         temp_dir = tempfile.gettempdir()
         temp_url = image_url.split("?")[0]
         file_name = temp_url.split("/")[-1]
@@ -96,7 +95,6 @@ class TextFactory:
 
 
 class VideoFactory:
-
     @staticmethod
     def make_from_url(video_url):
         temp_dir = tempfile.gettempdir()

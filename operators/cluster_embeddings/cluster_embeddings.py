@@ -2,6 +2,7 @@
 Operator to cluster embeddings using KMeans, Affinity Propagation, and Agglomerative clustering algorithms
 """
 
+
 def initialize(param):
     """
     Initializes the operator.
@@ -32,7 +33,7 @@ def initialize(param):
         """
         out = {}
         for label, payload in zip(labels, payloads):
-            key = f'cluster_{label}'
+            key = f"cluster_{label}"
             if key not in out:
                 out[key] = []
             out[key].append(payload)
@@ -49,7 +50,9 @@ def initialize(param):
         Returns:
             numpy.ndarray: An array of cluster labels for each embedding
         """
-        return KMeans(n_clusters=n_clusters, random_state=RANDOM_STATE).fit_predict(np.array(matrix))
+        return KMeans(n_clusters=n_clusters, random_state=RANDOM_STATE).fit_predict(
+            np.array(matrix)
+        )
 
     def Agglomerative_clustering(matrix, n_clusters):
         """
@@ -62,7 +65,9 @@ def initialize(param):
         Returns:
             numpy.ndarray: An array of cluster labels for each embedding
         """
-        return AgglomerativeClustering(n_clusters=n_clusters).fit_predict(np.array(matrix))
+        return AgglomerativeClustering(n_clusters=n_clusters).fit_predict(
+            np.array(matrix)
+        )
 
     def AffinityPropagation_clustering(matrix):
         """
@@ -74,9 +79,12 @@ def initialize(param):
         Returns:
             numpy.ndarray: An array of cluster labels for each embedding
         """
-        return AffinityPropagation(random_state=RANDOM_STATE).fit_predict(np.array(matrix))
+        return AffinityPropagation(random_state=RANDOM_STATE).fit_predict(
+            np.array(matrix)
+        )
 
-def run(input_data, n_clusters=None, modality='audio'):
+
+def run(input_data, n_clusters=None, modality="audio"):
     """
     Runs the operator.
 
@@ -94,19 +102,25 @@ def run(input_data, n_clusters=None, modality='audio'):
     """
     # Parse data:
     try:
-        matrix, payloads = zip(*[(data['embedding'], data['payload']) for data in input_data])
+        matrix, payloads = zip(
+            *[(data["embedding"], data["payload"]) for data in input_data]
+        )
     except KeyError as e:
-        raise KeyError(f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}.")
+        raise KeyError(
+            f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}."
+        )
 
     # Delegate appropriate clustering algorithm for the given params:
     if n_clusters:
-        n_clusters = int(n_clusters) # cast it to int
-        if modality == 'audio':
+        n_clusters = int(n_clusters)  # cast it to int
+        if modality == "audio":
             labels = KMeans_clustering(matrix=matrix, n_clusters=n_clusters)
-        elif modality == 'video':
+        elif modality == "video":
             labels = Agglomerative_clustering(matrix=matrix, n_clusters=n_clusters)
         else:
-            raise ValueError("Invalid modality. Modality should be either `audio` or `video`.")
+            raise ValueError(
+                "Invalid modality. Modality should be either `audio` or `video`."
+            )
     else:
         labels = AffinityPropagation_clustering(matrix=matrix)
-    return gen_data(payloads=payloads, labels=labels) # format output
+    return gen_data(payloads=payloads, labels=labels)  # format output

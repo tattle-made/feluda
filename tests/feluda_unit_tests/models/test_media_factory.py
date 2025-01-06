@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 from feluda.models.media_factory import ImageFactory, VideoFactory, AudioFactory
 
+
 class Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

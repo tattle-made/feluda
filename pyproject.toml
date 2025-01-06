@@ -46,5 +46,8 @@ members = [
     "operators/dimension_reduction",
 ]
 
+[tool.ruff]
+exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
