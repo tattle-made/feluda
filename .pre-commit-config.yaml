@@ -20,6 +20,7 @@ repos:
       # Run the linter.
       - id: ruff
         stages: [pre-commit]
-        # args: [--fix]
-      # Run the formatter.
-    #   - id: ruff-format
+        args: [--fix]
+      - id: ruff
+        name: ruff-format
+        stages: [pre-commit]

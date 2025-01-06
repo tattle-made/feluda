@@ -3,6 +3,7 @@ from unittest.case import skip
 from operators.vid_vec_rep_clip import vid_vec_rep_clip
 from feluda.models.media_factory import VideoFactory
 
+
 class Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

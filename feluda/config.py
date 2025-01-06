@@ -15,6 +15,7 @@ from dacite import from_dict
 
 log = logging.getLogger(__name__)
 
+
 @dataclass
 class StoreESParameters:
     host_name: str
