@@ -33,10 +33,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run all tests in feluda_unit_tests
+      - name: Run all Feluda Unit Tests
         run: |
-          echo "Running tests in feluda_unit_tests folder..."
-          for test_file in $(find feluda/feluda_unit_tests -type f -name "test_*.py"); do
-            echo "Running test file: $test_file"
+          echo "Running all Feluda Unit Tests folder..."
+          for test_file in $(find tests/feluda_unit_tests -type f -name "test_*.py"); do
+            echo "############# Running file: $test_file #############"
             python -m unittest $test_file
+            if [ $? -ne 0 ]; then
+              echo "Tests in $test_file failed"
+              exit 1
+            fi
+            echo "Run Successful"
           done
