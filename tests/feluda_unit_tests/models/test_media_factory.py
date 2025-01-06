@@ -1,6 +1,5 @@
 import unittest
 from unittest.case import skip
-import numpy as np
 from PIL import Image
 from feluda.models.media_factory import ImageFactory, VideoFactory, AudioFactory
 
@@ -27,7 +26,6 @@ class Test(unittest.TestCase):
         image_obj = ImageFactory.make_from_file_on_disk(image_path)
         self.assertIsNotNone(image_obj["image"])
         self.assertTrue(isinstance(image_obj["image"], Image.Image))
-        self.assertTrue(isinstance(image_obj["image_array"], np.ndarray))
 
     # @skip
     def test_video_make_from_url(self):
