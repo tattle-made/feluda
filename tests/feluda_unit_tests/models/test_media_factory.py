@@ -6,6 +6,7 @@ import os
 import tempfile
 from feluda.models.media_factory import ImageFactory, VideoFactory, AudioFactory
 
+
 class Test(unittest.TestCase):
     # Class variables to store file paths for cleanup
     test_files = []
@@ -19,7 +20,7 @@ class Test(unittest.TestCase):
         cls.expected_files = [
             "text-in-image-test-hindi.png",
             "cat_vid_2mb.mp4.mp4",
-            "audio.wav.wav"
+            "audio.wav.wav",
         ]
 
     @classmethod
