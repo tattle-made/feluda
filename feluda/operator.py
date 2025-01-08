@@ -1,5 +1,6 @@
-import logging
 import importlib
+import logging
+
 from feluda.config import OperatorConfig
 
 log = logging.getLogger(__name__)

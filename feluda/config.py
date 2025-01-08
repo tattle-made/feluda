@@ -8,9 +8,10 @@ todo :
 """
 
 import logging
-from typing import List, Optional, Union
-import yaml
 from dataclasses import dataclass
+from typing import List, Optional, Union
+
+import yaml
 from dacite import from_dict
 
 log = logging.getLogger(__name__)

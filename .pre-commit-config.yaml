@@ -21,6 +21,12 @@ repos:
       - id: ruff
         stages: [pre-commit]
         args: [--fix]
+      # run ruff specifically for sorting imports.
+      - id: ruff
+        name: ruff-import-sort
+        stages: [pre-commit]
+        args: ["--select", "I", "--fix"]
+      # format code using rff
       - id: ruff
         name: ruff-format
         stages: [pre-commit]

@@ -1,4 +1,5 @@
 import unittest
+
 from operators.cluster_embeddings import cluster_embeddings
 
 # Test constants
