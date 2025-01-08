@@ -1,4 +1,5 @@
 import logging
+
 from feluda import config
 
 log = logging.getLogger(__name__)

@@ -1,7 +1,8 @@
 import unittest
 from unittest.case import skip
-from operators.image_vec_rep_resnet import image_vec_rep_resnet
+
 from feluda.models.media_factory import ImageFactory
+from operators.image_vec_rep_resnet import image_vec_rep_resnet
 
 
 class Test(unittest.TestCase):

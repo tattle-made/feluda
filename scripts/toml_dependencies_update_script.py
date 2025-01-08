@@ -1,6 +1,7 @@
 import os
-import toml
 import re
+
+import toml
 
 
 def find_pyproject_files():

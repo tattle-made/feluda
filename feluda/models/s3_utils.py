@@ -1,5 +1,6 @@
-import boto3
 import os
+
+import boto3
 
 
 class AWSS3Utils:

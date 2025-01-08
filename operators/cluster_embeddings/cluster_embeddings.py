@@ -14,8 +14,8 @@ def initialize(param):
     global gen_data
 
     # Imports
-    from sklearn.cluster import KMeans, AffinityPropagation, AgglomerativeClustering
     import numpy as np
+    from sklearn.cluster import AffinityPropagation, AgglomerativeClustering, KMeans
 
     # Constants
     RANDOM_STATE = 50

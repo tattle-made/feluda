@@ -1,5 +1,7 @@
 import unittest
+
 import numpy as np
+
 from operators.dimension_reduction.dimension_reduction import initialize, run
 
 

@@ -18,6 +18,7 @@ def initialize(param):
     import os
     import subprocess
     import tempfile
+
     import torch
     from PIL import Image
     from transformers import AutoProcessor, CLIPModel

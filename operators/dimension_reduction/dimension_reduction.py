@@ -1,8 +1,9 @@
 """Operator to perform dimensionality reduction given the embedddings."""
 
 from abc import ABC, abstractmethod
-from sklearn.manifold import TSNE
+
 import numpy as np
+from sklearn.manifold import TSNE
 
 
 class DimensionReduction(ABC):

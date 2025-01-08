@@ -1,6 +1,6 @@
 import logging
-import pprint
 import os
+import pprint
 
 logging.basicConfig(level="INFO")
 pp = pprint.PrettyPrinter(indent=2)
