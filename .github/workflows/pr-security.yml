@@ -37,7 +37,7 @@ jobs:
           src: "."
         continue-on-error: false
 
-      - name: Validate must contents in pyproject.toml
+      - name: Validate required fields in pyproject.toml
         run: |
           pip install tomli
           python -m scripts.validate_toml_files
