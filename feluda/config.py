@@ -72,14 +72,13 @@ class ServerConfig:
 class OperatorParameters:
     name: str
     type: str
-    parameters: object
+    parameters: Optional[object] = None
 
 
 @dataclass
 class OperatorConfig:
     label: str
     parameters: List[OperatorParameters]
-
 
 @dataclass
 class Config:
