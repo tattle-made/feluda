@@ -2,7 +2,14 @@
 name = "feluda-audio-vec-embedding-clap"
 version = "0.0.0"
 requires-python = ">=3.10"
-dependencies = ["librosa>=0.10.2.post1", "transformers>=4.47.1", "torch>=2.5.1"]
+dependencies = [
+    "librosa>=0.10.2",
+    "transformers>=4.47.1",
+    "torch>=2.5.1",
+    "numba>=0.60.0",
+    "llvmlite>=0.43.0",
+    "numpy==2.0.0" # numba requriment
+]
 
 [build-system]
 requires = ["hatchling"]
