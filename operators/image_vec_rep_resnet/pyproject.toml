@@ -7,8 +7,6 @@ dependencies = [
     "torchvision>=0.20.1",
     "numpy>=2.2.1",
     "pillow>=11.1.0",
-    "memray>=1.15.0",
-    "pyinstrument>=5.0.0",
 ]
 
 [build-system]
