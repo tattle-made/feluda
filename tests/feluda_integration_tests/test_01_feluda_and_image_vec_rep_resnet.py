@@ -1,96 +1,84 @@
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
+import numpy as np
 import yaml
+from requests.exceptions import ConnectTimeout
 
 from feluda import Feluda
+from feluda.models.media_factory import ImageFactory
 
 
 class TestFeludaImageVectorIntegration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        """Initialize Feluda with the existing config file."""
-        cls.config_path = r"tests/feluda_integration_tests/01_config.yml"
+        """Create a temporary test configuration file that will be used for all tests."""
+        cls.config = {
+            "operators": {
+                "label": "Operators",
+                "parameters": [
+                    {
+                        "name": "image vectors",
+                        "type": "image_vec_rep_resnet",
+                        "parameters": {"index_name": "image"},
+                    }
+                ],
+            }
+        }
 
-        # Verify config file exists
-        if not Path(cls.config_path).exists():
-            raise unittest.SkipTest(f"Config file not found at {cls.config_path}")
+        # Create temporary config file
+        cls.temp_file = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".yml", delete=False
+        )
+        yaml.dump(cls.config, cls.temp_file)
+        cls.temp_file.close()
 
         # Initialize Feluda
-        cls.feluda = Feluda(cls.config_path)
+        cls.feluda = Feluda(cls.temp_file.name)
         cls.feluda.setup()
-        print("Feluda Setup Complete")
 
-    def test_config_loading(self):
-        """Test that config is loaded correctly."""
-        # Verify config file is accessible
-        self.assertTrue(hasattr(self.feluda, 'config_path'),
-                       "Feluda should have config_path attribute")
-        self.assertEqual(self.feluda.config_path, self.config_path,
-                        "Config path should match the provided path")
+    def test_image_vector_generation(self):
+        """Test that image vector generation works end-to-end."""
 
-        # Load config directly to verify content
-        with open(self.config_path, 'r') as f:
-            config = yaml.safe_load(f)
+        test_image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
+        image_obj = ImageFactory.make_from_url(test_image_url)
+        operator = self.feluda.operators.get()["image_vec_rep_resnet"]
+        image_vec = operator.run(image_obj)
 
-        # Verify expected operator configuration
-        operator_params = None
-        for param in config['operators']['parameters']:
-            if param['type'] == 'image_vec_rep_resnet':
-                operator_params = param
-                break
+        # Basic validation
+        self.assertTrue(
+            isinstance(image_vec, (list, np.ndarray)),
+            "Vector should be a list or numpy array",
+        )
+        self.assertTrue(len(image_vec) > 0, "Vector should not be empty")
 
-        self.assertIsNotNone(operator_params,
-                            "image_vec_rep_resnet operator should be configured")
+        expected_dim = 512
+        self.assertEqual(
+            len(image_vec), expected_dim, f"Vector should have dimension {expected_dim}"
+        )
 
-    # def test_image_vector_generation(self):
-    #     """Test that image vector generation works end-to-end."""
-    #     # Test with a known image URL
-    #     test_image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
+        if isinstance(image_vec, np.ndarray):
+            self.assertFalse(np.all(image_vec == 0), "Vector should not be all zeros")
 
-    #     # Create image object
-    #     image_obj = ImageFactory.make_from_url(test_image_url)
+    def test_invalid_image_url(self):
+        """Test handling of invalid image URL."""
+        invalid_url = "https://nonexistent-url/image.jpg"
 
-    #     # Get the operator
-    #     operator = self.feluda.operators.get()["image_vec_rep_resnet"]
+        with patch("requests.get") as mock_get:
+            mock_get.side_effect = ConnectTimeout
+            result = ImageFactory.make_from_url(invalid_url)
+            self.assertIsNone(result)
 
-    #     # Generate vector
-    #     image_vec = operator.run(image_obj)
+    def test_operator_configuration(self):
+        """Test that operator is properly configured."""
+        operator = self.feluda.operators.get()["image_vec_rep_resnet"]
 
-    #     # Basic validation
-    #     self.assertTrue(isinstance(image_vec, (list, np.ndarray)),
-    #                    "Vector should be a list or numpy array")
-    #     self.assertTrue(len(image_vec) > 0,
-    #                    "Vector should not be empty")
+        self.assertIsNotNone(operator, "Operator should be properly initialized")
+        self.assertTrue(hasattr(operator, 'run'), "Operator should have 'run' method")
 
-    #     expected_dim = 512
-    #     self.assertEqual(len(image_vec), expected_dim,
-    #                     f"Vector should have dimension {expected_dim}")
-
-    #     if isinstance(image_vec, np.ndarray):
-    #         self.assertTrue(np.all(np.isfinite(image_vec)),
-    #                       "All vector values should be finite")
-    #         self.assertFalse(np.all(image_vec == 0),
-    #                        "Vector should not be all zeros")
-
-    # def test_invalid_image_url(self):
-    #     """Test handling of invalid image URL."""
-    #     invalid_url = "https://nonexistent-url/image.jpg"
-
-    #     # This should raise some kind of exception
-    #     with self.assertRaises(Exception):  # Replace with your specific exception
-    #         image_obj = ImageFactory.make_from_url(invalid_url)
-    #         operator = self.feluda.operators.get()["image_vec_rep_resnet"]
-    #         operator.run(image_obj)
-
-    # def test_operator_configuration(self):
-    #     """Test that operator is properly configured."""
-    #     operator = self.feluda.operators.get()["image_vec_rep_resnet"]
-
-    #     self.assertIsNotNone(operator, "Operator should be properly initialized")
-    #     self.assertTrue(hasattr(operator, 'run'), "Operator should have 'run' method")
-
-    #     # Check operator parameters if applicable
-    #     if hasattr(operator, 'parameters'):
-    #         self.assertEqual(operator.parameters.get('index_name'), 'image',
-    #                        "Operator should have correct parameters")
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up temporary files after all tests are done."""
+        Path(cls.temp_file.name).unlink()
