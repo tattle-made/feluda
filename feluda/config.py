@@ -80,6 +80,7 @@ class OperatorConfig:
     label: str
     parameters: List[OperatorParameters]
 
+
 @dataclass
 class Config:
     store: Optional[StoreConfig]

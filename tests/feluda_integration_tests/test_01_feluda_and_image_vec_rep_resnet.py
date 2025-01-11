@@ -76,7 +76,7 @@ class TestFeludaImageVectorIntegration(unittest.TestCase):
         operator = self.feluda.operators.get()["image_vec_rep_resnet"]
 
         self.assertIsNotNone(operator, "Operator should be properly initialized")
-        self.assertTrue(hasattr(operator, 'run'), "Operator should have 'run' method")
+        self.assertTrue(hasattr(operator, "run"), "Operator should have 'run' method")
 
     @classmethod
     def tearDownClass(cls):

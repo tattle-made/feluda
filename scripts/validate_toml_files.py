@@ -30,7 +30,9 @@ def validate_pyproject_toml(file_path: Path) -> tuple[bool, list[str]]:
 
     # Check semantic release configuration
     try:
-        tag_format = content["tool"]["semantic_release"]["branches"]["main"]["tag_format"]
+        tag_format = content["tool"]["semantic_release"]["branches"]["main"][
+            "tag_format"
+        ]
         if tag_format != "{name}-{version}":
             errors.append(
                 f"{file_path}: Invalid tag_format. Expected '{{name}}-{{version}}', got '{tag_format}'"
@@ -39,6 +41,7 @@ def validate_pyproject_toml(file_path: Path) -> tuple[bool, list[str]]:
         errors.append(f"{file_path}: Missing or invalid semantic_release configuration")
 
     return len(errors) == 0, errors
+
 
 def main():
     # Find all pyproject.toml files
@@ -69,6 +72,7 @@ def main():
         for error in all_errors:
             print(f"  - {error}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
