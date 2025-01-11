@@ -2,38 +2,57 @@ name: Operator Tests
 
 on:
   pull_request:
+    branches:
+      - main
+      - development 
+      - hotfix
     paths:
       - 'feluda/operators/**'
       - '.github/workflows/operator-tests.yml'
+      - 'pyproject.toml'
 
 jobs:
   test-operators:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+          
       - name: Get modified files
         id: changed-files
         uses: tj-actions/changed-files@v40
         with:
           files: |
             feluda/operators/**/*.py
-      - name: Install dependencies
+            pyproject.toml
+            
+      - name: Install base dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -e .
           pip install pytest
+          
       - name: Run tests for modified operators
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          echo "Modified operator files:"
+          echo "Modified files:"
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "$file"
             if [[ $file == feluda/operators/* ]]; then
               operator_name=$(basename "$file" .py)
+              operator_folder=$(dirname "$file")
+              
+              # Install operator-specific dependencies if pyproject.toml exists
+              if [ -f "$operator_folder/pyproject.toml" ]; then
+                echo "Installing dependencies for $operator_name"
+                pip install -r "$operator_folder/pyproject.toml"
+              fi
+              
+              # Run tests if they exist
               test_path="tests/operators/test_${operator_name}.py"
               if [ -f "$test_path" ]; then
                 echo "Running tests for $operator_name"
@@ -41,10 +60,15 @@ jobs:
               fi
             fi
           done
+          
       - name: Cleanup
         if: always()
         run: |
-          rm -rf ~/.cache/feluda
+          # Clean up model caches
+          rm -rf ~/.cache/torch/hub
+          rm -rf ~/.cache/huggingface/hub
+          
+          # Clean up pip and Python caches
           rm -rf ~/.cache/pip
           rm -rf /tmp/feluda*
           find . -type d -name "__pycache__" -exec rm -r {} +
