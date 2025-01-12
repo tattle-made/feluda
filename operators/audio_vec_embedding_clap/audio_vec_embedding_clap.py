@@ -2,6 +2,7 @@
 Operator to get audio representation using LAION-CLAP - https://huggingface.co/laion/larger_clap_general
 """
 
+
 def initialize(param):
     """
     Initializes the operator.
