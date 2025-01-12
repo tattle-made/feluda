@@ -6,9 +6,8 @@ dependencies = [
     "librosa>=0.10.2",
     "transformers>=4.47.1",
     "torch>=2.5.1",
-    "numba>=0.60.0",
     "llvmlite>=0.43.0",
-    "numpy==2.0.0" # numba requriment
+    "numpy<=2.0.0",
 ]
 
 [build-system]
