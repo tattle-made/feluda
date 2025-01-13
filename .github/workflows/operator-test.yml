@@ -28,7 +28,8 @@ jobs:
         with:
           files: |
             feluda/operators/**/*.py
-            pyproject.toml
+            feluda/operators/**/pyproject.toml
+
             
       - name: Install base dependencies
         run: |
