@@ -9,7 +9,6 @@ on:
     paths:
       - 'feluda/operators/**'
       - '.github/workflows/operator-tests.yml'
-      - 'pyproject.toml'
 
 jobs:
   test-operators:
@@ -29,7 +28,6 @@ jobs:
           files: |
             feluda/operators/**/*.py
             feluda/operators/**/pyproject.toml
-
             
       - name: Install base dependencies
         run: |
