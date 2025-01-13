@@ -12,6 +12,8 @@ dependencies = [
     "werkzeug>=3.1.3",
     "wget>=3.2",
     "toml>=0.10.2",
+    "pillow>=11.1.0",
+    "numpy>=2.2.1"
 ]
 
 [project.optional-dependencies]
@@ -23,18 +25,15 @@ dev = [
     "ruff>=0.8.3",
     "pre-commit>=4.0.1",
     "pyproject-pre-commit[ruff]>=0.3.6",
+    "pytest>=8.3.4",
 ]
 
 [build-system]
-requires = [
-    "hatchling",
-]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.semantic_release]
-version_variable = [
-    "pyproject.toml:project.version",
-]
+version_variable = ["pyproject.toml:project.version"]
 
 [tool.semantic_release.branches.main]
 match = "main"
@@ -49,7 +48,8 @@ members = [
     "operators/dimension_reduction",
 ]
 
+[tool.ruff]
+exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
+
 [tool.hatch.build.targets.wheel]
-packages = [
-    "feluda",
-]
+packages = ["feluda"]

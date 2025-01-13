@@ -1,0 +1,52 @@
+name: Run tests on PR
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      - hotfix
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Run all Feluda Unit Tests
+        run: |
+          echo "Running all Feluda Unit Tests folder..."
+          for test_file in $(find tests/feluda_unit_tests -type f -name "test_*.py"); do
+            echo "############# Running file: $test_file #############"
+            python -m unittest $test_file
+            if [ $? -ne 0 ]; then
+              echo "Tests in $test_file failed"
+              exit 1
+            fi
+            echo "Run Successful"
+          done

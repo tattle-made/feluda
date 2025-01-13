@@ -2,6 +2,7 @@
 Operator to extract video vector representations using CLIP-ViT-B-32.
 """
 
+
 def initialize(param):
     """
     Initializes the operator.
@@ -17,6 +18,7 @@ def initialize(param):
     import os
     import subprocess
     import tempfile
+
     import torch
     from PIL import Image
     from transformers import AutoProcessor, CLIPModel
@@ -57,6 +59,7 @@ def initialize(param):
         """
         A class for video feature extraction.
         """
+
         def __init__(self, fname):
             """
             Constructor for the `VideoAnalyzer` class.
@@ -107,10 +110,12 @@ def initialize(param):
             """
             with tempfile.TemporaryDirectory() as temp_dir:
                 # Command to extract I-frames using ffmpeg's command line tool
-                cmd=f"""
+                cmd = f"""
                 ffmpeg -i "{fname}" -vf "select=eq(pict_type\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"
                 """
-                with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+                with subprocess.Popen(
+                    cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                ) as process:
                     process.wait()
                 frames = []
                 for filename in os.listdir(temp_dir):
@@ -130,11 +135,14 @@ def initialize(param):
             Returns:
                 torch.Tensor: Feature matrix of shape (batch, 512)
             """
-            inputs = processor(images=images, return_tensors="pt", padding=True, truncation=True)
+            inputs = processor(
+                images=images, return_tensors="pt", padding=True, truncation=True
+            )
             inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
             with torch.no_grad():
                 features = self.model.get_image_features(**inputs)
                 return features
+
 
 def run(file):
     """
@@ -153,8 +161,10 @@ def run(file):
     finally:
         os.remove(fname)
 
+
 def cleanup(param):
     pass
+
 
 def state():
     pass

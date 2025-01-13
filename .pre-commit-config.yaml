@@ -20,6 +20,13 @@ repos:
       # Run the linter.
       - id: ruff
         stages: [pre-commit]
-        # args: [--fix]
-      # Run the formatter.
-    #   - id: ruff-format
+        args: [--fix]
+      # run ruff specifically for sorting imports.
+      - id: ruff
+        name: ruff-import-sort
+        stages: [pre-commit]
+        args: ["--select", "I", "--fix"]
+      # format code using ruff
+      - id: ruff
+        name: ruff-format
+        stages: [pre-commit]

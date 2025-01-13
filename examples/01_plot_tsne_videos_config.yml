@@ -1,0 +1,9 @@
+operators:
+  label: "Operators"
+  parameters:
+    - name: "Dimension Reduction"
+      type: "dimension_reduction"
+      parameters: { index_name: "video" }
+    - name: "Video Vector Representation"
+      type: "vid_vec_rep_clip"
+      parameters: { index_name: "video" }
