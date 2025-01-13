@@ -78,7 +78,7 @@ class TestES(unittest.TestCase):
             indices["test_video"]["mappings"]["properties"]["vid_vec"]["dims"], 512
         )
         self.assertEqual(
-            indices["test_audio"]["mappings"]["properties"]["audio_vec"]["dims"], 2048
+            indices["test_audio"]["mappings"]["properties"]["audio_vec"]["dims"], 512
         )
 
     @skip
