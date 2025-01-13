@@ -26,7 +26,7 @@ repos:
         name: ruff-import-sort
         stages: [pre-commit]
         args: ["--select", "I", "--fix"]
-      # format code using rff
+      # format code using ruff
       - id: ruff
         name: ruff-format
         stages: [pre-commit]
