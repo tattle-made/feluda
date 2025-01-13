@@ -13,7 +13,7 @@ dependencies = [
     "wget>=3.2",
     "toml>=0.10.2",
     "pillow>=11.1.0",
-    "numpy>=2.2.1"
+    "numpy<=2.0.0"
 ]
 
 [project.optional-dependencies]
