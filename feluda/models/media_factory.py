@@ -1,16 +1,18 @@
-import requests
-from requests.exceptions import ConnectTimeout
-import PIL
-from io import BytesIO
-import numpy as np
-from werkzeug.datastructures import FileStorage
-import wget
-from feluda.models.media import MediaType
-from feluda.models.s3_utils import AWSS3Utils
 import logging
 import os
 import tempfile
+from io import BytesIO
+
+import numpy as np
+import PIL
+import requests
+import wget
 from pydub import AudioSegment
+from requests.exceptions import ConnectTimeout
+from werkzeug.datastructures import FileStorage
+
+from feluda.models.media import MediaType
+from feluda.models.s3_utils import AWSS3Utils
 
 log = logging.getLogger(__name__)
 
@@ -34,7 +36,6 @@ class ImageFactory:
 
     @staticmethod
     def make_from_url_to_path(image_url):
-
         temp_dir = tempfile.gettempdir()
         temp_url = image_url.split("?")[0]
         file_name = temp_url.split("/")[-1]
@@ -96,7 +97,6 @@ class TextFactory:
 
 
 class VideoFactory:
-
     @staticmethod
     def make_from_url(video_url):
         temp_dir = tempfile.gettempdir()

@@ -1,7 +1,9 @@
 import unittest
 from unittest.case import skip
-from operators.vid_vec_rep_clip import vid_vec_rep_clip
+
 from feluda.models.media_factory import VideoFactory
+from operators.vid_vec_rep_clip import vid_vec_rep_clip
+
 
 class Test(unittest.TestCase):
     @classmethod
