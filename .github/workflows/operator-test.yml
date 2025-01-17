@@ -1,0 +1,174 @@
+name: Run Modified Operator Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      - hotfix
+    paths:
+      - 'operators/**'
+      - '.github/workflows/operator-tests.yml'
+
+jobs:
+  test-operators:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Print uv version and cache dir
+        run: |
+          uv --version
+          uv cache dir
+          which python
+
+      - name: Detect changes in operators
+        id: check-changes
+        run: |
+          # Get the base branch (target branch of the PR)
+          BASE_BRANCH=${{ github.base_ref }}
+          echo "Base branch: $BASE_BRANCH"
+
+          # Find changed files in operators directory
+          CHANGED_FILES=$(git diff --name-only origin/$BASE_BRANCH...HEAD operators/)
+          echo "Changed files:"
+          echo "$CHANGED_FILES" | sed 's/^/  /'  # This indents each file for better readability
+
+          # If no files changed, set output to false, otherwise true
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No files were changed in the operators directory"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "changed_files=" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in operators directory"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+            echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and activate virtual environment and install Feluda
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install .
+          uv pip install ".[dev]"
+
+          echo "Installing Operator system level packages"
+          echo "Installing ffmpeg..."
+          sudo apt-get update > /dev/null
+          sudo apt-get install -y ffmpeg > /dev/null
+          echo "ffmpeg version:"
+          ffmpeg -version
+
+      - name: Run tests for changed operators
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          # Get the changed files from previous step
+          CHANGED_FILES="${{ steps.check-changes.outputs.changed_files }}"
+
+          # Print current working directory for context
+          echo "Current working directory: $(pwd)"
+
+          # Initialize a variable to track if we found any operators to test
+          FOUND_TESTS=false
+
+          # Loop through each operator directory and check if it contains changes
+          for OPERATOR_DIR in operators/*/; do
+            echo "Checking operator directory: $OPERATOR_DIR"
+            if echo "$CHANGED_FILES" | grep -q "$(basename $OPERATOR_DIR)"; then
+              echo "✓ Changes detected in operator: $(basename $OPERATOR_DIR)"
+
+              # Check if test.py exists in this operator directory
+              if [ -f "${OPERATOR_DIR}test.py" ]; then
+                echo "✓ Found test.py in: ${OPERATOR_DIR}"
+                echo "→ Running tests for: $(basename $OPERATOR_DIR)"
+                echo "→ Current directory before running tests: $(pwd)"
+                uv pip install "$OPERATOR_DIR"
+                uv run -m unittest "$OPERATOR_DIR/test.py"
+                TEST_EXIT_CODE=$?
+                echo "→ Test exit code: $TEST_EXIT_CODE"
+                FOUND_TESTS=true
+              else
+                echo "✗ No test.py found in: ${OPERATOR_DIR}"
+              fi
+            else
+              echo "✗ No changes detected in: $(basename $OPERATOR_DIR)"
+            fi
+          done
+
+          # Final status report
+          echo "----------------------------------------"
+          echo "Final Status Report:"
+          if [ "$FOUND_TESTS" = false ]; then
+            echo "✗ No test.py files were found in changed operator directories"
+          else
+            echo "✓ Tests were executed for changed operators"
+          fi
+          echo "----------------------------------------"
+
+      # This ensures cleanup runs even if previous steps fail
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "----------------------------------------"
+          echo "Starting cleanup process..."
+          echo "----------------------------------------"
+
+          # Check and print uv cache
+          echo "Cleaning UV cache..."
+          uv cache dir
+          uv cache prune
+          uv cache clean
+
+          # Check and remove virtual environment
+          echo "----------------------------------------"
+          echo "Virtual Environment:"
+          if [ -d ".venv" ]; then
+            echo "Virtual environment exists!"
+            echo "Removing virtual environment..."
+            rm -rf .venv/
+          else
+            echo "No virtual environment found at .venv/"
+          fi
+
+          # Check and remove PyTorch cache
+          echo "----------------------------------------"
+          echo "PyTorch Cache:"
+          if [ -d ~/.cache/torch/hub ]; then
+            echo "PyTorch cache exists, contents:"
+            ls -la ~/.cache/torch/hub
+            echo "Removing PyTorch cache..."
+            rm -rf ~/.cache/torch/hub
+          else
+            echo "No PyTorch cache found at ~/.cache/torch/hub"
+          fi
+
+          # Check and remove Hugging Face cache
+          echo "----------------------------------------"
+          echo "Hugging Face Cache:"
+          if [ -d ~/.cache/huggingface/hub ]; then
+            echo "Hugging Face cache exists, contents:"
+            ls -la ~/.cache/huggingface/hub
+            echo "Removing Hugging Face cache..."
+            rm -rf ~/.cache/huggingface/hub
+          else
+            echo "No Hugging Face cache found at ~/.cache/huggingface/hub"
+          fi
+
+          # Remove ffmpeg
+          echo "----------------------------------------"
+          echo "Removing ffmpeg..."
+          sudo apt-get remove -y ffmpeg > /dev/null
+          sudo apt-get autoremove -y > /dev/null
+          echo "FFmpeg removed"
+
+          echo "----------------------------------------"
+          echo "Cleanup completed"
+          echo "----------------------------------------"
