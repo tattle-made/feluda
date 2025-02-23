@@ -1,6 +1,6 @@
 # FROM jrottenberg/ffmpeg:4.0-scratch AS ffmpeg
 
-FROM --platform=$TARGETPLATFORM python:3.11-slim-bullseye@sha256:47863f26a5f2e0bfa903e7b658355940250979bd555b5e4f9f25da81647daff8 AS base
+FROM --platform=$TARGETPLATFORM python:3.13-slim-bullseye@sha256:edc28282d81252d643f654a299af2605949fde2ffe72c7e8d682956e930a43a4 AS base
 ARG UID
 ARG GID
 
