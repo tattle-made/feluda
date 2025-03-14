@@ -444,9 +444,9 @@ linkify-it-py==2.0.3 \
     --hash=sha256:68cda27e162e9215c17d786649d1da0021a451bdc436ef9e0fa0ba5234b9b048 \
     --hash=sha256:6bcbc417b0ac14323382aef5c5192c0075bf8a9d6b41820a2b66371eac6b6d79
     # via markdown-it-py
-locust==2.31.5 \
-    --hash=sha256:14b2fa6f95bf248668e6dc92d100a44f06c5dcb1c26f88a5442bcaaee18faceb \
-    --hash=sha256:2904ff6307d54d3202c9ebd776f9170214f6dfbe4059504dad9e3ffaca03f600
+locust==2.33.0 \
+    --hash=sha256:77fcc5cc35cceee5e12d99f5bb23bc441d145bdef6967c2e93d6e4d93451553e \
+    --hash=sha256:ba291b7ab2349cc2db540adb8888bc93feb89ea4e4e10d80b935e5065091e8e9
     # via -r requirements.in
 markdown-it-py[linkify,plugins]==3.0.0 \
     --hash=sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1 \
@@ -1211,9 +1211,10 @@ zope-interface==6.1 \
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
-setuptools==69.2.0 \
-    --hash=sha256:0ff4183f8f42cd8fa3acea16c45205521a4ef28f73c6391d8a25e92893134f2e \
-    --hash=sha256:c21c49fb1042386df081cb5d86759792ab89efca84cf114889191cd09aacc80c
+setuptools==76.0.0 \
+    --hash=sha256:199466a166ff664970d0ee145839f5582cb9bca7a0a3a2e795b6a9cb2308e9c6 \
+    --hash=sha256:43b4ee60e10b0d0ee98ad11918e114c70701bc6051662a9a675a0496c1a158f4
     # via
+    #   locust
     #   zope-event
     #   zope-interface
