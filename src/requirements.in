@@ -1,5 +1,5 @@
 flask==3.0.3
-Flask-Cors==5.0.0
+Flask-Cors==5.0.1
 Pillow==10.4.0
 elasticsearch==8.16.0
 wget==3.2

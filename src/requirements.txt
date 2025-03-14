@@ -237,9 +237,9 @@ flask==3.0.3 \
     #   flask-cors
     #   flask-login
     #   locust
-flask-cors==5.0.0 \
-    --hash=sha256:5aadb4b950c4e93745034594d9f3ea6591f734bb3662e16e255ffbf5e89c88ef \
-    --hash=sha256:b9e307d082a9261c100d8fb0ba909eec6a228ed1b60a8315fd85f783d61910bc
+flask-cors==5.0.1 \
+    --hash=sha256:6ccb38d16d6b72bbc156c1c3f192bc435bfcc3c2bc864b2df1eb9b2d97b2403c \
+    --hash=sha256:fa5cb364ead54bbf401a26dbf03030c6b18fb2fcaf70408096a572b409586b0c
     # via
     #   -r requirements.in
     #   locust
@@ -1162,6 +1162,7 @@ werkzeug==3.0.3 \
     --hash=sha256:fc9645dc43e03e4d630d23143a04a7f947a9a3b5727cd535fdfe155a17cc48c8
     # via
     #   flask
+    #   flask-cors
     #   flask-login
     #   locust
 wget==3.2 \
