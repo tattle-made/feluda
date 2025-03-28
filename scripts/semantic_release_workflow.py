@@ -70,12 +70,14 @@ class PackageVersionManager:
 
                 self._validate_pyproject(pyproject_data, pyproject_path)
 
-                packages[package_root] = {
+                # Normalize the key to use forward slashes
+                normalized_key = package_root.replace("\\", "/")
+                packages[normalized_key] = {
                     "package_path": full_path,
                     "pyproject_path": pyproject_path,
                     "pyproject_data": pyproject_data,
                     "current_version": pyproject_data["project"].get("version", "0.0.0"),
-                    "include_root_files": include_root_files,  # Add this flag
+                    "include_root_files": include_root_files,
                 }
 
             except (FileNotFoundError, tomlkit.exceptions.ParseError, ValueError):
