@@ -140,7 +140,6 @@ def run(input_data, n_clusters=None, modality="audio"):
     """
     import logging
 
-    import numpy as np
     logging.info(f"Running clustering with {modality} modality and {n_clusters} clusters")
 
     # Validate input data
@@ -152,7 +151,6 @@ def run(input_data, n_clusters=None, modality="audio"):
         matrix, payloads = zip(
             *[(data["embedding"], data["payload"]) for data in input_data]
         )
-        matrix = np.array(matrix)
     except KeyError as e:
         raise KeyError(f"Missing key: {e} in input data.")
 
