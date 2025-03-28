@@ -2,16 +2,6 @@
 Operator to cluster embeddings using KMeans, Affinity Propagation, and Agglomerative clustering algorithms
 """
 
-import logging
-
-# Constants
-RANDOM_STATE = 50
-BATCH_SIZE = 1000  # Batch size for large datasets
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-
-
 def initialize(param):
     """
     Initializes the operator.
@@ -19,19 +9,25 @@ def initialize(param):
     Args:
         param (dict): Parameters for initialization
     """
+    # Move logging configuration inside initialize()
+    import logging
+    logging.basicConfig(level=logging.INFO)
+
+    # Constants
+    global RANDOM_STATE, BATCH_SIZE
+    RANDOM_STATE = 50
+    BATCH_SIZE = 1000  # Batch size for large datasets
+
     logging.info("Initializing clustering operator with parameters: %s", param)
 
-    # Define global functions
-    global gen_data, batch_process
-    global KMeans_clustering, Agglomerative_clustering, AffinityPropagation_clustering
-
-
-    # Imports
+    # Import libraries inside initialize()
     import numpy as np
     from sklearn.cluster import AffinityPropagation, AgglomerativeClustering, KMeans
 
+    # Define functions inside initialize()
+    global gen_data, batch_process
+    global KMeans_clustering, Agglomerative_clustering, AffinityPropagation_clustering
 
-    # Helper function to format the output
     def gen_data(payloads, labels):
         """
         Generates formatted output data.
@@ -51,7 +47,6 @@ def initialize(param):
             out[key].append(payload)
         return out
 
-    # Batch processing for large datasets
     def batch_process(matrix, batch_size, cluster_func, **kwargs):
         """
         Batch processes the clustering algorithm to handle large datasets.
@@ -80,7 +75,6 @@ def initialize(param):
 
         return np.array(labels)
 
-    # KMeans clustering
     def KMeans_clustering(matrix, n_clusters):
         """
         Clusters given embeddings using KMeans clustering algorithm.
@@ -98,7 +92,6 @@ def initialize(param):
             logging.error(f"KMeans clustering failed: {e}")
             raise RuntimeError(f"KMeans clustering failed: {e}")
 
-    # Agglomerative clustering
     def Agglomerative_clustering(matrix, n_clusters):
         """
         Clusters given embeddings using Agglomerative clustering algorithm.
@@ -116,7 +109,6 @@ def initialize(param):
             logging.error(f"Agglomerative clustering failed: {e}")
             raise RuntimeError(f"Agglomerative clustering failed: {e}")
 
-    # Affinity Propagation clustering
     def AffinityPropagation_clustering(matrix):
         """
         Clusters given embeddings using Affinity Propagation algorithm.
@@ -139,18 +131,15 @@ def run(input_data, n_clusters=None, modality="audio"):
     Runs the clustering operator.
 
     Args:
-        input_data (list[dict]): List of data with each dictionary containing `embedding` and `payload` properties
+        input_data (list[dict]): List of data with `embedding` and `payload`
         n_clusters (int, optional): Number of clusters. Defaults to None
-        modality (str, optional): Source modality of embeddings. Defaults to 'audio'
+        modality (str, optional): Source modality. Defaults to 'audio'
 
     Returns:
-        dict: A dictionary mapping cluster labels to corresponding array of payloads
-
-    Raises:
-        ValueError: If modality is invalid
-        KeyError: If input data has missing keys
-        RuntimeError: If clustering fails
+        dict: Cluster labels mapped to payloads
     """
+    import logging
+
     import numpy as np
     logging.info(f"Running clustering with {modality} modality and {n_clusters} clusters")
 
@@ -164,51 +153,29 @@ def run(input_data, n_clusters=None, modality="audio"):
             *[(data["embedding"], data["payload"]) for data in input_data]
         )
         matrix = np.array(matrix)
-
     except KeyError as e:
-        raise KeyError(
-            f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}."
-        )
+        raise KeyError(f"Missing key: {e} in input data.")
 
     # Select clustering algorithm
     if n_clusters:
-        n_clusters = int(n_clusters)
-        if n_clusters <= 0:
-            raise ValueError("Number of clusters must be greater than zero.")
-
-        if modality == "audio":
-            logging.info("Using KMeans clustering...")
-            cluster_func = KMeans_clustering
-        elif modality == "video":
-            logging.info("Using Agglomerative clustering...")
-            cluster_func = Agglomerative_clustering
-        else:
-            raise ValueError("Invalid modality. Must be 'audio' or 'video'.")
-
-        # Batch processing for large datasets
+        cluster_func = KMeans_clustering if modality == "audio" else Agglomerative_clustering
         labels = batch_process(matrix, BATCH_SIZE, cluster_func, n_clusters=n_clusters)
-
     else:
-        logging.info("Using Affinity Propagation clustering...")
         labels = batch_process(matrix, BATCH_SIZE, AffinityPropagation_clustering)
 
     # Generate formatted output
     output = gen_data(payloads=payloads, labels=labels)
 
     logging.info("Clustering completed successfully.")
-
     return output
 
 
 def cleanup(param):
     """
     Cleans up resources after execution.
-
-    Args:
-        param (dict): Cleanup parameters
     """
+    import logging
     logging.info("Cleaning up resources...")
-    # Free up memory if using GPU
     import gc
     gc.collect()
 
@@ -220,5 +187,6 @@ def state():
     Returns:
         dict: Current state information
     """
+    import logging
     logging.info("Fetching operator state...")
     return {"status": "ready"}
