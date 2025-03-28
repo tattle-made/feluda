@@ -25,9 +25,9 @@ def initialize(param):
     global gen_data, batch_process
     global KMeans_clustering, Agglomerative_clustering, AffinityPropagation_clustering
 
-    import numpy as np
 
     # Imports
+    import numpy as np
     from sklearn.cluster import AffinityPropagation, AgglomerativeClustering, KMeans
 
 
