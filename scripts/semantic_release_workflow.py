@@ -3,8 +3,8 @@ import os
 import re
 import subprocess
 import sys
-import tomlkit
 
+import tomlkit
 
 
 class PackageVersionManager:
@@ -63,7 +63,9 @@ class PackageVersionManager:
                     include_root_files = False
 
                 if not os.path.exists(pyproject_path):
-                    raise FileNotFoundError(f"pyproject.toml not found in {package_root}")
+                    raise FileNotFoundError(
+                        f"pyproject.toml not found in {package_root}"
+                    )
 
                 with open(pyproject_path, "r", encoding="utf-8") as f:
                     pyproject_data = tomlkit.parse(f.read())
@@ -76,7 +78,9 @@ class PackageVersionManager:
                     "package_path": full_path,
                     "pyproject_path": pyproject_path,
                     "pyproject_data": pyproject_data,
-                    "current_version": pyproject_data["project"].get("version", "0.0.0"),
+                    "current_version": pyproject_data["project"].get(
+                        "version", "0.0.0"
+                    ),
                     "include_root_files": include_root_files,
                 }
 
@@ -151,10 +155,10 @@ class PackageVersionManager:
             pyproject_data.get("project", {}).get("name"),
             pyproject_data.get("project", {}).get("version"),
             pyproject_data.get("tool", {})
-                .get("semantic_release", {})
-                .get("branches", {})
-                .get("main", {})
-                .get("tag_format"),
+            .get("semantic_release", {})
+            .get("branches", {})
+            .get("main", {})
+            .get("tag_format"),
         ]
         if not all(required_fields):
             raise ValueError(f"Missing required fields in {pyproject_path}")
@@ -214,7 +218,7 @@ class PackageVersionManager:
                     "--",
                     "feluda/",
                     "pyproject.toml",
-                    ":!operators/*"
+                    ":!operators/*",
                 ]
             else:
                 relative_path = os.path.relpath(package_path, self.repo_root)
@@ -225,7 +229,7 @@ class PackageVersionManager:
                     "--pretty=format:%s",
                     "--full-history",
                     "--",
-                    f"{relative_path}/"
+                    f"{relative_path}/",
                 ]
 
             result = subprocess.run(
@@ -312,7 +316,9 @@ class PackageVersionManager:
         tag_name = tag_format.format(name=project_name, version=new_version)
 
         cmd = ["git", "tag", "--list"]
-        result = subprocess.run(cmd, cwd=self.repo_root, capture_output=True, text=True, check=True)
+        result = subprocess.run(
+            cmd, cwd=self.repo_root, capture_output=True, text=True, check=True
+        )
 
         existing_tags = result.stdout.splitlines()
         return tag_name in existing_tags
@@ -331,7 +337,11 @@ class PackageVersionManager:
         tag_name = tag_format.format(name=project_name, version=new_version)
 
         existing_tags = subprocess.run(
-            ["git", "tag", "--list"], cwd=self.repo_root, capture_output=True, text=True, check=True
+            ["git", "tag", "--list"],
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout.splitlines()
 
         if tag_name in existing_tags:
@@ -377,7 +387,7 @@ class PackageVersionManager:
                 updated_versions[package_name] = {
                     "old_version": current_version,
                     "new_version": new_version,
-                    "bump_type": bump_type
+                    "bump_type": bump_type,
                 }
 
             except Exception:
