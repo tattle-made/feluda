@@ -4,8 +4,7 @@ import re
 import subprocess
 import sys
 
-import tomli
-import tomli_w
+import tomlkit
 
 
 class PackageVersionManager:
@@ -28,6 +27,30 @@ class PackageVersionManager:
         self.prev_commit = prev_commit
         self.current_commit = current_commit
         self.packages = self._discover_packages()
+
+    def _validate_pyproject(self, pyproject_data, pyproject_path):
+        """
+        Validate the pyproject.toml file for required fields.
+
+        Args:
+            pyproject_data (dict): Parsed pyproject.toml data.
+            pyproject_path (str): Path to the pyproject.toml file.
+
+        Raises:
+            ValueError: If required fields are missing.
+        """
+        required_fields = [
+            pyproject_data.get("project", {}).get("name"),
+            pyproject_data.get("project", {}).get("version"),
+            pyproject_data.get("tool", {})
+            .get("semantic_release", {})
+            .get("branches", {})
+            .get("main", {})
+            .get("tag_format"),
+        ]
+        if not all(required_fields):
+            raise ValueError(f"Missing required fields in {pyproject_path}")
+        return True
 
     def _discover_packages(self):
         """
@@ -60,8 +83,10 @@ class PackageVersionManager:
                     pyproject_path = os.path.join(full_path, "pyproject.toml")
 
                 if os.path.exists(pyproject_path):
-                    with open(pyproject_path, "rb") as f:
-                        pyproject_data = tomli.load(f)
+                    with open(pyproject_path, "r") as f:
+                        pyproject_data = tomlkit.parse(f.read())
+
+                    self._validate_pyproject(pyproject_data, pyproject_path)
 
                     packages[package_root] = {
                         "package_path": full_path,
@@ -69,12 +94,15 @@ class PackageVersionManager:
                         "current_version": pyproject_data["project"].get(
                             "version", "0.0.0"
                         ),
+                        "pyproject_data": pyproject_data,
                     }
                 else:
                     raise FileNotFoundError(
                         f"pyproject.toml not found in {package_root}"
                     )
-            except (FileNotFoundError, tomli.TOMLDecodeError) as e:
+            except (FileNotFoundError, ValueError) as e:
+                print(f"Error discovering package at {package_root}: {e}")
+            except Exception as e:
                 print(f"Error discovering package at {package_root}: {e}")
 
         return packages
@@ -278,29 +306,16 @@ class PackageVersionManager:
         Get the tag format for a package from its pyproject.toml.
 
         Args:
-            package_info (dict): A dictionary containing the package's pyproject path.
-                                Expected format: {"pyproject_path": "<path_to_pyproject>"}
+            package_info (dict): A dictionary containing the package's pyproject info.
 
         Returns:
             str: The tag format string, e.g., "{version}".
 
         Raises:
             ValueError: If the tag format or project name is not found in pyproject.toml.
-            FileNotFoundError: If the pyproject.toml file is not found at the specified path.
-            tomli.TOMLDecodeError: If the pyproject.toml file is not properly formatted.
-
-        Happy Path:
-            - If the `pyproject.toml` file exists and is properly formatted,
-            the function retrieves the `tag_format` specified under `tool.semantic_release.branches.main.tag_format`.
-
-        Failure Path:
-            - If the `pyproject.toml` file is missing or malformed.
-            - If the `tag_format` is not found in the `pyproject.toml`.
-            - If the `name` or `version` fields are missing in the `pyproject.toml`.
         """
         try:
-            with open(package_info["pyproject_path"], "rb") as f:
-                pyproject_data = tomli.load(f)
+            pyproject_data = package_info["pyproject_data"]
 
             # Retrieve project name and version
             project_name = pyproject_data.get("project", {}).get("name")
@@ -331,16 +346,6 @@ class PackageVersionManager:
             # Return the raw tag format
             return tag_format
 
-        except FileNotFoundError:
-            print(
-                f"Error: pyproject.toml not found at {package_info['pyproject_path']}"
-            )
-            raise
-        except tomli.TOMLDecodeError:
-            print(
-                f"Error: Failed to parse {package_info['pyproject_path']} due to a TOML format error."
-            )
-            raise
         except ValueError as e:
             print(f"Error: {e}")
             raise
@@ -353,8 +358,7 @@ class PackageVersionManager:
         Check if a Git tag exists for the package version based on tag format.
 
         Args:
-            package_info (dict): A dictionary containing tag format details from pyproject.toml.
-                                Expected format: {"package_path": "<path>", "pyproject_path": "<path_to_pyproject>"}
+            package_info (dict): A dictionary containing package info.
             new_version (str): The new version to check for in Git tags.
 
         Returns:
@@ -363,20 +367,11 @@ class PackageVersionManager:
         Raises:
             subprocess.CalledProcessError: If the git command fails.
             ValueError: If tag format cannot be generated from pyproject.toml.
-
-        Happy Path:
-            - If the `tag_format` is found in `pyproject.toml` and the tag already exists for the new version,
-            the function returns `True`.
-
-        Failure Path:
-            - If the `tag_format` is not found in `pyproject.toml`.
-            - If the git command fails due to issues with fetching tags or accessing the repository.
         """
         try:
-            with open(package_info["pyproject_path"], "rb") as f:
-                pyproject_data = tomli.load(f)
+            pyproject_data = package_info["pyproject_data"]
 
-            # Retrieve project name and version
+            # Retrieve project name
             project_name = pyproject_data.get("project", {}).get("name")
             if not project_name:
                 raise ValueError(
@@ -410,8 +405,7 @@ class PackageVersionManager:
         Create a Git tag for the updated package version using the tag format from pyproject.toml.
 
         Args:
-            package_info (dict): A dictionary containing tag format details from pyproject.toml.
-                                Expected format: {"package_path": "<path>", "pyproject_path": "<path_to_pyproject>"}
+            package_info (dict): A dictionary containing package info.
             new_version (str): The new version to tag.
 
         Returns:
@@ -420,18 +414,9 @@ class PackageVersionManager:
         Raises:
             subprocess.CalledProcessError: If the git command fails to create the tag.
             ValueError: If the tag format cannot be generated from pyproject.toml.
-
-        Happy Path:
-            - If the tag format is found in `pyproject.toml` and the git tag command succeeds,
-            a new tag is created in the repository.
-
-        Failure Path:
-            - If the `tag_format` is not found in `pyproject.toml`.
-            - If the git command to create the tag fails.
         """
         try:
-            with open(package_info["pyproject_path"], "rb") as f:
-                pyproject_data = tomli.load(f)
+            pyproject_data = package_info["pyproject_data"]
 
             # Retrieve project name
             project_name = pyproject_data.get("project", {}).get("name")
@@ -471,15 +456,6 @@ class PackageVersionManager:
             subprocess.CalledProcessError: If the git command fails to fetch commits or create tags.
             ValueError: If version bump cannot be determined or applied.
             FileNotFoundError: If pyproject.toml is missing or inaccessible.
-
-        Happy Path:
-            - If version bumps are detected for any package, the function updates the versions in `pyproject.toml`,
-            creates Git tags, and returns a dictionary of updated packages with their old and new versions.
-            - If a package does not have any changes, the version is not bumped.
-            - If the tag already exists for the new version, version bumping is skipped
-
-        Failure Path:
-            - If any error occurs during version bump, tag creation, or updating pyproject.toml.
         """
         updated_versions = {}
 
@@ -499,13 +475,15 @@ class PackageVersionManager:
                     )
                     continue
 
-                with open(package_info["pyproject_path"], "rb") as f:
-                    pyproject_data = tomli.load(f)
+                # Use cached pyproject data
+                pyproject_data = package_info["pyproject_data"]
 
+                # Update the version
                 pyproject_data["project"]["version"] = new_version
 
-                with open(package_info["pyproject_path"], "wb") as f:
-                    tomli_w.dump(pyproject_data, f)
+                # Write the updated data back to the file
+                with open(package_info["pyproject_path"], "w") as f:
+                    f.write(tomlkit.dumps(pyproject_data))
 
                 self.create_tag(package_info, new_version)
 
