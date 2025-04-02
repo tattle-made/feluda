@@ -1,5 +1,6 @@
 import os
 import re
+
 import tomlkit
 
 
@@ -9,8 +10,10 @@ def find_pyproject_files():
     pyproject_files = []
 
     for root, dirs, files in os.walk(current_dir):
-        # Ignore "dist" and ".venv" folders
-        dirs[:] = [d for d in dirs if d not in {"dist", ".venv"}]
+        # Ignore a set of folders
+        dirs[:] = [
+            d for d in dirs if d not in {"dist", ".venv", ".ruff_cache", ".docker"}
+        ]
 
         if "pyproject.toml" in files:
             pyproject_files.append(os.path.join(root, "pyproject.toml"))
@@ -28,7 +31,9 @@ def load_lock_file(lock_file_path):
             if match:
                 package_name = match.group(1)
                 package_version = match.group(2)
-                lock_data["package"].append({"name": package_name, "version": package_version})
+                lock_data["package"].append(
+                    {"name": package_name, "version": package_version}
+                )
 
     return lock_data
 
@@ -39,8 +44,8 @@ def update_dependencies(dependencies, lock_data):
         dep_match = re.match(r"([a-zA-Z0-9\-_]+)([><=~!]*[\d\.]+)?", dependency)
 
         if dep_match:
-            dep_name = dep_match.group(1)  
-            dep_version_spec = dep_match.group(2)  
+            dep_name = dep_match.group(1)
+            dep_version_spec = dep_match.group(2)
 
             for pkg in lock_data["package"]:
                 if pkg["name"] == dep_name:
@@ -64,7 +69,9 @@ def update_pyproject_versions(toml_file_path, lock_data):
 
     # Update [project.optional-dependencies]
     if "optional-dependencies" in toml_data["project"]:
-        for group, dependencies in toml_data["project"]["optional-dependencies"].items():
+        for group, dependencies in toml_data["project"][
+            "optional-dependencies"
+        ].items():
             update_dependencies(dependencies, lock_data)
 
     with open(toml_file_path, "w", encoding="utf-8") as file:
