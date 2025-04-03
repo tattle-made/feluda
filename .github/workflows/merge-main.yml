@@ -111,65 +111,69 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # rough logic for generating custom changelog's
-      # - name: Generate Release Notes and Update Changelog
-      #   if: steps.push-changes.outputs.tag_created == 'true'
-      #   id: release-notes
-      #   run: |
-      #     # Get the previous feluda tag
-      #     PREV_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | grep -B1 "${{ steps.push-changes.outputs.new_tag }}" | head -n1)
-      #     echo "Prev feluda tag: $PREV_TAG"
-      #     echo "New feluda tag: ${{ steps.push-changes.outputs.new_tag }}"
+      - name: Generate Release Notes and Update Changelog
+        if: steps.push-changes.outputs.tag_created == 'true'
+        id: release-notes
+        run: |
+          # Get the previous feluda tag
+          PREV_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | grep -B1 "${{ steps.push-changes.outputs.new_tag }}" | head -n1)
+          echo "Prev feluda tag: $PREV_TAG"
+          echo "New feluda tag: ${{ steps.push-changes.outputs.new_tag }}"
 
-      #     # Create release notes file with header
-      #     echo "# Release ${{ steps.push-changes.outputs.new_tag }}" > release_notes.md
-      #     echo "" >> release_notes.md
+          # Create release notes file with header
+          echo "# Release ${{ steps.push-changes.outputs.new_tag }}" > release_notes.md
+          echo "" >> release_notes.md
 
-      #     # Function to add section if commits exist
-      #     add_section() {
-      #       local title="$1"
-      #       local pattern="$2"
-      #       local commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" | grep "^* $pattern" || true)
-      #       if [ ! -z "$commits" ]; then
-      #         echo "## $title" >> release_notes.md
-      #         echo "$commits" >> release_notes.md
-      #         echo "" >> release_notes.md
-      #       fi
-      #     }
+          # Function to add section if commits exist
+          add_section() {
+            local title="$1"
+            local pattern="$2"
+            local commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" -- feluda/ | grep "^* $pattern" || true)
+            if [ ! -z "$commits" ]; then
+              echo "## $title" >> release_notes.md
+              echo "$commits" >> release_notes.md
+              echo "" >> release_notes.md
+            fi
+          }
 
-      #     # Add sections only if they have commits
-      #     add_section "Features" "feat"
-      #     add_section "Bug Fixes" "fix"
-      #     add_section "Chores" "chore"
-      #     add_section "Documentation" "docs"
+          # Add sections only if they have commits
+          add_section "Features" "feat"
+          add_section "Bug Fixes" "fix"
+          add_section "Chores" "chore"
+          add_section "Documentation" "docs"
 
-      #     # Add miscellaneous section for other commits
-      #     misc_commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" |
-      #       grep -v "^* feat" |
-      #       grep -v "^* fix" |
-      #       grep -v "^* chore" |
-      #       grep -v "^* docs" || true)
+          # Add miscellaneous section for other commits
+          misc_commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" -- feluda/ |
+            grep -v "^* feat" |
+            grep -v "^* fix" |
+            grep -v "^* chore" |
+            grep -v "^* docs" || true)
 
-      #     if [ ! -z "$misc_commits" ]; then
-      #       echo "## Miscellaneous" >> release_notes.md
-      #       echo "$misc_commits" >> release_notes.md
-      #       echo "" >> release_notes.md
-      #     fi
+          if [ ! -z "$misc_commits" ]; then
+            echo "## Miscellaneous" >> release_notes.md
+            echo "$misc_commits" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
 
-      #     # Update CHANGELOG.md
-      #     if [ -f CHANGELOG.md ]; then
-      #       cat release_notes.md > temp_changelog
-      #       echo "" >> temp_changelog
-      #       cat CHANGELOG.md >> temp_changelog
-      #       mv temp_changelog CHANGELOG.md
-      #     else
-      #       cat release_notes.md > CHANGELOG.md
-      #     fi
+          # Append contributors to release notes
+          contributors=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"%an" -- feluda/ | sort | uniq)
+          if [ ! -z "$contributors" ]; then
+            echo "## Contributors" >> release_notes.md
+            echo "$contributors" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
 
-      #     # Commit the updated CHANGELOG
-      #     git add CHANGELOG.md
-      #     git commit -m "docs: update CHANGELOG.md for ${{ steps.push-changes.outputs.new_tag }}"
-      #     git push
+          # Update CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            cat release_notes.md > temp_changelog
+            echo "" >> temp_changelog
+            cat CHANGELOG.md >> temp_changelog
+            mv temp_changelog CHANGELOG.md
+          else
+            cat release_notes.md > CHANGELOG.md
+          fi
 
-     
-
+          # Commit the updated CHANGELOG
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md for ${{ steps.push-changes.outputs.new_tag }}"
+          git push
