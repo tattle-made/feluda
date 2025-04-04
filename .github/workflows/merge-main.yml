@@ -116,7 +116,7 @@ jobs:
         id: release-notes
         run: |
           # Get the previous feluda tag
-          PREV_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | grep -B1 "${{ steps.push-changes.outputs.new_tag }}" | head -n1)
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^)
           echo "Prev feluda tag: $PREV_TAG"
           echo "New feluda tag: ${{ steps.push-changes.outputs.new_tag }}"
 
@@ -128,7 +128,7 @@ jobs:
           add_section() {
             local title="$1"
             local pattern="$2"
-            local commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" -- feluda/ | grep "^* $pattern" || true)
+            local commits=$(git log "${PREV_TAG}..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" -- feluda/ | grep "^* $pattern" || true)
             if [ ! -z "$commits" ]; then
               echo "## $title" >> release_notes.md
               echo "$commits" >> release_notes.md
@@ -143,7 +143,7 @@ jobs:
           add_section "Documentation" "docs"
 
           # Add miscellaneous section for other commits
-          misc_commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" -- feluda/ |
+          misc_commits=$(git log "${PREV_TAG}..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" -- feluda/ |
             grep -v "^* feat" |
             grep -v "^* fix" |
             grep -v "^* chore" |
