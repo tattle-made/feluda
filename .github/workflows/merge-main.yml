@@ -111,65 +111,86 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # rough logic for generating custom changelog's
-      # - name: Generate Release Notes and Update Changelog
-      #   if: steps.push-changes.outputs.tag_created == 'true'
-      #   id: release-notes
-      #   run: |
-      #     # Get the previous feluda tag
-      #     PREV_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | grep -B1 "${{ steps.push-changes.outputs.new_tag }}" | head -n1)
-      #     echo "Prev feluda tag: $PREV_TAG"
-      #     echo "New feluda tag: ${{ steps.push-changes.outputs.new_tag }}"
+      - name: Generate Release Notes and Update Changelog
+        id: release-notes
+        run: |
+          # Configure Git
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions [Bot]"
 
-      #     # Create release notes file with header
-      #     echo "# Release ${{ steps.push-changes.outputs.new_tag }}" > release_notes.md
-      #     echo "" >> release_notes.md
+          # Get all commits from the PR
+          echo "Fetching all PR commits..."
+          PR_COMMITS=$(git rev-list --reverse "${BASE_COMMIT}..${LATEST_COMMIT}")
+          echo "Found $(echo "$PR_COMMITS" | wc -l) commits in PR"
 
-      #     # Function to add section if commits exist
-      #     add_section() {
-      #       local title="$1"
-      #       local pattern="$2"
-      #       local commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" | grep "^* $pattern" || true)
-      #       if [ ! -z "$commits" ]; then
-      #         echo "## $title" >> release_notes.md
-      #         echo "$commits" >> release_notes.md
-      #         echo "" >> release_notes.md
-      #       fi
-      #     }
+          # Get all commits affecting feluda/ directory
+          FELUDA_COMMITS=$(git log "${BASE_COMMIT}..${LATEST_COMMIT}" --pretty=format:"* %s (%h)" --no-merges -- feluda/)
+          echo "Feluda commits:"
+          echo "$FELUDA_COMMITS"
 
-      #     # Add sections only if they have commits
-      #     add_section "Features" "feat"
-      #     add_section "Bug Fixes" "fix"
-      #     add_section "Chores" "chore"
-      #     add_section "Documentation" "docs"
+          # Skip if no commits affecting feluda/
+          if [ -z "$FELUDA_COMMITS" ]; then
+            echo "No changes detected for feluda/. Skipping changelog update."
+            exit 0
+          fi
 
-      #     # Add miscellaneous section for other commits
-      #     misc_commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" |
-      #       grep -v "^* feat" |
-      #       grep -v "^* fix" |
-      #       grep -v "^* chore" |
-      #       grep -v "^* docs" || true)
+          # Create release notes file with header
+          echo "# Release Notes for PR" > release_notes.md
+          echo "" >> release_notes.md
+          echo "Total commits in PR: $(echo "$PR_COMMITS" | wc -l)" >> release_notes.md
+          echo "Commits affecting feluda/:" >> release_notes.md
+          echo "" >> release_notes.md
 
-      #     if [ ! -z "$misc_commits" ]; then
-      #       echo "## Miscellaneous" >> release_notes.md
-      #       echo "$misc_commits" >> release_notes.md
-      #       echo "" >> release_notes.md
-      #     fi
+          # Function to add section if commits exist
+          add_section() {
+            local title="$1"
+            local pattern="$2"
+            local commits=$(echo "$FELUDA_COMMITS" | grep "^* $pattern" || true)
+            if [ ! -z "$commits" ]; then
+              echo "## $title" >> release_notes.md
+              echo "$commits" >> release_notes.md
+              echo "" >> release_notes.md
+            fi
+          }
 
-      #     # Update CHANGELOG.md
-      #     if [ -f CHANGELOG.md ]; then
-      #       cat release_notes.md > temp_changelog
-      #       echo "" >> temp_changelog
-      #       cat CHANGELOG.md >> temp_changelog
-      #       mv temp_changelog CHANGELOG.md
-      #     else
-      #       cat release_notes.md > CHANGELOG.md
-      #     fi
+          # Add sections only if they have commits
+          add_section "Features" "feat"
+          add_section "Bug Fixes" "fix"
+          add_section "Chores" "chore"
+          add_section "Documentation" "docs"
 
-      #     # Commit the updated CHANGELOG
-      #     git add CHANGELOG.md
-      #     git commit -m "docs: update CHANGELOG.md for ${{ steps.push-changes.outputs.new_tag }}"
-      #     git push
+          # Add miscellaneous section for other commits
+          misc_commits=$(echo "$FELUDA_COMMITS" |
+            grep -v "^* feat" |
+            grep -v "^* fix" |
+            grep -v "^* chore" |
+            grep -v "^* docs" || true)
 
-     
+          if [ ! -z "$misc_commits" ]; then
+            echo "## Miscellaneous" >> release_notes.md
+            echo "$misc_commits" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
 
+          # Add contributors section
+          contributors=$(git log "${BASE_COMMIT}..${LATEST_COMMIT}" --pretty=format:"%an" --no-merges -- feluda/ | sort -u)
+          if [ ! -z "$contributors" ]; then
+            echo "## Contributors" >> release_notes.md
+            echo "$contributors" | sed 's/^/* /' >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+
+          # Update CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            cat release_notes.md > temp_changelog
+            echo "" >> temp_changelog
+            cat CHANGELOG.md >> temp_changelog
+            mv temp_changelog CHANGELOG.md
+          else
+            cat release_notes.md > CHANGELOG.md
+          fi
+
+          # Commit and push the updated CHANGELOG
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md for changes in feluda" || true
+          git push || true
