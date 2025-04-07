@@ -68,10 +68,11 @@ class PackageVersionManager:
         package_roots = ["feluda"]
 
         # Discover packages inside 'operators' directory using glob
-        operators_path = "operators"
+        operators_path = f"{self.repo_root}/operators"
         if os.path.isdir(operators_path):
             for folder in glob.glob(f"{operators_path}/*/pyproject.toml"):
                 package_roots.append(os.path.dirname(folder))
+                print(os.path.dirname(folder))
 
         for package_root in package_roots:
             try:
@@ -232,23 +233,33 @@ class PackageVersionManager:
         """
         try:
             paths_to_check = [package_path]
-
             # Special handling for feluda package to include root pyproject.toml
-            if package_path == "feluda":
+            if os.path.basename(package_path) == "feluda":
                 paths_to_check.append("pyproject.toml")
 
             all_commits = []
             for path in paths_to_check:
-                # Get commits that modified files in this path between two commits
+                # Check if prev_commit is the initial commit
+                is_initial_commit = subprocess.run(
+                    ["git", "rev-list", "--max-parents=0", "HEAD"],
+                    cwd=self.repo_root, capture_output=True, text=True, check=True
+                ).stdout.strip() == self.prev_commit
+                
+                # Use different commit range syntax based on whether prev_commit is initial
+                if is_initial_commit:
+                    commit_range = f"{self.prev_commit}..{self.current_commit}"
+                else:
+                    commit_range = f"{self.prev_commit}^..{self.current_commit}"
+                    
                 cmd = [
                     "git",
                     "log",
-                    f"{self.prev_commit}^..{self.current_commit}",
+                    commit_range,
                     "--pretty=format:%s",
                     "--",
                     path,
                 ]
-
+                
                 result = subprocess.run(
                     cmd, cwd=self.repo_root, capture_output=True, text=True, check=True
                 )
@@ -288,7 +299,8 @@ class PackageVersionManager:
 
             bump_priority = {"major": 3, "minor": 2, "patch": 1, None: 0}
             highest_bump = None
-
+            print(f"Processing commits for {package_path}:")
+            print(package_commits)
             for commit in package_commits:
                 commit_bump = self._parse_conventional_commit(commit)
                 if commit_bump and bump_priority.get(
@@ -458,7 +470,6 @@ class PackageVersionManager:
             FileNotFoundError: If pyproject.toml is missing or inaccessible.
         """
         updated_versions = {}
-
         for package_path, package_info in self.packages.items():
             try:
                 bump_type = self.determine_package_bump(package_path)
@@ -470,10 +481,10 @@ class PackageVersionManager:
                 new_version = self._bump_version(current_version, bump_type)
 
                 if self.tag_exists(package_info, new_version):
-                    print(
-                        f"Tag already exists for {package_path}. Skipping version bump."
-                    )
-                    continue
+                    # update to later version
+                    updated_version = new_version.split(".")
+                    updated_version[-1] = str(int(updated_version[-1]) + 1)
+                    new_version = ".".join(updated_version)
 
                 # Use cached pyproject data
                 pyproject_data = package_info["pyproject_data"]
