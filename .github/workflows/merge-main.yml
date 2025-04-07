@@ -44,23 +44,23 @@ jobs:
           # Get the base commit of the PR (the commit where it diverged from the main branch)
           BASE_COMMIT=$(git merge-base HEAD^ origin/main)
 
-          # Get all commits from this PR in reverse order
+          # Get the commits introduced by this PR
           COMMITS=$(git rev-list --reverse $BASE_COMMIT..HEAD)
 
-          # Get first and last commits to ensure we capture the full range
+          # Extract the first and last commits
           FIRST_COMMIT=$(echo "$COMMITS" | head -n 1)
           LATEST_COMMIT=$(echo "$COMMITS" | tail -n 1)
 
-          # Set outputs and log for verification
+          # Set outputs for later steps
           echo "base_commit=$BASE_COMMIT" >> $GITHUB_OUTPUT
           echo "first_commit=$FIRST_COMMIT" >> $GITHUB_OUTPUT
           echo "latest_commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
-        
-          # Debug output
+
+          # Log for debugging
           echo "Number of commits in PR: $(echo "$COMMITS" | wc -l)"
           echo "Base Commit: $BASE_COMMIT"
-          echo "First Commit: $FIRST_COMMIT"
-          echo "Latest Commit: $LATEST_COMMIT"
+          echo "First Commit in PR: $FIRST_COMMIT"
+          echo "Latest Commit in PR: $LATEST_COMMIT"
 
       - name: Get Latest Feluda Tag
         id: latest-tag
@@ -113,41 +113,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Release Notes and Update Changelog
-        id: release-notes
+        if: steps.push-changes.outputs.tag_created == 'true'
         run: |
-          # Configure Git
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "GitHub Actions [Bot]"
 
-          # Get commit range using environment variables
-          BASE_COMMIT="${{ steps.commit-range.outputs.base_commit }}"
-          LATEST_COMMIT="${{ steps.commit-range.outputs.latest_commit }}"
-        
-          echo "Base commit: $BASE_COMMIT"
-          echo "Latest commit: $LATEST_COMMIT"
+          NEW_TAG="${{ steps.push-changes.outputs.new_tag }}"
+          NEW_VERSION=$(echo $NEW_TAG | sed 's/feluda-/v/')
+          PREVIOUS_TAG="${{ steps.latest-tag.outputs.current_tag }}"
 
-          # Get all commits from the PR affecting feluda/
-          FELUDA_COMMITS=$(git log "${BASE_COMMIT}..${LATEST_COMMIT}" --pretty=format:"* %s (%h)" --no-merges -- feluda/)
-          echo "Feluda commits:"
+          # Get only commits that touch files in feluda/ or the exact pyproject.toml file
+          FELUDA_COMMITS=$(git log "${PREVIOUS_TAG}..${NEW_TAG}" --pretty=format:"* %s (%h)" --no-merges -- "feluda/" "pyproject.toml")
+
+          echo "Commits between ${PREVIOUS_TAG} and ${NEW_TAG} affecting feluda/ or pyproject.toml:"
           echo "$FELUDA_COMMITS"
 
-          # Skip if no commits affecting feluda/
-          if [ -z "$FELUDA_COMMITS" ]; then
-            echo "No changes detected for feluda/. Skipping changelog update."
-            exit 0
-          fi
+          # Get current date in YYYY-MM-DD format
+          CURRENT_DATE=$(date +"%Y-%m-%d")
 
-          # Create release notes file with header
-          echo "# Release Notes" > release_notes.md
+          # Create release notes file with proper format
+          echo "## ${NEW_VERSION} (${CURRENT_DATE})" > release_notes.md
           echo "" >> release_notes.md
 
-          # Function to add section if commits exist
           add_section() {
             local title="$1"
             local pattern="$2"
             local commits=$(echo "$FELUDA_COMMITS" | grep "^* $pattern" || true)
-            if [ ! -z "$commits" ]; then
-              echo "## $title" >> release_notes.md
+            if [ -n "$commits" ]; then
+              echo "### ${title}" >> release_notes.md
               echo "$commits" >> release_notes.md
               echo "" >> release_notes.md
             fi
@@ -166,37 +159,45 @@ jobs:
             grep -v "^* chore" |
             grep -v "^* docs" || true)
 
-          if [ ! -z "$misc_commits" ]; then
-            echo "## Miscellaneous" >> release_notes.md
+          if [ -n "$misc_commits" ]; then
+            echo "### Miscellaneous" >> release_notes.md
             echo "$misc_commits" >> release_notes.md
             echo "" >> release_notes.md
           fi
 
           # Add contributors section
-          contributors=$(git log "${BASE_COMMIT}..${LATEST_COMMIT}" --pretty=format:"%an" --no-merges -- feluda/ | sort -u)
-          if [ ! -z "$contributors" ]; then
-            echo "## Contributors" >> release_notes.md
+          contributors=$(git log "${PREVIOUS_TAG}..${NEW_TAG}" --pretty=format:"%an" --no-merges -- "feluda/" "pyproject.toml" | sort -u)
+          if [ -n "$contributors" ]; then
+            echo "### Contributors" >> release_notes.md
             echo "$contributors" | sed 's/^/* /' >> release_notes.md
             echo "" >> release_notes.md
           fi
 
-          # Ensure CHANGELOG.md exists
-          touch CHANGELOG.md
+          # Update CHANGELOG.md (keep existing header and append new release notes after it)
+          if [ -f CHANGELOG.md ]; then
+            # Extract the first line (# CHANGELOG) from the existing file
+            header=$(head -n 1 CHANGELOG.md)
 
-          # Update CHANGELOG.md
-          cat release_notes.md > temp_changelog
-          echo "" >> temp_changelog
-          cat CHANGELOG.md >> temp_changelog
-          mv temp_changelog CHANGELOG.md
+            # Create new changelog with header, new release notes, then rest of previous content
+            echo "$header" > temp_changelog
+            echo "" >> temp_changelog
+            cat release_notes.md >> temp_changelog
+
+            # Add the rest of the existing changelog (skip the first line)
+            tail -n +2 CHANGELOG.md >> temp_changelog
+            mv temp_changelog CHANGELOG.md
+          else
+            # If no CHANGELOG.md exists, create it with proper header
+            echo "# CHANGELOG" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            cat release_notes.md >> CHANGELOG.md
+          fi
 
           # Show content for debugging
-          echo "Generated release notes:"
-          cat release_notes.md
-        
           echo "Updated CHANGELOG.md:"
-          cat CHANGELOG.md
+          head -n 10 CHANGELOG.md
 
           # Commit and push the updated CHANGELOG
           git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG.md [skip ci]" || true
+          git commit -m "docs: update CHANGELOG.md for ${NEW_VERSION}" || true
           git push || true
