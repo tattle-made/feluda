@@ -125,7 +125,7 @@ jobs:
           echo "Cleaning UV cache..."
           uv cache dir
           uv cache prune
-          uv cache clean
+          # uv cache clean
 
           # Check and remove virtual environment
           echo "----------------------------------------"
