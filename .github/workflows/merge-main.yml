@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies for Semantic Versioning
         run: |
           python -m pip install --upgrade pip
-          pip install tomli tomli-w
+          pip install tomlkit
 
       - name: Get Base and Latest Commits of the Merged PR
         id: commit-range
@@ -57,6 +57,7 @@ jobs:
           echo "latest_commit=$LATEST_COMMIT" >> $GITHUB_OUTPUT
 
           # Log for debugging
+          echo "Number of commits in PR: $(echo "$COMMITS" | wc -l)"
           echo "Base Commit: $BASE_COMMIT"
           echo "First Commit in PR: $FIRST_COMMIT"
           echo "Latest Commit in PR: $LATEST_COMMIT"
@@ -111,65 +112,92 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # rough logic for generating custom changelog's
-      # - name: Generate Release Notes and Update Changelog
-      #   if: steps.push-changes.outputs.tag_created == 'true'
-      #   id: release-notes
-      #   run: |
-      #     # Get the previous feluda tag
-      #     PREV_TAG=$(git tag -l "feluda-[0-9]*" | sort -V | grep -B1 "${{ steps.push-changes.outputs.new_tag }}" | head -n1)
-      #     echo "Prev feluda tag: $PREV_TAG"
-      #     echo "New feluda tag: ${{ steps.push-changes.outputs.new_tag }}"
+      - name: Generate Release Notes and Update Changelog
+        if: steps.push-changes.outputs.tag_created == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions [Bot]"
 
-      #     # Create release notes file with header
-      #     echo "# Release ${{ steps.push-changes.outputs.new_tag }}" > release_notes.md
-      #     echo "" >> release_notes.md
+          NEW_TAG="${{ steps.push-changes.outputs.new_tag }}"
+          NEW_VERSION=$(echo $NEW_TAG | sed 's/feluda-/v/')
+          PREVIOUS_TAG="${{ steps.latest-tag.outputs.current_tag }}"
 
-      #     # Function to add section if commits exist
-      #     add_section() {
-      #       local title="$1"
-      #       local pattern="$2"
-      #       local commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" | grep "^* $pattern" || true)
-      #       if [ ! -z "$commits" ]; then
-      #         echo "## $title" >> release_notes.md
-      #         echo "$commits" >> release_notes.md
-      #         echo "" >> release_notes.md
-      #       fi
-      #     }
+          # Get only commits that touch files in feluda/ or the exact pyproject.toml file
+          FELUDA_COMMITS=$(git log "${PREVIOUS_TAG}..${NEW_TAG}" --pretty=format:"* %s (%h)" --no-merges -- "feluda/" "pyproject.toml")
 
-      #     # Add sections only if they have commits
-      #     add_section "Features" "feat"
-      #     add_section "Bug Fixes" "fix"
-      #     add_section "Chores" "chore"
-      #     add_section "Documentation" "docs"
+          echo "Commits between ${PREVIOUS_TAG} and ${NEW_TAG} affecting feluda/ or pyproject.toml:"
+          echo "$FELUDA_COMMITS"
 
-      #     # Add miscellaneous section for other commits
-      #     misc_commits=$(git log "${PREV_TAG}^..${{ steps.push-changes.outputs.new_tag }}" --pretty=format:"* %s (%h)" |
-      #       grep -v "^* feat" |
-      #       grep -v "^* fix" |
-      #       grep -v "^* chore" |
-      #       grep -v "^* docs" || true)
+          # Get current date in YYYY-MM-DD format
+          CURRENT_DATE=$(date +"%Y-%m-%d")
 
-      #     if [ ! -z "$misc_commits" ]; then
-      #       echo "## Miscellaneous" >> release_notes.md
-      #       echo "$misc_commits" >> release_notes.md
-      #       echo "" >> release_notes.md
-      #     fi
+          # Create release notes file with proper format
+          echo "## ${NEW_VERSION} (${CURRENT_DATE})" > release_notes.md
+          echo "" >> release_notes.md
 
-      #     # Update CHANGELOG.md
-      #     if [ -f CHANGELOG.md ]; then
-      #       cat release_notes.md > temp_changelog
-      #       echo "" >> temp_changelog
-      #       cat CHANGELOG.md >> temp_changelog
-      #       mv temp_changelog CHANGELOG.md
-      #     else
-      #       cat release_notes.md > CHANGELOG.md
-      #     fi
+          add_section() {
+            local title="$1"
+            local pattern="$2"
+            local commits=$(echo "$FELUDA_COMMITS" | grep "^* $pattern" || true)
+            if [ -n "$commits" ]; then
+              echo "### ${title}" >> release_notes.md
+              echo "$commits" >> release_notes.md
+              echo "" >> release_notes.md
+            fi
+          }
 
-      #     # Commit the updated CHANGELOG
-      #     git add CHANGELOG.md
-      #     git commit -m "docs: update CHANGELOG.md for ${{ steps.push-changes.outputs.new_tag }}"
-      #     git push
+          # Add sections only if they have commits
+          add_section "Features" "feat"
+          add_section "Bug Fixes" "fix"
+          add_section "Chores" "chore"
+          add_section "Documentation" "docs"
 
-     
+          # Add miscellaneous section for other commits
+          misc_commits=$(echo "$FELUDA_COMMITS" |
+            grep -v "^* feat" |
+            grep -v "^* fix" |
+            grep -v "^* chore" |
+            grep -v "^* docs" || true)
 
+          if [ -n "$misc_commits" ]; then
+            echo "### Miscellaneous" >> release_notes.md
+            echo "$misc_commits" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+
+          # Add contributors section
+          contributors=$(git log "${PREVIOUS_TAG}..${NEW_TAG}" --pretty=format:"%an" --no-merges -- "feluda/" "pyproject.toml" | sort -u)
+          if [ -n "$contributors" ]; then
+            echo "### Contributors" >> release_notes.md
+            echo "$contributors" | sed 's/^/* /' >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+
+          # Update CHANGELOG.md (keep existing header and append new release notes after it)
+          if [ -f CHANGELOG.md ]; then
+            # Extract the first line (# CHANGELOG) from the existing file
+            header=$(head -n 1 CHANGELOG.md)
+
+            # Create new changelog with header, new release notes, then rest of previous content
+            echo "$header" > temp_changelog
+            echo "" >> temp_changelog
+            cat release_notes.md >> temp_changelog
+
+            # Add the rest of the existing changelog (skip the first line)
+            tail -n +2 CHANGELOG.md >> temp_changelog
+            mv temp_changelog CHANGELOG.md
+          else
+            # If no CHANGELOG.md exists, create it with proper header
+            echo "# CHANGELOG" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            cat release_notes.md >> CHANGELOG.md
+          fi
+
+          # Show content for debugging
+          echo "Updated CHANGELOG.md:"
+          head -n 10 CHANGELOG.md
+
+          # Commit and push the updated CHANGELOG
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md for ${NEW_VERSION}" || true
+          git push || true

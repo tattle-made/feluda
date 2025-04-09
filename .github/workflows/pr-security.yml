@@ -39,7 +39,7 @@ jobs:
 
       - name: Validate required fields in pyproject.toml
         run: |
-          pip install tomli
+          pip install tomlkit
           python -m scripts.validate_toml_files
 
 

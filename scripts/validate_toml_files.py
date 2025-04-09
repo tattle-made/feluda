@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from pprint import pprint
 
-import tomli
+from tomlkit import parse
 
 
 def validate_pyproject_toml(file_path: Path) -> tuple[bool, list[str]]:
@@ -11,8 +11,8 @@ def validate_pyproject_toml(file_path: Path) -> tuple[bool, list[str]]:
     Returns (is_valid, list of error messages).
     """
     try:
-        with open(file_path, "rb") as f:
-            content = tomli.load(f)
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = parse(f.read())
     except Exception as e:
         return False, [f"Failed to parse {file_path}: {str(e)}"]
 
