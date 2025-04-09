@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v0.9.3 (2025-04-09)
+
+### Bug Fixes
+* fix: optimise semantic script (#520) (0397d82)
+
+### Chores
+* chore: update feluda dev dependencies (5d76f9a)
+* chore: update feluda and operator pacakges (0b69cc7)
+* chore: semantic versioning workflow and update related files (a93325c)
+
+### Contributors
+* Aatman Vaidya
+* Deepak Thappa
+* GitHub Actions [Bot]
+
+
 
 
 ## v0.8.0 (2024-09-12)
