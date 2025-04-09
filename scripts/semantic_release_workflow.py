@@ -22,7 +22,7 @@ class PackageVersionManager:
         """
         if not os.path.exists(repo_root):
             raise FileNotFoundError(f"Repository root '{repo_root}' does not exist.")
-
+            
         self.repo_root = repo_root
         self.prev_commit = prev_commit
         self.current_commit = current_commit
@@ -65,18 +65,16 @@ class PackageVersionManager:
         packages = {}
 
         # Root package (feluda)
-        package_roots = ["feluda"]
+        package_roots = [f"{self.repo_root}/feluda"]
 
         # Discover packages inside 'operators' directory using glob
         operators_path = f"{self.repo_root}/operators"
         if os.path.isdir(operators_path):
             for folder in glob.glob(f"{operators_path}/*/pyproject.toml"):
                 package_roots.append(os.path.dirname(folder))
-                print(os.path.dirname(folder))
-
         for package_root in package_roots:
             try:
-                if package_root == "feluda":
+                if package_root.endswith("feluda"):
                     pyproject_path = os.path.join(self.repo_root, "pyproject.toml")
                     full_path = os.path.join(self.repo_root, "feluda")
                 else:
@@ -233,33 +231,23 @@ class PackageVersionManager:
         """
         try:
             paths_to_check = [package_path]
+
             # Special handling for feluda package to include root pyproject.toml
-            if os.path.basename(package_path) == "feluda":
+            if package_path == "feluda":
                 paths_to_check.append("pyproject.toml")
 
             all_commits = []
             for path in paths_to_check:
-                # Check if prev_commit is the initial commit
-                is_initial_commit = subprocess.run(
-                    ["git", "rev-list", "--max-parents=0", "HEAD"],
-                    cwd=self.repo_root, capture_output=True, text=True, check=True
-                ).stdout.strip() == self.prev_commit
-                
-                # Use different commit range syntax based on whether prev_commit is initial
-                if is_initial_commit:
-                    commit_range = f"{self.prev_commit}..{self.current_commit}"
-                else:
-                    commit_range = f"{self.prev_commit}^..{self.current_commit}"
-                    
+                # Get commits that modified files in this path between two commits
                 cmd = [
                     "git",
                     "log",
-                    commit_range,
+                    f"{self.prev_commit}^..{self.current_commit}",
                     "--pretty=format:%s",
                     "--",
                     path,
                 ]
-                
+
                 result = subprocess.run(
                     cmd, cwd=self.repo_root, capture_output=True, text=True, check=True
                 )
@@ -299,8 +287,7 @@ class PackageVersionManager:
 
             bump_priority = {"major": 3, "minor": 2, "patch": 1, None: 0}
             highest_bump = None
-            print(f"Processing commits for {package_path}:")
-            print(package_commits)
+
             for commit in package_commits:
                 commit_bump = self._parse_conventional_commit(commit)
                 if commit_bump and bump_priority.get(
@@ -470,6 +457,7 @@ class PackageVersionManager:
             FileNotFoundError: If pyproject.toml is missing or inaccessible.
         """
         updated_versions = {}
+
         for package_path, package_info in self.packages.items():
             try:
                 bump_type = self.determine_package_bump(package_path)
@@ -481,10 +469,10 @@ class PackageVersionManager:
                 new_version = self._bump_version(current_version, bump_type)
 
                 if self.tag_exists(package_info, new_version):
-                    # update to later version
-                    updated_version = new_version.split(".")
-                    updated_version[-1] = str(int(updated_version[-1]) + 1)
-                    new_version = ".".join(updated_version)
+                    print(
+                        f"Tag already exists for {package_path}. Skipping version bump."
+                    )
+                    continue
 
                 # Use cached pyproject data
                 pyproject_data = package_info["pyproject_data"]
