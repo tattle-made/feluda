@@ -267,11 +267,11 @@ class TestPackageVersionManager(unittest.TestCase):
     def test_determine_package_bump(self):
         """Test determination of version bump type based on commits."""
         # Create a series of commits affecting different packages
-        self._create_file_and_commit(
+        commit1 = self._create_file_and_commit(
             "feluda/example1.py", "print('hello')", "feat: added feature to feluda"
         )
 
-        self._create_file_and_commit(
+        commit2 = self._create_file_and_commit(
             "operators/operator1/example1.py",
             "print('hello')",
             "feat: added feature to operator1 with BREAKING CHANGE",
@@ -283,7 +283,7 @@ class TestPackageVersionManager(unittest.TestCase):
             "fix: fixed bug in operator2",
         )
 
-        manager = PackageVersionManager(self.temp_dir, self.initial_commit, commit3)
+        manager = PackageVersionManager(self.temp_dir, commit1, commit3)
 
         # Test feluda bump (should be minor)
         self.assertEqual(
@@ -339,14 +339,15 @@ class TestPackageVersionManager(unittest.TestCase):
             self.temp_dir, self.initial_commit, self.initial_commit
         )
 
-        expected_tag = manager.packages["feluda"].get("pyproject_data", {}).get(
+        feluda_path = os.path.join(self.temp_dir, "feluda")
+        expected_tag = manager.packages[feluda_path].get("pyproject_data", {}).get(
             "tool", {}
         ).get("semantic_release", {}).get("branches", {}).get("main", {}).get(
             "tag_format", "{name}-v{version}"
         )
 
         self.assertEqual(
-            manager._get_tag_format(manager.packages["feluda"]), expected_tag
+            manager._get_tag_format(manager.packages[feluda_path]), expected_tag
         )
 
     def test_tag_exists(self):
@@ -358,11 +359,13 @@ class TestPackageVersionManager(unittest.TestCase):
         # Create a tag
         subprocess.run(["git", "tag", "feluda-v0.2.0"], cwd=self.temp_dir, check=True)
 
+        feluda_path = os.path.join(self.temp_dir, "feluda")
+
         # Test tag exists
-        self.assertTrue(manager.tag_exists(manager.packages["feluda"], "0.2.0"))
+        self.assertTrue(manager.tag_exists(manager.packages[feluda_path], "0.2.0"))
 
         # Test tag doesn't exist
-        self.assertFalse(manager.tag_exists(manager.packages["feluda"], "0.3.0"))
+        self.assertFalse(manager.tag_exists(manager.packages[feluda_path], "0.3.0"))
 
     def test_create_tag(self):
         """Test creation of tags."""
