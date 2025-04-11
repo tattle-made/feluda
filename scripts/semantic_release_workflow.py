@@ -22,7 +22,7 @@ class PackageVersionManager:
         """
         if not os.path.exists(repo_root):
             raise FileNotFoundError(f"Repository root '{repo_root}' does not exist.")
-
+            
         self.repo_root = repo_root
         self.prev_commit = prev_commit
         self.current_commit = current_commit
@@ -65,17 +65,16 @@ class PackageVersionManager:
         packages = {}
 
         # Root package (feluda)
-        package_roots = ["feluda"]
+        package_roots = [f"{self.repo_root}/feluda"]
 
         # Discover packages inside 'operators' directory using glob
-        operators_path = "operators"
+        operators_path = f"{self.repo_root}/operators"
         if os.path.isdir(operators_path):
             for folder in glob.glob(f"{operators_path}/*/pyproject.toml"):
                 package_roots.append(os.path.dirname(folder))
-
         for package_root in package_roots:
             try:
-                if package_root == "feluda":
+                if package_root.endswith("feluda"):
                     pyproject_path = os.path.join(self.repo_root, "pyproject.toml")
                     full_path = os.path.join(self.repo_root, "feluda")
                 else:
