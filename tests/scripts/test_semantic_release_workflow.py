@@ -271,7 +271,7 @@ class TestPackageVersionManager(unittest.TestCase):
             "feluda/example1.py", "print('hello')", "feat: added feature to feluda"
         )
 
-        commit2 = self._create_file_and_commit(
+        self._create_file_and_commit(
             "operators/operator1/example1.py",
             "print('hello')",
             "feat: added feature to operator1 with BREAKING CHANGE",
@@ -412,7 +412,7 @@ class TestPackageVersionManager(unittest.TestCase):
             "feluda/example1.py", "print('hello')", "feat: added feature to feluda"
         )
 
-        commit2 = self._create_file_and_commit(
+        self._create_file_and_commit(
             "operators/operator1/example1.py",
             "print('hello')",
             "feat: added feature to operator1 with BREAKING CHANGE",
@@ -498,7 +498,7 @@ class TestPackageVersionManager(unittest.TestCase):
 
         # Update versions
         updated_versions = manager.update_package_versions()
-        feluda_path = os.path.join(self.temp_dir, "feluda")
+        
         # Check that feluda was skipped (since 0.2.0 tag already exists)
         self.assertEqual(len(updated_versions), 0)
 
@@ -580,7 +580,7 @@ class TestPackageVersionManager(unittest.TestCase):
             "feluda/example1.py", "print('hello')", "feat: new feature"
         )
 
-        commit2 = self._create_file_and_commit(
+        self._create_file_and_commit(
             "feluda/example2.py", "print('world')", "fix: bug fix"
         )
 
@@ -620,14 +620,14 @@ class TestPackageVersionManager(unittest.TestCase):
             "feluda/file1.py", "print('hello')", "feat: new feature in feluda"
         )
 
-        commit2 = self._create_file_and_commit(
+        self._create_file_and_commit(
             "operators/operator1/file1.py",
             "print('hello')",
             "fix: bug fix in operator1",
         )
 
         # Create more commits
-        commit3 = self._create_file_and_commit(
+        self._create_file_and_commit(
             "feluda/file2.py",
             "print('world')",
             "feat: another feature in feluda with BREAKING CHANGE",
@@ -649,7 +649,6 @@ class TestPackageVersionManager(unittest.TestCase):
         self.assertEqual(len(updated_versions), 2)
         feluda_path = os.path.join(self.temp_dir, "feluda")
         operator1_path = os.path.join(self.temp_dir, "operators", "operator1")
-        operator2_path = os.path.join(self.temp_dir, "operators", "operator2")
         # Check feluda version (should be major bump due to BREAKING CHANGE)
         self.assertEqual(updated_versions[feluda_path]["old_version"], "0.1.0")
         self.assertEqual(updated_versions[feluda_path]["new_version"], "1.0.0")
