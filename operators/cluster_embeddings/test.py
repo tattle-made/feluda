@@ -56,3 +56,11 @@ class Test(unittest.TestCase):
         self.assertCountEqual(
             [result["cluster_0"], result["cluster_1"]], EXPECTED_CLUSTERS
         )
+
+    def test_run_without_modality(self):
+        with self.assertRaises(ValueError) as context:
+            cluster_embeddings.run(input_data=MOCK_DATA, n_clusters=2)
+        self.assertEqual(
+            str(context.exception),
+            "Modality must be specified and should be either `audio` or `video`."
+        )

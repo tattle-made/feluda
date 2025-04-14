@@ -84,14 +84,14 @@ def initialize(param):
         )
 
 
-def run(input_data, n_clusters=None, modality="audio"):
+def run(input_data, n_clusters=None, modality=None):
     """
     Runs the operator.
 
     Args:
         input_data (list[dict]): List of data with each dictionary containing `embedding` and `payload` properties
         n_clusters (int, optional): Number of clusters. Defaults to None
-        modality (str, optional): Source modality of embeddings. Defaults to 'audio'
+        modality (str, optional): Source modality of embeddings. Defaults to None
 
     Returns:
         dict: A dictionary mapping cluster labels to corresponding array of payloads
@@ -100,6 +100,9 @@ def run(input_data, n_clusters=None, modality="audio"):
         ValueError: Modality should be either `audio` or `video`
         KeyError: Each data point in input must have `embedding` and `payload` properties
     """
+    if modality is None:
+        raise ValueError("Modality must be specified and should be either `audio` or `video`.")
+
     # Parse data:
     try:
         matrix, payloads = zip(
