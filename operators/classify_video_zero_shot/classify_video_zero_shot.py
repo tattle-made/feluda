@@ -2,6 +2,7 @@
 Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach.
 """
 
+
 def initialize(param):
     """
     Initializes the operator.
@@ -17,6 +18,7 @@ def initialize(param):
     import os
     import subprocess
     import tempfile
+
     import torch
     from PIL import Image
     from transformers import AutoProcessor, CLIPModel
@@ -50,6 +52,7 @@ def initialize(param):
         """
         A class for video classification.
         """
+
         def __init__(self, fname, labels):
             """
             Constructor for the `VideoClassifier` class.
@@ -153,6 +156,9 @@ def run(file, labels):
     Returns:
         dict: A dictionary containing prediction and probabilities
     """
+    if not labels:
+        raise ValueError("Label list must not be empty.")
+
     fname = file["path"]
     vid_analyzer = VideoClassifier(fname, labels)
     return gen_data(vid_analyzer)
