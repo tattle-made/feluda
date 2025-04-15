@@ -101,7 +101,9 @@ def run(input_data, n_clusters=None, modality=None):
         KeyError: Each data point in input must have `embedding` and `payload` properties
     """
     if modality is None:
-        raise ValueError("Modality must be specified and should be either `audio` or `video`.")
+        raise ValueError(
+            "Modality must be specified and should be either `audio` or `video`."
+        )
 
     # Parse data:
     try:

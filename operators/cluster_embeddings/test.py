@@ -62,5 +62,5 @@ class Test(unittest.TestCase):
             cluster_embeddings.run(input_data=MOCK_DATA, n_clusters=2)
         self.assertEqual(
             str(context.exception),
-            "Modality must be specified and should be either `audio` or `video`."
+            "Modality must be specified and should be either `audio` or `video`.",
         )
