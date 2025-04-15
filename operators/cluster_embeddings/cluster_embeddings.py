@@ -84,7 +84,7 @@ def initialize(param):
         )
 
 
-def run(input_data, n_clusters=None, modality="audio"):
+def run(input_data, n_clusters=None, modality=None):
     """
     Runs the operator.
 
