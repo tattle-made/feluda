@@ -8,25 +8,22 @@ version = "0.9.3"
 description = "A Python library for media processing and analysis"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+include = ["LICENSE.md"]
 authors = [{ name = "Feluda Team", email = "team@feluda.org" }]
 maintainers = [{ name = "Feluda Maintainers", email = "maintainers@feluda.org" }]
 keywords = ["media", "processing", "analysis", "machine-learning", "ai"]
 classifiers = [
-    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules"
 ]
+
 urls = { 
     "Homepage" = "https://github.com/feluda/feluda",
     "Repository" = "https://github.com/feluda/feluda.git",
-    "Issues" = "https://github.com/feluda/feluda/issues"
-}
+    "Issues" = "https://github.com/feluda/feluda/issues" }
 
 dependencies = [
     "boto3>=1.37.30",
