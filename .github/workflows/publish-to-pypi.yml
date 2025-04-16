@@ -64,6 +64,10 @@ jobs:
           # Read the list of packages to publish
           IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
           
+          # Create a clean dist directory
+          rm -rf dist
+          mkdir -p dist
+          
           for package in "${PACKAGES[@]}"; do
             echo "Processing package: $package"
             
@@ -90,10 +94,13 @@ jobs:
               # Normal handling for operator packages that have their own pyproject.toml
               cd "$package" || exit 1
               
-              # Build the package
               echo "Building package: $package"
+              # Build the package - note that uv build will create the dist directory in the repository root
+              # rather than in the package directory
               uv build --index-strategy unsafe-best-match
-              ls -la dist/
+              
+              # Navigate back to the root for publishing
+              cd - > /dev/null
               
               if [ "$DRY_RUN" = "true" ]; then
                 echo "DRY RUN: Would publish $package to $PUBLISH_URL"
@@ -108,9 +115,15 @@ jobs:
                   uv publish --token "$PYPI_TOKEN"
                 fi
               fi
-              
-              cd - > /dev/null
             fi
+            
+            # Move the built artifacts to a backup directory for this package
+            mkdir -p "dist_backup/$package"
+            mv dist/* "dist_backup/$package/" || true
+            
+            # Clean the dist directory for the next package
+            rm -rf dist
+            mkdir -p dist
           done
 
       - name: Summary
