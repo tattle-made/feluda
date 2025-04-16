@@ -38,7 +38,8 @@ class TestFeludaImageVectorIntegration(unittest.TestCase):
         cls.feluda = Feluda(cls.config_path)
         cls.feluda.setup()
 
-        cls.test_image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
+        # Using a more reliable public image URL instead of the S3 bucket that's timing out
+        cls.test_image_url = "https://raw.githubusercontent.com/openai/CLIP/main/CLIP.png"
         cls.expected_vector_dim = 512
 
     def setUp(self):

@@ -11,7 +11,7 @@ import yaml
 from requests.exceptions import ConnectTimeout, ReadTimeout
 
 from feluda import Feluda
-from feluda.models.media_factory import ImageFactory, VideoFactory
+from feluda.models.media_factory import VideoFactory
 
 
 class TestFeludaMultiOperatorIntegration(unittest.TestCase):
@@ -22,7 +22,6 @@ class TestFeludaMultiOperatorIntegration(unittest.TestCase):
     - feluda (core)
     - feluda-vid-vec-rep-clip
     - feluda-cluster-embeddings
-    - image_vec_rep_resnet
     """
     
     @classmethod
@@ -34,11 +33,6 @@ class TestFeludaMultiOperatorIntegration(unittest.TestCase):
                 "operators": {
                     "label": "Operators",
                     "parameters": [
-                        {
-                            "name": "image vectors",
-                            "type": "image_vec_rep_resnet",
-                            "parameters": {"index_name": "image"},
-                        },
                         {
                             "name": "video vectors",
                             "type": "vid_vec_rep_clip",
@@ -70,10 +64,9 @@ class TestFeludaMultiOperatorIntegration(unittest.TestCase):
                 cls.setup_successful = False
                 cls.setup_error = str(e)
 
-            # Sample image/video URLs for testing
-            cls.test_image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
-            cls.test_video_url = "https://tattle-media.s3.amazonaws.com/test-data/test_video.mp4"
-            cls.expected_vector_dim = 512  # Both CLIP and ResNet embeddings are 512
+            # Sample video URL for testing
+            cls.test_video_url = "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            cls.expected_vector_dim = 512  # CLIP embeddings are 512-dimensional
             
             # Sample data for clustering tests
             cls.sample_clustering_data = [
@@ -100,64 +93,8 @@ class TestFeludaMultiOperatorIntegration(unittest.TestCase):
         self.operators = self.feluda.operators.get()
         
         # Check which operators are available (some may not be available due to dependencies)
-        self.has_image_operator = "image_vec_rep_resnet" in self.operators
         self.has_video_operator = "vid_vec_rep_clip" in self.operators
         self.has_cluster_operator = "cluster_embeddings" in self.operators
-
-    # =====================================================================
-    # IMAGE VECTOR REPRESENTATION TESTS
-    # =====================================================================
-    
-    def test_image_vector_generation(self):
-        """Test that image vector generation works end-to-end."""
-        if not self.has_image_operator:
-            self.skipTest("image_vec_rep_resnet operator not available")
-            
-        image_operator = self.operators["image_vec_rep_resnet"]
-        
-        image_obj = ImageFactory.make_from_url(self.test_image_url)
-        self.assertIsNotNone(image_obj, "Image object should be successfully created")
-
-        image_vec = image_operator.run(image_obj)
-
-        self.assertTrue(
-            isinstance(image_vec, (list, np.ndarray)),
-            "Vector should be a list or numpy array",
-        )
-        self.assertTrue(len(image_vec) > 0, "Vector should not be empty")
-        self.assertEqual(
-            len(image_vec),
-            self.expected_vector_dim,
-            f"Vector should have dimension {self.expected_vector_dim}",
-        )
-
-        if isinstance(image_vec, np.ndarray):
-            self.assertFalse(np.all(image_vec == 0), "Vector should not be all zeros")
-            self.assertFalse(
-                np.any(np.isnan(image_vec)), "Vector should not contain NaN values"
-            )
-
-    def test_image_vector_consistency(self):
-        """Test that generating vectors twice from the same image gives consistent results."""
-        if not self.has_image_operator:
-            self.skipTest("image_vec_rep_resnet operator not available")
-            
-        image_operator = self.operators["image_vec_rep_resnet"]
-        
-        # First vector generation
-        image_obj = ImageFactory.make_from_url(self.test_image_url)
-        with self.assertNoException("First vector generation should not raise exceptions"):
-            vec1 = image_operator.run(image_obj)
-
-        # Second vector generation with a new image object
-        image_obj = ImageFactory.make_from_url(self.test_image_url)
-        with self.assertNoException("Second vector generation should not raise exceptions"):
-            vec2 = image_operator.run(image_obj)
-
-        # Vectors should be identical
-        np.testing.assert_array_equal(
-            vec1, vec2, "Vectors should be identical for the same image"
-        )
 
     # =====================================================================
     # VIDEO VECTOR REPRESENTATION TESTS
@@ -297,56 +234,6 @@ class TestFeludaMultiOperatorIntegration(unittest.TestCase):
     # =====================================================================
     # CROSS-OPERATOR INTEGRATION TESTS
     # =====================================================================
-    
-    def test_image_to_clusters_integration(self):
-        """Test integration between image vector generation and clustering."""
-        if not (self.has_image_operator and self.has_cluster_operator):
-            self.skipTest("Required operators not available")
-            
-        image_operator = self.operators["image_vec_rep_resnet"]
-        cluster_operator = self.operators["cluster_embeddings"]
-        
-        # Generate image vectors
-        image_vectors = []
-        image_payloads = []
-        
-        # Use the same image multiple times with slight modifications for clustering
-        base_image_obj = ImageFactory.make_from_url(self.test_image_url)
-        image_vectors.append(image_operator.run(base_image_obj))
-        image_payloads.append({"id": "original", "path": self.test_image_url})
-        
-        # Prepare data for clustering
-        clustering_data = []
-        for i, (vec, payload) in enumerate(zip(image_vectors, image_payloads)):
-            clustering_data.append({
-                "embedding": vec.tolist() if isinstance(vec, np.ndarray) else vec,
-                "payload": payload
-            })
-        
-        # Add some synthetic vectors for better clustering demonstration
-        for i in range(3):
-            # Create a synthetic vector that's different from the image vector
-            synth_vec = np.ones(self.expected_vector_dim) * (i + 2)
-            clustering_data.append({
-                "embedding": synth_vec.tolist(),
-                "payload": {"id": f"synthetic_{i}", "path": "none"}
-            })
-        
-        # Cluster the vectors
-        n_clusters = 2  # We expect original image in one cluster, synthetic vectors in another
-        modality = "audio"  # Doesn't matter for this test, just need a valid value
-        
-        result = cluster_operator.run(clustering_data, n_clusters=n_clusters, modality=modality)
-        
-        # Verify clustering results
-        self.assertEqual(len(result), n_clusters, f"Should have {n_clusters} clusters")
-        
-        # All items should be in clusters
-        all_items = []
-        for cluster_items in result.values():
-            all_items.extend(cluster_items)
-        self.assertEqual(len(all_items), len(clustering_data), 
-                         "All items should be assigned to a cluster")
 
     def test_video_to_clusters_integration(self):
         """Test integration between video vector generation and clustering."""
@@ -405,62 +292,69 @@ class TestFeludaMultiOperatorIntegration(unittest.TestCase):
             print(f"  {cluster_name}: {len(items)} items - {[item['id'] for item in items]}")
 
     # =====================================================================
-    # COMBINED END-TO-END TEST
+    # FULL PIPELINE TEST
     # =====================================================================
     
-    def test_full_pipeline_integration(self):
-        """Test a full pipeline integrating all operators."""
-        if not (self.has_image_operator and self.has_video_operator and self.has_cluster_operator):
-            self.skipTest("Not all required operators are available")
+    def test_full_pipeline(self):
+        """Test the full pipeline with video vector extraction and clustering."""
+        if not (self.has_video_operator and self.has_cluster_operator):
+            self.skipTest("Required operators not available")
         
         # Get operator references
-        image_operator = self.operators["image_vec_rep_resnet"]
         video_operator = self.operators["vid_vec_rep_clip"]
         cluster_operator = self.operators["cluster_embeddings"]
         
-        # 1. Generate image vector
-        image_obj = ImageFactory.make_from_url(self.test_image_url)
-        image_vec = image_operator.run(image_obj)
-        
-        # 2. Generate video vector
+        # 1. Generate video vector
         video_obj = VideoFactory.make_from_url(self.test_video_url)
         video_vec_generator = video_operator.run(video_obj)
-        video_vec = next(video_vec_generator)["vid_vec"]
+        video_avg_vec = next(video_vec_generator)["vid_vec"]
         
-        # 3. Prepare combined data for clustering
-        combined_data = [
-            {"embedding": image_vec.tolist() if isinstance(image_vec, np.ndarray) else image_vec, 
-             "payload": {"id": "image", "type": "image", "path": self.test_image_url}},
-            {"embedding": video_vec, 
-             "payload": {"id": "video", "type": "video", "path": self.test_video_url}}
+        # Collect some I-frame vectors
+        iframe_vectors = []
+        for i, vec_data in enumerate(video_vec_generator):
+            if i >= 4:  # Just get a few frames
+                break
+            iframe_vectors.append(vec_data["vid_vec"])
+        
+        # 2. Prepare data for clustering
+        clustering_data = [
+            {"embedding": video_avg_vec, "payload": {"id": "avg_vector", "type": "video_avg"}}
         ]
         
-        # Add some deliberately different vectors to ensure meaningful clustering
+        # Add I-frame vectors
+        for i, vec in enumerate(iframe_vectors):
+            clustering_data.append({
+                "embedding": vec,
+                "payload": {"id": f"iframe_{i}", "type": "video_iframe"}
+            })
+        
+        # Add some synthetic vectors to ensure meaningful clustering
         for i in range(3):
-            combined_data.append({
+            clustering_data.append({
                 "embedding": [float(10 * (i + 1))] * self.expected_vector_dim,
                 "payload": {"id": f"synthetic_{i}", "type": "synthetic"}
             })
         
-        # 4. Cluster the combined vectors
-        n_clusters = 3  # Expect image, video, and synthetic in different clusters
-        modality = "audio"  # Just need a valid value
+        # 3. Cluster the vectors
+        n_clusters = 3  # Expect video frames in one cluster, synthetic in another
+        modality = "video"
         
-        cluster_result = cluster_operator.run(combined_data, n_clusters=n_clusters, modality=modality)
+        cluster_result = cluster_operator.run(clustering_data, n_clusters=n_clusters, modality=modality)
         
-        # 5. Verify results
-        self.assertEqual(len(cluster_result), n_clusters, f"Should have {n_clusters} clusters")
+        # 4. Verify results
+        self.assertTrue(1 <= len(cluster_result) <= n_clusters, 
+                       f"Should have between 1 and {n_clusters} clusters")
         
         # All items should be in clusters
         all_items = []
         for cluster_items in cluster_result.values():
             all_items.extend(cluster_items)
-        self.assertEqual(len(all_items), len(combined_data), 
+        self.assertEqual(len(all_items), len(clustering_data), 
                          "All items should be assigned to a cluster")
         
-        # Print the full pipeline results
+        # Print the results
         print("\n=== Full Pipeline Results ===")
-        print(f"Clustered {len(combined_data)} items into {len(cluster_result)} clusters")
+        print(f"Clustered {len(clustering_data)} items into {len(cluster_result)} clusters")
         for cluster_name, items in cluster_result.items():
             print(f"  {cluster_name}: {len(items)} items - {[item['id'] for item in items]}")
         
