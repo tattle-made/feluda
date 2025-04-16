@@ -1,0 +1,112 @@
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Perform a dry run (no actual publishing)'
+        required: false
+        default: true
+        type: boolean
+      publish_url:
+        description: 'PyPI publish URL (leave empty for production PyPI)'
+        required: false
+        default: 'https://test.pypi.org/legacy/'
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for trusted publishing to PyPI
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: |
+          pip install uv
+          uv --version
+
+      - name: Install dependencies for version checking
+        run: |
+          python -m pip install --upgrade pip
+          pip install tomlkit requests
+
+      - name: Find packages with updated versions
+        id: find-packages
+        env:
+          CHECK_TEST_PYPI: ${{ inputs.publish_url == 'https://test.pypi.org/legacy/' }}
+        run: |
+          python -m scripts.find_updated_packages
+          if [ -f packages_to_publish.txt ]; then
+            echo "packages_to_publish=$(cat packages_to_publish.txt)" >> $GITHUB_OUTPUT
+          else
+            echo "packages_to_publish=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish to PyPI
+        if: steps.find-packages.outputs.packages_to_publish != ''
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          PUBLISH_URL: ${{ inputs.publish_url }}
+        run: |
+          # Read the list of packages to publish
+          IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
+          
+          for package in "${PACKAGES[@]}"; do
+            echo "Processing package: $package"
+            cd "$package" || exit 1
+            
+            # Build the package first
+            echo "Building package: $package"
+            uv build --index-strategy unsafe-best-match
+            ls -la dist/
+            
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "DRY RUN: Would publish $package to $PUBLISH_URL"
+              uv publish --no-upload
+            else
+              echo "LIVE RUN: Publishing $package to $PUBLISH_URL"
+              if [ -n "$PUBLISH_URL" ]; then
+                uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
+              else
+                uv publish --token "$PYPI_TOKEN"
+              fi
+            fi
+            
+            cd - > /dev/null
+          done
+
+      - name: Summary
+        run: |
+          echo "## Publish to PyPI Summary" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -z "${{ steps.find-packages.outputs.packages_to_publish }}" ]; then
+            echo "No packages needed to be published." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "The following packages were processed:" >> $GITHUB_STEP_SUMMARY
+            IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
+            
+            for package in "${PACKAGES[@]}"; do
+              if [ "${{ inputs.dry_run }}" = "true" ]; then
+                echo "- $package (dry run)" >> $GITHUB_STEP_SUMMARY
+              else
+                destination="${{ inputs.publish_url }}"
+                if [ -z "$destination" ]; then
+                  destination="PyPI (production)"
+                fi
+                echo "- $package (published to $destination)" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
+          fi
