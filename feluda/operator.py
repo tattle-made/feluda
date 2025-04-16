@@ -14,8 +14,18 @@ class Operator:
     def setup(self):
         for operator in self.operators:
             log.info(operator.type)
-            module_path = f"{operator.type}"
-            module = importlib.import_module(module_path)
+            # Try to import the operator module with the full path first
+            try:
+                module_path = f"operators.{operator.type}.{operator.type}"
+                module = importlib.import_module(module_path)
+            except ImportError:
+                # Fall back to direct import if the full path doesn't work
+                try:
+                    module_path = f"{operator.type}"
+                    module = importlib.import_module(module_path)
+                except ImportError as e:
+                    log.error(f"Failed to import operator module {operator.type}: {e}")
+                    raise
             module.initialize(operator.parameters)
             self.active_operators[operator.type] = module
 
