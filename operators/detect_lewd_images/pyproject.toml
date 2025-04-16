@@ -2,7 +2,7 @@
 name = "feluda-detect-lewd-images"
 version = "0.0.0"
 requires-python = ">=3.10"
-dependencies = ["absl","huggingface-hub", "tensorflow"]
+dependencies = ["huggingface-hub", "tensorflow"]
 
 [build-system]
 requires = ["hatchling"]
