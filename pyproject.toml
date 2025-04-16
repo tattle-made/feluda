@@ -51,7 +51,6 @@ dev = [
 
 [tool.hatch.build]
 include = ["feluda"]
-exclude = ["tests/*", "docs/*"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
