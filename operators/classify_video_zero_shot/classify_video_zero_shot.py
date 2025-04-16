@@ -101,7 +101,9 @@ def initialize(param):
                 cmd = f"""
                 ffmpeg -i "{fname}" -vf "select=eq(pict_type\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"
                 """
-                with subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
+                with subprocess.Popen(
+                    cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                ) as process:
                     process.wait()
                 frames = []
                 for filename in os.listdir(temp_dir):
@@ -122,7 +124,13 @@ def initialize(param):
             Returns:
                 torch.Tensor: Probability distribution across labels
             """
-            inputs = processor(text=labels, images=images, return_tensors="pt", padding=True, truncation=True)
+            inputs = processor(
+                text=labels,
+                images=images,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+            )
             inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
             with torch.no_grad():
                 output = self.model(**inputs)

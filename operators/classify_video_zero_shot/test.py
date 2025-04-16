@@ -21,7 +21,7 @@ class TestClassifyVideoZeroShot(unittest.TestCase):
         # Set up test video paths for reuse
         self.test_videos = {
             "cat_video_url": "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/cat_vid_2mb.mp4",
-            "cat_video_local": "core/operators/sample_data/sample-cat-video.mp4"
+            "cat_video_local": "core/operators/sample_data/sample-cat-video.mp4",
         }
 
     def tearDown(self):
@@ -30,7 +30,9 @@ class TestClassifyVideoZeroShot(unittest.TestCase):
 
     @skip
     def test_sample_video_from_disk(self):
-        video_path = VideoFactory.make_from_file_on_disk(self.test_videos["cat_video_local"])
+        video_path = VideoFactory.make_from_file_on_disk(
+            self.test_videos["cat_video_local"]
+        )
         labels = ["cat", "dog"]
         result = classify_video_zero_shot.run(video_path, labels)
         self.assertEqual(result.get("prediction"), "cat")
