@@ -24,7 +24,6 @@ classifiers = [
 ]
 urls = { 
     "Homepage" = "https://github.com/feluda/feluda",
-    "Documentation" = "https://feluda.readthedocs.io",
     "Repository" = "https://github.com/feluda/feluda.git",
     "Issues" = "https://github.com/feluda/feluda/issues"
 }
@@ -48,12 +47,6 @@ dev = [
     "pre-commit>=4.2.0",
     "jupyter>=1.1.1",
     "notebook>=7.3.3",
-    "pytest>=7.0.0",
-    "black>=23.0.0",
-]
-docs = [
-    "sphinx>=7.0.0",
-    "sphinx-rtd-theme>=1.0.0",
 ]
 
 [tool.hatch.build]
@@ -78,8 +71,7 @@ members = [
 ]
 
 [tool.uv.dev-dependencies]
-lint = ["ruff", "black"]
-test = ["pytest"]
+lint = ["ruff"]
 docs = ["sphinx", "sphinx-rtd-theme"]
 
 [tool.ruff]
