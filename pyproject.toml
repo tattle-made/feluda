@@ -93,5 +93,4 @@ version_variable = ["pyproject.toml:project.version"]
 
 [tool.semantic_release.branches.main]
 match = "main"
-prerelease = false
 tag_format = "{name}-{version}"
