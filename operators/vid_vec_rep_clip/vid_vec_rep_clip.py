@@ -137,7 +137,6 @@ def initialize(param):
             with tempfile.TemporaryDirectory() as temp_dir:
                 try:
                     # Command to extract I-frames using ffmpeg's command line tool
-                    # Using the exact command format requested by repo owner
                     cmd = f"""ffmpeg -i "{fname}" -vf "select=eq(pict_type\\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg\""""
                     self.logger.info(f"Running command: {cmd}")
                     
