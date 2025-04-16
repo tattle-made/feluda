@@ -14,20 +14,28 @@ class Operator:
     def setup(self):
         for operator in self.operators:
             log.info(operator.type)
-            # Try to import the operator module with the full path first
+            #imports the operator module with the full path first
             try:
-                module_path = f"operators.{operator.type}.{operator.type}"
+                module_path = f"{operator.type}"
                 module = importlib.import_module(module_path)
-            except ImportError:
-                # Fall back to direct import if the full path doesn't work
+                module.initialize(operator.parameters)
+                self.active_operators[operator.type] = module
+                log.info(f"Successfully imported {operator.type} directly")
+            except (ImportError, ModuleNotFoundError):
+                # Fallback to the old path structure if direct import fails
                 try:
-                    module_path = f"{operator.type}"
+                    module_path = f"operators.{operator.type}.{operator.type}"
                     module = importlib.import_module(module_path)
-                except ImportError as e:
-                    log.error(f"Failed to import operator module {operator.type}: {e}")
-                    raise
-            module.initialize(operator.parameters)
-            self.active_operators[operator.type] = module
+                    module.initialize(operator.parameters)
+                    self.active_operators[operator.type] = module
+                    log.info(f"Successfully imported {operator.type} from operators package")
+                except (ImportError, ModuleNotFoundError):
+                    #Trying the original path as last resort
+                    module_path = f"operators.{operator.type}"
+                    module = importlib.import_module(module_path)
+                    module.initialize(operator.parameters)
+                    self.active_operators[operator.type] = module
+                    log.info(f"Successfully imported {operator.type} from operators package")
 
     def get(self):
         return self.active_operators
