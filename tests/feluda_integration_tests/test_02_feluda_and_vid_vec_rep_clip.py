@@ -6,10 +6,11 @@ from pathlib import Path  # For file path operations
 
 import numpy as np  # For numerical operations and array comparisons
 import yaml  # For YAML file operations
-from requests.exceptions import ConnectTimeout  # For handling network timeouts
 
 from feluda import Feluda
-from feluda.models.media_factory import VideoFactory  # Factory for creating video objects
+from feluda.models.media_factory import (
+    VideoFactory,  # Factory for creating video objects
+)
 
 
 class TestFeludaVideoVectorIntegration(unittest.TestCase):
@@ -112,7 +113,7 @@ class TestFeludaVideoVectorIntegration(unittest.TestCase):
     def test_invalid_video_url(self):
         """Test handling of invalid video URL."""
         invalid_url = "https://nonexistent-url/video.mp4"
-        
+
         # Direct test with invalid URL
         result = VideoFactory.make_from_url(invalid_url)
         self.assertIsNone(result, "Invalid URL should return None")
@@ -150,8 +151,8 @@ class TestFeludaVideoVectorIntegration(unittest.TestCase):
 
         # Check that the average vectors are identical
         np.testing.assert_array_equal(
-            vectors1[0]["vid_vec"], 
-            vectors2[0]["vid_vec"], 
+            vectors1[0]["vid_vec"],
+            vectors2[0]["vid_vec"],
             "Average vectors should be identical for the same video"
         )
 
