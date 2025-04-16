@@ -66,28 +66,51 @@ jobs:
           
           for package in "${PACKAGES[@]}"; do
             echo "Processing package: $package"
-            cd "$package" || exit 1
             
-            # Build the package first
-            echo "Building package: $package"
-            uv build --index-strategy unsafe-best-match
-            ls -la dist/
-            
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "DRY RUN: Would publish $package to $PUBLISH_URL"
-              # Just list the files that would be published without actually uploading
-              echo "Files that would be published:"
-              ls -la dist/
-            else
-              echo "LIVE RUN: Publishing $package to $PUBLISH_URL"
-              if [ -n "$PUBLISH_URL" ]; then
-                uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
+            # Special handling for the main feluda package which has pyproject.toml in the root
+            if [ "$package" = "feluda" ]; then
+              echo "Building root feluda package from repository root"
+              # Build from the root directory
+              uv build --index-strategy unsafe-best-match
+              
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "DRY RUN: Would publish feluda to $PUBLISH_URL"
+                # Just list the files that would be published without actually uploading
+                echo "Files that would be published:"
+                ls -la dist/
               else
-                uv publish --token "$PYPI_TOKEN"
+                echo "LIVE RUN: Publishing feluda to $PUBLISH_URL"
+                if [ -n "$PUBLISH_URL" ]; then
+                  uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
+                else
+                  uv publish --token "$PYPI_TOKEN"
+                fi
               fi
+            else
+              # Normal handling for operator packages that have their own pyproject.toml
+              cd "$package" || exit 1
+              
+              # Build the package
+              echo "Building package: $package"
+              uv build --index-strategy unsafe-best-match
+              ls -la dist/
+              
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "DRY RUN: Would publish $package to $PUBLISH_URL"
+                # Just list the files that would be published without actually uploading
+                echo "Files that would be published:"
+                ls -la dist/
+              else
+                echo "LIVE RUN: Publishing $package to $PUBLISH_URL"
+                if [ -n "$PUBLISH_URL" ]; then
+                  uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
+                else
+                  uv publish --token "$PYPI_TOKEN"
+                fi
+              fi
+              
+              cd - > /dev/null
             fi
-            
-            cd - > /dev/null
           done
 
       - name: Summary
