@@ -30,22 +30,8 @@ def initialize(param):
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("vid_vec_rep_clip")
     
-    # Try to locate ffmpeg executable
-    FFMPEG_PATH = "ffmpeg"  # Default to command name
-    if shutil.which("ffmpeg") is None:
-        # Try some common locations
-        potential_paths = [
-            "C:\\ffmpeg\\bin\\ffmpeg.exe",
-            "C:\\Program Files\\ffmpeg\\bin\\ffmpeg.exe",
-            "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe",
-            os.path.expanduser("~\\ffmpeg\\bin\\ffmpeg.exe")
-        ]
-        for path in potential_paths:
-            if os.path.exists(path):
-                FFMPEG_PATH = path
-                logger.info(f"Found FFmpeg at: {FFMPEG_PATH}")
-                break
-        logger.warning(f"FFmpeg not found in PATH, using path: {FFMPEG_PATH}")
+    # Use default ffmpeg from PATH
+    FFMPEG_PATH = "ffmpeg"
 
     # Load the model and processor
     processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -155,6 +141,7 @@ def initialize(param):
             with tempfile.TemporaryDirectory() as temp_dir:
                 try:
                     # Command to extract I-frames using ffmpeg's command line tool
+                    # Double escape the backslash for Windows compatibility
                     cmd = f'"{FFMPEG_PATH}" -i "{fname}" -vf "select=eq(pict_type\\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"'
                     self.logger.info(f"Running command: {cmd}")
                     
@@ -270,21 +257,6 @@ def run(file):
     try:
         vid_analyzer = VideoAnalyzer(fname)
         return gendata(vid_analyzer)
-    except Exception as e:
-        import logging
-        logging.error(f"Error processing video {fname}: {str(e)}")
-        # Create a dummy analyzer with minimal functionality
-        class DummyAnalyzer:
-            def __init__(self):
-                # Use global torch from initialize function
-                import numpy as np
-                # Create a fallback numpy array instead of torch tensor
-                self.feature_matrix = np.zeros((1, 512))
-            
-            def get_mean_feature(self):
-                return self.feature_matrix[0]
-        
-        return gendata(DummyAnalyzer())
     finally:
         if os.path.exists(fname):
             os.remove(fname)
