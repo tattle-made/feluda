@@ -13,7 +13,6 @@ def initialize(param):
     print("Installing packages for vid_vec_rep_clip")
     global os
     global VideoAnalyzer, gendata
-    global FFMPEG_PATH
 
     # Imports
     import os
@@ -29,9 +28,6 @@ def initialize(param):
     # Setup logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger("vid_vec_rep_clip")
-    
-    # Use default ffmpeg from PATH
-    FFMPEG_PATH = "ffmpeg"
 
     # Load the model and processor
     processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
@@ -141,8 +137,8 @@ def initialize(param):
             with tempfile.TemporaryDirectory() as temp_dir:
                 try:
                     # Command to extract I-frames using ffmpeg's command line tool
-                    # Double escape the backslash for Windows compatibility
-                    cmd = f'"{FFMPEG_PATH}" -i "{fname}" -vf "select=eq(pict_type\\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"'
+                    # Using the exact command format requested by repo owner
+                    cmd = f"""ffmpeg -i "{fname}" -vf "select=eq(pict_type\\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg\""""
                     self.logger.info(f"Running command: {cmd}")
                     
                     with subprocess.Popen(
@@ -185,7 +181,7 @@ def initialize(param):
             with tempfile.TemporaryDirectory() as temp_dir:
                 try:
                     # Extract frames every 1 second
-                    cmd = f'"{FFMPEG_PATH}" -i "{fname}" -vf "fps=1" "{temp_dir}/frame_%05d.jpg"'
+                    cmd = f"""ffmpeg -i "{fname}" -vf "fps=1" "{temp_dir}/frame_%05d.jpg\""""
                     self.logger.info(f"Running fallback command: {cmd}")
                     
                     with subprocess.Popen(
