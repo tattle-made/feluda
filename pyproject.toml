@@ -70,16 +70,30 @@ config-settings = { editable_mode = "compat" }
 
 [tool.uv.workspace]
 members = [
+    "feluda"
     "operators/image_vec_rep_resnet",
     "operators/vid_vec_rep_clip",
     "operators/cluster_embeddings",
     "operators/dimension_reduction",
 ]
 
+[tool.uv.dev-dependencies]
+lint = ["ruff", "black"]
+test = ["pytest"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py310"
-select = ["E", "F", "I"]
+select = [
+  "E",    # pycodestyle
+  "F",    # pyflakes
+  "I",    # isort
+  "B",    # flake8-bugbear
+  "UP",   # pyupgrade
+  "C4",   # flake8-comprehensions
+  "SIM",  # flake8-simplify
+]
 exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
 
 [tool.semantic_release]
