@@ -55,7 +55,7 @@ class TestFeludaVideoVectorIntegration(unittest.TestCase):
         cls.feluda.setup()
 
         # Test constants
-        cls.test_video_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/cat_vid_2mb.mp4"  # URL to the test video
+        cls.test_video_url = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"  # URL to the test video
         cls.expected_vector_dim = 512  # Expected dimension of the CLIP video vectors
 
     def setUp(self):
@@ -114,9 +114,11 @@ class TestFeludaVideoVectorIntegration(unittest.TestCase):
         """Test handling of invalid video URL."""
         invalid_url = "https://nonexistent-url/video.mp4"
 
-        # Direct test with invalid URL
-        result = VideoFactory.make_from_url(invalid_url)
-        self.assertIsNone(result, "Invalid URL should return None")
+        with self.assertRaises(Exception) as context:
+            VideoFactory.make_from_url(invalid_url)
+
+        self.assertIn("Error Downloading Video", str(context.exception))
+
 
     def test_operator_configuration(self):
         """Test that operator is properly configured."""
