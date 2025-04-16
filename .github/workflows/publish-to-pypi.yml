@@ -75,7 +75,9 @@ jobs:
             
             if [ "$DRY_RUN" = "true" ]; then
               echo "DRY RUN: Would publish $package to $PUBLISH_URL"
-              uv publish --no-upload
+              # Just list the files that would be published without actually uploading
+              echo "Files that would be published:"
+              ls -la dist/
             else
               echo "LIVE RUN: Publishing $package to $PUBLISH_URL"
               if [ -n "$PUBLISH_URL" ]; then
