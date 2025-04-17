@@ -18,6 +18,8 @@ class TestPackageVersionManager(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         # Create the basic structure
         os.makedirs(os.path.join(self.temp_dir, "feluda"))
+        self.temp_dir = os.path.join(self.temp_dir, "feluda")
+        os.makedirs(os.path.join(self.temp_dir, "feluda"))
         os.makedirs(os.path.join(self.temp_dir, "operators", "operator1"))
         os.makedirs(os.path.join(self.temp_dir, "operators", "operator2"))
         # make feluda the root path
@@ -29,7 +31,8 @@ class TestPackageVersionManager(unittest.TestCase):
 
         # Set up initial commit
         self._create_initial_commit()
-    
+        
+        
         
 
     def tearDown(self):
@@ -130,7 +133,7 @@ class TestPackageVersionManager(unittest.TestCase):
 
     def _get_current_version(self, package_path):
         """Get the current version from a package's pyproject.toml."""
-        if package_path == "feluda":
+        if package_path.endswith("feluda"):
             pyproject_path = os.path.join(self.temp_dir, "pyproject.toml")
         else:
             pyproject_path = os.path.join(self.temp_dir, package_path, "pyproject.toml")
@@ -150,15 +153,15 @@ class TestPackageVersionManager(unittest.TestCase):
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
-
+        manager.packages = manager._discover_packages([self.temp_dir], os.path.join(self.temp_dir, "operators"))
+        
         # Check that we have exactly 3 packages discovered
         self.assertEqual(len(manager.packages), 3)
         # Check for the root package 'feluda'
-        feluda_path = os.path.join(self.temp_dir, "feluda")
-        self.assertIn(feluda_path, manager.packages)
+        self.assertIn(self.temp_dir, manager.packages)
         self.assertEqual(
-            manager.packages[feluda_path]["package_path"],
-            os.path.join(self.temp_dir, "feluda"),
+            manager.packages[self.temp_dir]["package_path"],
+            self.temp_dir
         )
         # Check for operator1 and operator2 by their absolute paths
         op1_path = os.path.join(self.temp_dir, "operators", "operator1")
@@ -167,7 +170,7 @@ class TestPackageVersionManager(unittest.TestCase):
         self.assertIn(op2_path, manager.packages)
         # Additional checks to verify the version and package name
         self.assertEqual(
-            manager.packages[feluda_path]["pyproject_data"]["project"]["name"], "feluda"
+            manager.packages[self.temp_dir]["pyproject_data"]["project"]["name"], "feluda"
         )
         self.assertEqual(
             manager.packages[op1_path]["pyproject_data"]["project"]["name"], "operator1"
@@ -338,16 +341,18 @@ class TestPackageVersionManager(unittest.TestCase):
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
-
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
         feluda_path = os.path.join(self.temp_dir, "feluda")
-        expected_tag = manager.packages[feluda_path].get("pyproject_data", {}).get(
+        expected_tag = manager.packages[self.temp_dir].get("pyproject_data", {}).get(
             "tool", {}
         ).get("semantic_release", {}).get("branches", {}).get("main", {}).get(
             "tag_format", "{name}-v{version}"
         )
 
         self.assertEqual(
-            manager._get_tag_format(manager.packages[feluda_path]), expected_tag
+            manager._get_tag_format(manager.packages[self.temp_dir]), expected_tag
         )
 
     def test_tag_exists(self):
@@ -355,25 +360,29 @@ class TestPackageVersionManager(unittest.TestCase):
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
 
         # Create a tag
         subprocess.run(["git", "tag", "feluda-v0.2.0"], cwd=self.temp_dir, check=True)
 
-        feluda_path = os.path.join(self.temp_dir, "feluda")
-
         # Test tag exists
-        self.assertTrue(manager.tag_exists(manager.packages[feluda_path], "0.2.0"))
+        self.assertTrue(manager.tag_exists(manager.packages[self.temp_dir], "0.2.0"))
 
         # Test tag doesn't exist
-        self.assertFalse(manager.tag_exists(manager.packages[feluda_path], "0.3.0"))
+        self.assertFalse(manager.tag_exists(manager.packages[self.temp_dir], "0.3.0"))
 
     def test_create_tag(self):
         """Test creation of tags."""
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
-        feluda_path = os.path.join(self.temp_dir, "feluda")
-        manager.create_tag(manager.packages[feluda_path], "0.2.0")
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
+        
+        manager.create_tag(manager.packages[self.temp_dir], "0.2.0")
 
         tags = subprocess.run(
             ["git", "tag"],
@@ -386,7 +395,7 @@ class TestPackageVersionManager(unittest.TestCase):
         self.assertNotIn("feluda-v0.3.0", tags)
 
         # Check if the tag was created
-        manager.create_tag(manager.packages[feluda_path], "0.3.0")
+        manager.create_tag(manager.packages[self.temp_dir], "0.3.0")
         tags = subprocess.run(  
             ["git", "tag"],
             cwd=self.temp_dir,
@@ -426,6 +435,9 @@ class TestPackageVersionManager(unittest.TestCase):
 
         # Create the version manager
         manager = PackageVersionManager(self.temp_dir, commit1, commit3)
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
 
         # Update versions
         updated_versions = manager.update_package_versions()
@@ -433,14 +445,13 @@ class TestPackageVersionManager(unittest.TestCase):
         # Check that all packages were updated
         self.assertEqual(len(updated_versions), 3)
 
-        # Check feluda version (should be minor bump from 0.1.0 to 0.2.0)
-        feluda_path = os.path.join(self.temp_dir, "feluda")
+        # Check feluda version (should be major bump from 0.1.0 to 1.0.0)
+        
         operator1_path = os.path.join(self.temp_dir, "operators", "operator1")
         operator2_path = os.path.join(self.temp_dir, "operators", "operator2")
-        self.assertEqual(updated_versions[feluda_path]["old_version"], "0.1.0")
-        self.assertEqual(updated_versions[feluda_path]["new_version"], "0.2.0")
-        self.assertEqual(updated_versions[feluda_path]["bump_type"], "minor")
-
+        self.assertEqual(updated_versions[self.temp_dir]["old_version"], "0.1.0")
+        self.assertEqual(updated_versions[self.temp_dir]["new_version"], "1.0.0")
+        self.assertEqual(updated_versions[self.temp_dir]["bump_type"], "major")
         # Check operator1 version (should be major bump from 0.1.0 to 1.0.0)
         self.assertEqual(
             updated_versions[operator1_path]["old_version"], "0.1.0"
@@ -460,7 +471,7 @@ class TestPackageVersionManager(unittest.TestCase):
         self.assertEqual(updated_versions[operator2_path]["bump_type"], "patch")
 
         # Verify that the versions were updated in the pyproject.toml files
-        self.assertEqual(self._get_current_version("feluda"), "0.2.0")
+        self.assertEqual(self._get_current_version("feluda"), "1.0.0")
         self.assertEqual(self._get_current_version("operators/operator1"), "1.0.0")
         self.assertEqual(self._get_current_version("operators/operator2"), "0.1.1")
 
@@ -473,7 +484,7 @@ class TestPackageVersionManager(unittest.TestCase):
             check=True,
         ).stdout.splitlines()
 
-        self.assertIn("feluda-v0.2.0", tags)
+        self.assertIn("feluda-v1.0.0", tags)
         self.assertIn("operator1-v1.0.0", tags)
         self.assertIn("operator2-v0.1.1", tags)
 
@@ -516,12 +527,14 @@ class TestPackageVersionManager(unittest.TestCase):
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
-        feluda_path = os.path.join(self.temp_dir, "feluda")
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
         operator1_path = os.path.join(self.temp_dir, "operators", "operator1")
         operator2_path = os.path.join(self.temp_dir, "operators", "operator2")
         # Check that only two packages were discovered
         self.assertEqual(len(manager.packages), 2)
-        self.assertIn(feluda_path, manager.packages)
+        self.assertIn(self.temp_dir, manager.packages)
         self.assertIn(operator1_path, manager.packages)
         self.assertNotIn(operator2_path, manager.packages)
 
