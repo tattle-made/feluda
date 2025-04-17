@@ -1,8 +1,3 @@
-"""
-Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach.
-"""
-
-
 def initialize(param):
     """
     Initializes the operator.
@@ -18,7 +13,6 @@ def initialize(param):
     global read_image
     global os
 
-    # Imports
     import logging
     import os
 
