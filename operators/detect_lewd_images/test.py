@@ -27,8 +27,8 @@ class TestDetectLewdImages(unittest.TestCase):
         pass
 
     def test_sample_image_from_url(self):
-        image1 = ImageFactory.make_from_url(self.test_videos["nude_study"])
-        image2 = ImageFactory.make_from_url(self.test_videos["mobile_phone"])
+        image1 = ImageFactory.make_from_url(self.test_images["nude_study"])
+        image2 = ImageFactory.make_from_url(self.test_images["mobile_phone"])
         paths = [image1["path"], image2["path"]]
         results = detect_lewd_images.run(paths)
         # Assert that the lewd content prediction is greater than 40%
