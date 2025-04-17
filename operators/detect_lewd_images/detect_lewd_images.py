@@ -14,12 +14,17 @@ def initialize(param):
     global inference
 
     # Imports
+    import logging
+    import os
+
     import tensorflow as tf
-    from absl import logging as absl_logging
     from huggingface_hub import snapshot_download
 
-    tf.get_logger().setLevel("ERROR")
-    absl_logging.set_verbosity(absl_logging.ERROR)
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    logging.basicConfig(level=logging.ERROR)
+
+    tf.get_logger().setLevel(logging.ERROR)
+    logging.getLogger("absl").setLevel(logging.ERROR)
 
     # Load the model and processor
     local_dir = snapshot_download(repo_id="nateraw/bumble-private-detector")
