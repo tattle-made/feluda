@@ -168,5 +168,8 @@ def run(file, labels):
         raise ValueError("Label list must not be empty.")
 
     fname = file["path"]
-    vid_analyzer = VideoClassifier(fname, labels)
-    return gen_data(vid_analyzer)
+    try:
+        vid_analyzer = VideoClassifier(fname, labels)
+        return gen_data(vid_analyzer)
+    finally:
+        os.remove(fname)
