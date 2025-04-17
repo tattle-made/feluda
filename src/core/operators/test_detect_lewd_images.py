@@ -37,7 +37,7 @@ class TestDetectLewdImages(unittest.TestCase):
 
     @skip
     def test_sample_image_from_url(self):
-        image = ImageFactory.make_from_url(self.test_images["nude_study"])
+        image = ImageFactory.make_from_url(self.test_images["nude_study_url"])
 
         paths = [image["path"]]
         results = detect_lewd_images.run(paths)
