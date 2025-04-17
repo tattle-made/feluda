@@ -123,12 +123,17 @@ def initialize(param):
         image_paths : list[str]
             Path(s) to image to be predicted on
         """
+        all_preds = []
         for image_path in image_paths:
-            image = read_image(image_path)
-
-            preds = model([image])
+            try:
+                image = read_image(image_path)
+                preds = model([image])
+                all_preds.append(preds)
+            except Exception as e:
+                print(f"[ERROR] Inference failed on '{image_path}': {e}")
 
             print(f"Probability: {100 * tf.get_static_value(preds[0])[0]:.2f}% - {image_path}")
+        return all_preds
 
 
 def run(images: list[str]):
