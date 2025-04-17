@@ -12,6 +12,11 @@ def initialize(param):
     """
     print("Installing packages for classify_video_zero_shot")
     global inference
+    global model
+    global pad_resize_image
+    global preprocess_for_evaluation
+    global read_image
+    global os
 
     # Imports
     import logging
@@ -113,39 +118,44 @@ def initialize(param):
 
         return image
 
-    def inference(image_paths: list[str]) -> None:
+    def inference(image_path: str):
         """Get predictions with a Private Detector model
 
         Parameters
         ----------
-        model : str
-            Path to saved model
-        image_paths : list[str]
-            Path(s) to image to be predicted on
+        image_path : str
+            Path to image to be predicted on
+
+        Returns
+        -------
+        preds
+            Prediction result
         """
-        all_preds = []
-        for image_path in image_paths:
-            try:
-                image = read_image(image_path)
-                preds = model([image])
-                all_preds.append(preds)
-            except Exception as e:
-                print(f"[ERROR] Inference failed on '{image_path}': {e}")
-
-            print(f"Probability: {100 * tf.get_static_value(preds[0])[0]:.2f}% - {image_path}")
-        return all_preds
+        try:
+            image = read_image(image_path)
+            preds = model([image])
+            probability = tf.get_static_value(preds[0])[0]
+            return probability
+        except Exception as e:
+            print(f"[ERROR] Inference failed on '{image_path}': {e}")
+            return None
 
 
-def run(images: list[str]):
+def run(image_path: str):
     """
     Runs the operator.
 
     Args:
-        file (dict): `VideoFactory` file object
-        labels (list): List of labels
+        image_path (str): Path to the image file
 
+    Returns:
+        Prediction results
     """
-    if not images:
-        raise ValueError("Image list must not be empty.")
-
-    inference(images)
+    fname = image_path["path"]
+    if not fname:
+        raise ValueError("Image path must not be empty.")
+    try:
+        result = inference(fname)
+        return result
+    finally:
+        os.remove(fname)

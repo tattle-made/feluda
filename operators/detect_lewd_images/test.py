@@ -19,8 +19,8 @@ class TestDetectLewdImages(unittest.TestCase):
 
     def setUp(self):
         self.test_images = {
-            "nude_study_url": r"https://upload.wikimedia.org/wikipedia/commons/1/16/Nude_study_%2836207592445%29.jpg",
-            "mobile_phone_local": "core/operators/sample_data/mobile_phone.png",
+            "url": r"https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/text.png",
+            "local_path": "core/operators/sample_data/mobile_phone.png",
         }
 
     def tearDown(self):
@@ -29,17 +29,15 @@ class TestDetectLewdImages(unittest.TestCase):
 
     @skip
     def test_sample_video_from_disk(self):
-        image = ImageFactory.make_from_file_on_disk_to_path(self.test_images["mobile_phone_local"])
+        image = ImageFactory.make_from_file_on_disk_to_path(self.test_images["local_path"])
         paths = [image["path"]]
         results = detect_lewd_images.run(paths)
         # Assert that the lewd content prediction is less than 20%
         self.assertLess(results[1], 20)
 
-    @skip
     def test_sample_image_from_url(self):
-        image = ImageFactory.make_from_url(self.test_images["nude_study_url"])
+        image = ImageFactory.make_from_url_to_path(self.test_images["url"])
+        result = detect_lewd_images.run(image)
 
-        paths = [image["path"]]
-        results = detect_lewd_images.run(paths)
-        # Assert that the lewd content prediction is greater than 40%
-        self.assertGreater(results[0], 40)
+        self.assertGreaterEqual(result, 0.10)
+        self.assertLessEqual(result, 0.15)
