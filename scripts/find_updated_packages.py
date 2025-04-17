@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
 Script to identify packages with updated versions that need to be published to PyPI.
-This script checks each package's current version against the latest version on PyPI.
+This script checks each package's current version against the latest version on PyPI
+and verifies versions against git tags for security.
 """
 
 import glob
 import os
 import json
 import sys
+import subprocess
 import requests
 import tomlkit
 from pathlib import Path
@@ -48,10 +50,20 @@ def discover_packages(repo_root):
                     print(f"Warning: Missing name or version in {pyproject_path}")
                     continue
 
+                # Get the tag format from pyproject.toml if available
+                tag_format = (
+                    pyproject_data.get("tool", {})
+                    .get("semantic_release", {})
+                    .get("branches", {})
+                    .get("main", {})
+                    .get("tag_format", "{name}-{version}")
+                )
+
                 packages[package_root] = {
                     "path": full_path,
                     "name": package_name,
                     "current_version": current_version,
+                    "tag_format": tag_format
                 }
                 print(f"Discovered package: {package_name} ({current_version}) at {package_root}")
             else:
@@ -88,22 +100,72 @@ def get_pypi_version(package_name, test_pypi=True):
         print(f"Error checking {'Test PyPI' if test_pypi else 'PyPI'} for {package_name}: {e}")
         return None
 
+def verify_git_tag_exists(package_name, version, tag_format):
+    """
+    Verify that a git tag exists for the specified package version.
+    
+    Args:
+        package_name (str): Name of the package.
+        version (str): Version to check.
+        tag_format (str): Tag format template.
+    
+    Returns:
+        bool: True if the tag exists, False otherwise.
+    """
+    try:
+        # Format the tag according to the tag_format
+        tag_name = tag_format.format(name=package_name, version=version)
+        
+        # Check if the tag exists
+        cmd = ["git", "tag", "--list", tag_name]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        
+        exists = tag_name in result.stdout.splitlines()
+        if exists:
+            print(f"Found git tag {tag_name} for {package_name} version {version}")
+        else:
+            print(f"Warning: No git tag found for {package_name} version {version} (expected tag: {tag_name})")
+        return exists
+    except subprocess.CalledProcessError as e:
+        print(f"Error checking git tag for {package_name}: {e}")
+        return False
+
 def main():
     repo_root = os.getcwd()
     packages = discover_packages(repo_root)
     packages_to_publish = []
+    packages_with_tag_issues = []
 
     # Determine whether to check Test PyPI or production PyPI
     # If CHECK_TEST_PYPI is set to "true" in environment variables, use Test PyPI
     check_test_pypi = os.environ.get("CHECK_TEST_PYPI", "true").lower() == "true"
     
+    # Force tag verification or not (default to true)
+    verify_tags = os.environ.get("VERIFY_TAGS", "true").lower() == "true"
+    
     print(f"Checking package versions against {'Test PyPI' if check_test_pypi else 'production PyPI'}")
+    if verify_tags:
+        print("Git tag verification is enabled")
+    else:
+        print("Warning: Git tag verification is disabled")
     
     for package_root, package_info in packages.items():
         try:
             package_name = package_info["name"]
             current_version = package_info["current_version"]
+            tag_format = package_info["tag_format"]
             
+            # First verify the git tag exists if verification is enabled
+            tag_valid = True
+            if verify_tags:
+                tag_valid = verify_git_tag_exists(package_name, current_version, tag_format)
+                if not tag_valid:
+                    packages_with_tag_issues.append(f"{package_name} (version {current_version})")
+            
+            if not tag_valid and verify_tags:
+                print(f"Skipping {package_name} due to missing git tag")
+                continue
+                
             # Get the latest version from PyPI (Test or production)
             pypi_version = get_pypi_version(package_name, test_pypi=check_test_pypi)
             
@@ -123,6 +185,12 @@ def main():
     # Write the list of packages to publish to a file
     with open("packages_to_publish.txt", "w") as f:
         f.write(",".join(packages_to_publish))
+
+    # Write a report of tag issues if any were found
+    if packages_with_tag_issues:
+        with open("tag_verification_issues.txt", "w") as f:
+            f.write("\n".join(packages_with_tag_issues))
+        print(f"\nWarning: {len(packages_with_tag_issues)} packages have git tag verification issues. See tag_verification_issues.txt")
 
     if packages_to_publish:
         print(f"\nPackages to publish: {', '.join(packages_to_publish)}")
