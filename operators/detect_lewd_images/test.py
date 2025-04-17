@@ -29,7 +29,9 @@ class TestDetectLewdImages(unittest.TestCase):
 
     @skip
     def test_sample_video_from_disk(self):
-        image = ImageFactory.make_from_file_on_disk_to_path(self.test_images["local_path"])
+        image = ImageFactory.make_from_file_on_disk_to_path(
+            self.test_images["local_path"]
+        )
         paths = [image["path"]]
         results = detect_lewd_images.run(paths)
         # Assert that the lewd content prediction is less than 20%

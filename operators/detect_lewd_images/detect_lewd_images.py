@@ -68,7 +68,9 @@ def initialize(param):
 
         return image
 
-    def preprocess_for_evaluation(image: tf.Tensor, image_size: int, dtype: tf.dtypes.DType) -> tf.Tensor:
+    def preprocess_for_evaluation(
+        image: tf.Tensor, image_size: int, dtype: tf.dtypes.DType
+    ) -> tf.Tensor:
         """
         Preprocess image for evaluation
 
