@@ -9,7 +9,7 @@ on:
         default: true
         type: boolean
       publish_url:
-        description: 'PyPI publish URL (leave empty for production PyPI)'
+        description: 'PyPI publish URL (use https://test.pypi.org/legacy/ for TestPyPI)'
         required: false
         default: 'https://test.pypi.org/legacy/'
         type: string
@@ -18,549 +18,179 @@ on:
         required: false
         default: true
         type: boolean
-      generate_changelog:
-        description: 'Generate changelog for published packages'
-        required: false
-        default: true
-        type: boolean
-      notify_on_completion:
-        description: 'Send notification on completion'
-        required: false
-        default: false
-        type: boolean
-      concurrent_build:
-        description: 'Build packages concurrently'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # Required for trusted publishing to PyPI
+      id-token: write # Required for trusted publishing to PyPI
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Needed for tag verification
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install uv
-        run: |
-          pip install uv
-          uv --version
-
-      - name: Install dependencies for version checking
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install tomlkit requests
+          pip install uv tomlkit requests
 
       - name: Find packages with updated versions
         id: find-packages
         env:
+          # Pass publish URL to script to check against TestPyPI if needed
           CHECK_TEST_PYPI: ${{ inputs.publish_url == 'https://test.pypi.org/legacy/' }}
           VERIFY_TAGS: ${{ inputs.verify_tags }}
         run: |
           python -m scripts.find_updated_packages
           if [ -f packages_to_publish.txt ]; then
+            # Store comma-separated list and count as outputs
             echo "packages_to_publish=$(cat packages_to_publish.txt)" >> $GITHUB_OUTPUT
-            echo "packages_count=$(cat packages_to_publish.txt | tr ',' '\n' | wc -l)" >> $GITHUB_OUTPUT
+            echo "packages_count=$(wc -w < packages_to_publish.txt | tr -d ' ')" >> $GITHUB_OUTPUT # Count words (packages)
           else
             echo "packages_to_publish=" >> $GITHUB_OUTPUT
             echo "packages_count=0" >> $GITHUB_OUTPUT
           fi
           
+          # Check if tag verification found issues
           if [ -f tag_verification_issues.txt ]; then
             echo "has_tag_issues=true" >> $GITHUB_OUTPUT
           else
             echo "has_tag_issues=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Generate Changelog
-        if: inputs.generate_changelog == true && steps.find-packages.outputs.packages_to_publish != ''
-        id: changelog
-        run: |
-          mkdir -p changelogs
-          
-          # Read the list of packages to publish
-          IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-          
-          for package in "${PACKAGES[@]}"; do
-            echo "Generating changelog for $package"
-            
-            # Determine package name and version
-            if [ "$package" = "feluda" ]; then
-              PACKAGE_INFO=$(python -c "import tomlkit; print(tomlkit.parse(open('pyproject.toml').read())['project']['name'] + ',' + tomlkit.parse(open('pyproject.toml').read())['project']['version'])")
-            else
-              PACKAGE_INFO=$(python -c "import tomlkit; print(tomlkit.parse(open('$package/pyproject.toml').read())['project']['name'] + ',' + tomlkit.parse(open('$package/pyproject.toml').read())['project']['version'])")
-            fi
-            
-            PACKAGE_NAME=$(echo $PACKAGE_INFO | cut -d',' -f1)
-            PACKAGE_VERSION=$(echo $PACKAGE_INFO | cut -d',' -f2)
-            
-            # Get the git tag for the current version
-            if [ "$package" = "feluda" ]; then
-              TAG_FORMAT=$(python -c "import tomlkit; data=tomlkit.parse(open('pyproject.toml').read()); print(data.get('tool', {}).get('semantic_release', {}).get('branches', {}).get('main', {}).get('tag_format', '{name}-{version}'))")
-            else
-              TAG_FORMAT=$(python -c "import tomlkit; data=tomlkit.parse(open('$package/pyproject.toml').read()); print(data.get('tool', {}).get('semantic_release', {}).get('branches', {}).get('main', {}).get('tag_format', '{name}-{version}'))")
-            fi
-            
-            CURRENT_TAG=$(echo $TAG_FORMAT | sed "s/{name}/$PACKAGE_NAME/g" | sed "s/{version}/$PACKAGE_VERSION/g")
-            
-            # Find the previous tag
-            ALL_TAGS=$(git tag -l "$PACKAGE_NAME-*" | sort -V)
-            PREVIOUS_TAG=$(echo "$ALL_TAGS" | grep -v "$CURRENT_TAG" | tail -n 1)
-            
-            if [ -z "$PREVIOUS_TAG" ]; then
-              echo "No previous tag found for $PACKAGE_NAME, using first commit"
-              COMMIT_RANGE="$(git rev-list --max-parents=0 HEAD)..HEAD"
-            else
-              echo "Previous tag: $PREVIOUS_TAG, Current tag: $CURRENT_TAG"
-              COMMIT_RANGE="$PREVIOUS_TAG..$CURRENT_TAG"
-            fi
-            
-            # Generate changelog
-            echo "# Changelog for $PACKAGE_NAME v$PACKAGE_VERSION" > "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            echo "## Changes" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            
-            # Add sections for different types of changes
-            if [ "$package" = "feluda" ]; then
-              COMMITS=$(git log $COMMIT_RANGE --pretty=format:"%s (%h)" --no-merges -- "feluda/" "pyproject.toml")
-            else
-              COMMITS=$(git log $COMMIT_RANGE --pretty=format:"%s (%h)" --no-merges -- "$package/")
-            fi
-            
-            # Extract different types of commits
-            FEATURES=$(echo "$COMMITS" | grep -i "^feat" || echo "")
-            FIXES=$(echo "$COMMITS" | grep -i "^fix" || echo "")
-            DOCS=$(echo "$COMMITS" | grep -i "^docs" || echo "")
-            CHORE=$(echo "$COMMITS" | grep -i "^chore" || echo "")
-            OTHER=$(echo "$COMMITS" | grep -iv "^feat" | grep -iv "^fix" | grep -iv "^docs" | grep -iv "^chore" || echo "")
-            
-            # Add the sections if they have any commits
-            if [ -n "$FEATURES" ]; then
-              echo "### Features" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "$FEATURES" | sed 's/^/* /' >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            fi
-            
-            if [ -n "$FIXES" ]; then
-              echo "### Bug Fixes" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "$FIXES" | sed 's/^/* /' >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            fi
-            
-            if [ -n "$DOCS" ]; then
-              echo "### Documentation" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "$DOCS" | sed 's/^/* /' >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            fi
-            
-            if [ -n "$CHORE" ]; then
-              echo "### Chores" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "$CHORE" | sed 's/^/* /' >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            fi
-            
-            if [ -n "$OTHER" ]; then
-              echo "### Other Changes" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "$OTHER" | sed 's/^/* /' >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            fi
-            
-            # Add contributors
-            if [ "$package" = "feluda" ]; then
-              CONTRIBUTORS=$(git log $COMMIT_RANGE --pretty=format:"%an" --no-merges -- "feluda/" "pyproject.toml" | sort -u)
-            else
-              CONTRIBUTORS=$(git log $COMMIT_RANGE --pretty=format:"%an" --no-merges -- "$package/" | sort -u)
-            fi
-            
-            if [ -n "$CONTRIBUTORS" ]; then
-              echo "### Contributors" >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-              echo "$CONTRIBUTORS" | sed 's/^/* /' >> "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md"
-            fi
-            
-            echo "Generated changelog for $PACKAGE_NAME v$PACKAGE_VERSION"
-          done
-          
-          echo "changelogs_generated=true" >> $GITHUB_OUTPUT
-
-      - name: Check Dependencies
-        if: steps.find-packages.outputs.packages_to_publish != ''
-        id: check-deps
-        run: |
-          # Read the list of packages to publish
-          IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-          
-          HAS_DEPENDENCY_ISSUES=false
-          
-          for package in "${PACKAGES[@]}"; do
-            echo "Checking dependencies for $package"
-            
-            # Run a basic pip check for the package
-            if [ "$package" = "feluda" ]; then
-              pip install -e . || true
-            else
-              cd "$package" || continue
-              pip install -e . || true
-              cd - > /dev/null
-            fi
-            
-            # Check for any dependency issues using pip check
-            pip check 2> dependency_issues.txt || HAS_DEPENDENCY_ISSUES=true
-            
-            if [ "$HAS_DEPENDENCY_ISSUES" = "true" ]; then
-              echo "Dependency issues found in $package:"
-              cat dependency_issues.txt
-              echo "⚠️ Warning: Dependency issues detected in $package. See logs for details."
-            fi
-          done
-          
-          echo "has_dependency_issues=$HAS_DEPENDENCY_ISSUES" >> $GITHUB_OUTPUT
-
-      - name: Build and Publish to PyPI
+      - name: Build packages
+        # Run only if there are packages to publish
         if: steps.find-packages.outputs.packages_to_publish != ''
         env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          # Target repository URL (TestPyPI or Production)
           PUBLISH_URL: ${{ inputs.publish_url }}
-          CONCURRENT_BUILD: ${{ inputs.concurrent_build }}
         run: |
+          set -e # Exit on any error
+
           # Read the list of packages to publish
           IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
           
-          # Create a clean dist directory
+          # Clean slate for build artifacts
           rm -rf dist dist_backup
           mkdir -p dist
           
-          # Display warning if tag issues were found
+          # Display warnings from previous steps
           if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ]; then
-            echo "⚠️ Warning: Some packages have tag verification issues. See tag_verification_issues.txt for details."
-            cat tag_verification_issues.txt || true
+            echo "::warning::Some packages have tag verification issues. See 'Find packages' step logs."
+            cat tag_verification_issues.txt || true # Display if exists
           fi
           
-          # Display warning if dependency issues were found
-          if [ "${{ steps.check-deps.outputs.has_dependency_issues }}" = "true" ]; then
-            echo "⚠️ Warning: Dependency issues detected. Publishing may result in packages that are difficult to install."
-          fi
-          
-          # Process packages differently based on concurrent_build setting
-          if [ "$CONCURRENT_BUILD" = "true" ]; then
-            echo "Building packages concurrently..."
+          # Build packages sequentially
+          echo "Building packages..."
+          for package_path in "${PACKAGES[@]}"; do
+            echo "--- Processing package: $package_path ---"
             
-            # Install GNU parallel for concurrent processing
-            apt-get update && apt-get install -y parallel
-            
-            # Use parallel to build packages concurrently
-            mkdir -p temp_build_scripts
-            
-            for package in "${PACKAGES[@]}"; do
-              echo "Creating build script for $package"
-              
-              if [ "$package" = "feluda" ]; then
-                # Script for building root feluda package
-                cat > "temp_build_scripts/build_${package//\//_}.sh" << EOL
-#!/bin/bash
-echo "Building root feluda package from repository root"
-cd $PWD
-uv build --index-strategy unsafe-best-match
-mkdir -p dist_backup/feluda
-cp dist/* dist_backup/feluda/ || true
-echo "Finished building feluda"
-EOL
-              else
-                # Script for building operator package
-                cat > "temp_build_scripts/build_${package//\//_}.sh" << EOL
-#!/bin/bash
-echo "Building package: $package"
-cd $PWD/$package
-uv build --index-strategy unsafe-best-match
-mkdir -p $PWD/dist_backup/$package
-cp $PWD/dist/* $PWD/dist_backup/$package/ || true
-echo "Finished building $package"
-EOL
-              fi
-              
-              chmod +x "temp_build_scripts/build_${package//\//_}.sh"
-            done
-            
-            # Run the build scripts in parallel
-            ls temp_build_scripts/*.sh | parallel -j$(nproc) bash || true
-            
-            # Combine all built packages into the dist directory
-            mkdir -p dist
-            cp -R dist_backup/*/* dist/ || true
-            
-            # Publish all packages at once
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "DRY RUN: Would publish all packages to $PUBLISH_URL"
-              echo "Files that would be published:"
-              ls -la dist/
+            if [ "$package_path" = "." ] || [ "$package_path" = "feluda" ]; then
+              echo "Building root package (.)"
+              uv build --index-strategy unsafe-best-match
             else
-              echo "LIVE RUN: Publishing all packages to $PUBLISH_URL"
-              if [ -n "$PUBLISH_URL" ]; then
-                uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
-              else
-                uv publish --token "$PYPI_TOKEN"
-              fi
+              echo "Building package: $package_path"
+              ( # Subshell for cd
+                cd "$package_path" || exit 1
+                uv build --index-strategy unsafe-best-match # Builds in root dist
+              )
             fi
             
-          else
-            echo "Building packages sequentially..."
-            
-            for package in "${PACKAGES[@]}"; do
-              echo "Processing package: $package"
-              
-              # Special handling for the main feluda package which has pyproject.toml in the root
-              if [ "$package" = "feluda" ]; then
-                echo "Building root feluda package from repository root"
-                # Build from the root directory
-                uv build --index-strategy unsafe-best-match
-                
-                if [ "$DRY_RUN" = "true" ]; then
-                  echo "DRY RUN: Would publish feluda to $PUBLISH_URL"
-                  # Just list the files that would be published without actually uploading
-                  echo "Files that would be published:"
-                  ls -la dist/
-                else
-                  echo "LIVE RUN: Publishing feluda to $PUBLISH_URL"
-                  if [ -n "$PUBLISH_URL" ]; then
-                    uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
-                  else
-                    uv publish --token "$PYPI_TOKEN"
-                  fi
-                fi
-              else
-                # Normal handling for operator packages that have their own pyproject.toml
-                cd "$package" || exit 1
-                
-                echo "Building package: $package"
-                # Build the package - note that uv build will create the dist directory in the repository root
-                # rather than in the package directory
-                uv build --index-strategy unsafe-best-match
-                
-                # Navigate back to the root for publishing
-                cd - > /dev/null
-                
-                if [ "$DRY_RUN" = "true" ]; then
-                  echo "DRY RUN: Would publish $package to $PUBLISH_URL"
-                  # Just list the files that would be published without actually uploading
-                  echo "Files that would be published:"
-                  ls -la dist/
-                else
-                  echo "LIVE RUN: Publishing $package to $PUBLISH_URL"
-                  if [ -n "$PUBLISH_URL" ]; then
-                    uv publish --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
-                  else
-                    uv publish --token "$PYPI_TOKEN"
-                  fi
-                fi
-              fi
-              
-              # Move the built artifacts to a backup directory for this package
-              mkdir -p "dist_backup/$package"
-              mv dist/* "dist_backup/$package/" || true
-              
-              # Clean the dist directory for the next package
-              rm -rf dist
-              mkdir -p dist
-            done
-          fi
-
-      - name: Verify Published Packages
-        if: inputs.dry_run == false && steps.find-packages.outputs.packages_to_publish != ''
-        id: verify
-        run: |
-          echo "Giving PyPI some time to index the newly published packages..."
-          sleep 30
-          
-          # Read the list of packages to publish
-          IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-          
-          # Create a temp directory for verification
-          mkdir -p verification_env
-          cd verification_env
-          python -m venv venv
-          source venv/bin/activate
-          
-          VERIFICATION_FAILED=false
-          
-          for package in "${PACKAGES[@]}"; do
-            if [ "$package" = "feluda" ]; then
-              PACKAGE_INFO=$(python -c "import tomlkit; print(tomlkit.parse(open('../pyproject.toml').read())['project']['name'] + ',' + tomlkit.parse(open('../pyproject.toml').read())['project']['version'])")
-            else
-              PACKAGE_INFO=$(python -c "import tomlkit; print(tomlkit.parse(open('../$package/pyproject.toml').read())['project']['name'] + ',' + tomlkit.parse(open('../$package/pyproject.toml').read())['project']['version'])")
+            # Check for build success by checking if files were created
+            if [ ! "$(ls -A dist 2>/dev/null)" ]; then
+              echo "::error::No artifacts were created for $package_path"
+              exit 1
             fi
             
-            PACKAGE_NAME=$(echo $PACKAGE_INFO | cut -d',' -f1)
-            PACKAGE_VERSION=$(echo $PACKAGE_INFO | cut -d',' -f2)
-            
-            echo "Verifying $PACKAGE_NAME==$PACKAGE_VERSION can be installed from PyPI..."
-            
-            # Try to install from the configured PyPI (test or production)
-            if [ -n "${{ inputs.publish_url }}" ]; then
-              # Using Test PyPI
-              pip install --index-url "https://test.pypi.org/simple/" --extra-index-url "https://pypi.org/simple/" "$PACKAGE_NAME==$PACKAGE_VERSION" > install_log.txt 2>&1 || VERIFICATION_FAILED=true
-            else
-              # Using Production PyPI
-              pip install "$PACKAGE_NAME==$PACKAGE_VERSION" > install_log.txt 2>&1 || VERIFICATION_FAILED=true
-            fi
-            
-            if [ "$VERIFICATION_FAILED" = "true" ]; then
-              echo "❌ Failed to verify installation of $PACKAGE_NAME==$PACKAGE_VERSION"
-              cat install_log.txt
-            else
-              echo "✅ Successfully verified $PACKAGE_NAME==$PACKAGE_VERSION can be installed"
-            fi
+            echo "Build successful for $package_path"
           done
           
-          cd ..
-          rm -rf verification_env
-          
-          echo "verification_success=$([ "$VERIFICATION_FAILED" = "false" ] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+          echo "Contents of dist/ directory:"
+          ls -lR dist/
 
-      - name: Send Notification
-        if: inputs.notify_on_completion == true
+      - name: Publish to PyPI
+        # Run only if packages were built and not in dry-run mode
+        if: steps.find-packages.outputs.packages_to_publish != '' && inputs.dry_run == false
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          PUBLISH_URL: ${{ inputs.publish_url }}
         run: |
-          echo "Preparing notification..."
+          set -e # Exit on any error
           
-          # Format the notification message
-          MESSAGE="🚀 PyPI Publishing Report\n\n"
+          # Check if dist directory is not empty
+          if [ ! "$(ls -A dist)" ]; then
+            echo "::error::Dist directory is empty. No packages to publish."
+            exit 1
+          fi
           
-          if [ "${{ steps.find-packages.outputs.packages_count }}" = "0" ]; then
-            MESSAGE="${MESSAGE}No packages were published.\n"
+          echo "Publishing packages to ${PUBLISH_URL:-PyPI Production}..."
+          
+          # Use uv publish with the target URL and token
+          if [ -n "$PUBLISH_URL" ]; then
+            # Publish to specified URL (e.g., TestPyPI)
+            uv publish dist/* --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
           else
-            if [ "${{ inputs.dry_run }}" = "true" ]; then
-              MESSAGE="${MESSAGE}DRY RUN: ${{ steps.find-packages.outputs.packages_count }} packages were processed (no actual publishing).\n"
-            else
-              MESSAGE="${MESSAGE}${{ steps.find-packages.outputs.packages_count }} packages were published to ${{ inputs.publish_url || 'PyPI (production)' }}.\n"
-              
-              if [ "${{ steps.verify.outputs.verification_success }}" = "true" ]; then
-                MESSAGE="${MESSAGE}✅ All packages were verified installable.\n"
-              else
-                MESSAGE="${MESSAGE}⚠️ Some packages could not be verified. See logs for details.\n"
-              fi
-            fi
-            
-            # Add packages list
-            MESSAGE="${MESSAGE}\nPackages:\n"
-            IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-            for package in "${PACKAGES[@]}"; do
-              MESSAGE="${MESSAGE}- $package\n"
-            done
+            # Publish to production PyPI
+            uv publish dist/* --token "$PYPI_TOKEN"
           fi
           
-          # Add changelog info if generated
-          if [ "${{ steps.changelog.outputs.changelogs_generated }}" = "true" ]; then
-            MESSAGE="${MESSAGE}\nChangelogs were generated for all packages.\n"
-          fi
-          
-          # Include any warnings
-          if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ]; then
-            MESSAGE="${MESSAGE}\n⚠️ Warning: Some packages had git tag verification issues.\n"
-          fi
-          
-          if [ "${{ steps.check-deps.outputs.has_dependency_issues }}" = "true" ]; then
-            MESSAGE="${MESSAGE}\n⚠️ Warning: Dependency issues were detected.\n"
-          fi
-          
-          echo -e "$MESSAGE"
-          
-          # In a real implementation, you would send this to Slack, Discord, or email
-          # For example, using a webhook:
-          # curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$MESSAGE\"}" ${{ secrets.WEBHOOK_URL }}
-          
-          echo "Notification prepared. In a real implementation, this would be sent to a notification service."
+          echo "Publish command completed successfully."
+
+      - name: Upload Artifacts
+        # Run only if packages were processed
+        if: steps.find-packages.outputs.packages_to_publish != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist/ # Contains wheels/sdists
+            packages_to_publish.txt # List of packages processed
+            tag_verification_issues.txt # Optional: Issues found during tag check
+          retention-days: 3
+          if-no-files-found: warn
 
       - name: Summary
+        # Always run to provide a summary
         run: |
           echo "## Publish to PyPI Summary" >> $GITHUB_STEP_SUMMARY
           
           if [ -z "${{ steps.find-packages.outputs.packages_to_publish }}" ]; then
-            echo "No packages needed to be published." >> $GITHUB_STEP_SUMMARY
+            echo "No packages required publishing based on version checks." >> $GITHUB_STEP_SUMMARY
           else
+            PUBLISH_DESTINATION="${{ inputs.publish_url }}"
+            if [ -z "$PUBLISH_DESTINATION" ]; then PUBLISH_DESTINATION="PyPI Production"; fi
+
             if [ "${{ inputs.dry_run }}" = "true" ]; then
               echo "### 🧪 DRY RUN MODE" >> $GITHUB_STEP_SUMMARY
-              echo "The following packages were processed (no actual publishing):" >> $GITHUB_STEP_SUMMARY
+              echo "The following **${{ steps.find-packages.outputs.packages_count }}** package(s) were processed for **$PUBLISH_DESTINATION** (no actual publishing):" >> $GITHUB_STEP_SUMMARY
             else
               echo "### 🚀 LIVE PUBLISHING MODE" >> $GITHUB_STEP_SUMMARY
-              destination="${{ inputs.publish_url }}"
-              if [ -z "$destination" ]; then
-                destination="PyPI (production)"
-              fi
-              echo "The following packages were published to $destination:" >> $GITHUB_STEP_SUMMARY
+              echo "Attempted to publish the following **${{ steps.find-packages.outputs.packages_count }}** package(s) to **$PUBLISH_DESTINATION**:" >> $GITHUB_STEP_SUMMARY
             fi
             
+            # List packages
             IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-            
-            for package in "${PACKAGES[@]}"; do
-              if [ "$package" = "feluda" ]; then
-                PACKAGE_INFO=$(python -c "import tomlkit; print(tomlkit.parse(open('pyproject.toml').read())['project']['name'] + ',' + tomlkit.parse(open('pyproject.toml').read())['project']['version'])")
-              else
-                PACKAGE_INFO=$(python -c "import tomlkit; print(tomlkit.parse(open('$package/pyproject.toml').read())['project']['name'] + ',' + tomlkit.parse(open('$package/pyproject.toml').read())['project']['version'])")
-              fi
-              
+            for package_path in "${PACKAGES[@]}"; do
+              # Get package name/version again for display
+              if [ "$package_path" = "." ] || [ "$package_path" = "feluda" ]; then PYPROJECT_PATH="pyproject.toml"; else PYPROJECT_PATH="$package_path/pyproject.toml"; fi
+              PACKAGE_INFO=$(python -c "import sys, tomlkit; data=tomlkit.parse(open('$PYPROJECT_PATH').read()); print(data['project']['name'] + ',' + data['project']['version'])")
               PACKAGE_NAME=$(echo $PACKAGE_INFO | cut -d',' -f1)
               PACKAGE_VERSION=$(echo $PACKAGE_INFO | cut -d',' -f2)
               
-              echo "- **$PACKAGE_NAME** (v$PACKAGE_VERSION) from `$package`" >> $GITHUB_STEP_SUMMARY
-              
-              # If changelogs were generated, include them
-              if [ "${{ steps.changelog.outputs.changelogs_generated }}" = "true" ] && [ -f "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md" ]; then
-                echo "" >> $GITHUB_STEP_SUMMARY
-                echo "<details><summary>Changelog for $PACKAGE_NAME v$PACKAGE_VERSION</summary>" >> $GITHUB_STEP_SUMMARY
-                echo "" >> $GITHUB_STEP_SUMMARY
-                cat "changelogs/$PACKAGE_NAME-$PACKAGE_VERSION.md" >> $GITHUB_STEP_SUMMARY
-                echo "" >> $GITHUB_STEP_SUMMARY
-                echo "</details>" >> $GITHUB_STEP_SUMMARY
-              fi
+              echo "- **$PACKAGE_NAME** v$PACKAGE_VERSION (from \`$package_path\`)" >> $GITHUB_STEP_SUMMARY
             done
             
-            echo "" >> $GITHUB_STEP_SUMMARY
-            
-            # Add verification results
-            if [ "${{ inputs.dry_run }}" = "false" ] && [ -n "${{ steps.verify.outputs.verification_success }}" ]; then
-              if [ "${{ steps.verify.outputs.verification_success }}" = "true" ]; then
-                echo "### ✅ Verification" >> $GITHUB_STEP_SUMMARY
-                echo "All packages were verified to be installable from PyPI." >> $GITHUB_STEP_SUMMARY
-              else
-                echo "### ⚠️ Verification" >> $GITHUB_STEP_SUMMARY
-                echo "Some packages could not be verified. See logs for details." >> $GITHUB_STEP_SUMMARY
-              fi
-              echo "" >> $GITHUB_STEP_SUMMARY
-            fi
-            
-            # Add warnings section if needed
-            if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ] || [ "${{ steps.check-deps.outputs.has_dependency_issues }}" = "true" ]; then
+            # Add warnings
+            if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ]; then
               echo "### ⚠️ Warnings" >> $GITHUB_STEP_SUMMARY
-              
-              if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ]; then
-                echo "- Some packages had git tag verification issues. See workflow logs for details." >> $GITHUB_STEP_SUMMARY
-              fi
-              
-              if [ "${{ steps.check-deps.outputs.has_dependency_issues }}" = "true" ]; then
-                echo "- Dependency issues were detected. See workflow logs for details." >> $GITHUB_STEP_SUMMARY
-              fi
+              echo "- Git tag verification issues detected. See logs and artifacts." >> $GITHUB_STEP_SUMMARY
             fi
           fi
-
-      - name: Upload Artifacts
-        if: steps.find-packages.outputs.packages_to_publish != ''
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: |
-            dist_backup/
-            changelogs/
-            packages_to_publish.txt
-            tag_verification_issues.txt
-          retention-days: 7
