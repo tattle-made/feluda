@@ -26,6 +26,24 @@ When we built Feluda, we were focusing on the unique challenges of social media 
 
 Feluda can be used as a Python library to process and analyze data using its modular operators. This section provides a quick overview of how to install Feluda, configure it, and use it in your Python projects.
 
+### Prerequisites
+
+Before you begin, ensure that the following system dependencies are installed:
+
+1. **Python**: Feluda requires Python 3.8 or higher. You can check your Python version using:
+   ```bash
+   python --version
+   ```
+
+2. **uv**: Feluda uses `uv` to manage and develop Python packages. Install `uv` by following its [official installation guide](https://github.com/uv-metrics/uv).
+
+3. **pip**: Ensure you have `pip` installed for managing Python packages. You can install or upgrade `pip` using:
+   ```bash
+   python -m ensurepip --upgrade
+   ```
+
+---
+
 ### Installation
 
 1. Install the Feluda library:
@@ -42,6 +60,8 @@ Feluda can be used as a Python library to process and analyze data using its mod
      ```bash
      pip install feluda-image-vec-resnet
      ```
+
+---
 
 ### Configuration Overview
 
@@ -62,6 +82,8 @@ operators:
 - **`operators`**: A list of operators to be used.
 - **`name`**: The name of the operator.
 - **`parameters`**: Operator-specific parameters.
+
+---
 
 ### Python Code Example
 
