@@ -35,7 +35,7 @@ Before you begin, ensure that the following system dependencies are installed:
    python --version
    ```
 
-2. **uv**: Feluda uses `uv` to manage and develop Python packages. Install `uv` by following its [official installation guide](https://github.com/uv-metrics/uv).
+2. **uv**: Feluda uses `uv` to manage and develop Python packages. Install `uv` by following its [official installation guide](https://docs.astral.sh/uv/).
 
 3. **pip**: Ensure you have `pip` installed for managing Python packages. You can install or upgrade `pip` using:
    ```bash
