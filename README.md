@@ -24,40 +24,46 @@ When we built Feluda, we were focusing on the unique challenges of social media 
 
 ## Basic Usage
 
-This section provides a quick overview of how to install and use Feluda.
-
-### Overview of Operators and Configuration
-
-- **Operators**: Operators are modular components in Feluda that perform specific tasks, such as generating embeddings or clustering data. Each operator is implemented as a standalone Python package, making it easy to develop and use them independently.
-- **Configuration**: Feluda uses a configuration file to define the operators and their parameters. This allows users to customize their workflows without modifying the code.
+Feluda can be used as a Python library to process and analyze data using its modular operators. This section provides a quick overview of how to install Feluda, configure it, and use it in your Python projects.
 
 ### Installation
 
-#### Step 1: Clone the Repository
-```bash
-git clone https://github.com/tattle-made/feluda.git
-cd feluda/
+1. Install the Feluda library:
+   ```bash
+   pip install feluda
+   ```
+
+2. Install operator packages from PyPI. For example:
+   - To use the `vid-vec-clip` operator:
+     ```bash
+     pip install feluda-vid-vec-clip
+     ```
+   - To use the `image-vec-resnet` operator:
+     ```bash
+     pip install feluda-image-vec-resnet
+     ```
+
+### Configuration Overview
+
+Feluda uses a configuration file to define the operators and their parameters. This allows you to customize your workflow without modifying the code.
+
+Here’s an example configuration file (`config.yml`):
+
+```yaml
+operators:
+  - name: vid-vec-clip
+    parameters:
+      model_name: "ViT-B/32"
+  - name: image-vec-resnet
+    parameters:
+      model_name: "resnet50"
 ```
 
-#### Step 2: Set Up a Virtual Environment
-```bash
-uv venv
-source .venv/bin/activate
-```
+- **`operators`**: A list of operators to be used.
+- **`name`**: The name of the operator.
+- **`parameters`**: Operator-specific parameters.
 
-#### Step 3: Install Feluda and Development Dependencies
-```bash
-uv pip install .
-uv pip install ".[dev]"
-```
-
-#### Step 4: Install Operator Dependencies
-Install the dependencies for the operators you wish to use. For example:
-```bash
-uv pip install -r operators/image_vec_rep_resnet/pyproject.toml
-```
-
-### Code Example
+### Python Code Example
 
 Here’s a simple example to demonstrate how to use Feluda:
 
@@ -65,7 +71,7 @@ Here’s a simple example to demonstrate how to use Feluda:
 from feluda import Feluda
 
 # Path to the configuration file
-config_path = "/path/to/config.yml"
+config_path = "config.yml"
 
 # Initialize Feluda with the configuration file
 feluda = Feluda(config_path)
@@ -73,12 +79,18 @@ feluda = Feluda(config_path)
 # Set up Feluda and its operators
 feluda.setup()
 
-# Access operators and run tasks
-operator = feluda.operators.get()["cluster_embeddings"]
-result = operator.run(input_data=[{"embedding": [0.1, 0.2, 0.3], "payload": {"id": 1}}], n_clusters=2)
+# Access an operator and run a task
+operator = feluda.operators.get()["vid-vec-clip"]
+result = operator.run(input_data=[{"video_path": "example.mp4"}])
 
 print(result)
 ```
+
+This example demonstrates how to initialize Feluda, set it up with a configuration file, and use an operator to process data.
+
+---
+
+For more details, refer to the [Feluda Wiki](https://github.com/tattle-made/feluda/wiki).
 
 ## Contributing
 You can find instructions on contributing on the [Wiki](https://github.com/tattle-made/feluda/wiki)
