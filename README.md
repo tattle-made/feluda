@@ -52,7 +52,7 @@ Before you begin, ensure that the following system dependencies are installed:
    ```
 
 2. Install operator packages from PyPI. For example:
-   - To use the `vid-vec-clip` operator:
+   - To use the `vid_vec_rep_clip` operator:
      ```bash
      pip install feluda-vid-vec-clip
      ```
@@ -71,11 +71,11 @@ Here’s an example configuration file (`config.yml`):
 
 ```yaml
 operators:
-  - name: vid-vec-clip
-    parameters:
+  - name: vid_vec_rep_clip
+    parameters: {}
       model_name: "ViT-B/32"
-  - name: image-vec-resnet
-    parameters:
+  - name: image_vec_rep_resnet
+    parameters: {}
       model_name: "resnet50"
 ```
 
@@ -102,7 +102,7 @@ feluda = Feluda(config_path)
 feluda.setup()
 
 # Access an operator and run a task
-operator = feluda.operators.get()["vid-vec-clip"]
+operator = feluda.operators.get()["vid_vec_rep_clip"]
 result = operator.run(input_data=[{"video_path": "example.mp4"}])
 
 print(result)
