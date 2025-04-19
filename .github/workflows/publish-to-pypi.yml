@@ -69,6 +69,7 @@ jobs:
       - name: Build packages
         # Run only if there are packages to publish
         if: steps.find-packages.outputs.packages_to_publish != ''
+        id: build-packages
         env:
           # Target repository URL (TestPyPI or Production)
           PUBLISH_URL: ${{ inputs.publish_url }}
@@ -87,6 +88,11 @@ jobs:
             echo "::warning::Some packages have tag verification issues. See 'Find packages' step logs."
             cat tag_verification_issues.txt || true # Display if exists
           fi
+          
+          # Create artifacts directory for saving build info
+          mkdir -p artifacts
+          cp packages_to_publish.txt artifacts/ || echo "packages_to_publish.txt not found"
+          [ -f tag_verification_issues.txt ] && cp tag_verification_issues.txt artifacts/ || echo "No tag verification issues found"
           
           # Build packages sequentially
           echo "Building packages..."
@@ -110,15 +116,21 @@ jobs:
               exit 1
             fi
             
+            # Keep a copy of built artifacts in the artifacts directory
+            mkdir -p "artifacts/dist/$package_path"
+            cp dist/* "artifacts/dist/$package_path/" || true
+            
             echo "Build successful for $package_path"
           done
           
           echo "Contents of dist/ directory:"
           ls -lR dist/
+          
+          echo "has_built_packages=true" >> $GITHUB_OUTPUT
 
       - name: Publish to PyPI
         # Run only if packages were built and not in dry-run mode
-        if: steps.find-packages.outputs.packages_to_publish != '' && inputs.dry_run == false
+        if: steps.build-packages.outputs.has_built_packages == 'true' && inputs.dry_run == false
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
           PUBLISH_URL: ${{ inputs.publish_url }}
@@ -150,10 +162,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            dist/ # Contains wheels/sdists
-            packages_to_publish.txt # List of packages processed
-            tag_verification_issues.txt # Optional: Issues found during tag check
+          path: artifacts/
           retention-days: 3
           if-no-files-found: warn
 
