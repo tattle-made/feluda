@@ -49,16 +49,3 @@ def run(image_path):
     except Exception as e:
         raise RuntimeError(f"Text detection failed: {e}")
 
-def cleanup(param):
-    pass
-
-
-def state():
-    pass
-
-
-# image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
-# response = requests.get(image_url)
-# response.raise_for_status()
-# text_data = run(BytesIO(response.content))
-# print(text_data)
