@@ -120,3 +120,7 @@ threadpoolctl==3.5.0 \
     --hash=sha256:082433502dd922bf738de0d8bcc4fdcbf0979ff44c42bd40f5af8a282f6fa107 \
     --hash=sha256:56c1e26c150397e58c4926da8eeee87533b1e32bef131bd4bf6a2f45f3185467
     # via scikit-learn
+tqdm==4.67.1
+    # via umap-learn
+umap-learn==0.5.7
+    # via -r dimension_reduction_requirements.in
