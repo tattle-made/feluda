@@ -56,7 +56,7 @@ Before you begin, ensure that the following system dependencies are installed:
      ```bash
      pip install feluda-vid-vec-clip
      ```
-   - To use the `image-vec-resnet` operator:
+   - To use the `image_vec_rep_resnet` operator:
      ```bash
      pip install feluda-image-vec-resnet
      ```
@@ -103,7 +103,7 @@ feluda.setup()
 
 # Access an operator and run a task
 operator = feluda.operators.get()["vid_vec_rep_clip"]
-result = operator.run(input_data=[{"video_path": "example.mp4"}])
+result = operator.run("example.mp4")
 
 print(result)
 ```
