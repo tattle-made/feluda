@@ -1,10 +1,8 @@
 """Operator to perform dimensionality reduction given the embedddings."""
 
 from abc import ABC, abstractmethod
-
-import numpy as np
-import umap
 from sklearn.manifold import TSNE
+import numpy as np
 
 
 class DimensionReduction(ABC):
@@ -73,58 +71,6 @@ class TSNEReduction(DimensionReduction):
             raise RuntimeError(f"t-SNE reduction failed: {e}")
 
 
-class UMAPReduction(DimensionReduction):
-    """UMAP implementation of the DimensionReduction abstract class."""
-
-    def initialize(self, params):
-        """
-        Initialize the UMAP model with parameters.
-
-        Args:
-            params (dict): A dictionary containing UMAP parameters such as:
-                - n_components (int): Number of dimensions to reduce to. Default is 2.
-                - n_neighbors (int): Size of local neighborhood used for manifold approximation. Default is 15.
-                - min_dist (float): Minimum distance between embedded points. Default is 0.1.
-                - metric (str): The metric to use for distance computation. Default is 'euclidean'.
-                - random_state (int): Seed for random number generation. Default is 42.
-
-        Raises:
-            ValueError: If the UMAP model fails to initialize.
-        """
-        try:
-            self.model = umap.UMAP(
-                n_components=params.get('n_components', 2),
-                n_neighbors=params.get('n_neighbors', 15),
-                min_dist=params.get('min_dist', 0.1),
-                metric=params.get('metric', 'euclidean'),
-                random_state=params.get('random_state', 42),
-            )
-            print("UMAP model successfully initialized")
-        except Exception as e:
-            raise ValueError(f"Failed to initialize UMAP model: {e}")
-
-    def run(self, embeddings_array):
-        """
-        Apply the UMAP model to reduce the dimensionality of embeddings.
-
-        Args:
-            embeddings (numpy.ndarray): A 2D array of embeddings to be reduced.
-
-        Returns:
-            numpy.ndarray: The reduced embeddings as a 2D array.
-
-        Raises:
-            ValueError: If the embeddings input is not a 2D array.
-            RuntimeError: If the UMAP reduction fails.
-        """
-        try:
-            if embeddings_array.ndim != 2:
-                raise ValueError("Embeddings should be a 2D array.")
-            return self.model.fit_transform(embeddings_array)
-        except Exception as e:
-            raise RuntimeError(f"UMAP reduction failed: {e}")
-
-
 class DimensionReductionFactory:
     """Factory class for creating dimension reduction models."""
 
@@ -134,7 +80,7 @@ class DimensionReductionFactory:
         Factory method to create a dimension reduction model based on type.
 
         Args:
-            model_type (str): String indicating the type of model (e.g., 'tsne', 'umap').
+            model_type (str): String indicating the type of model (e.g., 'tsne').
 
         Returns:
             DimensionReduction: An instance of the corresponding dimension reduction model.
@@ -144,8 +90,6 @@ class DimensionReductionFactory:
         """
         if model_type.lower() == 'tsne':
             return TSNEReduction()
-        elif model_type.lower() == 'umap':
-            return UMAPReduction()
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
 
