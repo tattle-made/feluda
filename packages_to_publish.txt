@@ -1,0 +1,1 @@
+feluda,operators/image_vec_rep_resnet,operators/cluster_embeddings,operators/vid_vec_rep_clip,operators/dimension_reduction
