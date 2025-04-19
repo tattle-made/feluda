@@ -108,18 +108,16 @@ class UMAPReduction(DimensionReduction):
         Apply the UMAP model to reduce the dimensionality of embeddings.
 
         Args:
-            embeddings (numpy.ndarray): A 2D array of embeddings to be reduced.
+            embeddings (numpy.ndarray): An array of embeddings to be reduced.
+                UMAP can handle arrays of any dimension.
 
         Returns:
             numpy.ndarray: The reduced embeddings as a 2D array.
 
         Raises:
-            ValueError: If the embeddings input is not a 2D array.
             RuntimeError: If the UMAP reduction fails.
         """
         try:
-            if embeddings_array.ndim != 2:
-                raise ValueError("Embeddings should be a 2D array.")
             return self.model.fit_transform(embeddings_array)
         except Exception as e:
             raise RuntimeError(f"UMAP reduction failed: {e}")
