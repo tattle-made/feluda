@@ -550,13 +550,15 @@ class TestPackageVersionManager(unittest.TestCase):
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
 
-        feluda_path = os.path.join(self.temp_dir, "feluda")
         operator1_path = os.path.join(self.temp_dir, "operators", "operator1")
         operator2_path = os.path.join(self.temp_dir, "operators", "operator2")
         # Check that only two packages were discovered
         self.assertEqual(len(manager.packages), 2)
-        self.assertIn(feluda_path, manager.packages)
+        self.assertIn(self.temp_dir, manager.packages)
         self.assertIn(operator1_path, manager.packages)
         self.assertNotIn(operator2_path, manager.packages)
 
@@ -577,12 +579,14 @@ class TestPackageVersionManager(unittest.TestCase):
         manager = PackageVersionManager(
             self.temp_dir, self.initial_commit, self.initial_commit
         )
-        feluda_path = os.path.join(self.temp_dir, "feluda")
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
         operator1_path = os.path.join(self.temp_dir, "operators", "operator1")
         operator2_path = os.path.join(self.temp_dir, "operators", "operator2")
         # Check that only two packages were discovered
         self.assertEqual(len(manager.packages), 2)
-        self.assertIn(feluda_path, manager.packages)
+        self.assertIn(self.temp_dir, manager.packages)
         self.assertIn(operator1_path, manager.packages)
         self.assertNotIn(operator2_path, manager.packages)
 
@@ -654,18 +658,20 @@ class TestPackageVersionManager(unittest.TestCase):
 
         # Create the version manager
         manager = PackageVersionManager(self.temp_dir, commit1, commit4)
+        manager.packages = manager._discover_packages(
+            [self.temp_dir], os.path.join(self.temp_dir, "operators")
+        )
 
         # Update versions
         updated_versions = manager.update_package_versions()
 
         # Check that both packages were updated
         self.assertEqual(len(updated_versions), 2)
-        feluda_path = os.path.join(self.temp_dir, "feluda")
         operator1_path = os.path.join(self.temp_dir, "operators", "operator1")
         # Check feluda version (should be major bump due to BREAKING CHANGE)
-        self.assertEqual(updated_versions[feluda_path]["old_version"], "0.1.0")
-        self.assertEqual(updated_versions[feluda_path]["new_version"], "1.0.0")
-        self.assertEqual(updated_versions[feluda_path]["bump_type"], "major")
+        self.assertEqual(updated_versions[self.temp_dir]["old_version"], "0.1.0")
+        self.assertEqual(updated_versions[self.temp_dir]["new_version"], "1.0.0")
+        self.assertEqual(updated_versions[self.temp_dir]["bump_type"], "major")
 
         # Check operator1 version (should be minor bump due to feat commit)
         self.assertEqual(
