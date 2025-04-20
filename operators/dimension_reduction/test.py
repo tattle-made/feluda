@@ -19,20 +19,22 @@ def generate_input_data(num_samples=100, dimensions=50):
     ]
     return input_data, sample_embeddings
 
+
 class TestTSNEReductionOperator(unittest.TestCase):
     """Tests specifically for the t-SNE reduction."""
+
     @classmethod
     def setUpClass(cls):
         """Initialize the t-SNE model once for all tests in this class."""
         print("\nSetting up t-SNE tests...")
         cls.tsne_params = {
-            'model_type': 'tsne',
-            'n_components': 2,
-            'perplexity': 30,
-            'learning_rate': 200,
-            'max_iter': 250,
-            'random_state': 42,
-            'method': 'barnes_hut'
+            "model_type": "tsne",
+            "n_components": 2,
+            "perplexity": 30,
+            "learning_rate": 200,
+            "max_iter": 250,
+            "random_state": 42,
+            "method": "barnes_hut",
         }
         initialize(cls.tsne_params)
         print("t-SNE model initialized for tests.")
@@ -47,9 +49,16 @@ class TestTSNEReductionOperator(unittest.TestCase):
     def test_tsne_reduction_output_shape(self):
         """Verify t-SNE reduces to the correct shape."""
         reduced_data = run(self.input_data)
-        self.assertEqual(len(reduced_data), len(self.input_data), "Number of items should match input")
+        self.assertEqual(
+            len(reduced_data),
+            len(self.input_data),
+            "Number of items should match input",
+        )
         reduced_embeddings = np.array([d["reduced_embedding"] for d in reduced_data])
-        self.assertEqual(reduced_embeddings.shape, (len(self.input_data), self.tsne_params["n_components"]))
+        self.assertEqual(
+            reduced_embeddings.shape,
+            (len(self.input_data), self.tsne_params["n_components"]),
+        )
 
     def test_tsne_reduction_payload_preservation(self):
         """Verify payloads are correctly preserved."""
@@ -58,8 +67,10 @@ class TestTSNEReductionOperator(unittest.TestCase):
         reduced_payloads = [d["payload"] for d in reduced_data]
         self.assertEqual(original_payloads, reduced_payloads)
 
+
 class TestUMAPReductionOperator(unittest.TestCase):
     """Tests specifically for the UMAP reduction."""
+
     @classmethod
     def setUpClass(cls):
         """Initialize the UMAP model once for all tests in this class."""
@@ -84,9 +95,16 @@ class TestUMAPReductionOperator(unittest.TestCase):
     def test_umap_reduction_output_shape(self):
         """Verify UMAP reduces to the correct shape."""
         reduced_data = run(self.input_data)
-        self.assertEqual(len(reduced_data), len(self.input_data), "Number of items should match input")
+        self.assertEqual(
+            len(reduced_data),
+            len(self.input_data),
+            "Number of items should match input",
+        )
         reduced_embeddings = np.array([d["reduced_embedding"] for d in reduced_data])
-        self.assertEqual(reduced_embeddings.shape, (len(self.input_data), self.umap_params["n_components"]))
+        self.assertEqual(
+            reduced_embeddings.shape,
+            (len(self.input_data), self.umap_params["n_components"]),
+        )
 
     def test_umap_reduction_payload_preservation(self):
         """Verify payloads are correctly preserved."""
@@ -94,6 +112,7 @@ class TestUMAPReductionOperator(unittest.TestCase):
         original_payloads = [d["payload"] for d in self.input_data]
         reduced_payloads = [d["payload"] for d in reduced_data]
         self.assertEqual(original_payloads, reduced_payloads)
+
 
 class TestDimensionReductionGeneral(unittest.TestCase):
     """Tests for general functionality and error handling."""
@@ -116,14 +135,18 @@ class TestDimensionReductionGeneral(unittest.TestCase):
 
         # Test with missing 'payload' key
         with self.assertRaisesRegex(KeyError, "Missing key: 'payload'"):
-             run([{"embedding": [1, 2, 3]}])
+            run([{"embedding": [1, 2, 3]}])
 
     def test_invalid_model_type_initialize(self):
         """Test initialize function with an unsupported model type."""
-        with self.assertRaisesRegex(ValueError, "Unsupported model type: invalid_model"):
+        with self.assertRaisesRegex(
+            ValueError, "Unsupported model type: invalid_model"
+        ):
             initialize({"model_type": "invalid_model"})
 
     def test_factory_invalid_type(self):
         """Test the factory directly with an invalid type."""
-        with self.assertRaisesRegex(ValueError, "Unsupported model type: non_existent_model"):
+        with self.assertRaisesRegex(
+            ValueError, "Unsupported model type: non_existent_model"
+        ):
             DimensionReductionFactory.get_reduction_model("non_existent_model")
