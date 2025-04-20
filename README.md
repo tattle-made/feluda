@@ -22,8 +22,6 @@ When we built Feluda, we were focusing on the unique challenges of social media 
 - Text extraction from images and indexing into the engine.
 - Entity extraction from text and images and indexing into the engine.
 
----
-
 ## Basic Usage
 
 Feluda can be used as a Python library to process and analyze data using its modular operators. Below is a quick overview of how to install Feluda, configure it, and use it in your Python projects.
