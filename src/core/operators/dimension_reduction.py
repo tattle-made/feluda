@@ -168,12 +168,12 @@ def run(input_data):
     """
     if not isinstance(input_data, list) or len(input_data) == 0:
         raise ValueError("Input should be a non-empty list.")
-
+    
     try:
         embeddings, payloads = zip(*[(data['embedding'], data['payload']) for data in input_data])
     except KeyError as e:
         raise KeyError(f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}.")
-
+    
     reduced_embeddings = reduction_model.run(np.array(embeddings))
 
     return gen_data(payloads, reduced_embeddings)
