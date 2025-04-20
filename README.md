@@ -26,93 +26,68 @@ When we built Feluda, we were focusing on the unique challenges of social media 
 
 ## Basic Usage
 
-Feluda can be used as a Python library to process and analyze data using its modular operators. This section provides a quick overview of how to install Feluda, configure it, and use it in your Python projects.
+Feluda can be used as a Python library to process and analyze data using its modular operators. Below is a quick overview of how to install Feluda, configure it, and use it in your Python projects.
 
 ### Prerequisites
 
 Before you begin, ensure that the following system dependencies are installed:
 
-1. **Python**: Feluda requires Python 3.8 or higher. You can check your Python version using:
-   ```bash
-   python --version
-   ```
-
-2. **uv**: Feluda uses `uv` to manage and develop Python packages. Install `uv` by following its [official installation guide](https://docs.astral.sh/uv/).
-
-3. **pip**: Ensure you have `pip` installed for managing Python packages. You can install or upgrade `pip` using:
-   ```bash
-   python -m ensurepip --upgrade
-   ```
-
----
+- Python version 3.10 or higher
+- optionally we recommend to use `uv` for python pacakges and project managment. Install `uv` by following its [official installation guide](https://docs.astral.sh/uv/).
 
 ### Installation
 
-1. Install the Feluda library:
-   ```bash
-   pip install feluda
-   ```
+You can install `feluda` using
+```bash
+pip install feluda
+```
 
-2. Install operator packages from PyPI. For example:
-   - To use the `vid_vec_rep_clip` operator:
-     ```bash
-     pip install feluda-vid-vec-clip
-     ```
-   - To use the `image_vec_rep_resnet` operator:
-     ```bash
-     pip install feluda-image-vec-resnet
-     ```
+Each operator also has to be installed seperately. Link to a list of [published](https://pypi.org/user/tattle/) feluda operators. For instance, you can install the `feluda-vid-vec-rep-clip` operator like
+```sh
+pip install feluda-vid-vec-rep-clip
+```
 
----
+### Configuration
 
-### Configuration Overview
-
-Feluda uses a configuration file to define the operators and their parameters. This allows you to customize your workflow without modifying the code.
+Feluda uses a configuration file (`.yml`) to define the operators and their parameters. This allows you to customize your workflow without modifying the code. You will have to create this `.yml` file manually.
 
 Here’s an example configuration file (`config.yml`):
 
 ```yaml
-operators:
-  - name: vid_vec_rep_clip
-    parameters: {}
-      model_name: "ViT-B/32"
-  - name: image_vec_rep_resnet
-    parameters: {}
-      model_name: "resnet50"
+operators :
+  label : "Operators"
+  parameters :
+    - name : "Video Vector Representation"
+      type : "vid_vec_rep_clip"
+      parameters: {}
+    - name : "Image Vector Representation"
+      type : "image_vec_rep_resnet"
+      parameters: {}
 ```
 
 - **`operators`**: A list of operators to be used.
 - **`name`**: The name of the operator.
-- **`parameters`**: Operator-specific parameters.
+- **`parameters`**: Any other Operator specific parameters.
 
----
-
-### Python Code Example
+### Code Example
 
 Here’s a simple example to demonstrate how to use Feluda:
 
 ```python
 from feluda import Feluda
 
-# Path to the configuration file
-config_path = "config.yml"
+config_path = "/path/to/config.yml"
 
 # Initialize Feluda with the configuration file
 feluda = Feluda(config_path)
-
 # Set up Feluda and its operators
 feluda.setup()
 
 # Access an operator and run a task
 operator = feluda.operators.get()["vid_vec_rep_clip"]
-result = operator.run("example.mp4")
-
+result = operator.run("path/to/example.mp4")
 print(result)
 ```
-
-This example demonstrates how to initialize Feluda, set it up with a configuration file, and use an operator to process data.
-
----
 
 For more details, refer to the [Feluda Wiki](https://github.com/tattle-made/feluda/wiki).
 
