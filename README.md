@@ -3,8 +3,7 @@
 
 A configurable engine for analysing multi-lingual and multi-modal content.
 
-
-While flexible, we built it to analyse data collected from social media - images,text and video. This forms the core of our search, clustering and analysis services. Since different use cases might require different search capabilities with different trade offs, Feluda lets you specify which building blocks you want to use for the purpose and spins an engine with a corresponding configuration.
+While flexible, we built it to analyse data collected from social media - images, text, and video. This forms the core of our search, clustering, and analysis services. Since different use cases might require different search capabilities with different trade-offs, Feluda lets you specify which building blocks you want to use for the purpose and spins an engine with a corresponding configuration.
 
 ## Example Uses
 - [Khoj](https://tattle.co.in/products/khoj/) : A Reverse Image search engine to find fact-check articles
@@ -18,12 +17,77 @@ When we built Feluda, we were focusing on the unique challenges of social media 
 2. If someone wants to extract text from images and don't want to use a google product, they could use an operator that uses OpenCV instead of the Google Cloud Vision API.
 
 ## Features Enabled
-- Support for Vector based embeddings using ResNet models and Sentence Transformers
-- Support for hash based search using pHash
-- Text extraction from images and indexing into the engine
-- Entity extraction from text and images and indexing into the engine
+- Support for Vector-based embeddings using ResNet models and Sentence Transformers.
+- Support for hash-based search using pHash.
+- Text extraction from images and indexing into the engine.
+- Entity extraction from text and images and indexing into the engine.
 
+## Basic Usage
 
+Feluda can be used as a Python library to process and analyze data using its modular operators. Below is a quick overview of how to install Feluda, configure it, and use it in your Python projects.
+
+### Prerequisites
+
+Before you begin, ensure that the following system dependencies are installed:
+
+- Python version 3.10 or higher
+- optionally we recommend to use `uv` for python pacakges and project managment. Install `uv` by following its [official installation guide](https://docs.astral.sh/uv/).
+
+### Installation
+
+You can install `feluda` using
+```bash
+pip install feluda
+```
+
+Each operator also has to be installed seperately. Link to a list of [published](https://pypi.org/user/tattle/) feluda operators. For instance, you can install the `feluda-vid-vec-rep-clip` operator like
+```sh
+pip install feluda-vid-vec-rep-clip
+```
+
+### Configuration
+
+Feluda uses a configuration file (`.yml`) to define the operators and their parameters. This allows you to customize your workflow without modifying the code. You will have to create this `.yml` file manually.
+
+Here’s an example configuration file (`config.yml`):
+
+```yaml
+operators :
+  label : "Operators"
+  parameters :
+    - name : "Video Vector Representation"
+      type : "vid_vec_rep_clip"
+      parameters: {}
+    - name : "Image Vector Representation"
+      type : "image_vec_rep_resnet"
+      parameters: {}
+```
+
+- **`operators`**: A list of operators to be used.
+- **`name`**: The name of the operator.
+- **`parameters`**: Any other Operator specific parameters.
+
+### Code Example
+
+Here’s a simple example to demonstrate how to use Feluda:
+
+```python
+from feluda import Feluda
+
+config_path = "/path/to/config.yml"
+
+# Initialize Feluda with the configuration file
+feluda = Feluda(config_path)
+# Set up Feluda and its operators
+feluda.setup()
+
+# Access an operator and run a task
+operator = feluda.operators.get()["vid_vec_rep_clip"]
+result = operator.run("path/to/example.mp4")
+print(result)
+```
+
+For more details, refer to the [Feluda Wiki](https://github.com/tattle-made/feluda/wiki).
 
 ## Contributing
 You can find instructions on contributing on the [Wiki](https://github.com/tattle-made/feluda/wiki)
