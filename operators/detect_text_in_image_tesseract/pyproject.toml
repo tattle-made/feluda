@@ -2,9 +2,7 @@
 name = "feluda-detect-text-in-image-tesseract"
 version = "0.0.0"
 requires-python = ">=3.10"
-dependencies = [ "pytesseract>=0.3.10",
-    "Pillow>=11.1.0",
-    "requests>=2.28.0",]
+dependencies = ["pytesseract>=0.3.10", "Pillow>=11.1.0", "requests>=2.28.0"]
 
 [build-system]
 requires = ["hatchling"]
