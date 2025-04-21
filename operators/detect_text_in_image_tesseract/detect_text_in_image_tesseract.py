@@ -1,3 +1,6 @@
+import os
+
+
 def initialize(param):
     global config_psm
     global config_oem
@@ -9,6 +12,7 @@ def initialize(param):
         global pytesseract
         global requests
         global BytesIO
+
         from io import BytesIO
 
         import pytesseract
@@ -39,13 +43,29 @@ def initialize(param):
         )
 
 
-def run(image_path):
+def run(image_path, delete_after=False):
+
+
     try:
         with Image.open(image_path) as load_image:
             data = pytesseract.image_to_string(
                 load_image, lang="eng+hin+tam+tel", config=f"--psm {config_psm} --oem {config_oem}"
             )
-        return data
-    except Exception as e:
-        raise RuntimeError(f"Text detection failed: {e}")
 
+        if delete_after and os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+                print(f"Successfully deleted temporary file: {image_path}")
+            except OSError as e:
+                print(f"Warning: Could not delete file {image_path}: {e}")
+
+        return data
+
+    except Exception as e:
+        if delete_after and os.path.exists(image_path):
+            try:
+                os.remove(image_path)
+                print(f"Deleted temporary file after error: {image_path}")
+            except OSError as e:
+                print(f"Warning: Could not delete file {image_path} after error: {e}")
+        raise RuntimeError(f"Text detection failed: {e}")

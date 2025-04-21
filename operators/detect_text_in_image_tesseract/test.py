@@ -1,6 +1,7 @@
 import re
 import unittest
 
+from feluda.models.media_factory import ImageFactory
 from operators.detect_text_in_image_tesseract import detect_text_in_image_tesseract
 
 
@@ -16,8 +17,10 @@ class Test(unittest.TestCase):
         pass
 
     def test_sample_image_from_disk_hindi(self):
-        image_path =  r"src/core/operators/sample_data/hindi-text-2.png"
-        image_text = detect_text_in_image_tesseract.run(image_path)
+        image_url = "https://raw.githubusercontent.com/tattle-made/feluda_datasets/main/feluda-sample-media/hindi-text-2.png"
+        image_obj = ImageFactory.make_from_url_to_path(image_url)
+        image_path = image_obj["path"]
+        image_text = detect_text_in_image_tesseract.run(image_path, delete_after=True)
         expected_text = "( मेरे पीछे कौन आ रहा है)"
         self.assertEqual(image_text.strip(), expected_text.strip())
 
@@ -33,7 +36,3 @@ class Test(unittest.TestCase):
         image_text = detect_text_in_image_tesseract.run(image_path)
         expected_text = "నేను భూమిని ప్రేమిస్తున్నాను"
         self.assertEqual(image_text.strip(), expected_text.strip())
-
-
-# if __name__ == "__main__":
-#     unittest.main()
