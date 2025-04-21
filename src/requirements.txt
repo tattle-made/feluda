@@ -220,9 +220,9 @@ elastic-transport==8.17.0 \
     --hash=sha256:59f553300866750e67a38828fede000576562a0e66930c641adb75249e0c95af \
     --hash=sha256:e755f38f99fa6ec5456e236b8e58f0eb18873ac8fe710f74b91a16dd562de2a5
     # via elasticsearch
-elasticsearch==8.16.0 \
-    --hash=sha256:83d9fe09e8e95880559da43e44976c1e11cc63fe96bc0c0592f3d64f371772bf \
-    --hash=sha256:d2aaa92f44ebea3c4147389aeba038c0b42a017f8c52ff35b1e7ebc34c49adb7
+elasticsearch==9.0.0 \
+    --hash=sha256:295425172043e5db723d55cb3a5e28622696ca7739b466b812ab12ac938b6249 \
+    --hash=sha256:c075ccdc7d5697e2a842a88418efdb6cf6732d7a62c77a25d60184db23fd1464
     # via -r requirements.in
 exceptiongroup==1.2.2 \
     --hash=sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b \
@@ -952,7 +952,9 @@ pytest==8.3.3 \
 python-dateutil==2.9.0.post0 \
     --hash=sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3 \
     --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
-    # via botocore
+    # via
+    #   botocore
+    #   elasticsearch
 python-dotenv==1.0.1 \
     --hash=sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca \
     --hash=sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a
@@ -1141,6 +1143,7 @@ typing-extensions==4.9.0 \
     --hash=sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783 \
     --hash=sha256:af72aea155e91adfc61c3ae9e0e342dbc0cba726d6cba4b6c72c1f34e47291cd
     # via
+    #   elasticsearch
     #   locust
     #   textual
 uc-micro-py==1.0.3 \
