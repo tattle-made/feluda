@@ -1,8 +1,11 @@
 [project]
 name = "feluda"
 version = "0.9.3"
+description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
 requires-python = ">=3.10"
+license = {file = "LICENSE.md"}
+keywords = ["multilingual", "multimodal", "indian-languages", "search", "deep-learning"]
 dependencies = [
     "boto3>=1.37.30",
     "dacite>=1.9.2",
@@ -45,7 +48,12 @@ members = [
 ]
 
 [tool.ruff]
+target-version = "py310"
+line-length = 88
 exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
+
+[tool.ruff.pydocstyle]
+convention = "google"
