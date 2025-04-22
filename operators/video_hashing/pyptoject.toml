@@ -1,10 +1,9 @@
 [project]
 name = "feluda-video-hashing"
-version = "0.1.0"
+version = "0.0.0"
 description = "A Python operator for generating video perceptual hashes using TMK+PDQF."
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
-    "base64",  # For encoding binary hash data
     "ffmpeg-python>=0.2.0",  # Python wrapper for FFmpeg
 ]
 

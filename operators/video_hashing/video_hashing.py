@@ -7,10 +7,6 @@ import tempfile
 TMK_BINARY = os.path.join(os.path.dirname(__file__), "bin", "tmk-hash-video")
 FFMPEG_PATH = "/usr/bin/ffmpeg"  # Replace with the actual path to ffmpeg in your system
 
-print(f"Using TMK binary at: {TMK_BINARY}")
-print(f"Using FFmpeg at: {FFMPEG_PATH}")
-
-
 def hash_video(video_path: str) -> str:
     """
     Hash a video file using the TMK+PDQF binary and return the hash as a Base64-encoded string.
@@ -49,10 +45,3 @@ def hash_video(video_path: str) -> str:
         # delete the temporary hash file
         if os.path.exists(temp_hash_path):
             os.remove(temp_hash_path)
-
-# if __name__ == "__main__":
-#     video_file = r"chair-19-sd-bar.mp4"
-#     print("Generating hash for video...")
-#     video_hash = hash_video(video_file)
-#     print("Generated Hash (Base64):")
-#     print(video_hash)
