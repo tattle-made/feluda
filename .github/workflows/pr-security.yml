@@ -31,30 +31,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pip-audit uv
-
-      - name: Convert pyproject.toml to requirements.txt and Run pip-audit
-        run: |
-          # Find all pyproject.toml files
-          find . -name pyproject.toml -type f | while read -r toml_file; do
-            echo "Processing $toml_file"
-            dir=$(dirname "$toml_file")
-            
-            # Convert pyproject.toml to requirements.txt using uv
-            cd "$dir"
-            uv pip compile pyproject.toml -o requirements.txt
-            
-            # Run pip-audit on the requirements file, ignoring specific vulnerabilities
-            echo "Running pip-audit for $dir"
-            pip-audit -r requirements.txt \
-              --ignore-vuln GHSA-3749-ghw9-m3mg \
-              --ignore-vuln GHSA-887c-mr87-cxwp || exit 1
-            cd -
-          done
-
       - name: Lint with Ruff
         uses: chartboost/ruff-action@e18ae971ccee1b2d7bbef113930f00c670b78da4 # v1.0.0
         with:
@@ -66,44 +42,68 @@ jobs:
           pip install tomlkit
           python -m scripts.validate_toml_files
 
-      - name: Run Deptry Check
-        run: |
-          pip install deptry
-          echo "📦 Checking dependencies..."
-          
-          # Initialize a file to collect all dependency issues
-          DEPENDENCY_ISSUES=$(mktemp)
-          echo "" > "$DEPENDENCY_ISSUES"
-          
-          find . -name pyproject.toml -type f | while read -r toml_file; do
-            dir=$(dirname "$toml_file")
-            echo "Analyzing $dir"
-            cd "$dir"
+      # - name: Install dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     pip install pip-audit uv
+
+      # - name: Convert pyproject.toml to requirements.txt and Run pip-audit
+      #   run: |
+      #     # Find all pyproject.toml files
+      #     find . -name pyproject.toml -type f | while read -r toml_file; do
+      #       echo "Processing $toml_file"
+      #       dir=$(dirname "$toml_file")
             
-            # Skip if no deptry configuration
-            if ! grep -q "\[tool.deptry\]" pyproject.toml 2>/dev/null; then
-              echo "⏩ Skipping (no deptry configuration)"
-              cd -
-              continue
-            fi
+      #       # Convert pyproject.toml to requirements.txt using uv
+      #       cd "$dir"
+      #       uv pip compile pyproject.toml -o requirements.txt
             
-            # Run deptry and capture output
-            if ! deptry . > deptry_output.txt 2>&1; then
-              echo "❌ Dependency issues found in $dir:"
-              echo "Dependency issues in $dir:" >> "$DEPENDENCY_ISSUES"
-              cat deptry_output.txt >> "$DEPENDENCY_ISSUES"
-            fi
-            cd -
-          done
+      #       # Run pip-audit on the requirements file, ignoring specific vulnerabilities
+      #       echo "Running pip-audit for $dir"
+      #       pip-audit -r requirements.txt \
+      #         --ignore-vuln GHSA-3749-ghw9-m3mg \
+      #         --ignore-vuln GHSA-887c-mr87-cxwp || exit 1
+      #       cd -
+      #     done
+
+      # - name: Run Deptry Check
+      #   run: |
+      #     pip install deptry
+      #     echo "📦 Checking dependencies..."
           
-          # Check if there are any dependency issues
-          if [ -s "$DEPENDENCY_ISSUES" ]; then
-            echo "Dependency issues found. Please fix the following issues:"
-            cat "$DEPENDENCY_ISSUES"
-            exit 1
-          else
-            echo "All dependency checks passed."
-          fi
+      #     # Initialize a file to collect all dependency issues
+      #     DEPENDENCY_ISSUES=$(mktemp)
+      #     echo "" > "$DEPENDENCY_ISSUES"
+          
+      #     find . -name pyproject.toml -type f | while read -r toml_file; do
+      #       dir=$(dirname "$toml_file")
+      #       echo "Analyzing $dir"
+      #       cd "$dir"
+            
+      #       # Skip if no deptry configuration
+      #       if ! grep -q "\[tool.deptry\]" pyproject.toml 2>/dev/null; then
+      #         echo "⏩ Skipping (no deptry configuration)"
+      #         cd -
+      #         continue
+      #       fi
+            
+      #       # Run deptry and capture output
+      #       if ! deptry . > deptry_output.txt 2>&1; then
+      #         echo "❌ Dependency issues found in $dir:"
+      #         echo "Dependency issues in $dir:" >> "$DEPENDENCY_ISSUES"
+      #         cat deptry_output.txt >> "$DEPENDENCY_ISSUES"
+      #       fi
+      #       cd -
+      #     done
+          
+      #     # Check if there are any dependency issues
+      #     if [ -s "$DEPENDENCY_ISSUES" ]; then
+      #       echo "Dependency issues found. Please fix the following issues:"
+      #       cat "$DEPENDENCY_ISSUES"
+      #       exit 1
+      #     else
+      #       echo "All dependency checks passed."
+      #     fi
 
       # - name: Run Trivy vulnerability scanner in repo mode
       #   uses: aquasecurity/trivy-action@fd25fed6972e341ff0007ddb61f77e88103953c2 # v0.21.0

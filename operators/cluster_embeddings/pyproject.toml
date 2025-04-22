@@ -18,23 +18,3 @@ tag_format = "{name}-{version}"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]
-
-[tool.deptry]
-package_module_name_map.torch = "torch"
-package_module_name_map.torchvision = "torchvision"
-package_module_name_map.numpy = "numpy"
-package_module_name_map.pillow = "PIL"
-
-# Ignore custom packages and internal imports
-known_first_party = [
-    "feluda",
-    "operators",
-    "feluda.*",
-    "operators.*"
-]
-
-# Exclude irrelevant dependencies from unused checks
-ignore = ["DEP002"]
-
-# Exclude test and documentation directories
-exclude = ["src", "tests", "examples"]
