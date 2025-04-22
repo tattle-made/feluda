@@ -33,7 +33,7 @@ def initialize(param):
                 print(
                     f"Warning: Some required language packs are not installed: {', '.join(missing_langs)}"
                 )
-                print("OCR may not work correctly for these languages.")
+                print("OCR may not work correctly for these languages...")
         except Exception as e:
             print(f"Warning: Could not verify language pack installation: {e}")
 
