@@ -63,7 +63,7 @@ jobs:
           echo "Installing Operator system level packages"
           echo "Installing ffmpeg and tesseract-ocr..."
           sudo apt-get update > /dev/null
-          sudo apt-get install -y ffmpeg tesseract-ocr > /dev/null
+          sudo apt-get install -y ffmpeg > /dev/null
           sudo apt-get install -y tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel > /dev/null
           echo "ffmpeg version:"
           ffmpeg -version
@@ -175,7 +175,7 @@ jobs:
           # Remove tesseract-ocr
           echo "----------------------------------------"
           echo "Removing tesseract-ocr..."
-          sudo apt-get remove -y tesseract-ocr > /dev/null
+          sudo apt-get remove -y tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel > /dev/null
           sudo apt-get autoremove -y > /dev/null
           echo "Tesseract removed"
 
