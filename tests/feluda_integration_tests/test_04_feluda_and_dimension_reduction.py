@@ -46,7 +46,9 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
             {"payload": "B", "embedding": [0.0, 1.0, 0.0]},
             {"payload": "C", "embedding": [0.0, 0.0, 1.0]},
         ]
-        cls.expected_dim = cls.config["operators"]["parameters"][0]["parameters"]["n_components"]
+        cls.expected_dim = cls.config["operators"]["parameters"][0]["parameters"][
+            "n_components"
+        ]
 
     def setUp(self):
         """Fetch fresh operator reference for each test."""
@@ -132,15 +134,18 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
 
         for item in out:
             self.assertEqual(
-                len(item["reduced_embedding"]), valid_n_components,
-                "n_components should match initialized parameter"
+                len(item["reduced_embedding"]),
+                valid_n_components,
+                "n_components should match initialized parameter",
             )
 
     def test_edge_case_high_components(self):
         """Test that n_components > n_features or n_samples raises or is handled."""
         bad_params = {
             "model_type": "tsne",
-            "n_components": max(1, len(self.sample_inputs) + len(self.sample_inputs[0]["embedding"])),
+            "n_components": max(
+                1, len(self.sample_inputs) + len(self.sample_inputs[0]["embedding"])
+            ),
             "perplexity": 1,
             "random_state": 0,
         }
@@ -167,7 +172,7 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
             "perplexity": 1,  # Keep low for small test dataset
             "method": "exact",  # Different method
             "random_state": 42,
-            "max_iter": 500  # Different max iterations
+            "max_iter": 500,  # Different max iterations
         }
 
         with self.assertNoException("initialize with custom params should not raise"):
@@ -192,8 +197,8 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
         params = {
             "model_type": "tsne",
             "n_components": 2,  # Reduce to 2D
-            "perplexity": 1,    # Valid perplexity for 3 samples
-            "random_state": 42
+            "perplexity": 1,  # Valid perplexity for 3 samples
+            "random_state": 42,
         }
 
         with self.assertNoException("initialize for 5D input should not raise"):
@@ -211,7 +216,7 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
         # Create an input with mismatched embedding dimensions
         bad_inputs = [
             {"payload": "A", "embedding": [1.0, 2.0]},
-            {"payload": "B", "embedding": [1.0, 2.0, 3.0]}  # Different dimension
+            {"payload": "B", "embedding": [1.0, 2.0, 3.0]},  # Different dimension
         ]
 
         with self.assertRaises((ValueError, RuntimeError)):
@@ -242,14 +247,14 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
             "model_type": "tsne",
             "n_components": 2,
             "perplexity": 1,
-            "random_state": 42
+            "random_state": 42,
         }
 
         params2 = {
             "model_type": "tsne",
             "n_components": 2,
             "perplexity": 1,
-            "random_state": 43  # Different seed
+            "random_state": 43,  # Different seed
         }
 
         # First initialization
@@ -273,15 +278,16 @@ class TestFeludaDimensionReductionIntegration(unittest.TestCase):
         for v1, v2 in zip(result1, result2):
             try:
                 np.testing.assert_array_almost_equal(
-                    np.array(v1["reduced_embedding"]),
-                    np.array(v2["reduced_embedding"])
+                    np.array(v1["reduced_embedding"]), np.array(v2["reduced_embedding"])
                 )
             except AssertionError:
                 any_different = True
                 break
 
         # With different random seeds, results should differ
-        self.assertTrue(any_different, "Different random seeds should produce different results")
+        self.assertTrue(
+            any_different, "Different random seeds should produce different results"
+        )
 
     @contextlib.contextmanager
     def assertNoException(self, msg=None):

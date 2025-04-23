@@ -63,6 +63,3 @@ exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
-
-[tool.ruff.pydocstyle]
-convention = "google"
