@@ -4,8 +4,14 @@ version = "0.9.3"
 description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
 requires-python = ">=3.10"
-license = {file = "LICENSE.md"}
-keywords = ["multilingual", "multimodal", "indian-languages", "search", "deep-learning"]
+license = { file = "LICENSE.md" }
+keywords = [
+    "multilingual",
+    "multimodal",
+    "indian-languages",
+    "search",
+    "deep-learning",
+]
 dependencies = [
     "boto3>=1.37.30",
     "dacite>=1.9.2",
@@ -15,7 +21,7 @@ dependencies = [
     "werkzeug>=3.1.3",
     "wget>=3.2",
     "pillow>=11.1.0",
-    "numpy>=2.2.4",
+    "numpy>=1.26,<2.2.0",
 ]
 
 [project.optional-dependencies]
@@ -41,10 +47,13 @@ tag_format = "{name}-{version}"
 
 [tool.uv.workspace]
 members = [
+    "operators/classify_video_zero_shot",
+    "operators/cluster_embeddings",
+    "operators/detect_lewd_images",
+    "operators/detect_text_in_image_tesseract",
+    "operators/dimension_reduction",
     "operators/image_vec_rep_resnet",
     "operators/vid_vec_rep_clip",
-    "operators/cluster_embeddings",
-    "operators/dimension_reduction",
 ]
 
 [tool.ruff]
@@ -54,6 +63,3 @@ exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
-
-[tool.ruff.pydocstyle]
-convention = "google"
