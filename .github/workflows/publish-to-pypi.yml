@@ -2,204 +2,110 @@ name: Publish to PyPI
 
 on:
   workflow_dispatch:
-    inputs:
-      dry_run:
-        description: 'Perform a dry run (no actual publishing)'
-        required: false
-        default: true
-        type: boolean
-      publish_url:
-        description: 'PyPI publish URL (use https://test.pypi.org/legacy/ for TestPyPI)'
-        required: false
-        default: 'https://test.pypi.org/legacy/'
-        type: string
-      verify_tags:
-        description: 'Verify package versions match git tags'
-        required: false
-        default: true
-        type: boolean
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      id-token: write # Required for trusted publishing to PyPI
+      contents: write
+      id-token: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Needed for tag verification
+          fetch-depth: 0
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install required packages
         run: |
-          python -m pip install --upgrade pip
-          pip install uv tomlkit requests
+          uv venv
+          source .venv/bin/activate
+          uv pip install requests tomlkit
 
-      - name: Find packages with updated versions
-        id: find-packages
+      - name: Discover updated packages
+        id: discover
+        run: |
+          uv run -m scripts.find_updated_packages
         env:
-          # Pass publish URL to script to check against TestPyPI if needed
-          CHECK_TEST_PYPI: ${{ inputs.publish_url == 'https://test.pypi.org/legacy/' }}
-          VERIFY_TAGS: ${{ inputs.verify_tags }}
+          CHECK_TEST_PYPI: false
+          VERIFY_TAGS: true
+
+      - name: Fail if tag verification issues exist
+        if: always()
         run: |
-          python -m scripts.find_updated_packages
-          if [ -f packages_to_publish.txt ]; then
-            # Store comma-separated list and count as outputs
-            echo "packages_to_publish=$(cat packages_to_publish.txt)" >> $GITHUB_OUTPUT
-            echo "packages_count=$(wc -w < packages_to_publish.txt | tr -d ' ')" >> $GITHUB_OUTPUT # Count words (packages)
-          else
-            echo "packages_to_publish=" >> $GITHUB_OUTPUT
-            echo "packages_count=0" >> $GITHUB_OUTPUT
-          fi
-          
-          # Check if tag verification found issues
           if [ -f tag_verification_issues.txt ]; then
-            echo "has_tag_issues=true" >> $GITHUB_OUTPUT
+            echo "❌ Tag verification issues found:"
+            cat tag_verification_issues.txt
+            echo "⛔️ Aborting publish step due to tag issues."
+            exit 1
           else
-            echo "has_tag_issues=false" >> $GITHUB_OUTPUT
+            echo "✅ No tag verification issues."
           fi
 
-      - name: Build packages
-        # Run only if there are packages to publish
-        if: steps.find-packages.outputs.packages_to_publish != ''
-        id: build-packages
-        env:
-          # Target repository URL (TestPyPI or Production)
-          PUBLISH_URL: ${{ inputs.publish_url }}
+      - name: Print pyproject.toml paths of packages to publish
+        id: list_paths
         run: |
-          set -e # Exit on any error
-
-          # Read the list of packages to publish
-          IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-          
-          # Clean slate for build artifacts
-          rm -rf dist dist_backup
-          mkdir -p dist
-          
-          # Display warnings from previous steps
-          if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ]; then
-            echo "::warning::Some packages have tag verification issues. See 'Find packages' step logs."
-            cat tag_verification_issues.txt || true # Display if exists
-          fi
-          
-          # Create artifacts directory for saving build info
-          mkdir -p artifacts
-          cp packages_to_publish.txt artifacts/ || echo "packages_to_publish.txt not found"
-          [ -f tag_verification_issues.txt ] && cp tag_verification_issues.txt artifacts/ || echo "No tag verification issues found"
-          
-          # Build packages sequentially
-          echo "Building packages..."
-          for package_path in "${PACKAGES[@]}"; do
-            echo "--- Processing package: $package_path ---"
-            
-            if [ "$package_path" = "." ] || [ "$package_path" = "feluda" ]; then
-              echo "Building root package (.)"
-              uv build --index-strategy unsafe-best-match
-            else
-              echo "Building package: $package_path"
-              ( # Subshell for cd
-                cd "$package_path" || exit 1
-                uv build --index-strategy unsafe-best-match # Builds in root dist
-              )
-            fi
-            
-            # Check for build success by checking if files were created
-            if [ ! "$(ls -A dist 2>/dev/null)" ]; then
-              echo "::error::No artifacts were created for $package_path"
-              exit 1
-            fi
-            
-            # Keep a copy of built artifacts in the artifacts directory
-            mkdir -p "artifacts/dist/$package_path"
-            cp dist/* "artifacts/dist/$package_path/" || true
-            
-            echo "Build successful for $package_path"
-          done
-          
-          echo "Contents of dist/ directory:"
-          ls -lR dist/
-          
-          echo "has_built_packages=true" >> $GITHUB_OUTPUT
-
-      - name: Publish to PyPI
-        # Run only if packages were built and not in dry-run mode
-        if: steps.build-packages.outputs.has_built_packages == 'true' && inputs.dry_run == false
-        env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-          PUBLISH_URL: ${{ inputs.publish_url }}
-        run: |
-          set -e # Exit on any error
-          
-          # Check if dist directory is not empty
-          if [ ! "$(ls -A dist)" ]; then
-            echo "::error::Dist directory is empty. No packages to publish."
+          if [ ! -f packages_to_publish.txt ]; then
+            echo "No packages_to_publish.txt file found."
             exit 1
           fi
-          
-          echo "Publishing packages to ${PUBLISH_URL:-PyPI Production}..."
-          
-          # Use uv publish with the target URL and token
-          if [ -n "$PUBLISH_URL" ]; then
-            # Publish to specified URL (e.g., TestPyPI)
-            uv publish dist/* --publish-url "$PUBLISH_URL" --token "$PYPI_TOKEN"
-          else
-            # Publish to production PyPI
-            uv publish dist/* --token "$PYPI_TOKEN"
-          fi
-          
-          echo "Publish command completed successfully."
 
-      - name: Upload Artifacts
-        # Run only if packages were processed
-        if: steps.find-packages.outputs.packages_to_publish != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: artifacts/
-          retention-days: 3
-          if-no-files-found: warn
+          echo "📝 Packages to publish:"
+          cat packages_to_publish.txt
 
-      - name: Summary
-        # Always run to provide a summary
-        run: |
-          echo "## Publish to PyPI Summary" >> $GITHUB_STEP_SUMMARY
-          
-          if [ -z "${{ steps.find-packages.outputs.packages_to_publish }}" ]; then
-            echo "No packages required publishing based on version checks." >> $GITHUB_STEP_SUMMARY
-          else
-            PUBLISH_DESTINATION="${{ inputs.publish_url }}"
-            if [ -z "$PUBLISH_DESTINATION" ]; then PUBLISH_DESTINATION="PyPI Production"; fi
-
-            if [ "${{ inputs.dry_run }}" = "true" ]; then
-              echo "### 🧪 DRY RUN MODE" >> $GITHUB_STEP_SUMMARY
-              echo "The following **${{ steps.find-packages.outputs.packages_count }}** package(s) were processed for **$PUBLISH_DESTINATION** (no actual publishing):" >> $GITHUB_STEP_SUMMARY
+          echo ""
+          echo "🔍 Finding pyproject.toml paths:"
+          IFS=',' read -ra PACKAGES <<< "$(cat packages_to_publish.txt)"
+          for pkg in "${PACKAGES[@]}"; do
+            if [ "$pkg" == "feluda" ]; then
+              echo " - $pkg/pyproject.toml => ./pyproject.toml"
             else
-              echo "### 🚀 LIVE PUBLISHING MODE" >> $GITHUB_STEP_SUMMARY
-              echo "Attempted to publish the following **${{ steps.find-packages.outputs.packages_count }}** package(s) to **$PUBLISH_DESTINATION**:" >> $GITHUB_STEP_SUMMARY
+              echo " - $pkg/pyproject.toml => $pkg/pyproject.toml"
             fi
-            
-            # List packages
-            IFS=',' read -ra PACKAGES <<< "${{ steps.find-packages.outputs.packages_to_publish }}"
-            for package_path in "${PACKAGES[@]}"; do
-              # Get package name/version again for display
-              if [ "$package_path" = "." ] || [ "$package_path" = "feluda" ]; then PYPROJECT_PATH="pyproject.toml"; else PYPROJECT_PATH="$package_path/pyproject.toml"; fi
-              PACKAGE_INFO=$(python -c "import sys, tomlkit; data=tomlkit.parse(open('$PYPROJECT_PATH').read()); print(data['project']['name'] + ',' + data['project']['version'])")
-              PACKAGE_NAME=$(echo $PACKAGE_INFO | cut -d',' -f1)
-              PACKAGE_VERSION=$(echo $PACKAGE_INFO | cut -d',' -f2)
-              
-              echo "- **$PACKAGE_NAME** v$PACKAGE_VERSION (from \`$package_path\`)" >> $GITHUB_STEP_SUMMARY
-            done
-            
-            # Add warnings
-            if [ "${{ steps.find-packages.outputs.has_tag_issues }}" = "true" ]; then
-              echo "### ⚠️ Warnings" >> $GITHUB_STEP_SUMMARY
-              echo "- Git tag verification issues detected. See logs and artifacts." >> $GITHUB_STEP_SUMMARY
-            fi
+          done
+
+      - name: Build and publish updated packages
+        run: |
+          if [ ! -f packages_to_publish.txt ]; then
+            echo "❌ No packages_to_publish.txt file found."
+            exit 1
           fi
+
+          IFS=',' read -ra PACKAGES <<< "$(cat packages_to_publish.txt)"
+          for pkg in "${PACKAGES[@]}"; do
+            echo "📦 Processing package: $pkg"
+
+            if [ "$pkg" == "feluda" ]; then
+              echo "➡️ Root package: $pkg"
+              uv pip install .
+              uv build
+              uv publish --token $PYPI_PUBLISH_TOKEN
+              rm -rf dist/
+            else
+              echo "➡️ Operator package: $pkg"
+              uv pip install -r $pkg
+              uv build $pkg
+              uv publish --token $PYPI_PUBLISH_TOKEN
+              rm -rf dist/
+            fi
+
+            echo "✅ Done with $pkg"
+          done
+        env:
+          PYPI_PUBLISH_TOKEN: ${{ secrets.PYPI_PUBLISH_TOKEN }}
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "🧹 Cleaning up uv cache..."
+          uv cache dir
+          uv cache prune
+          echo "🗑️ Deleting temporary files..."
+          rm -rf packages_to_publish.txt tag_verification_issues.txt
