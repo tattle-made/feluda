@@ -2,13 +2,13 @@ import os
 import unittest
 
 from feluda.models.media_factory import VideoFactory
-from operators.video_hashing import video_hashing
+from operators.video_hash_tmk import video_hash_tmk
 
 
 class TestVideoHashing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        video_hashing.initialise(param=None)
+        video_hash_tmk.initialise(param=None)
 
     @classmethod
     def tearDownClass(cls):
@@ -23,8 +23,7 @@ class TestVideoHashing(unittest.TestCase):
         self.assertTrue(os.path.exists(video_path))
 
         # Generate the hash
-        video_hash = video_hashing.run(video_path)
-        print(f"VIDEO HASSHHHHHH {len(video_hash)}")
+        video_hash = video_hash_tmk.run(video_path)
         self.assertIsNotNone(video_hash)
         self.assertTrue(isinstance(video_hash, str))
 

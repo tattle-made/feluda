@@ -1,5 +1,5 @@
 [project]
-name = "feluda-video-hashing"
+name = "feluda-video-hash-tmk"
 version = "0.0.0"
 description = "A Feluda operator for generating video perceptual hashes using TMK+PDQF."
 requires-python = ">=3.10"
