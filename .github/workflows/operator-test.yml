@@ -61,11 +61,14 @@ jobs:
           uv pip install ".[dev]"
 
           echo "Installing Operator system level packages"
-          echo "Installing ffmpeg..."
+          echo "Installing ffmpeg and tesseract-ocr..."
           sudo apt-get update > /dev/null
           sudo apt-get install -y ffmpeg > /dev/null
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel > /dev/null
           echo "ffmpeg version:"
           ffmpeg -version
+          echo "tesseract version:"
+          tesseract --version
 
       - name: Run tests for changed operators
         if: steps.check-changes.outputs.has_changes == 'true'
@@ -168,6 +171,13 @@ jobs:
           sudo apt-get remove -y ffmpeg > /dev/null
           sudo apt-get autoremove -y > /dev/null
           echo "FFmpeg removed"
+
+          # Remove tesseract-ocr
+          echo "----------------------------------------"
+          echo "Removing tesseract-ocr..."
+          sudo apt-get remove -y tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel > /dev/null
+          sudo apt-get autoremove -y > /dev/null
+          echo "Tesseract removed"
 
           echo "----------------------------------------"
           echo "Cleanup completed"

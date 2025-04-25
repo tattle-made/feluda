@@ -52,7 +52,7 @@ class PackageVersionManager:
             raise ValueError(f"Missing required fields in {pyproject_path}")
         return True
 
-    def _discover_packages(self):
+    def _discover_packages(self, package_roots=["feluda"], operators_path="operators"):
         """
         Discover all packages in the monorepo with their pyproject.toml.
 
@@ -64,11 +64,7 @@ class PackageVersionManager:
         """
         packages = {}
 
-        # Root package (feluda)
-        package_roots = ["feluda"]
-
         # Discover packages inside 'operators' directory using glob
-        operators_path = "operators"
         if os.path.isdir(operators_path):
             for folder in glob.glob(f"{operators_path}/*/pyproject.toml"):
                 package_roots.append(os.path.dirname(folder))

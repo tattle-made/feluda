@@ -1,0 +1,111 @@
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install required packages
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install requests tomlkit
+
+      - name: Discover updated packages
+        id: discover
+        run: |
+          uv run -m scripts.find_updated_packages
+        env:
+          CHECK_TEST_PYPI: false
+          VERIFY_TAGS: true
+
+      - name: Fail if tag verification issues exist
+        if: always()
+        run: |
+          if [ -f tag_verification_issues.txt ]; then
+            echo "❌ Tag verification issues found:"
+            cat tag_verification_issues.txt
+            echo "⛔️ Aborting publish step due to tag issues."
+            exit 1
+          else
+            echo "✅ No tag verification issues."
+          fi
+
+      - name: Print pyproject.toml paths of packages to publish
+        id: list_paths
+        run: |
+          if [ ! -f packages_to_publish.txt ]; then
+            echo "No packages_to_publish.txt file found."
+            exit 1
+          fi
+
+          echo "📝 Packages to publish:"
+          cat packages_to_publish.txt
+
+          echo ""
+          echo "🔍 Finding pyproject.toml paths:"
+          IFS=',' read -ra PACKAGES <<< "$(cat packages_to_publish.txt)"
+          for pkg in "${PACKAGES[@]}"; do
+            if [ "$pkg" == "feluda" ]; then
+              echo " - $pkg/pyproject.toml => ./pyproject.toml"
+            else
+              echo " - $pkg/pyproject.toml => $pkg/pyproject.toml"
+            fi
+          done
+
+      - name: Build and publish updated packages
+        run: |
+          if [ ! -f packages_to_publish.txt ]; then
+            echo "❌ No packages_to_publish.txt file found."
+            exit 1
+          fi
+
+          IFS=',' read -ra PACKAGES <<< "$(cat packages_to_publish.txt)"
+          for pkg in "${PACKAGES[@]}"; do
+            echo "📦 Processing package: $pkg"
+
+            if [ "$pkg" == "feluda" ]; then
+              echo "➡️ Root package: $pkg"
+              uv pip install .
+              uv build
+              uv publish --token $PYPI_PUBLISH_TOKEN
+              rm -rf dist/
+            else
+              echo "➡️ Operator package: $pkg"
+              uv pip install -r $pkg
+              uv build $pkg
+              uv publish --token $PYPI_PUBLISH_TOKEN
+              rm -rf dist/
+            fi
+
+            echo "✅ Done with $pkg"
+          done
+        env:
+          PYPI_PUBLISH_TOKEN: ${{ secrets.PYPI_PUBLISH_TOKEN }}
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "🧹 Cleaning up uv cache..."
+          uv cache dir
+          uv cache prune
+          echo "🗑️ Deleting temporary files..."
+          rm -rf packages_to_publish.txt tag_verification_issues.txt

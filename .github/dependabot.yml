@@ -3,23 +3,22 @@ updates:
   # Enable version updates for Docker
   - package-ecosystem: "docker"
     # Look for a `Dockerfile` in the `root` directory
-    directory: "/src"
-    # Check for updates once a week
+    directory: "/"
+    # Check for updates once a month
     schedule:
-      interval: "weekly"
+      interval: "monthly"
 
   # Enable version updates for Pip
   - package-ecosystem: "pip"
     # Look for a `Dockerfile` in the `root` directory
-    directory: "/src"
-    # Check for updates once a week
+    directory: "/"
+    # Check for updates once a month
     schedule:
-      interval: "weekly"
-
+      interval: "monthly"
   # Enable version updates for github-actions
   - package-ecosystem: "github-actions"
     # Look for a `Dockerfile` in the `root` directory
     directory: ".github/workflows"
-    # Check for updates once a week
+    # Check for updates once a month
     schedule:
-      interval: "weekly"
+      interval: "monthly"
