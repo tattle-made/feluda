@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## v0.9.4 (2025-04-25)
+
+### Chores
+* chore: add video hash tmk operator to uv workspace (#600) (d4fd2e7)
+* chore: formatting files (8185e31)
+* chore: resolve numpy conflicts (851ddcc)
+* chore: minor changes to root pyproject.toml (#568) (fbc0ef0)
+* chore: semantic versioning workflow and update related files (6b104f7)
+
+### Contributors
+* Aatman Vaidya
+* GitHub Actions [Bot]
+* Parth Shah
+
+
 ## v0.9.3 (2025-04-09)
 
 ### Bug Fixes
