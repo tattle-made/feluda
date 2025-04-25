@@ -54,6 +54,7 @@ members = [
     "operators/dimension_reduction",
     "operators/image_vec_rep_resnet",
     "operators/vid_vec_rep_clip",
+    "operators/video_hash_tmk",
 ]
 
 [tool.ruff]
