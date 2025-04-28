@@ -5,7 +5,7 @@ def initialize(param):
     Args:
         param (dict): Parameters for initialization
     """
-    print("Installing packages for classify_video_zero_shot")
+    print("Installing packages for detect_lewd_images operator")
     global inference
     global model
     global pad_resize_image
