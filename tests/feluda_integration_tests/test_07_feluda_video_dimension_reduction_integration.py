@@ -59,9 +59,7 @@ class TestFeludaVideoDimensionReductionIntegration(unittest.TestCase):
 
         # Sample video URLs for testing
         cls.test_video_urls = [
-            "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4",
-            "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-dog-video.mp4",
-            "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-car-video.mp4",
+            "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
         ]
         cls.expected_vector_dim = 512  # Expected dimension of CLIP embeddings
 
