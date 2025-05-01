@@ -12,7 +12,7 @@ dacite==1.8.1
 memray==1.14.0  # dev
 pyinstrument==4.7.3
 numpy==2.1.1
-requests==2.32.2
+requests==2.32.3
 locust==2.31.5
 nose2==0.15.1
 psycopg2-binary==2.9.9
