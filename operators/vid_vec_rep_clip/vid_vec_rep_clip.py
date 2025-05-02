@@ -1,7 +1,7 @@
 """
 Operator to extract video vector representations using CLIP-ViT-B-32.
 """
-import psutil
+
 import time
 def initialize(param):
     """
@@ -96,24 +96,8 @@ def initialize(param):
             if not os.path.exists(fname):
                 raise FileNotFoundError(f"File not found: {fname}")
 
-            print(f"Analyzing video: {fname}")
-
-            process = psutil.Process(os.getpid())
-            cpu_before = process.cpu_percent(interval=1.0)
-            mem_before = process.memory_info().rss / (1024 * 1024)
-
-            start_time = time.time()
-            self.feature_matrix = self.extract_features_streaming(fname)
-            end_time = time.time()
-
-            mem_after = process.memory_info().rss / (1024 * 1024)
-            cpu_after = process.cpu_percent(interval=1.0)
-
-            print(f"Total vectors generated: {len(self.feature_matrix)}")
-            print(f"Peak memory usage: {mem_after - mem_before:.2f} MB")
-            print(f"CPU usage before processing: {cpu_before:.1f}%")
-            print(f"CPU usage after processing: {cpu_after:.1f}%")
-            print(f"Processing time: {end_time - start_time:.2f} seconds")
+            print(f"Analyzing video: {fname}")           
+            self.feature_matrix = self.extract_features_streaming(fname)           
 
         def extract_features_streaming(self, fname):
             feature_list = []
