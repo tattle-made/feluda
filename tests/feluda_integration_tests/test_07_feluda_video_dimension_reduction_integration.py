@@ -109,28 +109,34 @@ class TestFeludaVideoDimensionReductionIntegration(unittest.TestCase):
                          f"Vector should have dimension {self.expected_vector_dim}")
 
     def test_dimension_reduction(self):
-        #Test dimension reduction on sample data.
+        # Test dimension reduction on sample data with 20 samples
         dim_operator = self.operators["dimension_reduction"]
-        
-        # Create sample high-dimensional data
+    
+    # Create sample high-dimensional data (20 samples)
         sample_data = [
-            {"payload": "sample1", "embedding": [1.0] * self.expected_vector_dim},
-            {"payload": "sample2", "embedding": [2.0] * self.expected_vector_dim},
-            {"payload": "sample3", "embedding": [3.0] * self.expected_vector_dim}
-        ]
-        
-        # Reduce dimensions
+            {"payload": f"sample{i}", "embedding": [float(i)] * self.expected_vector_dim} 
+            for i in range(1, 21)  # Create 20 samples
+    ]
+    
+    # Reduce dimensions
         reduced_data = dim_operator.run(sample_data)
-        
-        # Validate results
+    
+    # Validate results
         self.assertEqual(len(reduced_data), len(sample_data), 
-                         "Output should have same number of items as input")
-        
+                     "Output should have the same number of items as input")
+
+    # Validate that each reduced embedding is 2D and contains required fields
         for item in reduced_data:
+        # Ensure the payload is present
             self.assertIn("payload", item, "Each result should contain the original payload")
+        
+        # Ensure the reduced_embedding is present
             self.assertIn("reduced_embedding", item, "Each result should contain reduced embeddings")
+        
+        # Ensure the reduced_embedding has 2 dimensions (for 2D reduction)
             self.assertEqual(len(item["reduced_embedding"]), 2, 
-                             "Reduced embeddings should be 2-dimensional")
+                         f"Reduced embeddings should be 2-dimensional, found {len(item['reduced_embedding'])} dimensions")
+
 
     def test_video_to_dimension_reduction_pipeline(self):
         #Test the full pipeline from video extraction to dimension reduction
