@@ -19,12 +19,13 @@ class TestFeludaVidTSNEReductionIntegration(unittest.TestCase):
             "operators": {
                 "label": "Vid+TSNE",
                 "parameters": [
-                    {"name": "vid","type": "vid_vec_rep_clip","parameters": {}},
+                    {"name": "vid", "type": "vid_vec_rep_clip", "parameters": {}},
                     {
                         "name": "tsne",
                         "type": "dimension_reduction",
                         "parameters": {
-                            "perplexity":    1,
+                            "perplexity": 1,
+                            "n_components": 2,
                         },
                     },
                 ],
@@ -38,13 +39,13 @@ class TestFeludaVidTSNEReductionIntegration(unittest.TestCase):
         cls.feluda.setup()
         ops = cls.feluda.operators.get()
         cls.vid = ops["vid_vec_rep_clip"]
-        cls.dr  = ops["dimension_reduction"]
+        cls.dr = ops["dimension_reduction"]
 
-        sample_url  = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
+        sample_url = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
         vecs = list(cls.vid.run(VideoFactory.make_from_url(sample_url)))
         if len(vecs) < 3:
             raise RuntimeError(f"Need ≥3 embeddings but got {len(vecs)}")
-        cls.avg_vec    = vecs[0]["vid_vec"]
+        cls.avg_vec = vecs[0]["vid_vec"]
         cls.frame_vecs = [vecs[1]["vid_vec"], vecs[2]["vid_vec"]]
         cls.expected_dim = len(cls.avg_vec)
 
@@ -63,7 +64,7 @@ class TestFeludaVidTSNEReductionIntegration(unittest.TestCase):
         """Smoke: two 512d → TSNE→ two 2d embeddings."""
         data = [
             {"payload": "avg", "embedding": self.avg_vec},
-            {"payload": "f1",  "embedding": self.frame_vecs[0]},
+            {"payload": "f1", "embedding": self.frame_vecs[0]},
         ]
         out = self.dr.run(data)
         self.assertEqual(len(out), 2)
@@ -75,7 +76,7 @@ class TestFeludaVidTSNEReductionIntegration(unittest.TestCase):
         """Fixed-seed TSNE on the same two vectors yields identical outputs."""
         data = [
             {"payload": "avg", "embedding": self.avg_vec},
-            {"payload": "f1",  "embedding": self.frame_vecs[0]},
+            {"payload": "f1", "embedding": self.frame_vecs[0]},
         ]
         a = self.dr.run(data)
         b = self.dr.run(data)
@@ -86,7 +87,7 @@ class TestFeludaVidTSNEReductionIntegration(unittest.TestCase):
         """End-to-end video→TSNE preserves payloads and dims."""
         data = [
             {"payload": "avg", "embedding": self.avg_vec},
-            {"payload": "f2",  "embedding": self.frame_vecs[1]},
+            {"payload": "f2", "embedding": self.frame_vecs[1]},
         ]
         out = self.dr.run(data)
         got = [o["payload"] for o in out]
@@ -103,14 +104,14 @@ class TestFeludaVidUMAPReductionIntegration(unittest.TestCase):
             "operators": {
                 "label": "Vid+UMAP",
                 "parameters": [
-                    {"name": "vid","type": "vid_vec_rep_clip","parameters": {}},
+                    {"name": "vid", "type": "vid_vec_rep_clip", "parameters": {}},
                     {
                         "name": "umap",
                         "type": "dimension_reduction",
                         "parameters": {
-                            "model_type":   "umap",
+                            "model_type": "umap",
                             "n_components": 3,
-                            "n_neighbors":  2,
+                            "n_neighbors": 2,
                         },
                     },
                 ],
@@ -124,10 +125,10 @@ class TestFeludaVidUMAPReductionIntegration(unittest.TestCase):
         cls.feluda.setup()
         ops = cls.feluda.operators.get()
         cls.vid = ops["vid_vec_rep_clip"]
-        cls.dr  = ops["dimension_reduction"]
+        cls.dr = ops["dimension_reduction"]
 
-        sample_url   = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
-        vecs  = list(cls.vid.run(VideoFactory.make_from_url(sample_url)))
+        sample_url = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
+        vecs = list(cls.vid.run(VideoFactory.make_from_url(sample_url)))
         needed = 5
         if len(vecs) < needed:
             raise RuntimeError(f"Need ≥{needed} embeddings but got {len(vecs)}")
@@ -146,8 +147,10 @@ class TestFeludaVidUMAPReductionIntegration(unittest.TestCase):
 
     def test_umap_integration(self):
         """UMAP: avg + frames → 3d embeddings."""
-        data = [{"payload": f"p{i}", "embedding": vec} for i, vec in enumerate(self.samples)]
-        out  = self.dr.run(data)
+        data = [
+            {"payload": f"p{i}", "embedding": vec} for i, vec in enumerate(self.samples)
+        ]
+        out = self.dr.run(data)
         self.assertEqual(len(out), len(self.samples))
         for item in out:
             self.assertEqual(len(item["reduced_embedding"]), 3)
