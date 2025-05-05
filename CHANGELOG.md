@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v0.9.5 (2025-05-05)
+
+### Chores
+* chore: semantic versioning workflow and update related files (80dcec2)
+
+### Contributors
+* GitHub Actions [Bot]
+
+
 ## v0.9.4 (2025-04-25)
 
 ### Chores
