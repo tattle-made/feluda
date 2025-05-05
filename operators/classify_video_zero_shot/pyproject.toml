@@ -1,6 +1,6 @@
 [project]
 name = "feluda-classify-video-zero-shot"
-version = "0.1.0"
+version = "0.1.1"
 requires-python = ">=3.10"
 dependencies = ["torch>=2.6.0", "pillow>=11.1.0", "transformers>=4.51.1"]
 
