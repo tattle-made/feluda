@@ -1,3 +1,0 @@
-pytest==7.4.4
-nltk==3.8.1
-textblob==0.17.1
