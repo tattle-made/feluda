@@ -13,19 +13,20 @@ The current implementation of the `vid_vec_rep_clip` operator lacks support for 
 - Ensure output vector correctness post-refactor.
 
 ## Findings from Original Implementation
+![alt text](1.png) 
 
-![alt text](image.png)
 **Inconsistencies:** Memory usage for the 60-min video is unexpectedly lower than for the 30-min video, suggesting inefficient memory handling or potential leaks in intermediate steps.
 
 ## Results After Refactor
+![alt text](2.png) 
+ 
 
-![alt text](<Screenshot 2025-05-02 at 6.12.31 AM.png>)
 _Note: Longer videos show memory increase due to more efficient baseline measurement._
 
 ## Performance Comparison
 
 ### Memory-Optimized vs Original Implementation
-![alt text](<Screenshot 2025-05-02 at 6.12.44 AM.png>)
+![alt text](3.png) 
 
 ### Memory Optimization Highlights:
 - 81% reduction for 30-minute videos (1917MB → 365MB)

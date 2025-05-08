@@ -3,6 +3,7 @@ Operator to extract video vector representations using CLIP-ViT-B-32.
 """
 
 import time
+import platform
 def initialize(param):
     """
     Initializes the operator.
@@ -23,7 +24,7 @@ def initialize(param):
     from transformers import AutoProcessor, CLIPModel
 
     # Load the model and processor
-    processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32", use_fast=True)
+    processor = AutoProcessor.from_pretrained("openai/clip-vit-base-patch32")
     model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 
     # Set the device
@@ -101,13 +102,10 @@ def initialize(param):
 
         def extract_features_streaming(self, fname):
             feature_list = []
-            with tempfile.TemporaryDirectory() as temp_dir:
-                cmd = f"""
-                ffmpeg -i \"{fname}\" -vf \"select=eq(pict_type\\,I)\" -vsync vfr \"{temp_dir}/frame_%05d.jpg\"
-                """
+            with tempfile.TemporaryDirectory() as temp_dir:               
+                cmd = f'ffmpeg -i "{fname}" -vf "select=eq(pict_type\\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"'
                 print("Extracting I-frames with ffmpeg...")
                 subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
                 filenames = sorted([f for f in os.listdir(temp_dir) if f.endswith(".jpg")])
                 print(f"Total I-frames found: {len(filenames)}")
                 print(f"Sampling every {self.frame_sample_rate}th frame")
