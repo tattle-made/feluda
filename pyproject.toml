@@ -1,6 +1,6 @@
 [project]
 name = "feluda"
-version = "0.9.5"
+version = "0.9.4"
 description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
 requires-python = ">=3.10"
