@@ -55,7 +55,6 @@ _Note: Longer videos show memory increase due to more efficient baseline measure
 | **45 min**   | 889         | 329.57s → 283.73s (**−14%**)          | 511MB → 636MB (**+24.5% ↑**)               | 132.86s → 130.95s       |
 | **1 hour**   | 1194        | 482.46s → 378.10s (**−22%**)          | 451MB → 695MB (**+54.1% ↑**)               | 170.36s → 174.26s       |
 
-
 ### Memory Optimization Highlights:
 - 81% reduction for 30-minute videos (1917MB → 365MB)
 
