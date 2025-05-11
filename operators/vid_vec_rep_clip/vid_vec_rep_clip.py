@@ -102,10 +102,22 @@ def initialize(param):
 
         def extract_features_streaming(self, fname):
             feature_list = []
-            with tempfile.TemporaryDirectory() as temp_dir:               
-                cmd = f'ffmpeg -i "{fname}" -vf "select=eq(pict_type\\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"'
+            with tempfile.TemporaryDirectory() as temp_dir:   
+                cmd = [
+                    "ffmpeg",
+                    "-i", fname,
+                    "-vf", "select=eq(pict_type\\,I)",
+                    "-vsync", "vfr",
+                    f"{temp_dir}/frame_%05d.jpg"
+                ]            
                 print("Extracting I-frames with ffmpeg...")
-                subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                subprocess.run(
+                    cmd,
+                    check=True,
+                    stdout=subprocess.PIPE,  
+                    stderr=subprocess.PIPE   
+                )
+               
                 filenames = sorted([f for f in os.listdir(temp_dir) if f.endswith(".jpg")])
                 print(f"Total I-frames found: {len(filenames)}")
                 print(f"Sampling every {self.frame_sample_rate}th frame")

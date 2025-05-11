@@ -36,7 +36,7 @@ class Test(unittest.TestCase):
 
     def test_large_video_profile(self):
         
-        rel_path = "1_min_video.mp4"  # optional: keep if you use it elsewhere
+        rel_path = "1_min_video.mp4"  
         abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), rel_path))
 
         profile_large_video(abs_path)
