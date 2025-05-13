@@ -3,13 +3,12 @@ name = "feluda"
 version = "0.9.4"
 description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
-requires-python = ">=3.10,<3.11" 
+requires-python = ">=3.10" 
 
 authors = [
     { name = "Feluda Admin", email = "admin@tattle.co.in" },
 ]
 maintainers = [
-    { name = "Feluda Admin", email = "admin@tattle.co.in" },
     { name = "Feluda Admin", email = "admin@tattle.co.in" },
 ]
 
