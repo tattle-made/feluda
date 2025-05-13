@@ -4,7 +4,17 @@ version = "0.9.4"
 description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE.md" }
+
+authors = [
+    { name = "author", email = "author@feluda.org" },
+]
+maintainers = [
+    { name = "Maintainer", email = "maintainer@feluda.org" },
+    { name = "Maintainer", email = "maintainer@feluda.org" },
+]
+
+license = { text = "GNU General Public License v3.0" }
+license-files = ["LICENSE.md"]
 keywords = [
     "multilingual",
     "multimodal",
@@ -12,55 +22,20 @@ keywords = [
     "search",
     "deep-learning",
 ]
-dependencies = [
-    "boto3>=1.37.30",
-    "dacite>=1.9.2",
-    "pydub>=0.25.1",
-    "pyyaml>=6.0.2",
-    "requests>=2.32.3",
-    "werkzeug>=3.1.3",
-    "wget>=3.2",
-    "pillow>=11.1.0",
-    "numpy>=1.26,<2.2.0",
+
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
+    "Topic :: Multimedia :: Video/Image",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-
-[project.optional-dependencies]
-dev = [
-    "tomlkit>=0.13.2",
-    "ruff>=0.11.4",
-    "pre-commit>=4.2.0",
-    "jupyter>=1.1.1",
-    "notebook>=7.3.3",
-]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.semantic_release]
-version_variable = ["pyproject.toml:project.version"]
-
-[tool.semantic_release.branches.main]
-match = "main"
-prerelease = false
-tag_format = "{name}-{version}"
-
-[tool.uv.workspace]
-members = [
-    "operators/classify_video_zero_shot",
-    "operators/cluster_embeddings",
-    "operators/detect_lewd_images",
-    "operators/detect_text_in_image_tesseract",
-    "operators/dimension_reduction",
-    "operators/image_vec_rep_resnet",
-    "operators/vid_vec_rep_clip",
-    "operators/video_hash_tmk",
-]
-
-[tool.ruff]
-target-version = "py310"
-line-length = 88
-exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
-
-[tool.hatch.build.targets.wheel]
-packages = ["feluda"]
