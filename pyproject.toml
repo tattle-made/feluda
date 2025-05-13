@@ -3,14 +3,14 @@ name = "feluda"
 version = "0.9.4"
 description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.11" 
 
 authors = [
-    { name = "author", email = "author@feluda.org" },
+    { name = "Feluda Admin", email = "admin@tattle.co.in" },
 ]
 maintainers = [
-    { name = "Maintainer", email = "maintainer@feluda.org" },
-    { name = "Maintainer", email = "maintainer@feluda.org" },
+    { name = "Feluda Admin", email = "admin@tattle.co.in" },
+    { name = "Feluda Admin", email = "admin@tattle.co.in" },
 ]
 
 license = { text = "GNU General Public License v3.0" }
@@ -30,12 +30,9 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Text Processing :: Linguistic",
-    "Topic :: Multimedia :: Video/Image",
+    "Topic :: Multimedia :: Video",
     "Topic :: Multimedia :: Sound/Audio",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
@@ -52,12 +49,13 @@ dependencies = [
     # to send HTTP requests and handle responses
     "requests>=2.32.3",   
     # for request/responses and routing
-    "werkzeug>=3.1.3",    
+    "werkzeug>=3.0.3",    
     # download files using a URL
     "wget>=3.2",           
     # for image processing
     "pillow>=11.1.0",      
-    # numerical computing
+    # numpy is set to >=1.26,<2.2.0 to maintain compatibility with TensorFlow
+    # versions >=2.2.0 may lead to conflicts
     "numpy>=1.26,<2.2.0",  
 ]
 
