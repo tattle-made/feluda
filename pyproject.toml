@@ -86,8 +86,6 @@ match = "main"
 prerelease = false
 tag_format = "{name}-{version}"
 
-# UV workspace configuration
-# each operator performs specific tasks
 [tool.uv.workspace]
 members = [
     "operators/classify_video_zero_shot",
