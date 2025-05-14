@@ -3,16 +3,12 @@ name = "feluda"
 version = "0.9.4"
 description = "A configurable engine for analysing multi-lingual and multi-modal content."
 readme = "README.md"
-requires-python = ">=3.10" 
+requires-python = ">=3.10"
 
-authors = [
-    { name = "Feluda Admin", email = "admin@tattle.co.in" },
-]
-maintainers = [
-    { name = "Feluda Admin", email = "admin@tattle.co.in" },
-]
+authors = [{ name = "Feluda Admin", email = "admin@tattle.co.in" }]
+maintainers = [{ name = "Feluda Admin", email = "admin@tattle.co.in" }]
 
-license = { text = "GNU General Public License v3.0" }
+license = "GNU General Public License v3.0"
 license-files = ["LICENSE.md"]
 keywords = [
     "multilingual",
@@ -38,38 +34,38 @@ classifiers = [
 
 dependencies = [
     # interact with AWS from Python
-    "boto3>=1.37.30",      
+    "boto3>=1.37.30",
     # convert dictionaries into dataclass
-    "dacite>=1.9.2",   
+    "dacite>=1.9.2",
     # for audio processing
-    "pydub>=0.25.1",       
+    "pydub>=0.25.1",
     # load/save config files in a readable format
-    "pyyaml>=6.0.2",       
+    "pyyaml>=6.0.2",
     # to send HTTP requests and handle responses
-    "requests>=2.32.3",   
+    "requests>=2.32.3",
     # for request/responses and routing
-    "werkzeug>=3.0.3",    
+    "werkzeug>=3.0.3",
     # download files using a URL
-    "wget>=3.2",           
+    "wget>=3.2",
     # for image processing
-    "pillow>=11.1.0",      
+    "pillow>=11.1.0",
     # numpy is set to >=1.26,<2.2.0 to maintain compatibility with TensorFlow
     # versions >=2.2.0 may lead to conflicts
-    "numpy>=1.26,<2.2.0",  
+    "numpy>=1.26,<2.2.0",
 ]
 
-# deps that are optional 
+# deps that are optional
 [project.optional-dependencies]
 dev = [
-    # for reading, editing configs
-    "tomlkit>=0.13.2",     
+    # for reading, editing pyproject.toml files
+    "tomlkit>=0.13.2",
     # code linter and formatter
-    "ruff>=0.11.4",       
+    "ruff>=0.11.4",
     # runs checks before each git commits
-    "pre-commit>=4.2.0", 
+    "pre-commit>=4.2.0",
     # for Jupyter support and interface
-    "jupyter>=1.1.1",     
-    "notebook>=7.3.3",    
+    "jupyter>=1.1.1",
+    "notebook>=7.3.3",
 ]
 
 [project.urls]
@@ -78,15 +74,9 @@ Repository = "https://github.com/tattle-made/feluda"
 Issues = "https://github.com/tattle-made/feluda/issues"
 Changelog = "https://github.com/tattle-made/feluda/blob/main/CHANGELOG.md"
 
-[project.scripts]
-##
-
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.hatch]
-installer = "uv"
 
 [tool.semantic_release]
 version_variable = ["pyproject.toml:project.version"]
@@ -117,4 +107,3 @@ exclude = ["src", "dist", ".docker", ".pytest_cache", ".ruff_cache"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["feluda"]
-
