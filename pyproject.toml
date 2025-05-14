@@ -5,11 +5,10 @@ description = "A configurable engine for analysing multi-lingual and multi-modal
 readme = "README.md"
 requires-python = ">=3.10"
 
-authors = [{ name = "Feluda Admin", email = "admin@tattle.co.in" }]
-maintainers = [{ name = "Feluda Admin", email = "admin@tattle.co.in" }]
+authors = [{ name = "Tattle Admin", email = "admin@tattle.co.in" }]
+maintainers = [{ name = "Tattle Admin", email = "admin@tattle.co.in" }]
 
-license = "GNU General Public License v3.0"
-license-files = ["LICENSE.md"]
+license = { file = "LICENSE.md" }
 keywords = [
     "multilingual",
     "multimodal",
