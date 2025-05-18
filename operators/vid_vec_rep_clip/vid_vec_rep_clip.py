@@ -60,7 +60,7 @@ def initialize(param):
         A class for video feature extraction.
         """
 
-        def __init__(self, fname, frame_sample_rate=1):
+        def __init__(self, fname):
             """
             Constructor for the `VideoAnalyzer` class.
 
@@ -71,7 +71,7 @@ def initialize(param):
             self.model = model
             self.device = device
             self.processor = processor
-            self.frame_sample_rate = frame_sample_rate
+            
 
             self.fname = fname
             self.feature_matrix = []
