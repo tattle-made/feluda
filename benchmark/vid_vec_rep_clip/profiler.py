@@ -1,9 +1,9 @@
 import os
 import time
-import psutil
 import tracemalloc
 
-from pathlib import Path
+import psutil
+
 from feluda.models.media_factory import VideoFactory
 from operators.vid_vec_rep_clip import vid_vec_rep_clip
 
@@ -30,10 +30,12 @@ def profile_large_video(abs_path):
         count += 1
 
     print(f"Total I-frame vectors: {count - 1}")
-    print(f"Average vector included: True")
+    print("Average vector included: True")
     print(f"Total vectors generated (incl. avg): {count}")
     print(f"Memory before processing: {mem_before:.2f} MB")
     print(f"Memory after processing: {mem_after:.2f} MB")
     print(f"Net memory change (test-side): {mem_after - mem_before:+.2f} MB")
-    print(f"CPU time used (user + system): {(cpu_times_after.user + cpu_times_after.system) - (cpu_times_before.user + cpu_times_before.system):.2f} seconds")
+    print(
+        f"CPU time used (user + system): {(cpu_times_after.user + cpu_times_after.system) - (cpu_times_before.user + cpu_times_before.system):.2f} seconds"
+    )
     print(f"Processing time: {end_time - start:.2f} seconds")
