@@ -92,10 +92,10 @@ _Note: Longer videos show memory increase due to more efficient baseline measure
 
 This PR introduces the following enhancements to the `vid_vec_rep_clip` operator:
 
-1.  #### I-Frame Sampling Strategy: 
+1.  #### I-Frame Sampling Strategy:
     Instead of decoding every frame or relying on precomputed metadata, the updated operator uses `ffmpeg` to extract only **I-frames** for vector representation. This reduces redundancy and improves scalability.
 
-2.  #### Streaming Feature Extraction: 
+2.  #### Streaming Feature Extraction:
     Frames are now loaded and processed in a streaming manner (one at a time) using temporary storage, preventing memory bloat.
 
 3.  #### Detailed Profiling Added to Tests:
@@ -130,4 +130,3 @@ This PR introduces the following enhancements to the `vid_vec_rep_clip` operator
 - The results were generated using the integrated `profiler.py` script.
 - Tests were run via `unittest` and include edge cases with short and long videos.
 - Videos used for benchmarking are not tracked in version control and excluded via `.gitignore`.
-
