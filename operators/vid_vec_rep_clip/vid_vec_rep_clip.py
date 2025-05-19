@@ -1,9 +1,6 @@
 """
 Operator to extract video vector representations using CLIP-ViT-B-32.
 """
-
-import time
-import platform
 def initialize(param):
     """
     Initializes the operator.
@@ -66,13 +63,11 @@ def initialize(param):
 
             Args:
                 fname (str): Path to the video file
-                frame_sample_rate (int): Sample every Nth I-frame
             """
             self.model = model
             self.device = device
             self.processor = processor
             
-
             self.fname = fname
             self.feature_matrix = []
             self.analyze(fname)
@@ -120,11 +115,8 @@ def initialize(param):
                
                 filenames = sorted([f for f in os.listdir(temp_dir) if f.endswith(".jpg")])
                 print(f"Total I-frames found: {len(filenames)}")
-                print(f"Sampling every {self.frame_sample_rate}th frame")
 
-                for i, filename in enumerate(filenames):
-                    if i % self.frame_sample_rate != 0:
-                        continue
+                for filename in filenames:
                     image_path = os.path.join(temp_dir, filename)
                     with Image.open(image_path) as img:
                         img = img.convert("RGB")
@@ -144,7 +136,7 @@ def run(file):
     fname = file["path"]
 
     try:
-        vid_analyzer = VideoAnalyzer(fname, frame_sample_rate=1)  # Now processing all I-frames
+        vid_analyzer = VideoAnalyzer(fname)  # Now processing all I-frames
         return gendata(vid_analyzer)
     finally:
         if file.get("is_temp", False) and os.path.exists(fname):
