@@ -1,6 +1,8 @@
 """
 Operator to extract video vector representations using CLIP-ViT-B-32.
 """
+
+
 def initialize(param):
     """
     Initializes the operator.
@@ -16,6 +18,7 @@ def initialize(param):
     import os
     import subprocess
     import tempfile
+
     import torch
     from PIL import Image
     from transformers import AutoProcessor, CLIPModel
@@ -66,9 +69,7 @@ def initialize(param):
             """
             self.model = model
             self.device = device
-            self.processor = processor
-            
-            self.fname = fname
+            self.frame_images = []
             self.feature_matrix = []
             self.analyze(fname)
 
@@ -89,62 +90,81 @@ def initialize(param):
             Raises:
                 FileNotFoundError: If the file is not found
             """
+            # check if file exists
             if not os.path.exists(fname):
                 raise FileNotFoundError(f"File not found: {fname}")
 
-            print(f"Analyzing video: {fname}")           
-            self.feature_matrix = self.extract_features_streaming(fname)           
+            # Extract I-frames and features
+            self.frame_images = self.extract_frames(fname)
+            self.feature_matrix = self.extract_features(self.frame_images)
 
-        def extract_features_streaming(self, fname):
-            feature_list = []
-            with tempfile.TemporaryDirectory() as temp_dir:   
-                cmd = [
-                    "ffmpeg",
-                    "-i", fname,
-                    "-vf", "select=eq(pict_type\\,I)",
-                    "-vsync", "vfr",
-                    f"{temp_dir}/frame_%05d.jpg"
-                ]            
-                print("Extracting I-frames with ffmpeg...")
-                subprocess.run(
-                    cmd,
-                    check=True,
-                    stdout=subprocess.PIPE,  
-                    stderr=subprocess.PIPE   
-                )
-               
-                filenames = sorted([f for f in os.listdir(temp_dir) if f.endswith(".jpg")])
-                print(f"Total I-frames found: {len(filenames)}")
+        def extract_frames(self, fname):
+            """
+            Extracts I-frames from the video file using `ffmpeg`.
 
-                for filename in filenames:
-                    image_path = os.path.join(temp_dir, filename)
-                    with Image.open(image_path) as img:
-                        img = img.convert("RGB")
-                        feature = self.extract_single_feature(img)
-                        feature_list.append(feature.cpu())
+            Args:
+                fname (str): Path to the video file
 
-            return torch.stack(feature_list)
+            Returns:
+                list: List of PIL Images
+            """
+            with tempfile.TemporaryDirectory() as temp_dir:
+                # Command to extract I-frames using ffmpeg's command line tool
+                cmd = f"""
+                ffmpeg -i "{fname}" -vf "select=eq(pict_type\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"
+                """
+                with subprocess.Popen(
+                    cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                ) as process:
+                    process.wait()
+                frames = []
+                for filename in os.listdir(temp_dir):
+                    if filename.endswith((".jpg")):
+                        image_path = os.path.join(temp_dir, filename)
+                        with Image.open(image_path) as img:
+                            frames.append(img.copy())
+                return frames
 
-        def extract_single_feature(self, img):
-            inputs = self.processor(images=img, return_tensors="pt")
-            inputs = {k: v.to(self.device) for k, v in inputs.items()}
+        def extract_features(self, images):
+            """
+            Extracts features from a list of images using pre-trained CLIP-ViT-B-32.
+
+            Args:
+                images (list): List of PIL Images
+
+            Returns:
+                torch.Tensor: Feature matrix of shape (batch, 512)
+            """
+            inputs = processor(
+                images=images, return_tensors="pt", padding=True, truncation=True
+            )
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
             with torch.no_grad():
-                feature = self.model.get_image_features(**inputs)
-            return feature.squeeze(0)
+                features = self.model.get_image_features(**inputs)
+                return features
+
 
 def run(file):
-    fname = file["path"]
+    """
+    Runs the operator.
 
+    Args:
+        file (dict): `VideoFactory` file object
+
+    Returns:
+        generator: Yields video and I-frame vector representations
+    """
+    fname = file["path"]
     try:
-        vid_analyzer = VideoAnalyzer(fname)  # Now processing all I-frames
+        vid_analyzer = VideoAnalyzer(fname)
         return gendata(vid_analyzer)
     finally:
-        if file.get("is_temp", False) and os.path.exists(fname):
-            os.remove(fname)
+        os.remove(fname)
+
 
 def cleanup(param):
     pass
 
+
 def state():
     pass
-
