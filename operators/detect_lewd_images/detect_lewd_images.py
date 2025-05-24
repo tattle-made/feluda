@@ -105,7 +105,7 @@ def initialize(param):
             Image ready for inference
         """
         raw = tf.io.read_file(filename)
-        image = tf.io.decode_image(raw, channels=3, expand_animations=False)
+        image = tf.io.decode_image(raw, channels=3, expand_animations=True)
         image.set_shape([None, None, 3])
 
         image = preprocess_for_evaluation(image, 480, tf.float16)
@@ -137,7 +137,7 @@ def initialize(param):
             return None
 
 
-def run(image_path: str, delete_after=False):
+def run(image_path: str):
     """
     Runs the operator.
 
@@ -147,9 +147,12 @@ def run(image_path: str, delete_after=False):
     Returns:
         Prediction results
     """
+    fname = image_path.get("path")
+    if not fname:
+        raise ValueError("Image path must not be empty.")
     try:
-        result = inference(image_path["path"])
+        result = inference(fname)
         return result
     finally:
-        if delete_after and os.path.exists(image_path["path"]):
-            os.remove(image_path["path"])
+        if os.path.exists(fname):
+            os.remove(fname)
