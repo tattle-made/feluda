@@ -4,6 +4,16 @@ import subprocess
 
 import requests
 import tomlkit
+import argparse
+def parse_args():
+    parser = argparse.ArgumentParser(description="Check which packages need to be published.")
+    parser.add_argument("--use-test-pypi", action="store_true", help="Use Test PyPI instead of production PyPI.")
+    parser.add_argument("--skip-tag-verification", action="store_true", help="Skip Git tag verification.")
+    parser.add_argument("--dry-run", action="store_true", help="Simulate without writing output files.")
+    parser.add_argument("--output", default="packages_to_publish.txt", help="Text output file.")
+    parser.add_argument("--json-output", default=None, help="Optional JSON output file.")
+    return parser.parse_args()
+
 
 
 def discover_packages(repo_root):
@@ -136,6 +146,7 @@ def verify_git_tag_exists(package_name, version, tag_format):
 
 
 def main():
+    args = parse_args()  #  Get command-line arguments
     repo_root = os.getcwd()
     packages = discover_packages(repo_root)
     packages_to_publish = []
@@ -143,10 +154,16 @@ def main():
 
     # Determine whether to check Test PyPI or production PyPI
     # If CHECK_TEST_PYPI is set to "true" in environment variables, use Test PyPI
-    check_test_pypi = os.environ.get("CHECK_TEST_PYPI", "false").lower() == "true"
+    # check_test_pypi = os.environ.get("CHECK_TEST_PYPI", "false").lower() == "true"
 
-    # Force tag verification or not (default to true)
-    verify_tags = os.environ.get("VERIFY_TAGS", "true").lower() == "true"
+    # # Force tag verification or not (default to true)
+    # verify_tags = os.environ.get("VERIFY_TAGS", "true").lower() == "true"
+
+    #  Use CLI arguments instead of environment variables
+    check_test_pypi = args.use_test_pypi
+    verify_tags = not args.skip_tag_verification
+
+    
 
     print(
         f"Checking package versions against {'Test PyPI' if check_test_pypi else 'production PyPI'}"
@@ -197,22 +214,28 @@ def main():
         except Exception as e:
             print(f"Error checking version for {package_info['name']}: {e}")
 
-    # Write the list of packages to publish to a file
-    with open("packages_to_publish.txt", "w") as f:
-        f.write(",".join(packages_to_publish))
+    # Skip writing if dry-run is enabled
+    if not args.dry_run:
+        with open(args.output, "w") as f:
+            f.write(",".join(packages_to_publish))
 
-    # Write a report of tag issues if any were found
-    if packages_with_tag_issues:
-        with open("tag_verification_issues.txt", "w") as f:
-            f.write("\n".join(packages_with_tag_issues))
-        print(
-            f"\nWarning: {len(packages_with_tag_issues)} packages have git tag verification issues. See tag_verification_issues.txt"
-        )
+        if args.json_output:
+            import json
+            with open(args.json_output, "w") as jf:
+                json.dump({"packages": packages_to_publish}, jf, indent=2)
+
+        if packages_with_tag_issues:
+            with open("tag_verification_issues.txt", "w") as f:
+                f.write("\n".join(packages_with_tag_issues))
+            print(
+                f"\nWarning: {len(packages_with_tag_issues)} packages have git tag verification issues. See tag_verification_issues.txt"
+            )
 
     if packages_to_publish:
         print(f"\nPackages to publish: {', '.join(packages_to_publish)}")
     else:
         print("\nNo packages need to be published.")
+
 
 
 if __name__ == "__main__":
