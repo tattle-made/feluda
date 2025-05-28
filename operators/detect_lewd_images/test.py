@@ -39,8 +39,7 @@ class TestDetectLewdImages(unittest.TestCase):
         self.assertIsInstance(result, float)
         self.assertGreaterEqual(result, 0.0)
         self.assertLessEqual(result, 1.0)
-        
-    @skip
+    
     def test_sample_image_from_url(self):
         """Test inference on a downloaded image from URL."""
         image = ImageFactory.make_from_url_to_path(self.test_images["url"])
@@ -55,9 +54,4 @@ class TestDetectLewdImages(unittest.TestCase):
         """Test handling of invalid/nonexistent image paths."""        
         result = detect_lewd_images.run({"path": "nonexistent_file.jpg"})
         self.assertIsNone(result)
-
-    @skip("Optional: Test batch processing if implemented later")
-    def test_batch_processing(self):
-        """Placeholder for future batch processing tests."""
-        pass
 
