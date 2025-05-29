@@ -12,7 +12,6 @@ def initialize(param):
     global preprocess_for_evaluation
     global read_image
     global os
-
     import logging
     import os
 
@@ -105,8 +104,9 @@ def initialize(param):
         image : tf.Tensor
             Image ready for inference
         """
-        image = tf.io.read_file(filename)
-        image = tf.io.decode_jpeg(image, channels=3)
+        raw = tf.io.read_file(filename)
+        image = tf.io.decode_image(raw, channels=3, expand_animations=True)
+        image.set_shape([None, None, 3])
 
         image = preprocess_for_evaluation(image, 480, tf.float16)
 
@@ -130,7 +130,7 @@ def initialize(param):
         try:
             image = read_image(image_path)
             preds = model([image])
-            probability = tf.get_static_value(preds[0])[0]
+            probability = preds[0].numpy()[0]
             return probability
         except Exception as e:
             print(f"[ERROR] Inference failed on '{image_path}': {e}")
@@ -147,11 +147,12 @@ def run(image_path: str):
     Returns:
         Prediction results
     """
-    fname = image_path["path"]
+    fname = image_path.get("path")
     if not fname:
         raise ValueError("Image path must not be empty.")
     try:
         result = inference(fname)
         return result
     finally:
-        os.remove(fname)
+        if os.path.exists(fname):
+            os.remove(fname)
