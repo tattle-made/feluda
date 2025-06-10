@@ -1,23 +1,20 @@
-"""
-Operator to extract video vector representations using CLIP-ViT-B-32.
-"""
+"""Operator to extract video vector representations using CLIP-ViT-B-32."""
 
 
-def initialize(param):
-    """
-    Initializes the operator.
+def initialize(param: dict = None) -> None:
+    """Initialize the operator.
 
     Args:
         param (dict): Parameters for initialization
     """
     print("Installing packages for vid_vec_rep_clip")
-    global os
-    global VideoAnalyzer, gendata
+    global os, VideoAnalyzer, gendata
 
     # Imports
     import os
     import subprocess
     import tempfile
+    from typing import Generator
 
     import torch
     from PIL import Image
@@ -31,9 +28,89 @@ def initialize(param):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
 
-    def gendata(vid_analyzer):
-        """
-        Yields video vector representations from a `VideoAnalyzer` prototype.
+    class VideoAnalyzer:
+        """A class for video feature extraction."""
+
+        def __init__(self, fname: str) -> None:
+            """Initialize the `VideoAnalyzer` class.
+
+            Args:
+                fname (str): Path to the video file
+            """
+            self.model = model
+            self.device = device
+            self.frame_images = []
+            self.feature_matrix = []
+            self.fname = fname
+            self.analyze(fname)
+
+        def get_mean_feature(self) -> torch.Tensor:
+            """Compute the mean feature vector from the feature matrix.
+
+            Returns:
+                torch.Tensor: Mean feature vector
+            """
+            return torch.mean(self.feature_matrix, dim=0)
+
+        def analyze(self) -> None:
+            """Analyze the video file and extract features.
+
+            Args:
+                fname (str): Path to the video file
+            """
+            # check if file exists
+            if not os.path.exists(self.fname):
+                raise FileNotFoundError(f"File not found: {self.fname}")
+
+            # Extract I-frames and features
+            self.frame_images = self.extract_frames(self.fname)
+            self.feature_matrix = self.extract_features(self.frame_images)
+
+        def extract_frames(self) -> list:
+            """Extract I-frames from the video file using `ffmpeg`.
+
+            Args:
+                fname (str): Path to the video file
+
+            Returns:
+                list: List of PIL Images
+            """
+            with tempfile.TemporaryDirectory() as temp_dir:
+                # Command to extract I-frames using ffmpeg's command line tool
+                cmd = rf"""
+                ffmpeg -i "{self.fname}" -vf "select=eq(pict_type\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"
+                """
+                with subprocess.Popen(
+                    cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                ) as process:
+                    process.wait()
+                frames = []
+                for filename in os.listdir(temp_dir):
+                    if filename.endswith(".jpg"):
+                        image_path = os.path.join(temp_dir, filename)
+                        with Image.open(image_path) as img:
+                            frames.append(img.copy())
+                return frames
+
+        def extract_features(self, images: list) -> torch.Tensor:
+            """Extract features from a list of images using pre-trained CLIP-ViT-B-32.
+
+            Args:
+                images (list): List of PIL Images
+
+            Returns:
+                torch.Tensor: Feature matrix of shape (batch, 512)
+            """
+            inputs = processor(
+                images=images, return_tensors="pt", padding=True, truncation=True
+            )
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
+            with torch.no_grad():
+                features = self.model.get_image_features(**inputs)
+                return features
+
+    def gendata(vid_analyzer: VideoAnalyzer) -> Generator[dict, None, None]:
+        """Yield video vector representations from the `VideoAnalyzer` prototype.
 
         Args:
             vid_analyzer (VideoAnalyzer): `VideoAnalyzer` instance
@@ -55,98 +132,9 @@ def initialize(param):
                 "is_avg": False,
             }
 
-    class VideoAnalyzer:
-        """
-        A class for video feature extraction.
-        """
 
-        def __init__(self, fname):
-            """
-            Constructor for the `VideoAnalyzer` class.
-
-            Args:
-                fname (str): Path to the video file
-            """
-            self.model = model
-            self.device = device
-            self.frame_images = []
-            self.feature_matrix = []
-            self.analyze(fname)
-
-        def get_mean_feature(self):
-            """
-            Returns:
-                torch.Tensor: Mean feature vector
-            """
-            return torch.mean(self.feature_matrix, dim=0)
-
-        def analyze(self, fname):
-            """
-            Analyzes the video file and extracts features.
-
-            Args:
-                fname (str): Path to the video file
-
-            Raises:
-                FileNotFoundError: If the file is not found
-            """
-            # check if file exists
-            if not os.path.exists(fname):
-                raise FileNotFoundError(f"File not found: {fname}")
-
-            # Extract I-frames and features
-            self.frame_images = self.extract_frames(fname)
-            self.feature_matrix = self.extract_features(self.frame_images)
-
-        def extract_frames(self, fname):
-            """
-            Extracts I-frames from the video file using `ffmpeg`.
-
-            Args:
-                fname (str): Path to the video file
-
-            Returns:
-                list: List of PIL Images
-            """
-            with tempfile.TemporaryDirectory() as temp_dir:
-                # Command to extract I-frames using ffmpeg's command line tool
-                cmd = f"""
-                ffmpeg -i "{fname}" -vf "select=eq(pict_type\,I)" -vsync vfr "{temp_dir}/frame_%05d.jpg"
-                """
-                with subprocess.Popen(
-                    cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                ) as process:
-                    process.wait()
-                frames = []
-                for filename in os.listdir(temp_dir):
-                    if filename.endswith((".jpg")):
-                        image_path = os.path.join(temp_dir, filename)
-                        with Image.open(image_path) as img:
-                            frames.append(img.copy())
-                return frames
-
-        def extract_features(self, images):
-            """
-            Extracts features from a list of images using pre-trained CLIP-ViT-B-32.
-
-            Args:
-                images (list): List of PIL Images
-
-            Returns:
-                torch.Tensor: Feature matrix of shape (batch, 512)
-            """
-            inputs = processor(
-                images=images, return_tensors="pt", padding=True, truncation=True
-            )
-            inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
-            with torch.no_grad():
-                features = self.model.get_image_features(**inputs)
-                return features
-
-
-def run(file):
-    """
-    Runs the operator.
+def run(file) -> dict:
+    """Run the operator.
 
     Args:
         file (dict): `VideoFactory` file object
@@ -162,9 +150,13 @@ def run(file):
         os.remove(fname)
 
 
-def cleanup(param):
-    pass
+def cleanup() -> None:
+    """Cleanup the operator."""
 
 
-def state():
-    pass
+def state() -> dict:
+    """Get the state of the operator.
+
+    Returns:
+        dict: State of the operator
+    """
