@@ -62,7 +62,7 @@ class Test(unittest.TestCase):
 
     # @skip
     def test_video_make_from_url(self):
-        video_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/cat_vid_2mb.mp4"
+        video_url = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
         result = VideoFactory.make_from_url(video_url)
         self.assertIsNotNone(result["path"])
         # Verify file exists
@@ -78,7 +78,7 @@ class Test(unittest.TestCase):
     # @skip
     def test_audio_make_from_url(self):
         result = AudioFactory.make_from_url(
-            "https://raw.githubusercontent.com/tattle-made/feluda/main/src/core/operators/sample_data/audio.wav"
+            "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/audio.wav"
         )
         self.assertIsNotNone(result["path"])
         # Verify file exists
