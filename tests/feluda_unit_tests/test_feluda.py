@@ -45,9 +45,9 @@ class TestFeluda(unittest.TestCase):
 
         feluda = Feluda(self.config_path)
 
-        self.assertIsNotNone(feluda.config)
-        self.assertIsNone(feluda.store)
-        self.assertIsNotNone(feluda.operators)
+        assert feluda.config is not None
+        assert feluda.store is None
+        assert feluda.operators is not None
         mock_config_load.assert_called_once_with(self.config_path)
 
     @patch("feluda.config.load")
@@ -64,9 +64,9 @@ class TestFeluda(unittest.TestCase):
         feluda = Feluda(self.config_path)
 
         # Assertions
-        self.assertIsNotNone(feluda.config)
-        self.assertIsNone(feluda.store)
-        self.assertIsNone(feluda.operators)
+        assert feluda.config is not None
+        assert feluda.store is None
+        assert feluda.operators is None
 
     @patch("feluda.config.load")
     @patch("feluda.operator.Operator.setup")
@@ -103,8 +103,8 @@ class TestFeluda(unittest.TestCase):
             feluda = Feluda(self.config_path)
 
             # Assertions
-            self.assertIsNotNone(feluda.config)
-            self.assertIsNotNone(feluda.operators)
+            assert feluda.config is not None
+            assert feluda.operators is not None
         finally:
             # Cleanup
             if os.path.exists(self.config_path):

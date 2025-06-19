@@ -6,7 +6,7 @@ from unittest.case import skip
 import numpy as np
 from PIL import Image
 
-from feluda.models.media_factory import AudioFactory, ImageFactory, VideoFactory
+from feluda.factory import AudioFactory, ImageFactory, VideoFactory
 
 
 class Test(unittest.TestCase):
@@ -48,45 +48,45 @@ class Test(unittest.TestCase):
         image_obj = ImageFactory.make_from_url_to_path(
             "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
         )
-        self.assertIsNotNone(image_obj["path"])
+        assert image_obj["path"] is not None
         # Verify file exists
-        self.assertTrue(os.path.exists(image_obj["path"]))
+        assert os.path.exists(image_obj["path"])
 
     @skip
     def test_image_make_from_file_on_disk(self):
         image_path = r"core/operators/sample_data/text.png"
         image_obj = ImageFactory.make_from_file_on_disk(image_path)
-        self.assertIsNotNone(image_obj["image"])
-        self.assertTrue(isinstance(image_obj["image"], Image.Image))
-        self.assertTrue(isinstance(image_obj["image_array"], np.ndarray))
+        assert image_obj["image"] is not None
+        assert isinstance(image_obj["image"], Image.Image)
+        assert isinstance(image_obj["image_array"], np.ndarray)
 
     # @skip
     def test_video_make_from_url(self):
         video_url = "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4"
         result = VideoFactory.make_from_url(video_url)
-        self.assertIsNotNone(result["path"])
+        assert result["path"] is not None
         # Verify file exists
-        self.assertTrue(os.path.exists(result["path"]))
+        assert os.path.exists(result["path"])
 
     @skip
     def test_video_make_from_file_on_disk(self):
         video_path = r"core/operators/sample_data/sample-cat-video.mp4"
         result = VideoFactory.make_from_file_on_disk(video_path)
-        self.assertIsNotNone(result["path"])
-        self.assertEqual(result["path"], video_path)
+        assert result["path"] is not None
+        assert result["path"] == video_path
 
     # @skip
     def test_audio_make_from_url(self):
         result = AudioFactory.make_from_url(
             "https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/audio.wav"
         )
-        self.assertIsNotNone(result["path"])
+        assert result["path"] is not None
         # Verify file exists
-        self.assertTrue(os.path.exists(result["path"]))
+        assert os.path.exists(result["path"])
 
     @skip
     def test_audio_make_from_file_on_disk(self):
         audio_path = r"core/operators/sample_data/audio.wav"
         result = AudioFactory.make_from_file_on_disk(audio_path)
-        self.assertIsNotNone(result["path"])
-        self.assertEqual(result["path"], audio_path)
+        assert result["path"] is not None
+        assert result["path"] == audio_path

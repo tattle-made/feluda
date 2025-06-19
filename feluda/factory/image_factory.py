@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 class ImageFactory:
     @staticmethod
-    def make_from_url(image_url: str) -> dict | None:
+    def make_from_url(image_url: str) -> dict:
         try:
             print("1", image_url)
             resp = requests.get(image_url, timeout=(3.05, 5))
@@ -29,9 +29,10 @@ class ImageFactory:
             }
         except ConnectTimeout:
             print("Request has timed out")
+            raise Exception("Request has timed out")
 
     @staticmethod
-    def make_from_url_to_path(image_url: str) -> dict | None:
+    def make_from_url_to_path(image_url: str) -> dict:
         temp_dir = tempfile.gettempdir()
         temp_url = image_url.split("?", maxsplit=1)[0]
         file_name = temp_url.split("/")[-1]

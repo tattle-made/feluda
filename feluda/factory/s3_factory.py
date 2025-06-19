@@ -15,11 +15,12 @@ class S3Factory:
     )
     s3 = session.client("s3")
 
+    @staticmethod
     def download_file_from_s3(
-        self, bucket_name: str, file_key: str, local_file_path: str
+        bucket_name: str, file_key: str, local_file_path: str
     ) -> None:
         try:
-            self.s3.download_file(bucket_name, file_key, local_file_path)
+            S3Factory.s3.download_file(bucket_name, file_key, local_file_path)
             print(f"File {file_key} downloaded successfully!")
         except Exception as e:
             print(f"Error downloading file {file_key}: {e}")

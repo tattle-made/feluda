@@ -1,6 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, call, patch
 
+import pytest
+
 from feluda.config import OperatorConfig, OperatorParameters
 from feluda.operator import Operator
 
@@ -28,8 +30,8 @@ class TestOperator(unittest.TestCase):
         """Test Operator initialization"""
         operator = Operator(self.operator_config)
 
-        self.assertEqual({}, operator.active_operators)
-        self.assertEqual(self.operator_params, operator.operators)
+        assert operator.active_operators == {}
+        assert self.operator_params == operator.operators
 
     @patch("feluda.operator.importlib.import_module")
     def test_setup(self, mock_import_module):
@@ -42,16 +44,17 @@ class TestOperator(unittest.TestCase):
         operator = Operator(self.operator_config)
         operator.setup()
 
-        mock_import_module.assert_has_calls(
-            [call("test_operator_1"), call("test_operator_2")]
-        )
+        mock_import_module.assert_has_calls([
+            call("test_operator_1"),
+            call("test_operator_2"),
+        ])
 
         mock_module1.initialize.assert_called_once_with({"param1": "value1"})
         mock_module2.initialize.assert_called_once_with({"param2": "value2"})
 
-        self.assertEqual(2, len(operator.active_operators))
-        self.assertEqual(mock_module1, operator.active_operators["test_operator_1"])
-        self.assertEqual(mock_module2, operator.active_operators["test_operator_2"])
+        assert len(operator.active_operators) == 2
+        assert mock_module1 == operator.active_operators["test_operator_1"]
+        assert mock_module2 == operator.active_operators["test_operator_2"]
 
     @patch("feluda.operator.importlib.import_module")
     def test_setup_with_empty_operator_list(self, mock_import_module):
@@ -63,7 +66,7 @@ class TestOperator(unittest.TestCase):
         operator.setup()
 
         mock_import_module.assert_not_called()
-        self.assertEqual({}, operator.active_operators)
+        assert operator.active_operators == {}
 
     def test_get(self):
         """Test Operator get method"""
@@ -77,9 +80,9 @@ class TestOperator(unittest.TestCase):
 
         result = operator.get()
 
-        self.assertEqual(2, len(result))
-        self.assertEqual(mock_module1, result["test_operator_1"])
-        self.assertEqual(mock_module2, result["test_operator_2"])
+        assert len(result) == 2
+        assert mock_module1 == result["test_operator_1"]
+        assert mock_module2 == result["test_operator_2"]
 
     @patch("feluda.operator.importlib.import_module")
     def test_setup_with_import_error(self, mock_import_module):
@@ -88,10 +91,10 @@ class TestOperator(unittest.TestCase):
 
         operator = Operator(self.operator_config)
 
-        with self.assertRaises(ImportError):
+        with pytest.raises(ImportError):
             operator.setup()
 
-        self.assertEqual({}, operator.active_operators)
+        assert operator.active_operators == {}
 
     @patch("feluda.operator.importlib.import_module")
     def test_setup_with_initialization_error(self, mock_import_module):
@@ -102,7 +105,7 @@ class TestOperator(unittest.TestCase):
 
         operator = Operator(self.operator_config)
 
-        with self.assertRaises(Exception):
+        with pytest.raises(Exception):
             operator.setup()
 
-        self.assertEqual({}, operator.active_operators)
+        assert operator.active_operators == {}

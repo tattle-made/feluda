@@ -9,7 +9,7 @@ from feluda.factory.s3_factory import S3Factory
 
 class VideoFactory:
     @staticmethod
-    def make_from_url(video_url: str) -> dict | None:
+    def make_from_url(video_url: str) -> dict:
         temp_dir = tempfile.gettempdir()
 
         if video_url.startswith("http"):

@@ -10,7 +10,7 @@ from feluda.factory.s3_factory import S3Factory
 
 class AudioFactory:
     @staticmethod
-    def make_from_url(audio_url: str) -> dict | None:
+    def make_from_url(audio_url: str) -> dict:
         temp_dir = tempfile.gettempdir()
 
         if audio_url.startswith("http"):
@@ -40,7 +40,7 @@ class AudioFactory:
         return {"path": file_path}
 
     @staticmethod
-    def make_from_url_to_wav(audio_url: str) -> dict | None:
+    def make_from_url_to_wav(audio_url: str) -> dict:
         temp_dir = tempfile.gettempdir()
         temp_url = audio_url.split("?", maxsplit=1)[0]
         file_name = temp_url.split("/")[-1]
