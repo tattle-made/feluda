@@ -3,7 +3,7 @@ import os
 import boto3
 
 
-class AWSS3Utils:
+class S3Factory:
     aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
     aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
     aws_region = os.getenv("AWS_REGION")
@@ -15,10 +15,11 @@ class AWSS3Utils:
     )
     s3 = session.client("s3")
 
-    @staticmethod
-    def download_file_from_s3(bucket_name, file_key, local_file_path):
+    def download_file_from_s3(
+        self, bucket_name: str, file_key: str, local_file_path: str
+    ) -> None:
         try:
-            AWSS3Utils.s3.download_file(bucket_name, file_key, local_file_path)
+            self.s3.download_file(bucket_name, file_key, local_file_path)
             print(f"File {file_key} downloaded successfully!")
         except Exception as e:
             print(f"Error downloading file {file_key}: {e}")
