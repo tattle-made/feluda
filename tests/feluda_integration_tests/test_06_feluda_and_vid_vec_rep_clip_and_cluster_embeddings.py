@@ -7,7 +7,7 @@ import numpy as np
 import yaml
 
 from feluda import Feluda
-from feluda.models.media_factory import VideoFactory
+from feluda.factory import VideoFactory
 
 
 class TestFeludaMultiOperatorIntegration(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 from unittest.case import skip
 
-from feluda.models.media_factory import VideoFactory
+from feluda.factory import VideoFactory
 from operators.vid_vec_rep_clip import vid_vec_rep_clip
 
 

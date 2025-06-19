@@ -5,7 +5,7 @@ import numpy as np
 import yaml
 
 from feluda import Feluda
-from feluda.models.media_factory import VideoFactory
+from feluda.factory import VideoFactory
 
 
 class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
@@ -19,7 +19,6 @@ class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Create a temporary test configuration file that will be used for all tests."""
-
         # Setup configuration with the video zero-shot classifier operator
         cls.config = {
             "operators": {
@@ -68,7 +67,6 @@ class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
 
     def test_video_classification_structure(self):
         """Test video classification structure using zero-shot classifier."""
-
         video_obj = VideoFactory.make_from_url(self.test_video_url)
         result = self.operator.run(video_obj, self.sample_labels)
 
@@ -116,7 +114,6 @@ class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
 
     def test_video_classification_results(self):
         """Test video classification results using zero-shot classifier."""
-
         # Create video object
         video_obj = VideoFactory.make_from_url(self.test_video_url)
 
@@ -147,7 +144,6 @@ class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
 
     def test_result_consistency(self):
         """Test that results are consistent across multiple runs."""
-
         # Create video object (reusing the same video)
         video_obj = VideoFactory.make_from_url(self.test_video_url)
 
@@ -177,7 +173,6 @@ class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
 
     def test_different_labels(self):
         """Test classification with different labels."""
-
         # Create video object
         video_obj = VideoFactory.make_from_url(self.test_video_url)
 
