@@ -1,5 +1,5 @@
 name: DMP 2024 Project Template
-description: List a new project for Dedicated Mentoring Program (DMP) 2024 
+description: List a new project for Dedicated Mentoring Program (DMP) 2024
 title: "[DMP 2024]: "
 labels: ["DMP 2024"]
 body:
@@ -97,10 +97,10 @@ body:
     attributes:
       label: Domain
       options:
-        - ⁠Healthcare 
+        - ⁠Healthcare
         - ⁠Education
         - ⁠Livelihoods
-        - ⁠Skilling 
+        - ⁠Skilling
         - ⁠Learning & Development
         - ⁠Agriculture
         - ⁠Service Delivery
@@ -211,7 +211,7 @@ body:
 
   - type: dropdown
     id: ticket-category
-    attributes: 
+    attributes:
       label: Category
       description: Choose the categories that best describe your ticket
       multiple: true
@@ -246,5 +246,3 @@ body:
         - Other
     validations:
       required: true
-
-  

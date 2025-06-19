@@ -9,7 +9,7 @@ import yaml
 from requests.exceptions import ConnectTimeout
 
 from feluda import Feluda
-from feluda.models.media_factory import ImageFactory
+from feluda.factory import ImageFactory
 
 
 class TestFeludaImageVectorIntegration(unittest.TestCase):

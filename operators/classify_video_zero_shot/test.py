@@ -1,7 +1,7 @@
 import unittest
 from unittest.case import skip
 
-from feluda.models.media_factory import VideoFactory
+from feluda.factory import VideoFactory
 from operators.classify_video_zero_shot import classify_video_zero_shot
 
 

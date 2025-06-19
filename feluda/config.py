@@ -1,5 +1,5 @@
 """
-This module loads configuration provided in a .yml file and makes it available as dataclasses. The main role of this module is
+The config module loads configuration provided in a .yml file and makes it available as dataclasses. The main role of this module is
 1. to document the possible values of various fields in the configuration file
 2. assist in providing auto complete and other IDE features via type support on python.
 
@@ -9,7 +9,6 @@ todo :
 
 import logging
 from dataclasses import dataclass
-from typing import List, Optional, Union
 
 import yaml
 from dacite import from_dict
@@ -28,25 +27,25 @@ class StoreESParameters:
 
 @dataclass
 class StorePostgresParameters:
-    table_names: List[str]
+    table_names: list[str]
 
 
 @dataclass
 class StoreEntity:
     label: str
     type: str
-    parameters: Union[StoreESParameters, StorePostgresParameters]
+    parameters: StoreESParameters | StorePostgresParameters
 
 
 @dataclass
 class StoreConfig:
-    entities: List[StoreEntity]
+    entities: list[StoreEntity]
 
 
 @dataclass
 class QueueParameters:
     host_name: str
-    queues: List[dict]
+    queues: list[dict]
 
 
 @dataclass
@@ -72,21 +71,21 @@ class ServerConfig:
 class OperatorParameters:
     name: str
     type: str
-    parameters: Optional[object] = None
+    parameters: object | None = None
 
 
 @dataclass
 class OperatorConfig:
     label: str
-    parameters: List[OperatorParameters]
+    parameters: list[OperatorParameters]
 
 
 @dataclass
 class Config:
-    store: Optional[StoreConfig]
-    queue: Optional[QueueConfig]
-    server: Optional[ServerConfig]
-    operators: Optional[OperatorConfig]
+    store: StoreConfig | None
+    queue: QueueConfig | None
+    server: ServerConfig | None
+    operators: OperatorConfig | None
 
 
 def load(filepath) -> Config:

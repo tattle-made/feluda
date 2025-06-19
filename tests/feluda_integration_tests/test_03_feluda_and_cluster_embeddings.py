@@ -5,7 +5,7 @@ import unittest
 import yaml
 
 from feluda import Feluda
-from feluda.models.media_factory import AudioFactory
+from feluda.factory import AudioFactory
 
 
 class TestFeludaClusterEmbeddingsIntegration(unittest.TestCase):
