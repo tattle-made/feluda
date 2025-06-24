@@ -31,28 +31,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-dependencies = [
-    # interact with AWS from Python
-    "boto3>=1.37.30",
-    # convert dictionaries into dataclass
-    "dacite>=1.9.2",
-    # for audio processing
-    "pydub>=0.25.1",
-    # load/save config files in a readable format
-    "pyyaml>=6.0.2",
-    # to send HTTP requests and handle responses
-    "requests>=2.32.3",
-    # for request/responses and routing
-    "werkzeug>=3.0.3",
-    # download files using a URL
-    "wget>=3.2",
-    # for image processing
-    "pillow>=11.1.0",
-    # numpy is set to >=1.26,<2.2.0 to maintain compatibility with TensorFlow
-    # versions >=2.2.0 may lead to conflicts
-    "numpy>=1.26,<2.2.0",
-]
-
+dependencies = ["dacite>=1.9.2", "pyyaml>=6.0.2"]
 
 # deps that are optional
 [project.optional-dependencies]
@@ -68,22 +47,11 @@ dev = [
     "notebook>=7.3.3",
     "pytest>=8.3.2",
 ]
+audio = ["pydub>=0.25.1", "wget>=3.2"]
 
-minimal = [
-    "dacite>=1.9.2",
-    "pyyaml>=6.0.2",
-]
-audio = [
-    "pydub>=0.25.1",
-    "wget>=3.2",
-]
+video = ["wget>=3.2", "werkzeug>=3.1.3"]
 
-video = [
-    "wget>=3.2",
-    "werkzeug>=3.1.3",
-]
-
-image =[
+image = [
     "numpy>=1.26,<2.2.0",
     "pillow>=11.1.0",
     "wget>=3.2",
@@ -92,6 +60,8 @@ image =[
 ]
 
 s3 = ["boto3"]
+
+all = ["feluda[audio,video,image,s3]"]
 
 [project.urls]
 Homepage = "https://tattle.co.in/products/feluda/"
