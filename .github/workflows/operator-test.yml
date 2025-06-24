@@ -58,6 +58,7 @@ jobs:
           uv venv
           source .venv/bin/activate
           uv pip install ".[all]"
+          uv pip install ".[dev]"
 
           echo "Installing Operator system level packages"
           echo "Installing ffmpeg and tesseract-ocr..."
