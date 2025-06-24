@@ -1,7 +1,7 @@
 import re
 import unittest
 
-from feluda.models.media_factory import ImageFactory
+from feluda.factory import ImageFactory
 from operators.detect_text_in_image_tesseract import detect_text_in_image_tesseract
 
 

@@ -1,7 +1,7 @@
 import unittest
 from unittest.case import skip
 
-from feluda.models.media_factory import ImageFactory
+from feluda.factory import ImageFactory
 from operators.detect_lewd_images import detect_lewd_images
 
 
@@ -39,11 +39,11 @@ class TestDetectLewdImages(unittest.TestCase):
         self.assertIsInstance(result, float)
         self.assertGreaterEqual(result, 0.0)
         self.assertLessEqual(result, 1.0)
-    
+
     def test_sample_image_from_url(self):
         """Test inference on a downloaded image from URL."""
         image = ImageFactory.make_from_url_to_path(self.test_images["url"])
-        result = detect_lewd_images.run(image) # Clean up temp file
+        result = detect_lewd_images.run(image)  # Clean up temp file
         result = float(result)
         self.assertIsInstance(result, float)
         self.assertGreaterEqual(result, 0.0)
@@ -51,7 +51,6 @@ class TestDetectLewdImages(unittest.TestCase):
 
     @skip
     def test_invalid_image_path(self):
-        """Test handling of invalid/nonexistent image paths."""        
+        """Test handling of invalid/nonexistent image paths."""
         result = detect_lewd_images.run({"path": "nonexistent_file.jpg"})
         self.assertIsNone(result)
-

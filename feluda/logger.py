@@ -7,22 +7,23 @@ pp = pprint.PrettyPrinter(indent=2)
 
 
 class Logger:
-    def __init__(self, moduleName):
+    def __init__(self, module_name: str) -> None:
         self.environment = os.environ.get("ENVIRONMENT", "DEVELOPMENT")
-        self.log = logging.getLogger(moduleName)
+        self.log = logging.getLogger(module_name)
 
-    def info(self, msg, *args, **kwargs):
+    def info(self, msg: str, *args, **kwargs) -> None:
         self.log.info(msg, *args, **kwargs)
 
-    def debug(self, msg):
+    def debug(self, msg: str) -> None:
         if self.environment == "DEVELOPMENT":
             self.log.debug(msg)
 
-    def exception(self, msg):
+    def exception(self, msg: str) -> None:
         self.log.exception(msg)
 
-    def prettyprint(self, msg):
+    @staticmethod
+    def prettyprint(msg: str) -> None:
         pp.pprint(msg)
 
-    def error(self, msg, *args, **kwargs):
+    def error(self, msg: str, *args, **kwargs) -> None:
         self.log.error(self, msg, *args, **kwargs)

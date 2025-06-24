@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from feluda.models.media_factory import VideoFactory
+from feluda.factory import VideoFactory
 from operators.video_hash_tmk import video_hash_tmk
 
 

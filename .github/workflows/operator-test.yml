@@ -57,7 +57,7 @@ jobs:
         run: |
           uv venv
           source .venv/bin/activate
-          uv pip install .
+          uv pip install ".[all]"
           uv pip install ".[dev]"
 
           echo "Installing Operator system level packages"
