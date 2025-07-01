@@ -29,19 +29,19 @@ The `VidVecRepClip` operator extracts vector representations from videos using t
 
 ## How to Run the Tests
 
-1. Install dependencies (in your virtual environment):
-   Ensure that you are in the root directory of the **operator** (where `pyproject.toml` is located.)
+1. Ensure that you are in the root directory of the `feluda` project.
+2. Install dependencies (in your virtual environment):
 
    ```bash
-   uv pip install "."
+   uv pip install "./operators/vid_vec_rep_clip"
    uv pip install "feluda[dev]"
    ```
 
-2. Ensure FFmpeg is installed and available in your PATH.
-3. Run the tests:
+3. Ensure FFmpeg is installed and available in your PATH.
+4. Run the tests:
 
    ```bash
-   pytest test.py
+   pytest operators/vid_vec_rep_clip/test.py
    ```
 
-4. For local video tests, place a sample video at the specified path or update the test accordingly.
+5. For local video tests, place a sample video at the specified path or update the test accordingly.

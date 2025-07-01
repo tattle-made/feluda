@@ -1,6 +1,6 @@
 import pytest
 
-from feluda.factory.media_factory import VideoFactory
+from feluda.factory import VideoFactory
 from operators.vid_vec_rep_clip import VidVecRepClip
 
 
@@ -30,7 +30,8 @@ def test_sample_video_from_disk(operator: VidVecRepClip):
         assert len(vec.get("vid_vec")) == 512
 
 
-def test_initialization_ffmpeg_not_found():
+def test_initialization_ffmpeg_not_found(monkeypatch):
+    monkeypatch.setattr("shutil.which", lambda _: None)
     with pytest.raises(RuntimeError, match="FFmpeg is not installed"):
         VidVecRepClip()
 

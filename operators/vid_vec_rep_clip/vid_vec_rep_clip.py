@@ -18,11 +18,12 @@ class VidVecRepClip(BaseOperator):
     """Operator to extract video vector representations using CLIP-ViT-B-32."""
 
     def __init__(self) -> None:
-        """Initialize the `VideoAnalyzer` class."""
+        """Initialize the `VidVecRepClip` class."""
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.frame_images = []
         self.feature_matrix = []
         self.load_model()
+        self.validate_system()
 
     def load_model(self) -> None:
         """Load the CLIP model and processor onto the specified device."""
@@ -142,10 +143,7 @@ class VidVecRepClip(BaseOperator):
             return features
 
     def gendata(self) -> Generator[dict, None, None]:
-        """Yield video vector representations from the `VideoAnalyzer` prototype.
-
-        Args:
-            vid_analyzer (VideoAnalyzer): `VideoAnalyzer` instance
+        """Yield video vector representations from the `VidVecRepClip` prototype.
 
         Yields:
             dict: A dictionary containing:
