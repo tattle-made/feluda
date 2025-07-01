@@ -1,5 +1,3 @@
-from unittest import patch
-
 import pytest
 
 from feluda.factory.media_factory import VideoFactory
@@ -33,9 +31,8 @@ def test_sample_video_from_disk(operator: VidVecRepClip):
 
 
 def test_initialization_ffmpeg_not_found():
-    with patch("shutil.which", return_value=None):
-        with pytest.raises(RuntimeError, match="FFmpeg is not installed"):
-            VidVecRepClip()
+    with pytest.raises(RuntimeError, match="FFmpeg is not installed"):
+        VidVecRepClip()
 
 
 def test_run_invalid_file_object(operator: VidVecRepClip):
