@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-from typing import Generator
+from typing import Generator, Optional
 
 import torch
 from PIL import Image
@@ -165,7 +165,7 @@ class VidVecRepClip(BaseOperator):
             }
 
     def run(
-        self, file: VideoFactory, remove_after_processing: bool = False
+        self, file: VideoFactory, remove_after_processing: Optional[bool] = False
     ) -> Generator[dict, None, None]:
         """Run the operator.
 
