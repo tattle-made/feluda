@@ -165,7 +165,7 @@ class VidVecRepClip(BaseOperator):
             }
 
     def run(
-        self, file: VideoFactory, remove_after_processing: bool = True
+        self, file: VideoFactory, remove_after_processing: bool = False
     ) -> Generator[dict, None, None]:
         """Run the operator.
 
