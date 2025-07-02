@@ -3,6 +3,7 @@ name = "feluda-image-vec-rep-resnet"
 version = "0.1.5"
 requires-python = ">=3.10"
 dependencies = [
+    "feluda[image]",
     "torch>=2.6.0",
     "torchvision>=0.21.0",
     "numpy>=1.26,<2.2.0",
