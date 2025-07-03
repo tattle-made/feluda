@@ -44,4 +44,24 @@ The `VidVecRepClip` operator extracts vector representations from videos using t
    pytest operators/vid_vec_rep_clip/test.py
    ```
 
-5. For local video tests, place a sample video at the specified path or update the test accordingly.
+## Usage
+
+```python
+from feluda.factory import VideoFactory
+from operators.vid_vec_rep_clip import VidVecRepClip
+
+# Initialize the operator
+operator = VidVecRepClip()
+
+# Load a video
+video = VideoFactory.make_from_file_on_disk("example.mp4")
+
+# Extract features
+frames = operator.run(video, remove_after_processing=False)
+
+for image in frames:
+   print(image.keys())
+
+# Cleanup
+operator.cleanup()
+```
