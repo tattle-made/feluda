@@ -4,7 +4,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-from typing import Generator, Optional
+from typing import Generator
 
 import torch
 from PIL import Image
@@ -165,7 +165,7 @@ class VidVecRepClip(BaseOperator):
             }
 
     def run(
-        self, file: VideoFactory, remove_after_processing: Optional[bool] = False
+        self, file: VideoFactory, remove_after_processing: bool | None = False
     ) -> Generator[dict, None, None]:
         """Run the operator.
 
@@ -194,7 +194,7 @@ class VidVecRepClip(BaseOperator):
                     os.remove(fname)
 
     def cleanup(self) -> None:
-        """Cleanup the operator."""
+        """Cleans up resources used by the operator."""
         del self.model
         del self.processor
 
@@ -206,7 +206,7 @@ class VidVecRepClip(BaseOperator):
             torch.cuda.empty_cache()
 
     def state(self) -> dict:
-        """Get the state of the operator.
+        """Returns the current state of the operator.
 
         Returns:
             dict: State of the operator
