@@ -13,14 +13,7 @@ The `ImageVecRep-Resnet` operator extracts vector representations from images us
 
 ## System Dependencies
 
-- Python >= 3.8
-
-## Operator Dependencies
-
-- PyTorch >= 1.9.0
-- Torchvision >= 0.10.0
-- Pillow >= 8.0.0
-- NumPy >= 1.19.0
+- Python >= 3.10
 
 ## How to Run the Tests
 
