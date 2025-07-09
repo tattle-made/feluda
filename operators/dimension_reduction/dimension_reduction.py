@@ -1,239 +1,349 @@
-"""Operator to perform dimensionality reduction given the embedddings."""
-
-from abc import ABC, abstractmethod
+import gc
+from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import umap
 from sklearn.manifold import TSNE
 
 
-class DimensionReduction(ABC):
-    """Abstract base class for dimension reduction techniques."""
+class ReductionModel:
+    """
+    Base class for dimension reduction models.
+    """
 
-    @abstractmethod
-    def initialize(self, params):
-        pass
+    def __init__(self, params: Any) -> None:
+        self.params = params
 
-    @abstractmethod
-    def run(self, embeddings):
-        pass
+    def validate_embeddings(self, embeddings_array: np.ndarray) -> np.ndarray:
+        """
+        Validate embeddings array, converting list to numpy array if needed.
+
+        Args:
+            embeddings_array: Either a list or numpy array of embeddings
+
+        Returns:
+            numpy.ndarray: Validated numpy array
+
+        Raises:
+            ValueError: If the embeddings are invalid
+        """
+        if not isinstance(embeddings_array, np.ndarray):
+            raise ValueError("Embeddings must be a list or numpy array")
+
+        if embeddings_array.ndim != 2:
+            raise ValueError("Embeddings should be a 2D array")
+
+        if embeddings_array.shape[0] == 0 or embeddings_array.shape[1] == 0:
+            raise ValueError("Embeddings array cannot be empty or have zero dimensions")
+
+        if not np.issubdtype(embeddings_array.dtype, np.number):
+            raise ValueError("Embeddings must contain numeric values")
+
+        if np.any(np.isnan(embeddings_array)) or np.any(np.isinf(embeddings_array)):
+            raise ValueError("Embeddings contain NaN or infinite values")
 
 
-class TSNEReduction(DimensionReduction):
-    """t-SNE implementation of the DimensionReduction abstract class."""
+@dataclass
+class TSNEParams:
+    """
+    Configuration parameters for t-SNE dimensionality reduction.
 
-    def initialize(self, params):
+    Attributes:
+        n_components: Number of dimensions to reduce to (default: 2)
+        perplexity: Perplexity parameter for t-SNE (default: 30.0)
+        learning_rate: Learning rate for optimization (default: 150.0)
+        max_iter: Maximum number of iterations (default: 1000)
+        random_state: Random seed for reproducibility (default: 42)
+        method: Algorithm method ('barnes_hut' or 'exact') (default: 'barnes_hut')
+    """
+
+    n_components: int = 2
+    perplexity: float = 30.0
+    learning_rate: float = 150.0
+    max_iter: int = 1000
+    random_state: int = 42
+    method: str = "barnes_hut"
+
+    def __post_init__(self):
+        """Validate t-SNE parameters."""
+        if self.n_components < 1:
+            raise ValueError("n_components must be at least 1")
+        if self.perplexity <= 0:
+            raise ValueError("perplexity must be positive")
+        if self.learning_rate <= 0:
+            raise ValueError("learning_rate must be positive")
+        if self.max_iter < 1:
+            raise ValueError("max_iter must be at least 1")
+        if self.method not in ["barnes_hut", "exact"]:
+            raise ValueError("method must be 'barnes_hut' or 'exact'")
+
+
+@dataclass
+class UMAPParams:
+    """
+    Configuration parameters for UMAP dimensionality reduction.
+
+    Attributes:
+        n_components: Number of dimensions to reduce to (default: 2)
+        n_neighbors: Size of local neighborhood (default: 15)
+        min_dist: Minimum distance between embedded points (default: 0.1)
+        metric: Distance metric to use (default: 'euclidean')
+        random_state: Random seed for reproducibility (default: 42)
+    """
+
+    n_components: int = 2
+    n_neighbors: int = 15
+    min_dist: float = 0.1
+    metric: str = "euclidean"
+    random_state: int = 42
+
+    def __post_init__(self):
+        """Validate UMAP parameters."""
+        if self.n_components < 1:
+            raise ValueError("n_components must be at least 1")
+        if self.n_neighbors < 2:
+            raise ValueError("n_neighbors must be at least 2")
+        if not (0 <= self.min_dist <= 1):
+            raise ValueError("min_dist must be between 0 and 1")
+
+
+class TSNEReduction(ReductionModel):
+    """
+    t-SNE (t-Distributed Stochastic Neighbor Embedding) dimension reduction.
+    """
+
+    def __init__(self, params: TSNEParams) -> None:
         """
         Initialize the t-SNE model with parameters.
 
         Args:
-            params (dict): A dictionary containing t-SNE parameters such as:
-                - n_components (int): Number of dimensions to reduce to. Default is 2.
-                - perplexity (float): Perplexity parameter for t-SNE. Default is 30.
-                - learning_rate (float): Learning rate for t-SNE. Default is 150.
-                - n_iter (int): Number of iterations for optimization. Default is 1000.
-                - random_state (int): Seed for random number generation. Default is 42.
-                - method (str): Algorithm to use for gradient calculation. Default is barnes_hut
+            params: TSNE configuration parameters
 
         Raises:
-            ValueError: If the t-SNE model fails to initialize.
+            ValueError: If the t-SNE model fails to initialize
         """
+        super().__init__(params)
         try:
             self.model = TSNE(
-                n_components=params.get("n_components", 2),
-                perplexity=params.get("perplexity", 30),
-                learning_rate=params.get("learning_rate", 150),
-                max_iter=params.get("max_iter", 1000),
-                random_state=params.get("random_state", 42),
-                method=params.get("method", "barnes_hut"),
+                n_components=params.n_components,
+                perplexity=params.perplexity,
+                learning_rate=params.learning_rate,
+                max_iter=params.max_iter,
+                random_state=params.random_state,
+                method=params.method,
             )
             print("t-SNE model successfully initialized")
         except Exception as e:
             raise ValueError(f"Failed to initialize t-SNE model: {e}")
 
-    def run(self, embeddings_array):
+    def run(self, embeddings_array: np.ndarray) -> np.ndarray:
         """
         Apply the t-SNE model to reduce the dimensionality of embeddings.
 
         Args:
-            embeddings (list or numpy.ndarray): A list or array of embeddings to be reduced.
+            embeddings_array: A 2D numpy array of embeddings to be reduced
 
         Returns:
             numpy.ndarray: The reduced embeddings as a 2D array.
-
-        Raises:
-            ValueError: If the embeddings input is not a 2D array.
-            RuntimeError: If the t-SNE reduction fails.
         """
+        self.validate_embeddings(embeddings_array)
         try:
-            if embeddings_array.ndim != 2:
-                raise ValueError("Embeddings should be a 2D array.")
             return self.model.fit_transform(embeddings_array)
         except Exception as e:
             raise RuntimeError(f"t-SNE reduction failed: {e}")
 
 
-class UMAPReduction(DimensionReduction):
-    """UMAP implementation of the DimensionReduction abstract class."""
+class UMAPReduction(ReductionModel):
+    """
+    UMAP (Uniform Manifold Approximation and Projection) dimension reduction.
+    """
 
-    def initialize(self, params):
+    def __init__(self, params: UMAPParams) -> None:
         """
         Initialize the UMAP model with parameters.
 
         Args:
-            params (dict): A dictionary containing UMAP parameters such as:
-                - n_components (int): Number of dimensions to reduce to. Default is 2.
-                - n_neighbors (int): Size of local neighborhood used for manifold approximation. Default is 15.
-                - min_dist (float): Minimum distance between embedded points. Default is 0.1.
-                - metric (str): The metric to use for distance computation. Default is 'euclidean'.
-                - random_state (int): Seed for random number generation. Default is 42.
+            params: UMAP configuration parameters
 
         Raises:
-            ValueError: If the UMAP model fails to initialize.
+            ValueError: If the UMAP model fails to initialize
         """
+        super().__init__(params)
         try:
             self.model = umap.UMAP(
-                n_components=params.get("n_components", 2),
-                n_neighbors=params.get("n_neighbors", 15),
-                min_dist=params.get("min_dist", 0.1),
-                metric=params.get("metric", "euclidean"),
-                random_state=params.get("random_state", 42),
+                n_components=params.n_components,
+                n_neighbors=params.n_neighbors,
+                min_dist=params.min_dist,
+                metric=params.metric,
+                random_state=params.random_state,
             )
             print("UMAP model successfully initialized")
         except Exception as e:
             raise ValueError(f"Failed to initialize UMAP model: {e}")
 
-    def run(self, embeddings_array):
+    def run(self, embeddings_array: np.ndarray) -> np.ndarray:
         """
         Apply the UMAP model to reduce the dimensionality of embeddings.
 
         Args:
-            embeddings (numpy.ndarray): An array of embeddings to be reduced.
-                UMAP can handle arrays of any dimension.
+            embeddings_array: A 2D numpy array of embeddings to be reduced
 
         Returns:
             numpy.ndarray: The reduced embeddings as a 2D array.
-
-        Raises:
-            RuntimeError: If the UMAP reduction fails.
         """
+        self.validate_embeddings(embeddings_array)
         try:
             return self.model.fit_transform(embeddings_array)
         except Exception as e:
             raise RuntimeError(f"UMAP reduction failed: {e}")
 
 
-class DimensionReductionFactory:
-    """Factory class for creating dimension reduction models."""
+class DimensionReduction:
+    """
+    Main interface for dimensionality reduction.
+    """
 
-    @staticmethod
-    def get_reduction_model(model_type):
+    def __init__(self, model_type: str, params: dict[str, Any] | None = None) -> None:
         """
-        Factory method to create a dimension reduction model based on type.
+        Initialize the dimension reduction operator.
 
         Args:
-            model_type (str): String indicating the type of model (e.g., 'tsne', 'umap').
-
-        Returns:
-            DimensionReduction: An instance of the corresponding dimension reduction model.
+            model_type: Type of model to use ('tsne' or 'umap')
+            params: Optional dictionary of parameters for the model
 
         Raises:
-            ValueError: If the specified model type is unsupported.
+            ValueError: If the model type is not supported or initialization fails
         """
-        if model_type.lower() == "tsne":
-            return TSNEReduction()
-        elif model_type.lower() == "umap":
-            return UMAPReduction()
-        else:
-            raise ValueError(f"Unsupported model type: {model_type}")
+        if params is None:
+            params = {}
 
+        try:
+            self.reduction_model: ReductionModel = self.get_reduction_model(
+                model_type, params
+            )
+        except Exception as e:
+            raise ValueError(f"Failed to initialize dimension reduction model: {e}")
 
-def gen_data(payloads, reduced_embeddings):
-    """
-    Generates the formatted output.
+    @staticmethod
+    def get_reduction_model(model_type: str, params: dict[str, Any]) -> ReductionModel:
+        """
+        Create a dimension reduction model based on the model type.
 
-    Args:
-        payloads (list): List of paylods.
-        reduced_embeddings (nd.array): An array of reduced embeddings.
+        Args:
+            model_type: Type of model ('tsne' or 'umap')
+            params: Dictionary of parameters for the model
 
-    Returns:
-        list: A list of dictionaries containing the payload and corresponding embedding.
-    """
-    out = []
+        Returns:
+            A dimension reduction model instance
+        """
+        model_type_lower = model_type.lower()
 
-    for payload, reduced_embedding in zip(payloads, reduced_embeddings):
-        tmp_dict = {}
-        tmp_dict["payload"] = payload
-        tmp_dict["reduced_embedding"] = reduced_embedding.tolist()
-        out.append(tmp_dict)
-    return out
+        if model_type_lower == "tsne":
+            tsne_params = TSNEParams(**params)
+            return TSNEReduction(tsne_params)
+        if model_type_lower == "umap":
+            umap_params = UMAPParams(**params)
+            return UMAPReduction(umap_params)
+        raise ValueError(f"Unsupported model type: {model_type}")
 
+    @staticmethod
+    def gen_data(payloads: list, reduced_embeddings: np.ndarray) -> list[dict]:
+        """
+        Generates the formatted output.
 
-def initialize(params):
-    """
-    Initialize the dimension reduction model with provided type and parameters.
+        Args:
+            payloads (list): List of paylods.
+            reduced_embeddings (nd.array): An array of reduced embeddings.
 
-    Args:
-        params (dict): Dictionary of parameters for the model initialization.
-
-    """
-    global reduction_model
-    reduction_model = DimensionReductionFactory.get_reduction_model(
-        params.get("model_type", "tsne")
-    )
-    reduction_model.initialize(params)
-
-
-def run(input_data):
-    """
-    Reduce the dimensionality of the provided embeddings using the initialized model.
-
-    Args:
-        input_data (list): A list of dictionaries containing payload and embeddings to be reduced.
-        Example:
-
-        [
+        Returns:
+            list: A list of dictionaries containing the payload and corresponding embedding.
+        """
+        return [
             {
-                "payload": "123",
-                "embedding": [1, 2, 3]
-            },
-            {
-                "payload": "124",
-                "embedding": [1, 0, 1]
+                "payload": payload,
+                "reduced_embedding": reduced_embedding.tolist(),
             }
+            for payload, reduced_embedding in zip(
+                payloads, reduced_embeddings, strict=False
+            )
         ]
 
-    Returns:
-        list: The reduced embeddings and the corresponding payload as a list of dictionaries.
+    def run(self, input_data: list[dict]) -> list[dict]:
+        """
+        Reduce the dimensionality of the provided embeddings using the initialized model.
+
+        Args:
+            input_data (list): A list of dictionaries containing payload and embeddings to be reduced.
+
         Example:
+            [
+                {
+                    "payload": "123",
+                    "embedding": [1, 2, 3]
+                },
+                {
+                    "payload": "124",
+                    "embedding": [1, 0, 1]
+                }
+            ]
 
-        [
-            {
-                "payload":"123",
-                "reduced_embedding": [1, 2]
-            },
-            {
-                "payload": "124",
-                "reduced_embedding": [1, 0]
-            }
-        ]
+        Returns:
+            list: The reduced embeddings and the corresponding payload as a list of dictionaries.
 
-    Raises:
-        ValueError: If the embeddings input is not a non-empty list.
-        KeyError: If the input data is invalid.
-    """
-    if not isinstance(input_data, list) or len(input_data) == 0:
-        raise ValueError("Input should be a non-empty list.")
+        Example:
+            [
+                {
+                    "payload":"123",
+                    "reduced_embedding": [1, 2]
+                },
+                {
+                    "payload": "124",
+                    "reduced_embedding": [1, 0]
+                }
+            ]
 
-    try:
-        embeddings, payloads = zip(
-            *[(data["embedding"], data["payload"]) for data in input_data]
-        )
-    except KeyError as e:
-        raise KeyError(
-            f"Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: {e}."
-        )
+        Raises:
+            ValueError: If the embeddings input is not a non-empty list.
+            KeyError: If the input data is invalid.
+        """
+        if not isinstance(input_data, list) or len(input_data) == 0:
+            raise ValueError("Input should be a non-empty list.")
 
-    reduced_embeddings = reduction_model.run(np.array(embeddings))
+        try:
+            self.embeddings, self.payloads = zip(
+                *[(data["embedding"], data["payload"]) for data in input_data],
+                strict=False,
+            )
+        except KeyError as e:
+            raise KeyError(f"Missing key in input data: {e}")
 
-    return gen_data(payloads, reduced_embeddings)
+        self.embeddings = np.array(self.embeddings)
+
+        self.reduced = self.reduction_model.run(self.embeddings)
+        return self.gen_data(self.payloads, self.reduced)
+
+    def cleanup(self) -> None:
+        """Cleans up resources used by the operator."""
+        del self.reduction_model
+        self.embeddings = None
+        self.payloads = None
+        self.reduced = None
+        self.reduction_model = None
+
+        gc.collect()
+
+    def state(self) -> dict:
+        """Returns the current state of the operator.
+
+        Returns:
+            dict: State of the operator
+        """
+        if not hasattr(self, "reduction_model"):
+            raise RuntimeError("Reduction model is not initialized.")
+        return {
+            "model": self.reduction_model,
+            "embeddings": self.embeddings.tolist(),
+            "payloads": self.payloads,
+            "reduced": self.reduced.tolist(),
+        }
