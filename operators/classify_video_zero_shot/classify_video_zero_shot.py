@@ -1,6 +1,6 @@
-"""
-Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach.
-"""
+class VideoClassifier:
+    """Operator to classify a video into given labels using CLIP-ViT-B-32 and a
+    zero-shot approach."""
 
 
 def initialize(param):

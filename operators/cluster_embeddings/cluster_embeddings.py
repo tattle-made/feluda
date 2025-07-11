@@ -1,6 +1,6 @@
-"""
-Operator to cluster embeddings using KMeans, Affinity Propagation, and Agglomerative clustering algorithms
-"""
+class ClusterEmbeddings:
+    """Operator to cluster embeddings using KMeans, Affinity Propagation, and
+    Agglomerative clustering algorithms."""
 
 
 def initialize(param):

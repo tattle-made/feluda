@@ -1,3 +1,7 @@
+class VideoHasher:
+    """Operator to hash video files using the TMK+PDQF binary."""
+
+
 def initialise(param=None):
     """
     Initializes the TMK binary. Downloads it to a temp directory if not present,

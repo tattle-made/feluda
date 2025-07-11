@@ -1,3 +1,7 @@
+class ImageTextDetector:
+    """An operator to detect text in images using Tesseract OCR."""
+
+
 def initialize(param):
     global config_psm
     global config_oem
