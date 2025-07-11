@@ -8,22 +8,17 @@ from sklearn.manifold import TSNE
 
 
 class ReductionModel:
-    """
-    Base class for dimension reduction models.
-    """
+    """Base class for dimension reduction models."""
 
     def __init__(self, params: Any) -> None:
         self.params = params
 
     def validate_embeddings(self, embeddings_array: np.ndarray) -> np.ndarray:
-        """
-        Validate embeddings array, converting list to numpy array if needed.
+        """Validate embeddings array, converting list to numpy array if needed.
 
         Args:
             embeddings_array: Either a list or numpy array of embeddings
 
-        Returns:
-            numpy.ndarray: Validated numpy array
 
         Raises:
             ValueError: If the embeddings are invalid
@@ -46,8 +41,7 @@ class ReductionModel:
 
 @dataclass
 class TSNEParams:
-    """
-    Configuration parameters for t-SNE dimensionality reduction.
+    """Configuration parameters for t-SNE dimensionality reduction.
 
     Attributes:
         n_components: Number of dimensions to reduce to (default: 2)
@@ -65,7 +59,7 @@ class TSNEParams:
     random_state: int = 42
     method: str = "barnes_hut"
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate t-SNE parameters."""
         if self.n_components < 1:
             raise ValueError("n_components must be at least 1")
@@ -81,8 +75,7 @@ class TSNEParams:
 
 @dataclass
 class UMAPParams:
-    """
-    Configuration parameters for UMAP dimensionality reduction.
+    """Configuration parameters for UMAP dimensionality reduction.
 
     Attributes:
         n_components: Number of dimensions to reduce to (default: 2)
@@ -98,7 +91,7 @@ class UMAPParams:
     metric: str = "euclidean"
     random_state: int = 42
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate UMAP parameters."""
         if self.n_components < 1:
             raise ValueError("n_components must be at least 1")
@@ -109,13 +102,12 @@ class UMAPParams:
 
 
 class TSNEReduction(ReductionModel):
-    """
-    t-SNE (t-Distributed Stochastic Neighbor Embedding) dimension reduction.
+    """T-SNE (t-Distributed Stochastic Neighbor Embedding) dimension
+    reduction.
     """
 
     def __init__(self, params: TSNEParams) -> None:
-        """
-        Initialize the t-SNE model with parameters.
+        """Initialize the t-SNE model with parameters.
 
         Args:
             params: TSNE configuration parameters
@@ -138,8 +130,7 @@ class TSNEReduction(ReductionModel):
             raise ValueError(f"Failed to initialize t-SNE model: {e}")
 
     def run(self, embeddings_array: np.ndarray) -> np.ndarray:
-        """
-        Apply the t-SNE model to reduce the dimensionality of embeddings.
+        """Apply the t-SNE model to reduce the dimensionality of embeddings.
 
         Args:
             embeddings_array: A 2D numpy array of embeddings to be reduced
@@ -155,13 +146,12 @@ class TSNEReduction(ReductionModel):
 
 
 class UMAPReduction(ReductionModel):
-    """
-    UMAP (Uniform Manifold Approximation and Projection) dimension reduction.
+    """UMAP (Uniform Manifold Approximation and Projection) dimension
+    reduction.
     """
 
     def __init__(self, params: UMAPParams) -> None:
-        """
-        Initialize the UMAP model with parameters.
+        """Initialize the UMAP model with parameters.
 
         Args:
             params: UMAP configuration parameters
@@ -183,8 +173,7 @@ class UMAPReduction(ReductionModel):
             raise ValueError(f"Failed to initialize UMAP model: {e}")
 
     def run(self, embeddings_array: np.ndarray) -> np.ndarray:
-        """
-        Apply the UMAP model to reduce the dimensionality of embeddings.
+        """Apply the UMAP model to reduce the dimensionality of embeddings.
 
         Args:
             embeddings_array: A 2D numpy array of embeddings to be reduced
@@ -200,13 +189,10 @@ class UMAPReduction(ReductionModel):
 
 
 class DimensionReduction:
-    """
-    Main interface for dimensionality reduction.
-    """
+    """Main interface for dimensionality reduction."""
 
     def __init__(self, model_type: str, params: dict[str, Any] | None = None) -> None:
-        """
-        Initialize the dimension reduction operator.
+        """Initialize the dimension reduction operator.
 
         Args:
             model_type: Type of model to use ('tsne' or 'umap')
@@ -227,8 +213,7 @@ class DimensionReduction:
 
     @staticmethod
     def get_reduction_model(model_type: str, params: dict[str, Any]) -> ReductionModel:
-        """
-        Create a dimension reduction model based on the model type.
+        """Create a dimension reduction model based on the model type.
 
         Args:
             model_type: Type of model ('tsne' or 'umap')
@@ -249,8 +234,7 @@ class DimensionReduction:
 
     @staticmethod
     def gen_data(payloads: list, reduced_embeddings: np.ndarray) -> list[dict]:
-        """
-        Generates the formatted output.
+        """Generates the formatted output.
 
         Args:
             payloads (list): List of paylods.
@@ -270,8 +254,8 @@ class DimensionReduction:
         ]
 
     def run(self, input_data: list[dict]) -> list[dict]:
-        """
-        Reduce the dimensionality of the provided embeddings using the initialized model.
+        """Reduce the dimensionality of the provided embeddings using the
+        initialized model.
 
         Args:
             input_data (list): A list of dictionaries containing payload and embeddings to be reduced.
