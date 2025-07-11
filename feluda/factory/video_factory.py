@@ -8,8 +8,11 @@ from feluda.factory.s3_factory import S3Factory
 
 
 class VideoFactory:
+    """Factory class for creating video objects from various sources."""
+
     @staticmethod
     def make_from_url(video_url: str) -> dict:
+        """Create a video object from a URL or S3 path."""
         temp_dir = tempfile.gettempdir()
 
         if video_url.startswith("http"):
@@ -40,10 +43,12 @@ class VideoFactory:
 
     @staticmethod
     def make_from_file_on_disk(video_path: str) -> dict:
+        """Create a video object from a file on disk."""
         return {"path": video_path}
 
     @staticmethod
     def make_from_file_in_memory(file_data: FileStorage) -> dict:
+        """Create a video object from a file in memory."""
         # save on disk
         fname = tempfile.gettempdir() + os.sep + file_data.filename
         file_data.save(fname)

@@ -40,6 +40,8 @@ log = logging.getLogger(__name__)
 
 
 class MediaMode(Enum):
+    """Enumeration for different media modes supported by the factory."""
+
     UNSUPPORTED = "unsupported"
     FILE = "file"
     URL = "url"
@@ -47,6 +49,8 @@ class MediaMode(Enum):
 
 
 class MediaType(Enum):
+    """Enumeration for different media types supported by the factory."""
+
     UNSUPPORTED = "unsupported"
     TEXT = "text"
     IMAGE = "image"
@@ -55,6 +59,7 @@ class MediaType(Enum):
 
     @classmethod
     def make(cls, media_type: str) -> "MediaType":
+        """Create a MediaType instance from a string."""
         if media_type == "text":
             return cls.TEXT
         if media_type == "image":

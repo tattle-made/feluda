@@ -1,4 +1,4 @@
-from .base_operator import BaseOperator
 from .feluda import Feluda
+from .operator import Operator
 
-__all__ = ["BaseOperator", "Feluda"]
+__all__ = ["Feluda", "Operator"]
