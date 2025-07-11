@@ -1,4 +1,7 @@
-class VideoHasher:
+from feluda import Operator
+
+
+class VideoHasher(Operator):
     """Operator to hash video files using the TMK+PDQF binary."""
 
 

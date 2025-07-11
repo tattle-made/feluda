@@ -1,4 +1,7 @@
-class ImageTextDetector:
+from feluda import Operator
+
+
+class ImageTextDetector(Operator):
     """An operator to detect text in images using Tesseract OCR."""
 
 

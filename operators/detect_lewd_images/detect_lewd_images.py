@@ -1,4 +1,7 @@
-class LewdImageDetector:
+from feluda import Operator
+
+
+class LewdImageDetector(Operator):
     """LewdImageDetector operator for detecting lewd images using a pre-trained
     model.
 

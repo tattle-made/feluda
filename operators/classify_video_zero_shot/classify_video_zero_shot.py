@@ -1,6 +1,10 @@
-class VideoClassifier:
+from feluda import Operator
+
+
+class VideoClassifier(Operator):
     """Operator to classify a video into given labels using CLIP-ViT-B-32 and a
-    zero-shot approach."""
+    zero-shot approach.
+    """
 
 
 def initialize(param):
