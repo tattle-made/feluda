@@ -1,3 +1,10 @@
+from feluda import Operator
+
+
+class VideoHasher(Operator):
+    """Operator to hash video files using the TMK+PDQF binary."""
+
+
 def initialise(param=None):
     """
     Initializes the TMK binary. Downloads it to a temp directory if not present,

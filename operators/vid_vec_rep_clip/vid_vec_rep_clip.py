@@ -10,11 +10,11 @@ import torch
 from PIL import Image
 from transformers import AutoProcessor, CLIPModel
 
-from feluda import BaseOperator
+from feluda import Operator
 from feluda.factory import VideoFactory
 
 
-class VidVecRepClip(BaseOperator):
+class VidVecRepClip(Operator):
     """Operator to extract video vector representations using CLIP-ViT-B-32."""
 
     def __init__(self) -> None:

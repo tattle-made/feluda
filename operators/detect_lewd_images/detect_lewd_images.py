@@ -1,3 +1,15 @@
+from feluda import Operator
+
+
+class LewdImageDetector(Operator):
+    """LewdImageDetector operator for detecting lewd images using a pre-trained
+    model.
+
+    This operator uses the Bumble Private Detector model to classify
+    images.
+    """
+
+
 def initialize(param):
     """
     Initializes the operator.

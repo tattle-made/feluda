@@ -9,8 +9,11 @@ from feluda.factory.s3_factory import S3Factory
 
 
 class AudioFactory:
+    """Factory class for creating audio objects from various sources."""
+
     @staticmethod
     def make_from_url(audio_url: str) -> dict:
+        """Create an audio object from a URL or S3 path."""
         temp_dir = tempfile.gettempdir()
 
         if audio_url.startswith("http"):
@@ -41,6 +44,7 @@ class AudioFactory:
 
     @staticmethod
     def make_from_url_to_wav(audio_url: str) -> dict:
+        """Create a WAV audio object from a URL."""
         temp_dir = tempfile.gettempdir()
         temp_url = audio_url.split("?", maxsplit=1)[0]
         file_name = temp_url.split("/")[-1]
@@ -65,4 +69,5 @@ class AudioFactory:
 
     @staticmethod
     def make_from_file_on_disk(audio_path: str) -> dict:
+        """Create an audio object from a file on disk."""
         return {"path": audio_path}

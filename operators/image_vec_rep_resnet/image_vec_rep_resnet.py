@@ -7,10 +7,11 @@ from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
 
+from feluda import Operator
 from feluda.factory import ImageFactory
 
 
-class ImageVecRepResnet:
+class ImageVecRepResnet(Operator):
     """Operator to extract image vector representations using ResNet18."""
 
     def __init__(self) -> None:

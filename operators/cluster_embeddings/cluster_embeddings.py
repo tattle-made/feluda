@@ -1,6 +1,10 @@
-"""
-Operator to cluster embeddings using KMeans, Affinity Propagation, and Agglomerative clustering algorithms
-"""
+from feluda import Operator
+
+
+class ClusterEmbeddings(Operator):
+    """Operator to cluster embeddings using KMeans, Affinity Propagation, and
+    Agglomerative clustering algorithms.
+    """
 
 
 def initialize(param):
