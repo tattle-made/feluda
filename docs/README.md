@@ -9,7 +9,7 @@ This directory contains the documentation for Feluda, built with Sphinx and MyST
 Install the documentation dependencies:
 
 ```bash
-pip install -e .[dev]
+uv pip install -e ".[dev]"
 ```
 
 ### Build Commands
