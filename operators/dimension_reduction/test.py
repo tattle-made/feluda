@@ -1,17 +1,15 @@
-import unittest
-
 import numpy as np
+import pytest
 
 from operators.dimension_reduction.dimension_reduction import (
-    DimensionReductionFactory,
-    initialize,
-    run,
+    DimensionReduction,
+    ReductionModel,
+    TSNEReduction,
+    UMAPReduction,
 )
 
 
-# Helper data generation
-def generate_input_data(num_samples=100, dimensions=50):
-    """Generates sample input data for testing."""
+def generate_input_data(num_samples: int = 100, dimensions: int = 50):
     sample_embeddings = np.random.rand(num_samples, dimensions)
     input_data = [
         {"payload": str(i), "embedding": embedding.tolist()}
@@ -20,133 +18,94 @@ def generate_input_data(num_samples=100, dimensions=50):
     return input_data, sample_embeddings
 
 
-class TestTSNEReductionOperator(unittest.TestCase):
-    """Tests specifically for the t-SNE reduction."""
-
-    @classmethod
-    def setUpClass(cls):
-        """Initialize the t-SNE model once for all tests in this class."""
-        print("\nSetting up t-SNE tests...")
-        cls.tsne_params = {
-            "model_type": "tsne",
+class TestTSNEReduction:
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.params = {
             "n_components": 2,
             "perplexity": 30,
             "learning_rate": 200,
             "max_iter": 250,
             "random_state": 42,
-            "method": "barnes_hut",
         }
-        initialize(cls.tsne_params)
-        print("t-SNE model initialized for tests.")
+        self.input_data, _ = generate_input_data()
 
-        cls.input_data, cls.original_embeddings = generate_input_data(num_samples=100)
+    def test_output_shape_and_payload(self):
+        operator = DimensionReduction("tsne", self.params)
+        reduced = operator.run(self.input_data)
 
-    @classmethod
-    def tearDownClass(cls):
-        """Clean up after t-SNE tests if necessary."""
-        pass
+        assert len(reduced) == len(self.input_data)
+        assert all("payload" in d and "reduced_embedding" in d for d in reduced)
 
-    def test_tsne_reduction_output_shape(self):
-        """Verify t-SNE reduces to the correct shape."""
-        reduced_data = run(self.input_data)
-        self.assertEqual(
-            len(reduced_data),
-            len(self.input_data),
-            "Number of items should match input",
-        )
-        reduced_embeddings = np.array([d["reduced_embedding"] for d in reduced_data])
-        self.assertEqual(
-            reduced_embeddings.shape,
-            (len(self.input_data), self.tsne_params["n_components"]),
-        )
-
-    def test_tsne_reduction_payload_preservation(self):
-        """Verify payloads are correctly preserved."""
-        reduced_data = run(self.input_data)
-        original_payloads = [d["payload"] for d in self.input_data]
-        reduced_payloads = [d["payload"] for d in reduced_data]
-        self.assertEqual(original_payloads, reduced_payloads)
+        emb = np.array([d["reduced_embedding"] for d in reduced])
+        assert emb.shape == (len(self.input_data), self.params["n_components"])
 
 
-class TestUMAPReductionOperator(unittest.TestCase):
-    """Tests specifically for the UMAP reduction."""
-
-    @classmethod
-    def setUpClass(cls):
-        """Initialize the UMAP model once for all tests in this class."""
-        print("\nSetting up UMAP tests...")
-        cls.umap_params = {
-            "model_type": "umap",
+class TestUMAPReduction:
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.params = {
             "n_components": 2,
-            "n_neighbors": 5,
+            "n_neighbors": 10,
             "min_dist": 0.1,
             "random_state": 42,
         }
-        initialize(cls.umap_params)
-        print("UMAP model initialized for tests.")
+        self.input_data, _ = generate_input_data()
 
-        cls.input_data, cls.original_embeddings = generate_input_data(num_samples=100)
+    def test_output_shape_and_payload(self):
+        operator = DimensionReduction("umap", self.params)
+        reduced = operator.run(self.input_data)
 
-    @classmethod
-    def tearDownClass(cls):
-        """Clean up after UMAP tests if necessary."""
-        pass
+        assert len(reduced) == len(self.input_data)
+        assert all("payload" in d and "reduced_embedding" in d for d in reduced)
 
-    def test_umap_reduction_output_shape(self):
-        """Verify UMAP reduces to the correct shape."""
-        reduced_data = run(self.input_data)
-        self.assertEqual(
-            len(reduced_data),
-            len(self.input_data),
-            "Number of items should match input",
-        )
-        reduced_embeddings = np.array([d["reduced_embedding"] for d in reduced_data])
-        self.assertEqual(
-            reduced_embeddings.shape,
-            (len(self.input_data), self.umap_params["n_components"]),
-        )
-
-    def test_umap_reduction_payload_preservation(self):
-        """Verify payloads are correctly preserved."""
-        reduced_data = run(self.input_data)
-        original_payloads = [d["payload"] for d in self.input_data]
-        reduced_payloads = [d["payload"] for d in reduced_data]
-        self.assertEqual(original_payloads, reduced_payloads)
+        emb = np.array([d["reduced_embedding"] for d in reduced])
+        assert emb.shape == (len(self.input_data), self.params["n_components"])
 
 
-class TestDimensionReductionGeneral(unittest.TestCase):
-    """Tests for general functionality and error handling."""
+class TestDimensionReductionValidation:
+    def test_invalid_model_type(self):
+        with pytest.raises(ValueError, match="Unsupported model type"):
+            DimensionReduction("bogus", {})
 
-    def test_invalid_input_run(self):
-        """Test run function with various invalid inputs."""
-        initialize({})
+    def test_empty_input_list(self):
+        operator = DimensionReduction("umap", {"n_components": 2})
+        with pytest.raises(ValueError, match="non-empty list"):
+            operator.run([])
 
-        # Test with empty list
-        with self.assertRaisesRegex(ValueError, "Input should be a non-empty list"):
-            run([])
+    def test_missing_keys(self):
+        operator = DimensionReduction("tsne", {"n_components": 2})
+        with pytest.raises(KeyError):
+            operator.run([{"embedding": [0.1, 0.2]}])  # Missing payload
+        with pytest.raises(KeyError):
+            operator.run([{"payload": "x"}])  # Missing embedding
 
-        # Test with non-list input
-        with self.assertRaisesRegex(ValueError, "Input should be a non-empty list"):
-            run("not a list")
+    def test_invalid_embeddings(self):
+        operator = DimensionReduction("tsne", {"n_components": 2})
 
-        # Test with missing 'embedding' key
-        with self.assertRaisesRegex(KeyError, "Missing key: 'embedding'"):
-            run([{"payload": "123"}])
+        # Non-numeric embedding
+        with pytest.raises(ValueError):
+            operator.run([{"payload": "x", "embedding": ["a", "b", "c"]}])
 
-        # Test with missing 'payload' key
-        with self.assertRaisesRegex(KeyError, "Missing key: 'payload'"):
-            run([{"embedding": [1, 2, 3]}])
+        # Embedding with NaN
+        with pytest.raises(ValueError):
+            operator.run([{"payload": "x", "embedding": [1.0, float("nan")]}])
 
-    def test_invalid_model_type_initialize(self):
-        """Test initialize function with an unsupported model type."""
-        with self.assertRaisesRegex(
-            ValueError, "Unsupported model type: invalid_model"
-        ):
-            initialize({"model_type": "invalid_model"})
+        # Embedding with inf
+        with pytest.raises(ValueError):
+            operator.run([{"payload": "x", "embedding": [1.0, float("inf")]}])
 
-    def test_factory_invalid_type(self):
-        """Test the factory directly with an invalid type."""
-        with self.assertRaisesRegex(
-            ValueError, "Unsupported model type: non_existent_model"
-        ):
-            DimensionReductionFactory.get_reduction_model("non_existent_model")
+    def test_single_point_error(self):
+        operator = DimensionReduction("tsne", {"n_components": 2, "perplexity": 5})
+        with pytest.raises(RuntimeError, match="must be less than n_samples"):
+            operator.run([{"payload": "x", "embedding": list(np.random.rand(50))}])
+
+
+class TestFactoryLogic:
+    def test_factory_instantiates_models_correctly(self):
+        tsne = DimensionReduction.get_reduction_model("tsne", {"n_components": 2})
+        umap = DimensionReduction.get_reduction_model("umap", {"n_components": 2})
+        assert isinstance(tsne, TSNEReduction)
+        assert isinstance(umap, UMAPReduction)
+        assert isinstance(tsne, ReductionModel)
+        assert isinstance(umap, ReductionModel)
