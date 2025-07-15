@@ -14,14 +14,10 @@ from feluda.factory import VideoFactory
 
 
 class VideoClassifier(Operator):
-    """
-    Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach.
-    """
+    """Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach."""
 
     def __init__(self) -> None:
-        """
-        Initializes the `VideoClassifier` operator, loads the CLIP model and processor, and validates system dependencies.
-        """
+        """Initialize the `VideoClassifier` operator, loads the CLIP model and processor, and validates system dependencies."""
         super().__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.validate_system()
@@ -41,8 +37,8 @@ class VideoClassifier(Operator):
 
     @staticmethod
     def validate_system() -> None:
-        """
-        Validates that required system dependencies are available (ffmpeg).
+        """Validates that required system dependencies are available.
+        (ffmpeg).
         """
         if shutil.which("ffmpeg") is None:
             raise RuntimeError(
@@ -51,8 +47,7 @@ class VideoClassifier(Operator):
             )
 
     def gen_data(self) -> dict[str, Any]:
-        """
-        Generates output dict with prediction and probabilities.
+        """Generate output dict with prediction and probabilities.
 
         Returns:
             dict: A dictionary containing:
@@ -65,8 +60,7 @@ class VideoClassifier(Operator):
         }
 
     def analyze(self) -> None:
-        """
-        Analyzes the video file and generates predictions.
+        """Analyze the video file and generates predictions.
 
         Args:
             fname (str): Path to the video file
@@ -79,8 +73,7 @@ class VideoClassifier(Operator):
         self.probs = self.predict(self.frame_images, self.labels)
 
     def extract_frames(self) -> list[Image.Image]:
-        """
-        Extracts I-frames from the video file using ffmpeg.
+        """Extract I-frames from the video file using ffmpeg.
 
         Args:
             fname (str): Path to the video file
@@ -122,8 +115,8 @@ class VideoClassifier(Operator):
             return frames
 
     def predict(self, images: list[Image.Image], labels: list[str]) -> torch.Tensor:
-        """
-        Runs inference and gets label probabilities using a pre-trained CLIP-ViT-B-32.
+        """Run inference and gets label probabilities using a pre-trained
+        CLIP-ViT-B-32.
 
         Args:
             images (list): List of PIL Images
@@ -155,8 +148,7 @@ class VideoClassifier(Operator):
         labels: list[str],
         remove_after_processing: bool = False,
     ) -> dict[str, Any]:
-        """
-        Runs the operator.
+        """Run the operator.
 
         Args:
             file (dict): VideoFactory file object (must have a 'path' key)
@@ -188,7 +180,7 @@ class VideoClassifier(Operator):
                     os.remove(fname)
 
     def cleanup(self) -> None:
-        """Cleans up resources used by the operator."""
+        """Clean up resources used by the operator."""
         self.frame_images.clear()
         self.probs = None
         self.labels.clear()
@@ -197,7 +189,7 @@ class VideoClassifier(Operator):
         del self.model
 
     def state(self) -> dict[str, Any]:
-        """Returns the current state of the operator.
+        """Return the current state of the operator.
 
         Returns:
             dict: State of the operator
