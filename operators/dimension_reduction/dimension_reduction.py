@@ -6,6 +6,8 @@ import numpy as np
 import umap
 from sklearn.manifold import TSNE
 
+from feluda import Operator
+
 
 class ReductionModel:
     """Base class for dimension reduction models."""
@@ -13,7 +15,8 @@ class ReductionModel:
     def __init__(self, params: Any) -> None:
         self.params = params
 
-    def validate_embeddings(self, embeddings_array: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def validate_embeddings(embeddings_array: np.ndarray) -> np.ndarray:
         """Validate embeddings array, converting list to numpy array if needed.
 
         Args:
@@ -69,7 +72,7 @@ class TSNEParams:
             raise ValueError("learning_rate must be positive")
         if self.max_iter < 1:
             raise ValueError("max_iter must be at least 1")
-        if self.method not in ["barnes_hut", "exact"]:
+        if self.method not in {"barnes_hut", "exact"}:
             raise ValueError("method must be 'barnes_hut' or 'exact'")
 
 
@@ -188,7 +191,7 @@ class UMAPReduction(ReductionModel):
             raise RuntimeError(f"UMAP reduction failed: {e}")
 
 
-class DimensionReduction:
+class DimensionReduction(Operator):
     """Main interface for dimensionality reduction."""
 
     def __init__(self, model_type: str, params: dict[str, Any] | None = None) -> None:
