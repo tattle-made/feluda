@@ -2,21 +2,20 @@ name: Publish Feluda Docs
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Needed to push to gh-pages branch
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures full git history for deployment
+          fetch-depth: 0
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
@@ -30,7 +29,7 @@ jobs:
 
       - name: Build HTML docs
         run: |
-          make -C docs clean html  # cleans old build files, then builds fresh HTML
+          make -C docs clean html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
