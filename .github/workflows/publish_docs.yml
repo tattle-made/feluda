@@ -2,7 +2,9 @@ name: Publish Feluda Docs
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - development
+      - main
   workflow_dispatch:
 
 jobs:
