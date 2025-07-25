@@ -350,8 +350,10 @@
     <span class="k">global</span> <span class="n">os</span>
 
     <span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
@@ -367,14 +369,44 @@
         <span class="n">wget</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">TMK_BINARY_URL</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">tmk_binary_path</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">tmk_binary_path</span><span class="p">,</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRWXU</span><span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_pure_average_feature</span><span class="p">(</span><span class="n">tmk_data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">tmk_data</span><span class="p">)</span>
+
+        <span class="n">project_magic</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+        <span class="n">file_type_magic</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+        <span class="n">_frame_feature_algorithm_magic</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">project_magic</span> <span class="o">!=</span> <span class="s2">&quot;TMK1&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid project magic: </span><span class="si">{</span><span class="n">project_magic</span><span class="si">}</span><span class="s2">, expected TMK1&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">file_type_magic</span> <span class="o">!=</span> <span class="s2">&quot;FVEC&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid file type magic: </span><span class="si">{</span><span class="n">file_type_magic</span><span class="si">}</span><span class="s2">, expected FVEC&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">_frames_per_second</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">num_periods</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">num_fourier_coefficients</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">frame_feature_dimension</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">_frame_feature_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Skip periods and fourier coefficients arrays</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">num_periods</span><span class="p">)</span>  <span class="c1"># Skip periods</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">num_fourier_coefficients</span><span class="p">)</span>  <span class="c1"># Skip fourier coefficients</span>
+
+        <span class="c1"># Now read the pure average feature</span>
+        <span class="n">pure_average_feature</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span>
+            <span class="s2">&quot;f&quot;</span> <span class="o">*</span> <span class="n">frame_feature_dimension</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">frame_feature_dimension</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">pure_average_feature</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">hash_video</span><span class="p">(</span><span class="n">video_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Hash a video file using the TMK+PDQF binary and return the hash as a Base64-encoded string.</span>
+<span class="sd">        Hash a video file using TMK and return just the pure average feature as a Base64-encoded string.</span>
 
 <span class="sd">        :param video_path: Path to the video file.</span>
-<span class="sd">        :return: The hash as a Base64-encoded string.</span>
+<span class="sd">        :return: The pure average feature hash as a Base64-encoded string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.tmk&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp_hash_file</span><span class="p">:</span>
             <span class="n">temp_hash_path</span> <span class="o">=</span> <span class="n">temp_hash_file</span><span class="o">.</span><span class="n">name</span>
 
@@ -393,16 +425,25 @@
                 <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
+            <span class="c1"># Read the TMK file and extract pure average feature</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_hash_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">binary_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                <span class="n">base64_hash</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">binary_data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                <span class="n">tmk_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">pure_average_feature</span> <span class="o">=</span> <span class="n">extract_pure_average_feature</span><span class="p">(</span><span class="n">tmk_data</span><span class="p">)</span>
+
+                <span class="n">feature_bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span>
+                    <span class="s2">&quot;f&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pure_average_feature</span><span class="p">),</span> <span class="o">*</span><span class="n">pure_average_feature</span>
+                <span class="p">)</span>
+                <span class="n">base64_hash</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">feature_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
             <span class="k">return</span> <span class="n">base64_hash</span>
+
         <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error generating hash for </span><span class="si">{</span><span class="n">video_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing TMK file for </span><span class="si">{</span><span class="n">video_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_hash_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_hash_path</span><span class="p">)</span>
-                <span class="k">pass</span>
 
     <span class="k">return</span> <span class="n">hash_video</span>
 
