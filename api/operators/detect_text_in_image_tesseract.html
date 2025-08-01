@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Feluda 0.9.4 documentation</title>
+  <title>DetectTextInImageTesseract Operator &mdash; Feluda 0.9.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -260,7 +260,16 @@
 <li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#output-format">Output Format</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">ImageTextDetector</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DetectTextInImageTesseract Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="vid_vec_rep_clip.html">VidVecRepClip Operator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#description">Description</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#model-information">Model Information</a></li>
@@ -331,7 +340,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../operators.html">Operators API</a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">DetectTextInImageTesseract Operator</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/operators/detect_text_in_image_tesseract.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -341,13 +350,101 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <dl class="py class">
-<dt class="sig sig-object py" id="operators.detect_text_in_image_tesseract.detect_text_in_image_tesseract.ImageTextDetector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">operators.detect_text_in_image_tesseract.detect_text_in_image_tesseract.</span></span><span class="sig-name descname"><span class="pre">ImageTextDetector</span></span><a class="reference internal" href="../../_modules/operators/detect_text_in_image_tesseract/detect_text_in_image_tesseract.html#ImageTextDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.detect_text_in_image_tesseract.detect_text_in_image_tesseract.ImageTextDetector" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../feluda.html#feluda.operator.Operator" title="feluda.operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
-<p>An operator to detect text in images using Tesseract OCR.</p>
-</dd></dl>
+  <section id="detecttextinimagetesseract-operator">
+<h1>DetectTextInImageTesseract Operator<a class="headerlink" href="#detecttextinimagetesseract-operator" title="Link to this heading"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DetectTextInImageTesseract</span></code> operator extracts text from images using Tesseract OCR (Optical Character Recognition). It supports multiple languages including English, Hindi, Tamil, and Telugu. The operator processes image files and returns the detected text as a string.</p>
+</section>
+<section id="model-information">
+<h2>Model Information<a class="headerlink" href="#model-information" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>OCR Engine</strong>: <a class="reference external" href="https://github.com/tesseract-ocr/tesseract">Tesseract OCR</a></p></li>
+<li><p><strong>Source</strong>: Google, via pytesseract Python wrapper</p></li>
+<li><p><strong>Supported Languages</strong>: English (eng), Hindi (hin), Tamil (tam), Telugu (tel)</p></li>
+<li><p><strong>Usage</strong>: The operator uses Tesseract’s OCR capabilities to extract text from images, enabling downstream tasks such as text analysis, content moderation, and document processing.</p></li>
+</ul>
+</section>
+<section id="system-dependencies">
+<h2>System Dependencies<a class="headerlink" href="#system-dependencies" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Tesseract OCR</p>
+<ul>
+<li><p>On Windows:</p>
+<ol class="arabic simple">
+<li><p>Download from <a class="reference external" href="https://github.com/UB-Mannheim/tesseract/wiki">UB-Mannheim’s Tesseract</a></p></li>
+<li><p>Install and add to PATH</p></li>
+<li><p>Install language packs for Hindi, Tamil, and Telugu</p></li>
+</ol>
+</li>
+<li><p>On Linux: <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">tesseract-ocr</span> <span class="pre">tesseract-ocr-hin</span> <span class="pre">tesseract-ocr-tam</span> <span class="pre">tesseract-ocr-tel</span></code></p></li>
+<li><p>On macOS: <code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">tesseract</span> <span class="pre">tesseract-lang</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="operator-dependencies">
+<h2>Operator Dependencies<a class="headerlink" href="#operator-dependencies" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>pytesseract &gt;= 0.3.10</p></li>
+<li><p>Pillow &gt;= 11.1.0</p></li>
+</ul>
+</section>
+<section id="how-to-run-the-tests">
+<h2>How to Run the Tests<a class="headerlink" href="#how-to-run-the-tests" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Ensure that you are in the root directory of the <code class="docutils literal notranslate"><span class="pre">feluda</span></code> project.</p></li>
+<li><p>Install dependencies (in your virtual environment):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;./operators/detect_text_in_image_tesseract&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;feluda[dev]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Ensure Tesseract OCR is installed and available in your PATH.</p></li>
+<li><p>Run the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>operators/detect_text_in_image_tesseract/test.py
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">feluda.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operators.detect_text_in_image_tesseract</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectTextInImageTesseract</span>
 
+<span class="c1"># Initialize the operator</span>
+<span class="n">operator</span> <span class="o">=</span> <span class="n">DetectTextInImageTesseract</span><span class="p">()</span>
+
+<span class="c1"># Load an image</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">ImageFactory</span><span class="o">.</span><span class="n">make_from_url_to_path</span><span class="p">(</span><span class="s2">&quot;https://example.com/image.png&quot;</span><span class="p">)</span>
+
+<span class="c1"># Extract text</span>
+<span class="n">text</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">remove_after_processing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="c1"># Check operator state</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">state</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PSM: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;psm&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, OEM: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;oem&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Cleanup resources</span>
+<span class="n">operator</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>The operator accepts two configuration parameters:</p>
+<ul class="simple">
+<li><p><strong>psm</strong> (int): Page segmentation mode (default: 6)</p></li>
+<li><p><strong>oem</strong> (int): OCR Engine mode (default: 1)</p></li>
+</ul>
+<p>These can be set during initialization:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">operator</span> <span class="o">=</span> <span class="n">DetectTextInImageTesseract</span><span class="p">(</span><span class="n">psm</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">oem</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 
 
            </div>
