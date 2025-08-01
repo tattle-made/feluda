@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Feluda 0.9.4 documentation</title>
+  <title>LewdImageDetector Operator &mdash; Feluda 0.9.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -251,7 +251,15 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">LewdImageDetector</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">LewdImageDetector Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-format">Output Format</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="detect_text_in_image_tesseract.html"><code class="docutils literal notranslate"><span class="pre">ImageTextDetector</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="vid_vec_rep_clip.html">VidVecRepClip Operator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#description">Description</a></li>
@@ -323,7 +331,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../operators.html">Operators API</a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">LewdImageDetector Operator</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/operators/detect_lewd_images.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -333,16 +341,77 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <dl class="py class">
-<dt class="sig sig-object py" id="operators.detect_lewd_images.detect_lewd_images.LewdImageDetector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">operators.detect_lewd_images.detect_lewd_images.</span></span><span class="sig-name descname"><span class="pre">LewdImageDetector</span></span><a class="reference internal" href="../../_modules/operators/detect_lewd_images/detect_lewd_images.html#LewdImageDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.detect_lewd_images.detect_lewd_images.LewdImageDetector" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../feluda.html#feluda.operator.Operator" title="feluda.operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
-<p>LewdImageDetector operator for detecting lewd images using a pre-trained
-model.</p>
-<p>This operator uses the Bumble Private Detector model to classify
-images.</p>
-</dd></dl>
+  <section id="lewdimagedetector-operator">
+<h1>LewdImageDetector Operator<a class="headerlink" href="#lewdimagedetector-operator" title="Link to this heading"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">LewdImageDetector</span></code> operator detects inappropriate or lewd content in images using the Bumble Private Detector model. It analyzes images and returns a probability score indicating the likelihood of inappropriate content being present. The operator is designed to help moderate content by identifying potentially problematic images.</p>
+</section>
+<section id="model-information">
+<h2>Model Information<a class="headerlink" href="#model-information" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Model</strong>: <a class="reference external" href="https://huggingface.co/nateraw/bumble-private-detector">Bumble Private Detector</a></p></li>
+<li><p><strong>Source</strong>: Bumble, via HuggingFace Hub</p></li>
+<li><p><strong>Framework</strong>: TensorFlow</p></li>
+<li><p><strong>Input</strong>: Images (various formats supported)</p></li>
+<li><p><strong>Output</strong>: Probability score (0.0 to 1.0) indicating likelihood of inappropriate content</p></li>
+<li><p><strong>Usage</strong>: The model is used for content moderation and filtering inappropriate images from datasets or applications.</p></li>
+</ul>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>TensorFlow &gt;= 2.19.0</p></li>
+<li><p>HuggingFace Hub &gt;= 0.30.2</p></li>
+</ul>
+</section>
+<section id="how-to-run-the-tests">
+<h2>How to Run the Tests<a class="headerlink" href="#how-to-run-the-tests" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Ensure that you are in the root directory of the <code class="docutils literal notranslate"><span class="pre">feluda</span></code> project.</p></li>
+<li><p>Install dependencies (in your virtual environment):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;./operators/detect_lewd_images&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;feluda[dev]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Run the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>operators/detect_lewd_images/test.py
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">feluda.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operators.detect_lewd_images</span><span class="w"> </span><span class="kn">import</span> <span class="n">LewdImageDetector</span>
 
+<span class="c1"># Initialize the operator</span>
+<span class="n">operator</span> <span class="o">=</span> <span class="n">LewdImageDetector</span><span class="p">()</span>
+
+<span class="c1"># Load an image</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">ImageFactory</span><span class="o">.</span><span class="n">make_from_url_to_path</span><span class="p">(</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="p">)</span>
+
+<span class="c1"># Detect inappropriate content</span>
+<span class="n">probability</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability of inappropriate content: </span><span class="si">{</span><span class="n">probability</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Cleanup</span>
+<span class="n">operator</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="output-format">
+<h2>Output Format<a class="headerlink" href="#output-format" title="Link to this heading"></a></h2>
+<p>The operator returns a float value between 0.0 and 1.0:</p>
+<ul class="simple">
+<li><p><strong>0.0</strong>: Very low probability of inappropriate content</p></li>
+<li><p><strong>1.0</strong>: Very high probability of inappropriate content</p></li>
+</ul>
+</section>
+</section>
 
 
            </div>
