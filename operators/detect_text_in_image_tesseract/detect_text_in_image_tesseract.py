@@ -1,35 +1,52 @@
+import gc
+import os
+import shutil
+from typing import Any
+
+import pytesseract
+from PIL import Image
+
 from feluda import Operator
+from feluda.factory import ImageFactory
 
 
 class ImageTextDetector(Operator):
-    """An operator to detect text in images using Tesseract OCR."""
+    """Operator to detect text in images using Tesseract OCR."""
 
+    def __init__(self, psm: int = 6, oem: int = 1, tesseract_cmd: str = None) -> None:
+        """Initialize the `ImageTextDetector` class.
 
-def initialize(param):
-    global config_psm
-    global config_oem
-    config_psm = param.get("psm", 6)
-    config_oem = param.get("oem", 1)
+        Args:
+            psm (int): Page segmentation mode for Tesseract (default: 6)
+            oem (int): OCR Engine mode for Tesseract (default: 1)
+        """
+        self.psm = psm
+        self.oem = oem
+        self.tesseract_cmd = tesseract_cmd or shutil.which("tesseract")
+        self.validate_system()
+        self.validate_languages()
 
-    try:
-        global Image
-        global pytesseract
-        global requests
-        global BytesIO
-        global os
+    def validate_system(self) -> None:
+        """Validate that Tesseract OCR is installed and accessible.
 
-        import os
-        from io import BytesIO
-
-        import pytesseract
-        import requests
-        from PIL import Image
-
+        Raises:
+            RuntimeError: If Tesseract is not installed or not in PATH.
+        """
+        if self.tesseract_cmd:
+            pytesseract.pytesseract.tesseract_cmd = self.tesseract_cmd
         try:
             pytesseract.get_tesseract_version()
         except pytesseract.TesseractNotFoundError:
-            raise RuntimeError("Tesseract OCR is not installed or not in PATH.")
+            raise RuntimeError(
+                "Tesseract OCR is not installed or not in PATH. "
+                "Please install Tesseract to use this operator."
+            )
 
+    def validate_languages(self) -> None:
+        """Validate that required language packs are installed.
+
+        Checks for English, Hindi, Tamil, and Telugu language support.
+        """
         required_langs = ["eng", "hin", "tam", "tel"]
         try:
             installed_langs = pytesseract.get_languages()
@@ -44,31 +61,57 @@ def initialize(param):
         except Exception as e:
             print(f"Warning: Could not verify language pack installation: {e}")
 
-    except ImportError as e:
-        raise ImportError(
-            f"Failed to import required packages: {e}. "
-            "Please ensure pytesseract and Pillow are installed."
-        )
+    def run(self, file: ImageFactory, remove_after_processing: bool = False) -> str:
+        """Run the text detection operator.
 
+        Args:
+            file (ImageFactory): ImageFactory object
+            remove_after_processing (bool): Whether to remove the file after processing
 
-def run(image_path):
-    data = None
-    try:
-        with Image.open(image_path) as load_image:
-            data = pytesseract.image_to_string(
-                load_image,
-                lang="eng+hin+tam+tel",
-                config=f"--psm {config_psm} --oem {config_oem}",
+        Returns:
+            str: Detected text from the image
+        """
+        if not isinstance(file, dict) or "path" not in file:
+            raise ValueError(
+                "Invalid file object. Expected ImageFactory object with 'path' key."
             )
-        return data
 
-    except Exception as e:
-        print(f"Error during OCR: {e}")
-        raise RuntimeError(f"Text detection failed: {e}")
+        image_path = file["path"]
 
-    finally:
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Image file not found: {image_path}")
+
         try:
-            if os.path.exists(image_path):
-                os.remove(image_path)
-        except OSError as e:
-            print(f"Warning: Could not delete file {image_path}: {e}")
+            with Image.open(image_path) as load_image:
+                text = pytesseract.image_to_string(
+                    load_image,
+                    lang="eng+hin+tam+tel",
+                    config=f"--psm {self.psm} --oem {self.oem}",
+                )
+            return text
+
+        except Exception as e:
+            raise RuntimeError(f"Text detection failed: {e}") from e
+
+        finally:
+            if remove_after_processing:
+                try:
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
+                except OSError as e:
+                    print(f"Warning: Could not delete file {image_path}: {e}")
+
+    def cleanup(self) -> None:
+        """Cleans up resources used by the operator."""
+        gc.collect()
+
+    def state(self) -> dict[str, Any]:
+        """Returns the current state of the operator.
+
+        Returns:
+            dict: State of the operator including PSM and OEM settings
+        """
+        return {
+            "psm": self.psm,
+            "oem": self.oem,
+        }
