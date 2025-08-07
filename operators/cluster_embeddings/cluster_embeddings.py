@@ -14,6 +14,10 @@ class ClusterEmbeddings(Operator):
     def __init__(self) -> None:
         """Initialize the `ClusterEmbeddings` operator."""
         super().__init__()
+        self.matrix = []
+        self.payloads = []
+        self.modality = None
+        self.n_clusters = None
 
     @staticmethod
     def gen_data(payloads: list[dict], labels: np.ndarray) -> dict:
@@ -130,8 +134,8 @@ class ClusterEmbeddings(Operator):
 
     def cleanup(self) -> None:
         """Clean up resources used by the operator."""
-        self.matrix.clear()
-        self.payloads.clear()
+        self.matrix = []
+        self.payloads = []
         self.modality = None
         self.n_clusters = None
 

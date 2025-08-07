@@ -1,73 +1,55 @@
-import contextlib
-import tempfile
-import unittest
-from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
-import yaml
+import pytest
+from image_vec_rep_resnet import ImageVecRepResnet
 from requests.exceptions import ConnectTimeout
 
-from feluda import Feluda
 from feluda.factory import ImageFactory
 
 
-class TestFeludaImageVectorIntegration(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        """Create a temporary test configuration file that will be used for all tests."""
-        cls.config = {
-            "operators": {
-                "label": "Operators",
-                "parameters": [
-                    {
-                        "name": "image vectors",
-                        "type": "image_vec_rep_resnet",
-                        "parameters": {"index_name": "image"},
-                    }
-                ],
-            }
-        }
+@pytest.fixture(scope="session")
+def image_operator():
+    """Fixture to provide image vector representation operator."""
+    return ImageVecRepResnet()
 
-        # Create temporary config file using with statement to ensure proper resource cleanup
-        fd, cls.config_path = tempfile.mkstemp(suffix=".yml")
-        with open(fd, "w") as f:
-            yaml.dump(cls.config, f)
 
-        # Initialize Feluda
-        cls.feluda = Feluda(cls.config_path)
-        cls.feluda.setup()
+@pytest.fixture(scope="session")
+def test_image_url():
+    """Fixture to provide test image URL."""
+    return "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
 
-        cls.test_image_url = "https://tattle-media.s3.amazonaws.com/test-data/tattle-search/text-in-image-test-hindi.png"
-        cls.expected_vector_dim = 512
 
-    def setUp(self):
-        """Set up test-specific feluda resources."""
-        # Get operator reference in each test to ensure isolation
-        self.operator = self.feluda.operators.get()["image_vec_rep_resnet"]
+@pytest.fixture(scope="session")
+def expected_vector_dim():
+    """Fixture to provide expected vector dimension."""
+    return 512
 
-    def test_image_vector_generation(self):
+
+class TestImageVectorIntegration:
+    """Test image vector representation functionality."""
+
+    def test_image_vector_generation(
+        self, image_operator, test_image_url, expected_vector_dim
+    ):
         """Test that image vector generation works end-to-end."""
-        image_obj = ImageFactory.make_from_url(self.test_image_url)
-        self.assertIsNotNone(image_obj, "Image object should be successfully created")
+        image_obj = ImageFactory.make_from_url(test_image_url)
+        assert image_obj is not None, "Image object should be successfully created"
 
-        image_vec = self.operator.run(image_obj)
+        image_vec = image_operator.run(image_obj)
 
-        self.assertTrue(
-            isinstance(image_vec, (list, np.ndarray)),
-            "Vector should be a list or numpy array",
+        assert isinstance(image_vec, (list, np.ndarray)), (
+            "Vector should be a list or numpy array"
         )
-        self.assertTrue(len(image_vec) > 0, "Vector should not be empty")
-        self.assertEqual(
-            len(image_vec),
-            self.expected_vector_dim,
-            f"Vector should have dimension {self.expected_vector_dim}",
+        assert len(image_vec) > 0, "Vector should not be empty"
+        assert len(image_vec) == expected_vector_dim, (
+            f"Vector should have dimension {expected_vector_dim}"
         )
 
         if isinstance(image_vec, np.ndarray):
-            self.assertFalse(np.all(image_vec == 0), "Vector should not be all zeros")
-            self.assertFalse(
-                np.any(np.isnan(image_vec)), "Vector should not contain NaN values"
+            assert not np.all(image_vec == 0), "Vector should not be all zeros"
+            assert not np.any(np.isnan(image_vec)), (
+                "Vector should not contain NaN values"
             )
 
     def test_invalid_image_url(self):
@@ -75,49 +57,30 @@ class TestFeludaImageVectorIntegration(unittest.TestCase):
         invalid_url = "https://nonexistent-url/image.jpg"
 
         for exception in [ConnectTimeout]:
-            with self.subTest(exception=exception.__name__):
-                with patch("requests.get") as mock_get:
-                    mock_get.side_effect = exception
-                    result = ImageFactory.make_from_url(invalid_url)
-                    self.assertIsNone(result)
+            with patch("requests.get") as mock_get:
+                mock_get.side_effect = exception
+                with pytest.raises(Exception, match="Request has timed out"):
+                    ImageFactory.make_from_url(invalid_url)
 
-    def test_operator_configuration(self):
+    def test_operator_configuration(self, image_operator):
         """Test that operator is properly configured."""
-        self.assertIsNotNone(self.operator, "Operator should be properly initialized")
-        self.assertTrue(
-            hasattr(self.operator, "run"), "Operator should have 'run' method"
-        )
+        assert image_operator is not None, "Operator should be properly initialized"
+        assert hasattr(image_operator, "run"), "Operator should have 'run' method"
 
-    @contextlib.contextmanager
-    def assertNoException(self, msg=None):
-        """Context manager to verify no exception is raised."""
-        try:
-            yield
-        except Exception as e:
-            self.fail(f"{msg or 'Exception was raised'}: {e}")
-
-    def test_image_vector_consistency(self):
+    def test_image_vector_consistency(self, image_operator, test_image_url):
         """Test that generating vectors twice from the same image gives consistent results."""
-        image_obj = ImageFactory.make_from_url(self.test_image_url)
+        image_obj = ImageFactory.make_from_url(test_image_url)
 
-        with self.assertNoException(
-            "First vector generation should not raise exceptions"
-        ):
-            vec1 = self.operator.run(image_obj)
-
-        with self.assertNoException(
-            "Second vector generation should not raise exceptions"
-        ):
-            vec2 = self.operator.run(image_obj)
+        vec1 = image_operator.run(image_obj)
+        vec2 = image_operator.run(image_obj)
 
         np.testing.assert_array_equal(
             vec1, vec2, "Vectors should be identical for the same image"
         )
 
-    @classmethod
-    def tearDownClass(cls):
-        """Clean up temporary files after all tests are done."""
-        try:
-            Path(cls.config_path).unlink(missing_ok=True)
-        except Exception as e:
-            print(f"Warning: Failed to delete temporary file: {e}")
+
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_operators(image_operator):
+    """Cleanup operators after each test."""
+    yield
+    image_operator.cleanup()
