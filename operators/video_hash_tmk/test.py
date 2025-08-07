@@ -4,7 +4,8 @@ import os
 import pytest
 
 from feluda.factory import VideoFactory
-from operators.video_hash_tmk import VideoHashTmk
+
+from .video_hash_tmk import VideoHashTmk
 
 
 @pytest.fixture(scope="module")
