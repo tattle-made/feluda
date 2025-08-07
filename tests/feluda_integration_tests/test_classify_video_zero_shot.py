@@ -162,7 +162,9 @@ class TestFeludaClassifyVideoZeroShotIntegration(unittest.TestCase):
         )
 
         # Check that probabilities are similar (may not be identical due to frame extraction)
-        for i, (p1, p2) in enumerate(zip(result1["probs"], result2["probs"])):
+        for i, (p1, p2) in enumerate(
+            zip(result1["probs"], result2["probs"], strict=False)
+        ):
             # Allow for some variation but should be close
             self.assertAlmostEqual(
                 p1,
