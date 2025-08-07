@@ -1,7 +1,8 @@
 import pytest
 
 from feluda.factory import VideoFactory
-from operators.vid_vec_rep_clip import VidVecRepClip
+
+from .vid_vec_rep_clip import VidVecRepClip
 
 
 @pytest.fixture(scope="module")

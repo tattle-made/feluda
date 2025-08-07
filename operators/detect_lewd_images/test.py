@@ -1,7 +1,8 @@
 import pytest
 
 from feluda.factory import ImageFactory
-from operators.detect_lewd_images import LewdImageDetector
+
+from .detect_lewd_images import LewdImageDetector
 
 
 @pytest.fixture(scope="module")

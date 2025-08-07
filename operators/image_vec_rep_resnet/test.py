@@ -5,7 +5,8 @@ import pytest
 from PIL import Image
 
 from feluda.factory import ImageFactory
-from operators.image_vec_rep_resnet import ImageVecRepResnet
+
+from .image_vec_rep_resnet import ImageVecRepResnet
 
 
 @pytest.fixture
