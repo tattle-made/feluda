@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; Feluda 0.9.4 documentation</title>
+  <title>VideoHashTmk Operator &mdash; Feluda 0.9.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -282,7 +282,17 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">VideoHasher</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">VideoHashTmk Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#using-the-class-based-operator-recommended">Using the Class-based Operator (Recommended)</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="classify_video_zero_shot.html">Classify Video Zero Shot Operator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#description">Description</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#model-information">Model Information</a></li>
@@ -340,7 +350,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../operators.html">Operators API</a></li>
-      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="breadcrumb-item active">VideoHashTmk Operator</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/operators/video_hash_tmk.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -350,13 +360,80 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <dl class="py class">
-<dt class="sig sig-object py" id="operators.video_hash_tmk.video_hash_tmk.VideoHasher">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">operators.video_hash_tmk.video_hash_tmk.</span></span><span class="sig-name descname"><span class="pre">VideoHasher</span></span><a class="reference internal" href="../../_modules/operators/video_hash_tmk/video_hash_tmk.html#VideoHasher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.video_hash_tmk.video_hash_tmk.VideoHasher" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../feluda.html#feluda.operator.Operator" title="feluda.operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
-<p>Operator to hash video files using the TMK+PDQF binary.</p>
-</dd></dl>
+  <section id="videohashtmk-operator">
+<h1>VideoHashTmk Operator<a class="headerlink" href="#videohashtmk-operator" title="Link to this heading"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">VideoHashTmk</span></code> operator generates perceptual hashes from video files using the TMK (Temporal Media Key) algorithm. It extracts the pure average feature from videos and returns it as a Base64-encoded string. This operator is useful for video similarity detection, duplicate detection, and content fingerprinting.</p>
+</section>
+<section id="model-information">
+<h2>Model Information<a class="headerlink" href="#model-information" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Algorithm</strong>: TMK (Temporal Media Key) + PDQF (Perceptual Diff Quality Function)</p></li>
+<li><p><strong>Source</strong>: <a class="reference external" href="https://github.com/facebook/ThreatExchange/tree/main/tmk">Facebook AI Research</a></p></li>
+<li><p><strong>Hash Type</strong>: Pure average feature vector</p></li>
+<li><p><strong>Output Format</strong>: Base64-encoded string</p></li>
+<li><p><strong>Usage</strong>: The operator processes video files to generate perceptual hashes that can be used for video similarity comparison, duplicate detection, and content fingerprinting.</p></li>
+</ul>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>FFmpeg</p>
+<ul>
+<li><p>On Windows, you have two methods:</p>
+<ol class="arabic simple">
+<li><p>Download from <a class="reference external" href="https://ffmpeg.org/download.html">ffmpeg.org</a> and add to PATH</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">winget</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code> from an elevated PowerShell (Make sure you have winget installed first)</p></li>
+</ol>
+</li>
+<li><p>On Linux/macOS, install via your package manager (e.g., <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="how-to-run-the-tests">
+<h2>How to Run the Tests<a class="headerlink" href="#how-to-run-the-tests" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Ensure that you are in the root directory of the <code class="docutils literal notranslate"><span class="pre">feluda</span></code> project.</p></li>
+<li><p>Install dependencies (in your virtual environment):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;./operators/video_hash_tmk&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;feluda[dev]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Ensure FFmpeg is installed and available in your PATH.</p></li>
+<li><p>Run the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>operators/video_hash_tmk/test.py
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<section id="using-the-class-based-operator-recommended">
+<h3>Using the Class-based Operator (Recommended)<a class="headerlink" href="#using-the-class-based-operator-recommended" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">feluda.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VideoFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operators.video_hash_tmk</span><span class="w"> </span><span class="kn">import</span> <span class="n">VideoHashTmk</span>
 
+<span class="c1"># Initialize the operator</span>
+<span class="n">operator</span> <span class="o">=</span> <span class="n">VideoHashTmk</span><span class="p">()</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/tattle-made/feluda_datasets/raw/main/feluda-sample-media/sample-cat-video.mp4&quot;</span>
+
+<span class="c1"># Load a video</span>
+<span class="n">video</span> <span class="o">=</span> <span class="n">VideoFactory</span><span class="o">.</span><span class="n">make_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">video_path</span> <span class="o">=</span> <span class="n">video</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span>
+
+<span class="c1"># Generate hash</span>
+<span class="n">hash_value</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">video_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hash: </span><span class="si">{</span><span class="n">hash_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
 
 
            </div>
