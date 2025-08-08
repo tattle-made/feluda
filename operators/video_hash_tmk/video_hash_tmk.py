@@ -20,7 +20,7 @@ class VideoHashTmk(Operator):
     def __init__(self) -> None:
         """Initialize the VideoHashTmk operator."""
         self.tmk_binary_path = None
-        self.ffmpeg_path = None
+        self.ffmpeg_path = shutil.which("ffmpeg")
         self.setup_binary()
         self.validate_system()
         self.hash = None
@@ -98,7 +98,7 @@ class VideoHashTmk(Operator):
             cmd = [
                 self.tmk_binary_path,
                 "-f",
-                shutil.which("ffmpeg"),
+                self.ffmpeg_path,
                 "-i",
                 video_path,
                 "-o",
@@ -151,6 +151,6 @@ class VideoHashTmk(Operator):
         """Return the internal state of the operator."""
         return {
             "tmk_binary_path": self.tmk_binary_path,
-            "ffmpeg_path": shutil.which("ffmpeg"),
+            "ffmpeg_path": self.ffmpeg_path,
             "hash": self.hash,
         }
