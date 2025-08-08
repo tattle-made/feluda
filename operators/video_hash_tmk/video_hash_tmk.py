@@ -72,9 +72,11 @@ class VideoHashTmk(Operator):
                     f"Invalid file type magic: {file_type_magic}, expected FVEC"
                 )
 
+            _frames_per_second = struct.unpack("i", handle.read(4))[0]
             num_periods = struct.unpack("i", handle.read(4))[0]
             num_fourier_coefficients = struct.unpack("i", handle.read(4))[0]
             frame_feature_dimension = struct.unpack("i", handle.read(4))[0]
+            _frame_feature_count = struct.unpack("i", handle.read(4))[0]
 
             # Skip periods and fourier coefficients arrays
             handle.read(4 * num_periods)
