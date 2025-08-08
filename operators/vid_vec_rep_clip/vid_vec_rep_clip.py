@@ -21,7 +21,7 @@ class VidVecRepClip(Operator):
         """Initialize the `VidVecRepClip` class."""
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.frame_images = []
-        self.feature_matrix = None
+        self.feature_matrix = []
         self.load_model()
         self.validate_system()
 
@@ -217,5 +217,4 @@ class VidVecRepClip(Operator):
             "processor": self.processor,
             "frame_images": self.frame_images.copy(),
             "feature_matrix": self.feature_matrix.copy() if self.feature_matrix else [],
-
         }
