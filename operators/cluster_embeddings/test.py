@@ -1,6 +1,6 @@
 import pytest
 
-from operators.cluster_embeddings import ClusterEmbeddings
+from .cluster_embeddings import ClusterEmbeddings
 
 MOCK_DATA = [
     {"payload": "A", "embedding": [0, 1]},

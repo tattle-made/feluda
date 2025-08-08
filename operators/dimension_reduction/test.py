@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from operators.dimension_reduction.dimension_reduction import (
+from .dimension_reduction import (
     DimensionReduction,
     ReductionModel,
     TSNEReduction,

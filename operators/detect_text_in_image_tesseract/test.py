@@ -3,7 +3,8 @@ import re
 import pytest
 
 from feluda.factory import ImageFactory
-from operators.detect_text_in_image_tesseract import ImageTextDetector
+
+from .detect_text_in_image_tesseract import ImageTextDetector
 
 
 @pytest.fixture(scope="module")

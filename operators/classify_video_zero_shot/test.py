@@ -1,7 +1,8 @@
 import pytest
 
 from feluda.factory import VideoFactory
-from operators.classify_video_zero_shot import VideoClassifier
+
+from .classify_video_zero_shot import VideoClassifier
 
 
 @pytest.fixture(scope="module")
