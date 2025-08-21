@@ -1,0 +1,47 @@
+name: Weekly Benchmarks
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Every Sunday at 2 AM UTC
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel
+          
+      - name: Setup Python environment
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install ".[all]" ".[dev]"
+          
+      - name: Run benchmarks
+        run: |
+          source .venv/bin/activate
+          cd benchmark
+          python main.py
+          
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: benchmark/results/
+          retention-days: 90
+          
+      - name: Cleanup caches
+        if: always()
+        run: |
+          rm -rf ~/.cache/torch/hub
+          rm -rf ~/.cache/huggingface/hub
