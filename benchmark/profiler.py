@@ -7,8 +7,9 @@ from datetime import datetime
 from typing import Any, Callable
 
 import psutil
-from feluda.operator import Operator
 from memory_profiler import memory_usage
+
+from feluda.operator import Operator
 
 
 class Profiler:
@@ -73,15 +74,17 @@ class Profiler:
     def benchmark_operator(
         operator_class: type[Operator],
         operator_name: str,
-        runtime_kwargs: dict,
+        runtime_kwargs: dict = {},
         operator_kwargs: dict = {},
     ) -> dict[str, Any]:
         """Benchmark a single operator with given test data."""
+        print(f"Benchmarking {operator_name}...")
         results = {
             "operator": operator_name,
             "timestamp": datetime.now().isoformat(),
         }
-        try:
+        # try:
+        if True:
             # Initialization profiling
             init_start = time.perf_counter()
             init_mem_before = Profiler._get_memory_mb()
@@ -115,8 +118,8 @@ class Profiler:
 
             results["status"] = "success"
 
-        except Exception as e:
-            results["status"] = "failed"
-            results["error"] = str(e)
+        # except Exception as e:
+        #     results["status"] = "failed"
+        #     results["error"] = str(e)
 
         return results

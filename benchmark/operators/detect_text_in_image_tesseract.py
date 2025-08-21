@@ -2,7 +2,7 @@ from benchmark.profiler import Profiler
 from operators.detect_text_in_image_tesseract import ImageTextDetector
 
 
-def benchmark():
+def benchmark() -> list[dict]:
     """Benchmark the ImageTextDetector operator."""
     test_data = [
         {"file": "test_images/image1.jpg"},
@@ -17,6 +17,5 @@ def benchmark():
             runtime_kwargs=test_item,
         )
         results.append(result)
-
 
     return results

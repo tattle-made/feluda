@@ -3,7 +3,7 @@ from benchmark.profiler import Profiler
 from operators.cluster_embeddings import ClusterEmbeddings
 
 
-def benchmark():
+def benchmark() -> list[dict]:
     """Benchmark the ClusterEmbeddings operator."""
     results = []
 
@@ -29,8 +29,11 @@ def benchmark():
         # Test with different clustering methods
         for method in ["kmeans", "dbscan", "agglomerative"]:
             runtime_kwargs = {
-                "embeddings": embeddings,
-                "method": method,
+                "input_data": [
+                    {"payload": f"sample_{i}", "embedding": embedding.tolist()}
+                    for i, embedding in enumerate(embeddings)
+                ],
+                "modality": "video",
             }
 
             # For kmeans, specify the number of clusters

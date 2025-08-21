@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from profiler import Profiler
+
+from benchmark.profiler import Profiler
 
 
 class BenchmarkReport:
@@ -18,9 +19,13 @@ class BenchmarkReport:
         self.results: list[dict[str, Any]] = []
         self.system_info: dict[str, Any] = Profiler.get_system_info()
 
-    def add_results(self, result: dict[str, Any]) -> None:
+    def add(self, result: dict[str, Any]) -> None:
         """Add a benchmark result to the report."""
         self.results.append(result)
+
+    def extend(self, results: list[dict[str, Any]]) -> None:
+        """Extend the benchmark report with multiple results."""
+        self.results.extend(results)
 
     def generate_summary(self) -> dict[str, Any]:
         """Generate summary statistics for all benchmarked operators."""
@@ -76,8 +81,8 @@ class BenchmarkReport:
     def save_json(self, filepath: str | Path = None) -> None:
         """Save the benchmark summary as JSON."""
         if not filepath:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filepath = f"results/benchmark_results_{timestamp}.json"
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = f"benchmark/results/benchmark_results_{timestamp}.json"
         Path(filepath).write_text(
             json.dumps(self.generate_summary(), indent=2, default=str),
             encoding="utf-8",
@@ -86,8 +91,8 @@ class BenchmarkReport:
     def save_markdown(self, filepath: str | Path = None) -> None:
         """Save the benchmark summary as a Markdown report."""
         if not filepath:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filepath = f"results/benchmark_results_{timestamp}.md"
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            filepath = f"benchmark/results/benchmark_results_{timestamp}.md"
         summary = self.generate_summary()
         sysinfo = self.system_info
 

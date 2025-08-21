@@ -2,7 +2,7 @@ from benchmark.profiler import Profiler
 from operators.video_hash_tmk import VideoHashTmk
 
 
-def benchmark():
+def benchmark() -> list[dict]:
     """Benchmark the VideoHashTmk operator."""
     test_data = [
         {"file": "test_videos/video1.mp4"},

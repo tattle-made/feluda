@@ -2,7 +2,7 @@ from benchmark.profiler import Profiler
 from operators.classify_video_zero_shot import VideoClassifier
 
 
-def benchmark():
+def benchmark() -> list[dict]:
     """Benchmark the VideoClassifier operator."""
     test_data = [
         {"file": "test/image1.jpg", "labels": ["label1", "label2"]},

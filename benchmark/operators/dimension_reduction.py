@@ -1,9 +1,11 @@
+import random
+
 from benchmark.data_generator import DataGenerator
 from benchmark.profiler import Profiler
 from operators.dimension_reduction import DimensionReduction
 
 
-def benchmark():
+def benchmark() -> list[dict]:
     """Benchmark the DimensionReduction operator."""
     results = []
 
@@ -18,18 +20,28 @@ def benchmark():
     for dataset_name, embeddings in test_datasets.items():
         print(f"Processing: {dataset_name} (shape: {embeddings.shape})")
 
-        # Test with different reduction methods
-        for method in ["tsne", "pca", "umap"]:
+        # Test with different reduction methods (only supported ones)
+        for method in ["tsne", "umap"]:
+            # Convert embeddings to the format expected by the operator
             runtime_kwargs = {
-                "embeddings": embeddings,
-                "method": method,
-                "n_components": 2,
+                "input_data": [
+                    {"payload": f"sample_{i}", "embedding": embedding.tolist()}
+                    for i, embedding in enumerate(embeddings)
+                ],
+            }
+
+            operator_kwargs = {
+                "model_type": method,
+                "params": {
+                    "n_components": random.randint(2, 3),
+                },
             }
 
             result = Profiler.benchmark_operator(
                 operator_class=DimensionReduction,
                 operator_name=f"dimension_reduction_{method}",
                 runtime_kwargs=runtime_kwargs,
+                operator_kwargs=operator_kwargs,
             )
 
             # Add dataset info to result
