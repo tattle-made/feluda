@@ -1,0 +1,272 @@
+{
+  "system_info": {
+    "platform": "macOS-15.6-arm64-arm-64bit-Mach-O",
+    "processor": "arm",
+    "cpu_count": 10,
+    "cpu_freq": {
+      "current": 4,
+      "min": 0,
+      "max": 4
+    },
+    "total_memory_gb": 16.0,
+    "python_version": "3.13.7",
+    "timestamp": "2025-08-22T00:34:11.788553"
+  },
+  "total_benchmarks": 8,
+  "results": [
+    {
+      "operator": "dimension_reduction_tsne",
+      "timestamp": "2025-08-22T00:34:11.883509",
+      "initialization": {
+        "time_seconds": 0.00020083299750695005,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 2.5234,
+        "cpu_time_seconds": 7.5966,
+        "memory_before_mb": 318.91,
+        "memory_after_mb": 336.75,
+        "memory_change_mb": 17.84,
+        "peak_memory_mb": 336.75
+      },
+      "cleanup": {
+        "time_seconds": 0.03707287500219536,
+        "memory_released_mb": 0.0
+      },
+      "status": "success",
+      "data_description": "small_500x512 - tsne",
+      "output_info": {
+        "method": "tsne",
+        "input_shape": [
+          500,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_umap",
+      "timestamp": "2025-08-22T00:34:14.448712",
+      "initialization": {
+        "time_seconds": 7.283300146809779e-05,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 4.3537,
+        "cpu_time_seconds": 2.5456,
+        "memory_before_mb": 341.55,
+        "memory_after_mb": 375.55,
+        "memory_change_mb": 34.0,
+        "peak_memory_mb": 375.55
+      },
+      "cleanup": {
+        "time_seconds": 0.04548708299989812,
+        "memory_released_mb": 0.0
+      },
+      "status": "success",
+      "data_description": "small_500x512 - umap",
+      "output_info": {
+        "method": "umap",
+        "input_shape": [
+          500,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_tsne",
+      "timestamp": "2025-08-22T00:34:18.860339",
+      "initialization": {
+        "time_seconds": 0.00011350000204402022,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 9.5611,
+        "cpu_time_seconds": 73.5612,
+        "memory_before_mb": 406.7,
+        "memory_after_mb": 460.58,
+        "memory_change_mb": 53.88,
+        "peak_memory_mb": 460.58
+      },
+      "cleanup": {
+        "time_seconds": 0.048616000000038184,
+        "memory_released_mb": 0.0
+      },
+      "status": "success",
+      "data_description": "medium_2000x512 - tsne",
+      "output_info": {
+        "method": "tsne",
+        "input_shape": [
+          2000,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_umap",
+      "timestamp": "2025-08-22T00:34:28.486301",
+      "initialization": {
+        "time_seconds": 0.00016025000149966218,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 4.7199,
+        "cpu_time_seconds": 2.762,
+        "memory_before_mb": 467.39,
+        "memory_after_mb": 507.41,
+        "memory_change_mb": 40.02,
+        "peak_memory_mb": 507.41
+      },
+      "cleanup": {
+        "time_seconds": 0.04250358299759682,
+        "memory_released_mb": 0.0
+      },
+      "status": "success",
+      "data_description": "medium_2000x512 - umap",
+      "output_info": {
+        "method": "umap",
+        "input_shape": [
+          2000,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_tsne",
+      "timestamp": "2025-08-22T00:34:33.284086",
+      "initialization": {
+        "time_seconds": 0.00018287499915459193,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 12.5821,
+        "cpu_time_seconds": 98.0406,
+        "memory_before_mb": 572.12,
+        "memory_after_mb": 546.09,
+        "memory_change_mb": -26.03,
+        "peak_memory_mb": 632.53
+      },
+      "cleanup": {
+        "time_seconds": 0.05567387499831966,
+        "memory_released_mb": -0.125
+      },
+      "status": "success",
+      "data_description": "large_5000x512 - tsne",
+      "output_info": {
+        "method": "tsne",
+        "input_shape": [
+          5000,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_umap",
+      "timestamp": "2025-08-22T00:34:45.965134",
+      "initialization": {
+        "time_seconds": 0.00017783299699658528,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 10.9316,
+        "cpu_time_seconds": 8.7779,
+        "memory_before_mb": 557.02,
+        "memory_after_mb": 565.39,
+        "memory_change_mb": 8.38,
+        "peak_memory_mb": 609.11
+      },
+      "cleanup": {
+        "time_seconds": 0.09350049999920884,
+        "memory_released_mb": -0.03125
+      },
+      "status": "success",
+      "data_description": "large_5000x512 - umap",
+      "output_info": {
+        "method": "umap",
+        "input_shape": [
+          5000,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_tsne",
+      "timestamp": "2025-08-22T00:34:57.068908",
+      "initialization": {
+        "time_seconds": 0.00012904100003652275,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 22.8094,
+        "cpu_time_seconds": 192.2966,
+        "memory_before_mb": 676.41,
+        "memory_after_mb": 821.25,
+        "memory_change_mb": 144.84,
+        "peak_memory_mb": 821.25
+      },
+      "cleanup": {
+        "time_seconds": 0.07857691600293037,
+        "memory_released_mb": 0.0
+      },
+      "status": "success",
+      "data_description": "xlarge_10000x512 - tsne",
+      "output_info": {
+        "method": "tsne",
+        "input_shape": [
+          10000,
+          512
+        ]
+      }
+    },
+    {
+      "operator": "dimension_reduction_umap",
+      "timestamp": "2025-08-22T00:35:20.059665",
+      "initialization": {
+        "time_seconds": 0.0001632919993426185,
+        "memory_change_mb": 0.0
+      },
+      "execution": {
+        "execution_time_seconds": 11.0648,
+        "cpu_time_seconds": 9.0731,
+        "memory_before_mb": 840.14,
+        "memory_after_mb": 886.42,
+        "memory_change_mb": 46.28,
+        "peak_memory_mb": 886.48
+      },
+      "cleanup": {
+        "time_seconds": 0.08379545900243102,
+        "memory_released_mb": 8.984375
+      },
+      "status": "success",
+      "data_description": "xlarge_10000x512 - umap",
+      "output_info": {
+        "method": "umap",
+        "input_shape": [
+          10000,
+          512
+        ]
+      }
+    }
+  ],
+  "statistics": {
+    "dimension_reduction_tsne": {
+      "avg_execution_time": 11.869,
+      "min_execution_time": 2.5234,
+      "max_execution_time": 22.8094,
+      "std_execution_time": 7.294989813906528,
+      "avg_memory_change": 47.6325,
+      "max_memory_peak": 821.25,
+      "total_runs": 4,
+      "success_rate": 1.0
+    },
+    "dimension_reduction_umap": {
+      "avg_execution_time": 7.7675,
+      "min_execution_time": 4.3537,
+      "max_execution_time": 11.0648,
+      "std_execution_time": 3.233636200162288,
+      "avg_memory_change": 32.17,
+      "max_memory_peak": 886.48,
+      "total_runs": 4,
+      "success_rate": 1.0
+    }
+  }
+}
