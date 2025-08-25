@@ -111,33 +111,35 @@ Generated: {sysinfo["timestamp"]}
 ## Operator Statistics
 """
 
+        # Operator statistics as a markdown table
+        md_content += "\n"
+        md_content += "| Operator | Total Runs | Success Rate (%) | Avg Time (s) | Min Time (s) | Max Time (s) | Std Time (s) | Avg Mem Change (MB) | Peak Mem (MB) |\n"
+        md_content += "|---|---:|---:|---:|---:|---:|---:|---:|---:|\n"
         for op_name, stats in sorted(summary["statistics"].items()):
-            md_content += f"""
-### {op_name}
+            md_content += (
+                f"| {op_name} | {stats['total_runs']} | {stats['success_rate'] * 100:.1f} | "
+                f"{stats['avg_execution_time']:.3f} | {stats['min_execution_time']:.3f} | {stats['max_execution_time']:.3f} | "
+                f"{stats.get('std_execution_time', 0.0):.3f} | {stats['avg_memory_change']:.2f} | {stats['max_memory_peak']:.2f} |\n"
+            )
 
-- Total Runs: {stats["total_runs"]}
-- Success Rate: {stats["success_rate"] * 100:.1f}%
-- Avg Execution Time: {stats["avg_execution_time"]:.3f}s
-- Min/Max Time: {stats["min_execution_time"]:.3f}s / {stats["max_execution_time"]:.3f}s
-- Avg Memory Change: {stats["avg_memory_change"]:.2f} MB
-- Peak Memory: {stats["max_memory_peak"]:.2f} MB
-"""
-
-        md_content += "\n## Detailed Results\n"
+        md_content += "\n## Detailed Results\n\n"
+        md_content += "| Operator | Data | Status | Exec Time (s) | Mem Change (MB) | Peak Mem (MB) | CPU Time (s) | Error |\n"
+        md_content += "|---|---|---|---:|---:|---:|---:|---|\n"
         for result in self.results:
-            md_content += f"""
-### {result["operator"]} - {result["data_description"]}
-"""
-            if result["status"] == "success":
+            operator = result.get("operator", "unknown")
+            data_desc = result.get("data_description", "-")
+            status = result.get("status", "unknown")
+            if status == "success":
                 exec_data = result["execution"]
-                md_content += f"""- Execution Time: {exec_data["execution_time_seconds"]:.3f}s
-- Memory Change: {exec_data["memory_change_mb"]:.2f} MB
-- Peak Memory: {exec_data["peak_memory_mb"]:.2f} MB
-- CPU Time: {exec_data["cpu_time_seconds"]:.3f}s
-"""
+                md_content += (
+                    f"| {operator} | {data_desc} | success | "
+                    f"{exec_data['execution_time_seconds']:.3f} | {exec_data['memory_change_mb']:.2f} | "
+                    f"{exec_data['peak_memory_mb']:.2f} | {exec_data['cpu_time_seconds']:.3f} |  |\n"
+                )
             else:
-                md_content += f"""- Status: Failed
-- Error: {result.get("error", "Unknown")}
-"""
+                error_msg = str(result.get("error", "Unknown"))
+                md_content += (
+                    f"| {operator} | {data_desc} | failed |  |  |  |  | {error_msg} |\n"
+                )
 
         Path(filepath).write_text(md_content, encoding="utf-8")
