@@ -1,5 +1,5 @@
 from . import (
-    classify_video_zero_shot,
+    # classify_video_zero_shot,
     cluster_embeddings,
     detect_lewd_images,
     detect_text_in_image_tesseract,
@@ -10,7 +10,7 @@ from . import (
 )
 
 all_operators = [
-    classify_video_zero_shot,
+    # classify_video_zero_shot,
     cluster_embeddings,
     detect_lewd_images,
     detect_text_in_image_tesseract,
