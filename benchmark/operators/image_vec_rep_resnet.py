@@ -1,12 +1,14 @@
+from benchmark.config import BENCHMARK_IMAGES
 from benchmark.profiler import Profiler
+from feluda.factory import ImageFactory
 from operators.image_vec_rep_resnet import ImageVecRepResnet
 
 
 def benchmark() -> list[dict]:
     """Benchmark the ImageVecRepResnet operator."""
     test_data = [
-        {"file": "test_images/image1.jpg"},
-        {"file": "test_images/image2.png"},
+        {"image": ImageFactory.make_from_file_on_disk_to_path(image)}
+        for image in BENCHMARK_IMAGES
     ]
 
     results = []
