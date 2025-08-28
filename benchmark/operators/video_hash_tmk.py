@@ -1,13 +1,11 @@
+from benchmark.config import BENCHMARK_VIDEOS
 from benchmark.profiler import Profiler
 from operators.video_hash_tmk import VideoHashTmk
 
 
 def benchmark() -> list[dict]:
     """Benchmark the VideoHashTmk operator."""
-    test_data = [
-        {"file": "test_videos/video1.mp4"},
-        {"file": "test_videos/video2.mp4"},
-    ]
+    test_data = [{"video_path": video_path} for video_path in BENCHMARK_VIDEOS]
 
     results = []
     for test_item in test_data:
