@@ -24,6 +24,11 @@ jobs:
           uv venv
           source .venv/bin/activate
           uv pip install ".[all]" ".[dev]"
+          uv pip install gdown
+      
+      - name: Download benchmark videos
+        run: |
+          gdown --folder "https://drive.google.com/drive/folders/1XozZbqSzJVzTD4QgGZNOR6U5U7_rf5O3" -O benchmark/videos
           
       - name: Run benchmarks
         run: |
@@ -43,3 +48,5 @@ jobs:
         run: |
           rm -rf ~/.cache/torch/hub
           rm -rf ~/.cache/huggingface/hub
+          rm -rf benchmark/videos
+          rm -rf benchmark/images
