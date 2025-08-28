@@ -10,8 +10,8 @@ def main():
         results = operator.benchmark()
         report.extend(results)
 
-    report.save_json()
-    report.save_markdown()
+        report.save_json()
+        report.save_markdown()
 
 
 if __name__ == "__main__":
