@@ -40,10 +40,7 @@ BENCHMARK_IMAGE_URLS = [
     "https://github.com/tattle-made/feluda_datasets/blob/main/feluda-sample-media/newspaper-clipings/news7.png",
 ]
 
-BENCHMARK_IMAGE_URLS = [
-    url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
-    for url in BENCHMARK_IMAGE_URLS
-]
+BENCHMARK_IMAGE_URLS = [url.replace("blob", "raw") for url in BENCHMARK_IMAGE_URLS]
 
 
 def get_benchmark_images() -> list[str]:
