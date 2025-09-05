@@ -1,0 +1,52 @@
+name: Benchmarks
+
+on:
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg tesseract-ocr tesseract-ocr-hin tesseract-ocr-tam tesseract-ocr-tel
+          
+      - name: Setup Python environment
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install ".[all]" ".[dev]"
+          uv pip install gdown
+      
+      - name: Download benchmark videos
+        run: |
+          gdown --folder "https://drive.google.com/drive/folders/1XozZbqSzJVzTD4QgGZNOR6U5U7_rf5O3" -O benchmark/videos
+          
+      - name: Run benchmarks
+        run: |
+          source .venv/bin/activate
+          cd benchmark
+          python main.py
+          
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results-${{ github.run_id }}
+          path: benchmark/results/
+          retention-days: 90
+          
+      - name: Cleanup caches
+        if: always()
+        run: |
+          rm -rf ~/.cache/torch/hub
+          rm -rf ~/.cache/huggingface/hub
+          rm -rf benchmark/videos
+          rm -rf benchmark/images

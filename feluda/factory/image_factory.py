@@ -35,12 +35,14 @@ class ImageFactory:
             raise Exception("Request has timed out")
 
     @staticmethod
-    def make_from_url_to_path(image_url: str) -> dict:
+    def make_from_url_to_path(image_url: str, image_path: str = None) -> dict:
         """Create an image object from a URL and save it to a path."""
-        temp_dir = tempfile.gettempdir()
-        temp_url = image_url.split("?", maxsplit=1)[0]
-        file_name = temp_url.split("/")[-1]
-        image_path = os.path.join(temp_dir, file_name)
+        if not image_path:
+            temp_dir = tempfile.gettempdir()
+            temp_url = image_url.split("?", maxsplit=1)[0]
+            file_name = temp_url.split("/")[-1]
+            image_path = os.path.join(temp_dir, file_name)
+
         try:
             print("Downloading image from URL")
             wget.download(image_url, out=image_path)

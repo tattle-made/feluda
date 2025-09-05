@@ -55,6 +55,10 @@ dev = [
     # docstring style checking
     "pydocstyle>=6.3.0",
     "docformatter>=0.6.0",
+    # benchmark dependencies
+    "psutil>=5.9.0",
+    "memory-profiler>=0.61.0",
+    "numpy>=1.26,<2.2.0",
 ]
 audio = ["pydub>=0.25.1", "wget>=3.2", "boto3>=1.38.42"]
 

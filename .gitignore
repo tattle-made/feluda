@@ -157,3 +157,5 @@ src/core/operators/cnn/panns_data
 
 # uv
 uv.lock
+benchmark/images/
+benchmark/videos/

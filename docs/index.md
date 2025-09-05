@@ -14,14 +14,12 @@ Feluda is a powerful, configurable engine designed for analyzing multi-lingual a
 - **Configurable**: Flexible configuration system
 - **Production Ready**: Built for real-world applications
 
-
 ```{toctree}
 :maxdepth: 1
 :caption: Getting Started
 
 install
 quickstart
-contributing
 ```
 
 ```{toctree}
@@ -37,4 +35,12 @@ api/operators
 :caption: Examples
 
 examples/README
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: Development
+
+benchmarking
+contributing
 ```
