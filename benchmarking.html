@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feluda Documentation &mdash; Feluda 0.9.4 documentation</title>
+  <title>Benchmarking &mdash; Feluda 0.9.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -25,7 +25,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="install.html" /> 
+    <link rel="next" title="Contributing to Feluda" href="contributing.html" />
+    <link rel="prev" title="Examples" href="examples/README.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,7 +37,7 @@
 
           
           
-          <a href="#" class="icon icon-home">
+          <a href="index.html" class="icon icon-home">
             Feluda
           </a>
 <div role="search">
@@ -307,36 +308,36 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/README.html">Examples</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#quick-start">Quick Start</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#run-all-benchmarks">Run All Benchmarks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#run-specific-operator">Run Specific Operator</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Benchmarking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#run-all-benchmarks">Run All Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-specific-operator">Run Specific Operator</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#system-components">System Components</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#profiler-engine">1. Profiler Engine</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#data-generator">2. Data Generator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#operator-benchmarks">3. Operator Benchmarks</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#report-generation">4. Report Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#system-components">System Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#profiler-engine">1. Profiler Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-generator">2. Data Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operator-benchmarks">3. Operator Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#report-generation">4. Report Generation</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#example-creating-a-new-benchmark">Example: Creating a New Benchmark</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#create-benchmark-file">1. Create Benchmark File</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#register-the-operator">2. Register the Operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-creating-a-new-benchmark">Example: Creating a New Benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-benchmark-file">1. Create Benchmark File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#register-the-operator">2. Register the Operator</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#performance-metrics">Performance Metrics</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#execution-metrics">Execution Metrics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#quality-metrics">Quality Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-metrics">Performance Metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#execution-metrics">Execution Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quality-metrics">Quality Metrics</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#understanding-results">Understanding Results</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#json-report-structure">JSON Report Structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="benchmarking.html#markdown-report">Markdown Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#understanding-results">Understanding Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#json-report-structure">JSON Report Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#markdown-report">Markdown Report</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarking.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to Feluda</a><ul>
@@ -374,17 +375,17 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">Feluda</a>
+          <a href="index.html">Feluda</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Feluda Documentation</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Benchmarking</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/benchmarking.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -392,48 +393,224 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="feluda-documentation">
-<h1>Feluda Documentation<a class="headerlink" href="#feluda-documentation" title="Link to this heading"></a></h1>
-<p>Welcome to the Feluda documentation! Feluda is a configurable engine for analysing multi-lingual and multi-modal content.</p>
-<section id="what-is-feluda">
-<h2>What is Feluda?<a class="headerlink" href="#what-is-feluda" title="Link to this heading"></a></h2>
-<p>Feluda is a powerful, configurable engine designed for analyzing multi-lingual and multi-modal content. It provides a flexible framework for processing text, images, audio, and video content with various operators.</p>
+  <section id="benchmarking">
+<h1>Benchmarking<a class="headerlink" href="#benchmarking" title="Link to this heading"></a></h1>
+<p>Feluda includes a benchmarking system that measures performance characteristics of all operators, helping developers optimize performance and maintain consistent standards.</p>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<section id="run-all-benchmarks">
+<h3>Run All Benchmarks<a class="headerlink" href="#run-all-benchmarks" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>benchmark
+python<span class="w"> </span>main.py
+</pre></div>
+</div>
+<p>Generates timestamped reports in <code class="docutils literal notranslate"><span class="pre">benchmark/results/</span></code>.</p>
 </section>
-<section id="key-features">
-<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<section id="run-specific-operator">
+<h3>Run Specific Operator<a class="headerlink" href="#run-specific-operator" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">cluster_embeddings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.report</span><span class="w"> </span><span class="kn">import</span> <span class="n">BenchmarkReport</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">cluster_embeddings</span><span class="o">.</span><span class="n">benchmark</span><span class="p">()</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">BenchmarkReport</span><span class="p">()</span>
+<span class="n">report</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">report</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="system-components">
+<h2>System Components<a class="headerlink" href="#system-components" title="Link to this heading"></a></h2>
+<section id="profiler-engine">
+<h3>1. Profiler Engine<a class="headerlink" href="#profiler-engine" title="Link to this heading"></a></h3>
+<p>Measures execution time, memory usage, and CPU time:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Profiler</span>
+
+<span class="c1"># Profile a function</span>
+<span class="nd">@Profiler</span><span class="o">.</span><span class="n">profile</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
+    <span class="c1"># Your code here</span>
+    <span class="k">pass</span>
+
+<span class="c1"># Benchmark an operator</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">Profiler</span><span class="o">.</span><span class="n">benchmark_operator</span><span class="p">(</span>
+    <span class="n">operator_class</span><span class="o">=</span><span class="n">MyOperator</span><span class="p">,</span>
+    <span class="n">operator_name</span><span class="o">=</span><span class="s2">&quot;my_operator&quot;</span><span class="p">,</span>
+    <span class="n">runtime_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;test_data&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Features:</strong></p>
 <ul class="simple">
-<li><p><strong>Multi-modal Support</strong>: Process text, images, audio, and video</p></li>
-<li><p><strong>Multi-lingual</strong>: Support for Indian languages and beyond</p></li>
-<li><p><strong>Modular Architecture</strong>: Easy to extend with custom operators</p></li>
-<li><p><strong>Configurable</strong>: Flexible configuration system</p></li>
-<li><p><strong>Production Ready</strong>: Built for real-world applications</p></li>
+<li><p>System information capture (CPU, memory, platform)</p></li>
+<li><p>Memory usage tracking with peak detection</p></li>
+<li><p>Wall clock and CPU time measurement</p></li>
 </ul>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
-</ul>
+</section>
+<section id="data-generator">
+<h3>2. Data Generator<a class="headerlink" href="#data-generator" title="Link to this heading"></a></h3>
+<p>Creates synthetic datasets for testing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.data_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataGenerator</span>
+
+<span class="c1"># Generate embeddings</span>
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">DataGenerator</span><span class="o">.</span><span class="n">generate_embeddings</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+
+<span class="c1"># Generate clustered data</span>
+<span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">DataGenerator</span><span class="o">.</span><span class="n">generate_embeddings_with_clusters</span><span class="p">(</span>
+    <span class="n">num_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">samples_per_cluster</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">512</span>
+<span class="p">)</span>
+
+<span class="c1"># Generate test images</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">DataGenerator</span><span class="o">.</span><span class="n">generate_test_images</span><span class="p">(</span><span class="s2">&quot;test_images/&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api/feluda.html">Feluda Core API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/operators.html">Operators API</a></li>
+<p><strong>Dataset Types:</strong></p>
+<ul class="simple">
+<li><p><strong>Embeddings</strong>: 100 to 100,000 samples, 256 to 2048 dimensions</p></li>
+<li><p><strong>Images</strong>: 128x128 to 4K resolutions, RGB/grayscale modes</p></li>
+<li><p><strong>Clustered Data</strong>: Known cluster structures for validation</p></li>
 </ul>
+</section>
+<section id="operator-benchmarks">
+<h3>3. Operator Benchmarks<a class="headerlink" href="#operator-benchmarks" title="Link to this heading"></a></h3>
+<p>Each operator has a dedicated benchmark:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">benchmark</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark the ClusterEmbeddings operator.&quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># Test with different dataset sizes</span>
+    <span class="k">for</span> <span class="n">n_clusters</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]:</span>
+        <span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">DataGenerator</span><span class="o">.</span><span class="n">generate_embeddings_with_clusters</span><span class="p">(</span>
+            <span class="n">num_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">samples_per_cluster</span><span class="o">=</span><span class="mi">200</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Profiler</span><span class="o">.</span><span class="n">benchmark_operator</span><span class="p">(</span>
+            <span class="n">operator_class</span><span class="o">=</span><span class="n">ClusterEmbeddings</span><span class="p">,</span>
+            <span class="n">operator_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;cluster_embeddings_</span><span class="si">{</span><span class="n">n_clusters</span><span class="si">}</span><span class="s2">clusters&quot;</span><span class="p">,</span>
+            <span class="n">runtime_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input_data&quot;</span><span class="p">:</span> <span class="n">embeddings</span><span class="p">}</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;data_description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n_clusters</span><span class="si">}</span><span class="s2"> clusters, 200 samples each&quot;</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/README.html">Examples</a></li>
-</ul>
+</section>
+<section id="report-generation">
+<h3>4. Report Generation<a class="headerlink" href="#report-generation" title="Link to this heading"></a></h3>
+<p>Creates comprehensive reports:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.report</span><span class="w"> </span><span class="kn">import</span> <span class="n">BenchmarkReport</span>
+
+<span class="n">report</span> <span class="o">=</span> <span class="n">BenchmarkReport</span><span class="p">()</span>
+<span class="n">report</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">benchmark_results</span><span class="p">)</span>
+<span class="n">report</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">)</span>
+<span class="n">report</span><span class="o">.</span><span class="n">save_markdown</span><span class="p">(</span><span class="s2">&quot;results.md&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="benchmarking.html">Benchmarking</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to Feluda</a></li>
+</section>
+</section>
+<section id="example-creating-a-new-benchmark">
+<h2>Example: Creating a New Benchmark<a class="headerlink" href="#example-creating-a-new-benchmark" title="Link to this heading"></a></h2>
+<section id="create-benchmark-file">
+<h3>1. Create Benchmark File<a class="headerlink" href="#create-benchmark-file" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># benchmark/operators/my_operator.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.data_generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">benchmark.profiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Profiler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operators.my_operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyOperator</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">benchmark</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Benchmark the MyOperator.&quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># Test configurations</span>
+    <span class="n">configs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;value1&quot;</span><span class="p">,</span> <span class="s2">&quot;param2&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;param1&quot;</span><span class="p">:</span> <span class="s2">&quot;value2&quot;</span><span class="p">,</span> <span class="s2">&quot;param2&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+    <span class="p">]</span>
+    
+    <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Profiler</span><span class="o">.</span><span class="n">benchmark_operator</span><span class="p">(</span>
+            <span class="n">operator_class</span><span class="o">=</span><span class="n">MyOperator</span><span class="p">,</span>
+            <span class="n">operator_name</span><span class="o">=</span><span class="s2">&quot;my_operator&quot;</span><span class="p">,</span>
+            <span class="n">runtime_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;test_data&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">}</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span><span class="p">[</span><span class="s2">&quot;data_description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;config: </span><span class="si">{</span><span class="n">config</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</section>
+<section id="register-the-operator">
+<h3>2. Register the Operator<a class="headerlink" href="#register-the-operator" title="Link to this heading"></a></h3>
+<p>Add to <code class="docutils literal notranslate"><span class="pre">benchmark/operators/__init__.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">my_operator</span>
+
+<span class="n">all_operators</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># ... existing operators</span>
+    <span class="n">my_operator</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="performance-metrics">
+<h2>Performance Metrics<a class="headerlink" href="#performance-metrics" title="Link to this heading"></a></h2>
+<section id="execution-metrics">
+<h3>Execution Metrics<a class="headerlink" href="#execution-metrics" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Execution Time</strong>: Total wall clock time</p></li>
+<li><p><strong>CPU Time</strong>: Actual CPU processing time</p></li>
+<li><p><strong>Memory Change</strong>: Net memory allocation/deallocation</p></li>
+<li><p><strong>Peak Memory</strong>: Maximum memory usage</p></li>
 </ul>
+</section>
+<section id="quality-metrics">
+<h3>Quality Metrics<a class="headerlink" href="#quality-metrics" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Success Rate</strong>: Percentage of successful runs</p></li>
+<li><p><strong>Error Details</strong>: Specific failure reasons</p></li>
+<li><p><strong>Consistency</strong>: Standard deviation of performance</p></li>
+</ul>
+</section>
+</section>
+<section id="understanding-results">
+<h2>Understanding Results<a class="headerlink" href="#understanding-results" title="Link to this heading"></a></h2>
+<section id="json-report-structure">
+<h3>JSON Report Structure<a class="headerlink" href="#json-report-structure" title="Link to this heading"></a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;system_info&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;platform&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;macOS-14.6.0-x86_64&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;cpu_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;total_memory_gb&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">16.0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">&quot;statistics&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;cluster_embeddings_kmeans&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;avg_execution_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.045</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;avg_memory_change&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">2.45</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;success_rate&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="markdown-report">
+<h3>Markdown Report<a class="headerlink" href="#markdown-report" title="Link to this heading"></a></h3>
+<p>Provides human-readable summaries with:</p>
+<ul class="simple">
+<li><p>System configuration details</p></li>
+<li><p>Per-operator performance statistics</p></li>
+<li><p>Success rates and error information</p></li>
+</ul>
+</section>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>psutil<span class="w"> </span>memory_profiler<span class="w"> </span>numpy<span class="w"> </span>pillow
+</pre></div>
 </div>
 </section>
 </section>
@@ -442,7 +619,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="install.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="examples/README.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing to Feluda" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
