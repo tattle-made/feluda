@@ -1,8 +1,8 @@
-# LewdImageDetector Operator
+# DetectLewdImages Operator
 
 ## Description
 
-The `LewdImageDetector` operator detects inappropriate or lewd content in images using the Bumble Private Detector model. It analyzes images and returns a probability score indicating the likelihood of inappropriate content being present. The operator is designed to help moderate content by identifying potentially problematic images.
+The `DetectLewdImages` operator detects inappropriate or lewd content in images using the Bumble Private Detector model. It analyzes images and returns a probability score indicating the likelihood of inappropriate content being present. The operator is designed to help moderate content by identifying potentially problematic images.
 
 ## Model Information
 
@@ -38,10 +38,10 @@ The `LewdImageDetector` operator detects inappropriate or lewd content in images
 
 ```python
 from feluda.factory import ImageFactory
-from operators.detect_lewd_images import LewdImageDetector
+from operators.detect_lewd_images import DetectLewdImages
 
 # Initialize the operator
-operator = LewdImageDetector()
+operator = DetectLewdImages()
 
 # Load an image
 image = ImageFactory.make_from_url_to_path("https://example.com/image.jpg")

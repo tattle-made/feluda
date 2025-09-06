@@ -10,7 +10,7 @@ from feluda import Operator
 from feluda.factory import ImageFactory
 
 
-class LewdImageDetector(Operator):
+class DetectLewdImages(Operator):
     """Operator to detect lewd images using the Bumble Private Detector model.
 
     This operator uses a pre-trained TensorFlow model to classify images
@@ -18,7 +18,7 @@ class LewdImageDetector(Operator):
     """
 
     def __init__(self) -> None:
-        """Initialize the LewdImageDetector class."""
+        """Initialize the DetectLewdImages class."""
         self.model = None
         self.setup_logging()
         self.load_model()

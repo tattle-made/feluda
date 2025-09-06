@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
-from image_vec_rep_resnet import ImageVecRepResnet
+from image_vec_rep import ImageVecRep
 from requests.exceptions import ConnectTimeout
 
 from feluda.factory import ImageFactory
@@ -11,7 +11,7 @@ from feluda.factory import ImageFactory
 @pytest.fixture(scope="session")
 def image_operator():
     """Fixture to provide image vector representation operator."""
-    return ImageVecRepResnet()
+    return ImageVecRep()
 
 
 @pytest.fixture(scope="session")

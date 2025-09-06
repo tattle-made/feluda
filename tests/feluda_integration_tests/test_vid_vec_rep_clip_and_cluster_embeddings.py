@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from cluster_embeddings import ClusterEmbeddings
-from vid_vec_rep_clip import VidVecRepClip
+from vid_vec_rep import VidVecRep
 
 from feluda.factory import VideoFactory
 
@@ -9,7 +9,7 @@ from feluda.factory import VideoFactory
 @pytest.fixture(scope="session")
 def video_operator():
     """Fixture to provide video vector representation operator."""
-    return VidVecRepClip()
+    return VidVecRep()
 
 
 @pytest.fixture(scope="session")

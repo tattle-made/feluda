@@ -19,10 +19,10 @@ Feluda uses operators to process different types of content. Here's a simple exa
 
 ```python
 from feluda.factory import ImageFactory
-from operators.image_vec_rep_resnet.image_vec_rep_resnet import ImageVecRepResnet
+from operators.image_vec_rep.image_vec_rep import ImageVecRep
 
 # Initialize the operator
-operator = ImageVecRepResnet()
+operator = ImageVecRep()
 
 # Load an image
 image_obj = ImageFactory.make_from_url("https://example.com/image.jpg")

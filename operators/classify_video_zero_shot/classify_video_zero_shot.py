@@ -13,11 +13,11 @@ from feluda import Operator
 from feluda.factory import VideoFactory
 
 
-class VideoClassifier(Operator):
+class ClassifyVideoZeroShot(Operator):
     """Operator to classify a video into given labels using CLIP-ViT-B-32 and a zero-shot approach."""
 
     def __init__(self) -> None:
-        """Initialize the `VideoClassifier` operator, loads the CLIP model and processor, and validates system dependencies."""
+        """Initialize the `ClassifyVideoZeroShot` operator, loads the CLIP model and processor, and validates system dependencies."""
         super().__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.validate_system()

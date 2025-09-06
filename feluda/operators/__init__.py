@@ -4,6 +4,8 @@ from feluda.operator import Operator
 
 
 def lazy_import(module_name: str, class_name: str) -> Any:
+    class_name = "".join(word.capitalize() for word in module_name.split("_"))
+
     def _import() -> Any:
         try:
             module = __import__(module_name, fromlist=[class_name])
@@ -26,46 +28,22 @@ def lazy_import(module_name: str, class_name: str) -> Any:
     return LazyLoader()
 
 
-VideoClassifier = lazy_import(
-    "classify_video_zero_shot",
-    "VideoClassifier",
-)
-ClusterEmbeddings = lazy_import(
-    "cluster_embeddings",
-    "ClusterEmbeddings",
-)
-LewdImageDetector = lazy_import(
-    "detect_lewd_images",
-    "LewdImageDetector",
-)
-ImageTextDetector = lazy_import(
-    "detect_text_in_image_tesseract",
-    "ImageTextDetector",
-)
-DimensionReduction = lazy_import(
-    "dimension_reduction",
-    "DimensionReduction",
-)
-ImageVecRepResnet = lazy_import(
-    "image_vec_rep_resnet",
-    "ImageVecRepResnet",
-)
-VidVecRepClip = lazy_import(
-    "vid_vec_rep_clip",
-    "VidVecRepClip",
-)
-VideoHashTmk = lazy_import(
-    "video_hash_tmk",
-    "VideoHashTmk",
-)
+ClassifyVideoZeroShot = lazy_import("classify_video_zero_shot")
+ClusterEmbeddings = lazy_import("cluster_embeddings")
+DetectLewdImages = lazy_import("detect_lewd_images")
+DetectTextInImage = lazy_import("detect_text_in_image")
+DimensionReduction = lazy_import("dimension_reduction")
+ImageVecRep = lazy_import("image_vec_rep")
+VidVecRep = lazy_import("vid_vec_rep")
+VideoHash = lazy_import("video_hash")
 
 __all__ = [
+    "ClassifyVideoZeroShot",
     "ClusterEmbeddings",
+    "DetectLewdImages",
+    "DetectTextInImage",
     "DimensionReduction",
-    "ImageTextDetector",
-    "ImageVecRepResnet",
-    "LewdImageDetector",
-    "VidVecRepClip",
-    "VideoClassifier",
-    "VideoHashTmk",
+    "ImageVecRep",
+    "VidVecRep",
+    "VideoHash",
 ]
