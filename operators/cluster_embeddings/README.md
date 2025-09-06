@@ -36,7 +36,7 @@ The `Cluster Embeddings` operator clusters high-dimensional embeddings into grou
 ## Usage
 
 ```python
-from operators.cluster_embeddings import ClusterEmbeddings
+from feluda.operators import ClusterEmbeddings
 
 # Initialize the operator
 operator = ClusterEmbeddings()

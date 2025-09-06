@@ -36,7 +36,7 @@ The `Dimension Reduction` operator reduces the dimensionality of high-dimensiona
 ## Usage
 
 ```python
-from operators.dimension_reduction.dimension_reduction import DimensionReduction
+from feluda.operators import DimensionReduction
 
 # Initialize with t-SNE
 operator = DimensionReduction("tsne", {

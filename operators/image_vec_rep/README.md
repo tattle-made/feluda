@@ -35,7 +35,7 @@ The `ImageVecRep-Resnet` operator extracts vector representations from images us
 
 ```python
 from feluda.factory import ImageFactory
-from operators.image_vec_rep.image_vec_rep import ImageVecRep
+from feluda.operators import ImageVecRep
 
 # Initialize the operator
 operator = ImageVecRep()

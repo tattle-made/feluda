@@ -43,7 +43,7 @@ The `VideoHash` operator generates perceptual hashes from video files using the 
 
 ```python
 from feluda.factory import VideoFactory
-from operators.video_hash import VideoHash
+from feluda.operators import VideoHash
 
 # Initialize the operator
 operator = VideoHash()

@@ -19,7 +19,7 @@ Feluda uses operators to process different types of content. Here's a simple exa
 
 ```python
 from feluda.factory import ImageFactory
-from operators.image_vec_rep.image_vec_rep import ImageVecRep
+from feluda.operators import ImageVecRep
 
 # Initialize the operator
 operator = ImageVecRep()

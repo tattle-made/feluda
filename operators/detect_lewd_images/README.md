@@ -38,7 +38,7 @@ The `DetectLewdImages` operator detects inappropriate or lewd content in images 
 
 ```python
 from feluda.factory import ImageFactory
-from operators.detect_lewd_images import DetectLewdImages
+from feluda.operators import DetectLewdImages
 
 # Initialize the operator
 operator = DetectLewdImages()

@@ -126,7 +126,7 @@ report.save_markdown("results.md")
 # benchmark/operators/my_operator.py
 from benchmark.data_generator import DataGenerator
 from benchmark.profiler import Profiler
-from operators.my_operator import MyOperator
+from feluda.operators import MyOperator
 
 def benchmark() -> list[dict]:
     """Benchmark the MyOperator."""

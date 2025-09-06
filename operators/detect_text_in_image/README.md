@@ -47,7 +47,7 @@ The `DetectTextInImage` operator extracts text from images using Tesseract OCR (
 
 ```python
 from feluda.factory import ImageFactory
-from operators.detect_text_in_image import DetectTextInImage
+from feluda.operators import DetectTextInImage
 
 # Initialize the operator
 operator = DetectTextInImage()

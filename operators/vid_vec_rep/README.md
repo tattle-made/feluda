@@ -48,7 +48,7 @@ The `VidVecRep` operator extracts vector representations from videos using the C
 
 ```python
 from feluda.factory import VideoFactory
-from operators.vid_vec_rep import VidVecRep
+from feluda.operators import VidVecRep
 
 # Initialize the operator
 operator = VidVecRep()
