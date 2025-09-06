@@ -96,7 +96,7 @@ def benchmark() -> list[dict]:
     test_data = [
         {"file": "test/image1.jpg", "labels": ["label1", "label2"]},
         {"file": "test/image2.jpg", "labels": ["label1", "label3"]},
-    ]      
+    ]
     for test_item in test_data:
         # Profile the operator for each test_item and add it to results.
         result = Profiler.benchmark_operator(
@@ -105,8 +105,8 @@ def benchmark() -> list[dict]:
             runtime_kwargs=test_item,
             operator_kwargs=
         )
-        
-        results.append(result)   
+
+        results.append(result)
     return results
 ```
 
@@ -166,7 +166,7 @@ Provides human-readable summaries with:
 pip install psutil memory_profiler numpy pillow
 ```
 
-or 
+or
 
 ```bash
 pip install feluda['dev']

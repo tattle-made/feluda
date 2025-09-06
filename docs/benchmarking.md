@@ -86,22 +86,22 @@ Each operator has a dedicated benchmark:
 def benchmark() -> list[dict]:
     """Benchmark the ClusterEmbeddings operator."""
     results = []
-    
+
     # Test with different dataset sizes
     for n_clusters in [3, 5, 10]:
         embeddings, labels = DataGenerator.generate_embeddings_with_clusters(
             num_clusters=n_clusters, samples_per_cluster=200
         )
-        
+
         result = Profiler.benchmark_operator(
             operator_class=ClusterEmbeddings,
             operator_name=f"cluster_embeddings_{n_clusters}clusters",
             runtime_kwargs={"input_data": embeddings}
         )
-        
+
         result["data_description"] = f"{n_clusters} clusters, 200 samples each"
         results.append(result)
-    
+
     return results
 ```
 
@@ -131,23 +131,23 @@ from operators.my_operator import MyOperator
 def benchmark() -> list[dict]:
     """Benchmark the MyOperator."""
     results = []
-    
+
     # Test configurations
     configs = [
         {"param1": "value1", "param2": 10},
         {"param1": "value2", "param2": 20}
     ]
-    
+
     for config in configs:
         result = Profiler.benchmark_operator(
             operator_class=MyOperator,
             operator_name="my_operator",
             runtime_kwargs={"input": "test_data", **config}
         )
-        
+
         result["data_description"] = f"config: {config}"
         results.append(result)
-    
+
     return results
 ```
 
