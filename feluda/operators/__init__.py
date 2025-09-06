@@ -3,7 +3,7 @@ from typing import Any
 from feluda.operator import Operator
 
 
-def lazy_import(module_name: str, class_name: str) -> Any:
+def lazy_import(module_name: str) -> Any:
     class_name = "".join(word.capitalize() for word in module_name.split("_"))
 
     def _import() -> Any:
