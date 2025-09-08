@@ -56,10 +56,10 @@ operators :
   label : "Operators"
   parameters :
     - name : "Video Vector Representation"
-      type : "vid_vec_rep_clip"
+      type : "vid_vec_rep"
       parameters: {}
     - name : "Image Vector Representation"
-      type : "image_vec_rep_resnet"
+      type : "image_vec_rep"
       parameters: {}
 ```
 
@@ -82,7 +82,7 @@ feluda = Feluda(config_path)
 feluda.setup()
 
 # Access an operator and run a task
-operator = feluda.operators.get()["vid_vec_rep_clip"]
+operator = feluda.operators.get()["vid_vec_rep"]
 result = operator.run("path/to/example.mp4")
 print(result)
 ```

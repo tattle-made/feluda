@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from classify_video_zero_shot import VideoClassifier
+from classify_video_zero_shot import ClassifyVideoZeroShot
 
 from feluda.factory import VideoFactory
 
@@ -8,7 +8,7 @@ from feluda.factory import VideoFactory
 @pytest.fixture(scope="session")
 def video_classifier_operator():
     """Fixture to provide video zero-shot classifier operator."""
-    return VideoClassifier()
+    return ClassifyVideoZeroShot()
 
 
 @pytest.fixture(scope="session")

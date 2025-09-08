@@ -1,3 +1,3 @@
-from .classify_video_zero_shot import VideoClassifier
+from .classify_video_zero_shot import ClassifyVideoZeroShot
 
-__all__ = ["VideoClassifier"]
+__all__ = ["ClassifyVideoZeroShot"]

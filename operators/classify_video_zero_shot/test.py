@@ -2,12 +2,12 @@ import pytest
 
 from feluda.factory import VideoFactory
 
-from .classify_video_zero_shot import VideoClassifier
+from .classify_video_zero_shot import ClassifyVideoZeroShot
 
 
 @pytest.fixture(scope="module")
 def operator():
-    return VideoClassifier()
+    return ClassifyVideoZeroShot()
 
 
 def test_sample_video_from_url(operator):
@@ -37,7 +37,7 @@ def test_sample_video_from_disk(operator):
 def test_initialization_ffmpeg_not_found(monkeypatch):
     monkeypatch.setattr("shutil.which", lambda _: None)
     with pytest.raises(RuntimeError, match="FFmpeg is not installed"):
-        VideoClassifier()
+        ClassifyVideoZeroShot()
 
 
 def test_run_invalid_file_object(operator):

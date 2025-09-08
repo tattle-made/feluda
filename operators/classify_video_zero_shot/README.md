@@ -44,10 +44,10 @@ The `Classify Video Zero Shot` operator classifies a video into user-provided la
 
 ```python
 from feluda.factory import VideoFactory
-from operators.classify_video_zero_shot import VideoClassifier
+from feluda.operators import ClassifyVideoZeroShot
 
 # Initialize the operator
-operator = VideoClassifier()
+operator = ClassifyVideoZeroShot()
 
 # Load a video
 video_url = (
