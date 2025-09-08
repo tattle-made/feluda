@@ -1,9 +1,9 @@
-```{include} ../../../operators/video_hash_tmk/README.md
+```{include} ../../../operators/video_hash/README.md
 :parser: myst_parser.sphinx_
 ```
 
 ```{eval-rst}
-.. autoclass:: operators.video_hash_tmk.video_hash_tmk.VideoHasher
+.. autoclass:: operators.video_hash.video_hash.VideoHash
    :members:
    :undoc-members:
    :show-inheritance:

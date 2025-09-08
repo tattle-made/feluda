@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LewdImageDetector Operator &mdash; Feluda 0.9.4 documentation</title>
+  <title>DetectLewdImages Operator &mdash; Feluda 0.9.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -25,8 +25,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="DetectTextInImageTesseract Operator" href="detect_text_in_image_tesseract.html" />
-    <link rel="prev" title="ImageVecRep-Resnet Operator" href="image_vec_rep_resnet.html" /> 
+    <link rel="next" title="Classify Video Zero Shot Operator" href="classify_video_zero_shot.html" />
+    <link rel="prev" title="Operators API" href="../operators.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -213,57 +213,13 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="../operators.html">Operators API</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="image_vec_rep_resnet.html">ImageVecRep-Resnet Operator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="image_vec_rep_resnet.html#description">Description</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image_vec_rep_resnet.html#model-information">Model Information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image_vec_rep_resnet.html#system-dependencies">System Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image_vec_rep_resnet.html#how-to-run-the-tests">How to Run the Tests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="image_vec_rep_resnet.html#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="image_vec_rep_resnet.html#operators.image_vec_rep_resnet.image_vec_rep_resnet.ImageVecRepResnet"><code class="docutils literal notranslate"><span class="pre">ImageVecRepResnet</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">LewdImageDetector Operator</a><ul>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DetectLewdImages Operator</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#model-information">Model Information</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-tests">How to Run the Tests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#output-format">Output Format</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="detect_text_in_image_tesseract.html">DetectTextInImageTesseract Operator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#description">Description</a></li>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#model-information">Model Information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#system-dependencies">System Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#operator-dependencies">Operator Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#how-to-run-the-tests">How to Run the Tests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#usage">Usage</a></li>
-<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image_tesseract.html#configuration">Configuration</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="vid_vec_rep_clip.html">VidVecRepClip Operator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#description">Description</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#model-information">Model Information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#system-dependencies">System Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#operator-dependencies">Operator Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#how-to-run-the-tests">How to Run the Tests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="vid_vec_rep_clip.html#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="vid_vec_rep_clip.html#operators.vid_vec_rep_clip.vid_vec_rep_clip.VidVecRepClip"><code class="docutils literal notranslate"><span class="pre">VidVecRepClip</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="video_hash_tmk.html">VideoHashTmk Operator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="video_hash_tmk.html#description">Description</a></li>
-<li class="toctree-l3"><a class="reference internal" href="video_hash_tmk.html#model-information">Model Information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="video_hash_tmk.html#dependencies">Dependencies</a></li>
-<li class="toctree-l3"><a class="reference internal" href="video_hash_tmk.html#how-to-run-the-tests">How to Run the Tests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="video_hash_tmk.html#usage">Usage</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="video_hash_tmk.html#using-the-class-based-operator-recommended">Using the Class-based Operator (Recommended)</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="classify_video_zero_shot.html">Classify Video Zero Shot Operator</a><ul>
@@ -273,7 +229,7 @@
 <li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#operator-dependencies">Operator Dependencies</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#how-to-run-the-tests">How to Run the Tests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#usage-example">Usage Example</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="classify_video_zero_shot.html#operators.classify_video_zero_shot.classify_video_zero_shot.VideoClassifier"><code class="docutils literal notranslate"><span class="pre">VideoClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="classify_video_zero_shot.html#operators.classify_video_zero_shot.classify_video_zero_shot.ClassifyVideoZeroShot"><code class="docutils literal notranslate"><span class="pre">ClassifyVideoZeroShot</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -384,7 +340,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../operators.html">Operators API</a></li>
-      <li class="breadcrumb-item active">LewdImageDetector Operator</li>
+      <li class="breadcrumb-item active">DetectLewdImages Operator</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/api/operators/detect_lewd_images.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -394,11 +350,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="lewdimagedetector-operator">
-<h1>LewdImageDetector Operator<a class="headerlink" href="#lewdimagedetector-operator" title="Link to this heading"></a></h1>
+  <section id="detectlewdimages-operator">
+<h1>DetectLewdImages Operator<a class="headerlink" href="#detectlewdimages-operator" title="Link to this heading"></a></h1>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">LewdImageDetector</span></code> operator detects inappropriate or lewd content in images using the Bumble Private Detector model. It analyzes images and returns a probability score indicating the likelihood of inappropriate content being present. The operator is designed to help moderate content by identifying potentially problematic images.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">DetectLewdImages</span></code> operator detects inappropriate or lewd content in images using the Bumble Private Detector model. It analyzes images and returns a probability score indicating the likelihood of inappropriate content being present. The operator is designed to help moderate content by identifying potentially problematic images.</p>
 </section>
 <section id="model-information">
 <h2>Model Information<a class="headerlink" href="#model-information" title="Link to this heading"></a></h2>
@@ -438,10 +394,10 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">feluda.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageFactory</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">operators.detect_lewd_images</span><span class="w"> </span><span class="kn">import</span> <span class="n">LewdImageDetector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">feluda.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectLewdImages</span>
 
 <span class="c1"># Initialize the operator</span>
-<span class="n">operator</span> <span class="o">=</span> <span class="n">LewdImageDetector</span><span class="p">()</span>
+<span class="n">operator</span> <span class="o">=</span> <span class="n">DetectLewdImages</span><span class="p">()</span>
 
 <span class="c1"># Load an image</span>
 <span class="n">image</span> <span class="o">=</span> <span class="n">ImageFactory</span><span class="o">.</span><span class="n">make_from_url_to_path</span><span class="p">(</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="p">)</span>
@@ -470,8 +426,8 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="image_vec_rep_resnet.html" class="btn btn-neutral float-left" title="ImageVecRep-Resnet Operator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="detect_text_in_image_tesseract.html" class="btn btn-neutral float-right" title="DetectTextInImageTesseract Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../operators.html" class="btn btn-neutral float-left" title="Operators API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="classify_video_zero_shot.html" class="btn btn-neutral float-right" title="Classify Video Zero Shot Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

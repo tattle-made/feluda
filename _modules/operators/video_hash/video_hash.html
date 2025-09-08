@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>operators.cluster_embeddings.cluster_embeddings &mdash; Feluda 0.9.4 documentation</title>
+  <title>operators.video_hash.video_hash &mdash; Feluda 0.9.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
@@ -337,7 +337,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
-      <li class="breadcrumb-item active">operators.cluster_embeddings.cluster_embeddings</li>
+      <li class="breadcrumb-item active">operators.video_hash.video_hash</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -346,184 +346,189 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for operators.cluster_embeddings.cluster_embeddings</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">AffinityPropagation</span><span class="p">,</span> <span class="n">AgglomerativeClustering</span><span class="p">,</span> <span class="n">KMeans</span>
+  <h1>Source code for operators.video_hash.video_hash</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">wget</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">feluda</span><span class="w"> </span><span class="kn">import</span> <span class="n">Operator</span>
 
-<span class="n">RANDOM_STATE</span> <span class="o">=</span> <span class="mi">50</span>
 
+<div class="viewcode-block" id="VideoHash">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoHash</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Operator to hash video files using the TMK+PDQF binary.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ClusterEmbeddings">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ClusterEmbeddings</span><span class="p">(</span><span class="n">Operator</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Operator to cluster embeddings using KMeans, Affinity Propagation, and</span>
-<span class="sd">    Agglomerative clustering algorithms.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="ClusterEmbeddings.__init__">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.__init__">[docs]</a>
+<div class="viewcode-block" id="VideoHash.__init__">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the `ClusterEmbeddings` operator.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">payloads</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modality</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="kc">None</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the VideoHash operator.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ffmpeg_path</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_binary</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate_system</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="ClusterEmbeddings.gen_data">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.gen_data">[docs]</a>
+<div class="viewcode-block" id="VideoHash.setup_binary">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.setup_binary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup_binary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download and setup the TMK binary.&quot;&quot;&quot;</span>
+        <span class="n">TMK_BINARY_URL</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/tattle-made/feluda/releases/download/third-party-models/tmk-hash-video&quot;</span>
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">()</span>
+
+        <span class="n">binary_name</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;tmk-hash-video.exe&quot;</span> <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Windows&quot;</span> <span class="k">else</span> <span class="s2">&quot;tmk-hash-video&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">binary_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading TMK binary to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">wget</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">TMK_BINARY_URL</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Windows&quot;</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span><span class="p">,</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRWXU</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to download TMK binary: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+
+
+<div class="viewcode-block" id="VideoHash.validate_system">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.validate_system">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">gen_data</span><span class="p">(</span><span class="n">payloads</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate formatted output data.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            payloads (list): List of payloads</span>
-<span class="sd">            labels (np.ndarray): An array of cluster labels</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict: A dictionary mapping cluster labels to corresponding array of payloads</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">payload</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">payloads</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cluster_</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
-                <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_system</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate that required system dependencies are available.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;ffmpeg&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;FFmpeg is not installed or not found in system PATH. &quot;</span>
+                <span class="s2">&quot;Please install FFmpeg to use this operator.&quot;</span>
+            <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ClusterEmbeddings.kmeans">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.kmeans">[docs]</a>
+<div class="viewcode-block" id="VideoHash.extract_pure_average_feature">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.extract_pure_average_feature">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">kmeans</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cluster embeddings using KMeans.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_pure_average_feature</span><span class="p">(</span><span class="n">tmk_data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the pure average feature from TMK binary data.&quot;&quot;&quot;</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">tmk_data</span><span class="p">)</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            matrix (list[list]): list of embeddings</span>
-<span class="sd">            n_clusters (int): number of clusters</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            numpy.ndarray: An array of cluster labels for each embedding</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ClusterEmbeddings.agglomerative">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.agglomerative">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">agglomerative</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cluster embeddings using Agglomerative Clustering.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            matrix (list[list]): list of embeddings</span>
-<span class="sd">            n_clusters (int): number of clusters</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            numpy.ndarray: An array of cluster labels for each embedding</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">AgglomerativeClustering</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ClusterEmbeddings.affinity_propagation">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.affinity_propagation">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">affinity_propagation</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cluster embeddings using Affinity Propagation.</span>
-
-<span class="sd">        (Used if the number of clusters is unknown).</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            matrix (list[list]): list of embeddings</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            numpy.ndarray: An array of cluster labels for each embedding</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">AffinityPropagation</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">RANDOM_STATE</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ClusterEmbeddings.run">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">n_clusters</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">modality</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run the operator.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            input_data (list[dict]): List of data with each dictionary containing `embedding` and `payload` properties</span>
-<span class="sd">            n_clusters (int, optional): Number of clusters. Defaults to None</span>
-<span class="sd">            modality (str, optional): Source modality of embeddings. Defaults to None</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict: A dictionary mapping cluster labels to corresponding array of payloads</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">modality</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="s2">&quot;video&quot;</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Modality must be specified and should be either `audio` or `video`.&quot;</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modality</span> <span class="o">=</span> <span class="n">modality</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">input_data</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;input_data must be a non-empty list of dicts.&quot;</span><span class="p">)</span>
-
-        <span class="c1"># Parse data:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">payloads</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
-                <span class="o">*</span><span class="p">[(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;payload&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">input_data</span><span class="p">],</span>
-                <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid data. Each data point in input must have `embedding` and `payload` properties. Missing key: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="n">project_magic</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+            <span class="n">file_type_magic</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+            <span class="n">_frame_feature_algorithm_magic</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Delegate appropriate clustering algorithm for the given params:</span>
-        <span class="k">if</span> <span class="n">n_clusters</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_clusters</span><span class="p">)</span>  <span class="c1"># cast it to int</span>
-            <span class="k">if</span> <span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;audio&quot;</span><span class="p">:</span>
-                <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmeans</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">modality</span> <span class="o">==</span> <span class="s2">&quot;video&quot;</span><span class="p">:</span>
-                <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">agglomerative</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">project_magic</span> <span class="o">!=</span> <span class="s2">&quot;TMK1&quot;</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Invalid modality. Modality should be either `audio` or `video`.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid project magic: </span><span class="si">{</span><span class="n">project_magic</span><span class="si">}</span><span class="s2">, expected TMK1&quot;</span>
                 <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">affinity_propagation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_data</span><span class="p">(</span><span class="n">payloads</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">payloads</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="n">file_type_magic</span> <span class="o">!=</span> <span class="s2">&quot;FVEC&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid file type magic: </span><span class="si">{</span><span class="n">file_type_magic</span><span class="si">}</span><span class="s2">, expected FVEC&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">_frames_per_second</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">num_periods</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">num_fourier_coefficients</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">frame_feature_dimension</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">_frame_feature_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># Skip periods and fourier coefficients arrays</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">num_periods</span><span class="p">)</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">num_fourier_coefficients</span><span class="p">)</span>
+
+            <span class="c1"># Read the pure average feature</span>
+            <span class="n">pure_average_feature</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span>
+                <span class="s2">&quot;f&quot;</span> <span class="o">*</span> <span class="n">frame_feature_dimension</span><span class="p">,</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">frame_feature_dimension</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">pure_average_feature</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="ne">UnicodeDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid TMK data format: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
-<div class="viewcode-block" id="ClusterEmbeddings.cleanup">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.cleanup">[docs]</a>
+<div class="viewcode-block" id="VideoHash.hash_video">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.hash_video">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hash_video</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Hash a video file using TMK and return the pure average feature.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.tmk&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp_hash_file</span><span class="p">:</span>
+            <span class="n">temp_hash_path</span> <span class="o">=</span> <span class="n">temp_hash_file</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span><span class="p">,</span>
+                <span class="s2">&quot;-f&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ffmpeg_path</span><span class="p">,</span>
+                <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
+                <span class="n">video_path</span><span class="p">,</span>
+                <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+                <span class="n">temp_hash_path</span><span class="p">,</span>
+                <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_hash_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">tmk_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                <span class="n">pure_average_feature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_pure_average_feature</span><span class="p">(</span><span class="n">tmk_data</span><span class="p">)</span>
+                <span class="n">feature_bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span>
+                    <span class="s2">&quot;f&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pure_average_feature</span><span class="p">),</span> <span class="o">*</span><span class="n">pure_average_feature</span>
+                <span class="p">)</span>
+                <span class="n">base64_hash</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">feature_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">hash</span> <span class="o">=</span> <span class="n">base64_hash</span>
+
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;TMK binary failed to process video </span><span class="si">{</span><span class="n">video_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing TMK file for </span><span class="si">{</span><span class="n">video_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_hash_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_hash_path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VideoHash.run">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a perceptual hash for the given video file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">video_path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;video_path must be a string&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">video_path</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;video_path cannot be empty&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">video_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Video file not found: </span><span class="si">{</span><span class="n">video_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hash_video</span><span class="p">(</span><span class="n">video_path</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span></div>
+
+
+<div class="viewcode-block" id="VideoHash.cleanup">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.cleanup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean up resources used by the operator.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">payloads</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">modality</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="kc">None</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean up any resources used by the operator.&quot;&quot;&quot;</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="ClusterEmbeddings.state">
-<a class="viewcode-back" href="../../../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings.state">[docs]</a>
+<div class="viewcode-block" id="VideoHash.state">
+<a class="viewcode-back" href="../../../api/operators/video_hash_tmk.html#operators.video_hash.video_hash.VideoHash.state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current state of the operator.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict: State of the operator</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the internal state of the operator.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;modality&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modality</span><span class="p">,</span>
-            <span class="s2">&quot;n_clusters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">,</span>
-            <span class="s2">&quot;matrix&quot;</span><span class="p">:</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">],</span>
-            <span class="s2">&quot;payloads&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">payloads</span><span class="p">,</span>
+            <span class="s2">&quot;tmk_binary_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmk_binary_path</span><span class="p">,</span>
+            <span class="s2">&quot;ffmpeg_path&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffmpeg_path</span><span class="p">,</span>
+            <span class="s2">&quot;hash&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span>
         <span class="p">}</span></div>
 </div>
 
