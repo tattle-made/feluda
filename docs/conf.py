@@ -45,7 +45,7 @@ templates_path = ["_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "examples/*.ipynb"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -91,6 +91,7 @@ autodoc_mock_imports = [
     "seaborn",
     "pandas",
     "tesseract",
+    "pytesseract",
     "tqdm",
     # Additional ML/AI libraries
     "umap",
@@ -325,6 +326,9 @@ autodoc_mock_imports = [
 
 nb_execution_mode = "off"
 nb_execution_timeout = 300
+
+# Suppress highlighting warnings for shell commands in notebooks
+suppress_warnings = ["misc.highlighting_failure"]
 # -- Options for intersphinx -------------------------------------------------
 
 intersphinx_mapping = {

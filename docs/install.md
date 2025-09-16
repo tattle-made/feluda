@@ -71,6 +71,6 @@ print(feluda.__version__)
 
 ## Getting Help
 
-- Check the [examples](examples/) for usage patterns
+- Check the [examples](examples/README) for usage patterns
 - Review the [API documentation](api/feluda) for detailed information
 - Open an issue on [GitHub](https://github.com/tattle-made/feluda/issues) for bugs.
