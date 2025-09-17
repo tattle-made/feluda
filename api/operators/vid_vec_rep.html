@@ -1,0 +1,683 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VidVecRep Operator &mdash; Feluda 0.9.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=c5ca06ca"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=30646c52"></script>
+      <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="VideoHash Operator" href="video_hash.html" />
+    <link rel="prev" title="DetectTextInImage Operator" href="detect_text_in_image.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Feluda
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#optional-dependencies">Optional Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#audio-processing">Audio Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#video-processing">Video Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#image-processing">Image Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#all-dependencies">All Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#development-installation">Development Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../install.html#development-dependencies">Development Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#verification">Verification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../install.html#getting-help">Getting Help</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#basic-usage">Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../quickstart.html#import-and-initialize">1. Import and Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../quickstart.html#using-operators">2. Using Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../feluda.html">Feluda Core API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../feluda.html#module-feluda.feluda">Main Feluda Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.feluda.Feluda"><code class="docutils literal notranslate"><span class="pre">Feluda</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.feluda.Feluda.__init__"><code class="docutils literal notranslate"><span class="pre">Feluda.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../feluda.html#module-feluda.config">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters"><code class="docutils literal notranslate"><span class="pre">StoreESParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters.host_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.host_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters.image_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.image_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters.text_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.text_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters.video_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.video_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters.audio_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.audio_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreESParameters.__init__"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.StorePostgresParameters"><code class="docutils literal notranslate"><span class="pre">StorePostgresParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StorePostgresParameters.table_names"><code class="docutils literal notranslate"><span class="pre">StorePostgresParameters.table_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StorePostgresParameters.__init__"><code class="docutils literal notranslate"><span class="pre">StorePostgresParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.StoreEntity"><code class="docutils literal notranslate"><span class="pre">StoreEntity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreEntity.label"><code class="docutils literal notranslate"><span class="pre">StoreEntity.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreEntity.type"><code class="docutils literal notranslate"><span class="pre">StoreEntity.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreEntity.parameters"><code class="docutils literal notranslate"><span class="pre">StoreEntity.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreEntity.__init__"><code class="docutils literal notranslate"><span class="pre">StoreEntity.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.StoreConfig"><code class="docutils literal notranslate"><span class="pre">StoreConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreConfig.entities"><code class="docutils literal notranslate"><span class="pre">StoreConfig.entities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.StoreConfig.__init__"><code class="docutils literal notranslate"><span class="pre">StoreConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.QueueParameters"><code class="docutils literal notranslate"><span class="pre">QueueParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueParameters.host_name"><code class="docutils literal notranslate"><span class="pre">QueueParameters.host_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueParameters.queues"><code class="docutils literal notranslate"><span class="pre">QueueParameters.queues</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueParameters.__init__"><code class="docutils literal notranslate"><span class="pre">QueueParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.QueueConfig"><code class="docutils literal notranslate"><span class="pre">QueueConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueConfig.label"><code class="docutils literal notranslate"><span class="pre">QueueConfig.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueConfig.type"><code class="docutils literal notranslate"><span class="pre">QueueConfig.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueConfig.parameters"><code class="docutils literal notranslate"><span class="pre">QueueConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.QueueConfig.__init__"><code class="docutils literal notranslate"><span class="pre">QueueConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.ServerParameters"><code class="docutils literal notranslate"><span class="pre">ServerParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.ServerParameters.port"><code class="docutils literal notranslate"><span class="pre">ServerParameters.port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.ServerParameters.type"><code class="docutils literal notranslate"><span class="pre">ServerParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.ServerParameters.__init__"><code class="docutils literal notranslate"><span class="pre">ServerParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.ServerConfig"><code class="docutils literal notranslate"><span class="pre">ServerConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.ServerConfig.label"><code class="docutils literal notranslate"><span class="pre">ServerConfig.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.ServerConfig.parameters"><code class="docutils literal notranslate"><span class="pre">ServerConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.ServerConfig.__init__"><code class="docutils literal notranslate"><span class="pre">ServerConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.OperatorParameters"><code class="docutils literal notranslate"><span class="pre">OperatorParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorParameters.name"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorParameters.type"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorParameters.parameters"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorParameters.__init__"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.OperatorConfig"><code class="docutils literal notranslate"><span class="pre">OperatorConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorConfig.label"><code class="docutils literal notranslate"><span class="pre">OperatorConfig.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorConfig.parameters"><code class="docutils literal notranslate"><span class="pre">OperatorConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.OperatorConfig.__init__"><code class="docutils literal notranslate"><span class="pre">OperatorConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.Config.store"><code class="docutils literal notranslate"><span class="pre">Config.store</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.Config.queue"><code class="docutils literal notranslate"><span class="pre">Config.queue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.Config.server"><code class="docutils literal notranslate"><span class="pre">Config.server</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.Config.operators"><code class="docutils literal notranslate"><span class="pre">Config.operators</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.config.Config.__init__"><code class="docutils literal notranslate"><span class="pre">Config.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.config.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../feluda.html#module-feluda.operator">Base Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.operator.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.operator.Operator.__init__"><code class="docutils literal notranslate"><span class="pre">Operator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.operator.Operator.run"><code class="docutils literal notranslate"><span class="pre">Operator.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.operator.Operator.cleanup"><code class="docutils literal notranslate"><span class="pre">Operator.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.operator.Operator.state"><code class="docutils literal notranslate"><span class="pre">Operator.state()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../feluda.html#module-feluda.logger">Logger</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#feluda.logger.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.logger.Logger.__init__"><code class="docutils literal notranslate"><span class="pre">Logger.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.logger.Logger.info"><code class="docutils literal notranslate"><span class="pre">Logger.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.logger.Logger.debug"><code class="docutils literal notranslate"><span class="pre">Logger.debug()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.logger.Logger.exception"><code class="docutils literal notranslate"><span class="pre">Logger.exception()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.logger.Logger.prettyprint"><code class="docutils literal notranslate"><span class="pre">Logger.prettyprint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.logger.Logger.error"><code class="docutils literal notranslate"><span class="pre">Logger.error()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../feluda.html#factory-modules">Factory Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#module-feluda.factory.audio_factory">Audio Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.factory.audio_factory.AudioFactory"><code class="docutils literal notranslate"><span class="pre">AudioFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#module-feluda.factory.image_factory">Image Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.factory.image_factory.ImageFactory"><code class="docutils literal notranslate"><span class="pre">ImageFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#module-feluda.factory.s3_factory">S3 Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.factory.s3_factory.S3Factory"><code class="docutils literal notranslate"><span class="pre">S3Factory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#module-feluda.factory.text_factory">Text Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.factory.text_factory.TextFactory"><code class="docutils literal notranslate"><span class="pre">TextFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../feluda.html#module-feluda.factory.video_factory">Video Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../feluda.html#feluda.factory.video_factory.VideoFactory"><code class="docutils literal notranslate"><span class="pre">VideoFactory</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../operators.html">Operators API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="image_vec_rep.html">ImageVecRep-Resnet Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="image_vec_rep.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image_vec_rep.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image_vec_rep.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image_vec_rep.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image_vec_rep.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="image_vec_rep.html#operators.image_vec_rep.image_vec_rep.ImageVecRep"><code class="docutils literal notranslate"><span class="pre">ImageVecRep</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="detect_lewd_images.html">DetectLewdImages Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_lewd_images.html#output-format">Output Format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="detect_text_in_image.html">DetectTextInImage Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="detect_text_in_image.html#configuration">Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="detect_text_in_image.html#operators.detect_text_in_image.detect_text_in_image.DetectTextInImage"><code class="docutils literal notranslate"><span class="pre">DetectTextInImage</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">VidVecRep Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep"><code class="docutils literal notranslate"><span class="pre">VidVecRep</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="video_hash.html">VideoHash Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="video_hash.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="video_hash.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="video_hash.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="video_hash.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="video_hash.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="video_hash.html#using-the-class-based-operator-recommended">Using the Class-based Operator (Recommended)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classify_video_zero_shot.html">Classify Video Zero Shot Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="classify_video_zero_shot.html#usage-example">Usage Example</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="classify_video_zero_shot.html#operators.classify_video_zero_shot.classify_video_zero_shot.ClassifyVideoZeroShot"><code class="docutils literal notranslate"><span class="pre">ClassifyVideoZeroShot</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cluster_embeddings.html">Cluster Embeddings Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cluster_embeddings.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cluster_embeddings.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cluster_embeddings.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cluster_embeddings.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cluster_embeddings.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings"><code class="docutils literal notranslate"><span class="pre">ClusterEmbeddings</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dimension_reduction.html">Dimension Reduction Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dimension_reduction.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dimension_reduction.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dimension_reduction.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dimension_reduction.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dimension_reduction.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="dimension_reduction.html#operators.dimension_reduction.dimension_reduction.DimensionReduction"><code class="docutils literal notranslate"><span class="pre">DimensionReduction</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/README.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/classify_video_zero_shot.html">Zero-Shot Video Classification with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/compare_video_hashes.html">Compare Perceptual Similarity between two Videos with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/detect_lewd_images.html">Detect Lewd Content in Images with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/find_text_in_newspaper.html">Detect Text in Newspaper Images with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/plot_cluster_images.html">Image Embedding Clustering with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/plot_cluster_videos.html">Video Embedding Clustering with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/plot_tsne_videos.html">Visualizing Video Embeddings with Feluda and t-SNE</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarking.html">Benchmarking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#quick-start">Quick Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#run-all-benchmarks">Run All Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#run-specific-operator">Run Specific Operator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#system-components">System Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#profiler-engine">1. Profiler Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#data-generator">2. Data Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#operator-benchmarks">3. Operator Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#report-generation">4. Report Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#example-creating-a-new-benchmark">Example: Creating a New Benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#create-benchmark-file">1. Create Benchmark File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#register-the-operator">2. Register the Operator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#performance-metrics">Performance Metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#execution-metrics">Execution Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#quality-metrics">Quality Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#understanding-results">Understanding Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#json-report-structure">JSON Report Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarking.html#markdown-report">Markdown Report</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarking.html#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to Feluda</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#development-setup">Development Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#development-guidelines">Development Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#code-style">Code Style</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#testing">Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#adding-new-operators">Adding New Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#updating-documentation">Updating Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#building-documentation">Building Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#pull-request-process">Pull Request Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#pull-request-guidelines">Pull Request Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#reporting-issues">Reporting Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#code-of-conduct">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#questions">Questions?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Feluda Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../README.html#building-the-documentation">Building the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../README.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../README.html#build-commands">Build Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../README.html#viewing-the-documentation">Viewing the Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../README.html#documentation-structure">Documentation Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../README.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../README.html#adding-new-documentation">Adding New Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../README.html#adding-api-documentation">Adding API Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../README.html#adding-examples">Adding Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../README.html#adding-general-pages">Adding General Pages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Feluda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../operators.html">Operators API</a></li>
+      <li class="breadcrumb-item active">VidVecRep Operator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/operators/vid_vec_rep.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="vidvecrep-operator">
+<h1>VidVecRep Operator<a class="headerlink" href="#vidvecrep-operator" title="Link to this heading"></a></h1>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">VidVecRep</span></code> operator extracts vector representations from videos using the CLIP-ViT-B-32 model. It works by extracting I-frames (keyframes) from a video file using FFmpeg, then generating a 512-dimensional feature vector for each frame using the CLIP model. The operator yields both the average vector for the video and vectors for each I-frame.</p>
+</section>
+<section id="model-information">
+<h2>Model Information<a class="headerlink" href="#model-information" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Model</strong>: <a class="reference external" href="https://huggingface.co/openai/clip-vit-base-patch32">CLIP ViT-B/32</a></p></li>
+<li><p><strong>Source</strong>: OpenAI, via HuggingFace Transformers</p></li>
+<li><p><strong>Vector Size</strong>: 512</p></li>
+<li><p><strong>Usage</strong>: The model is used to generate embeddings for video frames, enabling downstream tasks such as video similarity, clustering, and zero-shot classification.</p></li>
+</ul>
+</section>
+<section id="system-dependencies">
+<h2>System Dependencies<a class="headerlink" href="#system-dependencies" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Python &gt;= 3.10</p></li>
+<li><p>FFmpeg</p>
+<ul>
+<li><p>On Windows, you have two methods -</p>
+<ol class="arabic simple">
+<li><p>Download from <a class="reference external" href="https://ffmpeg.org/download.html">ffmpeg.org</a> and add to PATH.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">winget</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code> from an elevated powershell. (Make sure you have winget installed first)</p></li>
+</ol>
+</li>
+<li><p>On Linux/macOS, install via your package manager (e.g., <code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">install</span> <span class="pre">ffmpeg</span></code>).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="operator-dependencies">
+<h2>Operator Dependencies<a class="headerlink" href="#operator-dependencies" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>PyTorch &gt;= 2.6.0</p></li>
+<li><p>Torchvision &gt;= 0.21.0</p></li>
+<li><p>Transformers &gt;= 4.51.1</p></li>
+<li><p>Pillow &gt;= 11.1.0</p></li>
+</ul>
+</section>
+<section id="how-to-run-the-tests">
+<h2>How to Run the Tests<a class="headerlink" href="#how-to-run-the-tests" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Ensure that you are in the root directory of the <code class="docutils literal notranslate"><span class="pre">feluda</span></code> project.</p></li>
+<li><p>Install dependencies (in your virtual environment):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;./operators/vid_vec_rep&quot;</span>
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;feluda[dev]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Ensure FFmpeg is installed and available in your PATH.</p></li>
+<li><p>Run the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>operators/vid_vec_rep/test.py
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">feluda.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VideoFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">feluda.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">VidVecRep</span>
+
+<span class="c1"># Initialize the operator</span>
+<span class="n">operator</span> <span class="o">=</span> <span class="n">VidVecRep</span><span class="p">()</span>
+
+<span class="c1"># Load a video</span>
+<span class="n">video</span> <span class="o">=</span> <span class="n">VideoFactory</span><span class="o">.</span><span class="n">make_from_file_on_disk</span><span class="p">(</span><span class="s2">&quot;example.mp4&quot;</span><span class="p">)</span>
+
+<span class="c1"># Extract features</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">video</span><span class="p">,</span> <span class="n">remove_after_processing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="c1"># Cleanup</span>
+<span class="n">operator</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">operators.vid_vec_rep.vid_vec_rep.</span></span><span class="sig-name descname"><span class="pre">VidVecRep</span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../feluda.html#feluda.operator.Operator" title="feluda.operator.Operator"><code class="xref py py-class docutils literal notranslate"><span class="pre">Operator</span></code></a></p>
+<p>Operator to extract video vector representations using CLIP-ViT-B-32.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the <cite>VidVecRep</cite> class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.load_model">
+<span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.load_model" title="Link to this definition"></a></dt>
+<dd><p>Load the CLIP model and processor onto the specified device.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.validate_system">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_system</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.validate_system"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.validate_system" title="Link to this definition"></a></dt>
+<dd><p>Validate that required system dependencies are available.</p>
+<p>Checks if FFmpeg is installed and accessible in the system PATH.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.get_mean_feature">
+<span class="sig-name descname"><span class="pre">get_mean_feature</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.get_mean_feature"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.get_mean_feature" title="Link to this definition"></a></dt>
+<dd><p>Compute the mean feature vector from the feature matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mean feature vector</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.analyze">
+<span class="sig-name descname"><span class="pre">analyze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.analyze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.analyze" title="Link to this definition"></a></dt>
+<dd><p>Analyze the video file and extract features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the video file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.extract_frames">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extract_frames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">PIL.Image.Image</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.extract_frames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.extract_frames" title="Link to this definition"></a></dt>
+<dd><p>Extract I-frames from the video file using <cite>ffmpeg</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the video file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of PIL Images</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.extract_features">
+<span class="sig-name descname"><span class="pre">extract_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.extract_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.extract_features" title="Link to this definition"></a></dt>
+<dd><p>Extract features from a list of images using pre-trained CLIP-ViT-B-32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>images</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of PIL Images</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Feature matrix of shape (batch, 512)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.gendata">
+<span class="sig-name descname"><span class="pre">gendata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.gendata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.gendata" title="Link to this definition"></a></dt>
+<dd><p>Yield video vector representations from the <cite>VidVecRep</cite> prototype.</p>
+<dl class="field-list">
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>dict</em> –</p>
+<dl class="simple">
+<dt>A dictionary containing:</dt><dd><ul class="simple">
+<li><p><cite>vid_vec</cite> (list): Vector representation</p></li>
+<li><p><cite>is_avg</cite> (bool): A flag indicating whether the vector is the average vector or a I-frame vector</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../feluda.html#feluda.factory.video_factory.VideoFactory" title="feluda.factory.video_factory.VideoFactory"><span class="pre">VideoFactory</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_after_processing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.run" title="Link to this definition"></a></dt>
+<dd><p>Run the operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <cite>VideoFactory</cite> file object</p></li>
+<li><p><strong>remove_after_processing</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to remove the file after processing</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Yields video and I-frame vector representations</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.cleanup" title="Link to this definition"></a></dt>
+<dd><p>Cleans up resources used by the operator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="operators.vid_vec_rep.vid_vec_rep.VidVecRep.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/operators/vid_vec_rep/vid_vec_rep.html#VidVecRep.state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#operators.vid_vec_rep.vid_vec_rep.VidVecRep.state" title="Link to this definition"></a></dt>
+<dd><p>Returns the current state of the operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>State of the operator</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="detect_text_in_image.html" class="btn btn-neutral float-left" title="DetectTextInImage Operator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="video_hash.html" class="btn btn-neutral float-right" title="VideoHash Operator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tattle.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

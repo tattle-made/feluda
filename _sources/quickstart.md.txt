@@ -39,5 +39,5 @@ operator.cleanup()
 ## Next Steps
 
 - Explore the [API documentation](api/feluda) for detailed information
-- Check out the [examples](examples/) for more complex use cases
+- Check out the [examples](examples/README) for more complex use cases
 - Learn about [contributing](contributing/) to the project

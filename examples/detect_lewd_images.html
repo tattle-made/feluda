@@ -1,0 +1,564 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detect Lewd Content in Images with Feluda &mdash; Feluda 0.9.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=c5ca06ca"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=30646c52"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Detect Text in Newspaper Images with Feluda" href="find_text_in_newspaper.html" />
+    <link rel="prev" title="Compare Perceptual Similarity between two Videos with Feluda" href="compare_video_hashes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Feluda
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#basic-installation">Basic Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#optional-dependencies">Optional Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../install.html#audio-processing">Audio Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../install.html#video-processing">Video Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../install.html#image-processing">Image Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../install.html#all-dependencies">All Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#development-installation">Development Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../install.html#development-dependencies">Development Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#verification">Verification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html#getting-help">Getting Help</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#basic-usage">Basic Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#import-and-initialize">1. Import and Initialize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#using-operators">2. Using Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/feluda.html">Feluda Core API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/feluda.html#module-feluda.feluda">Main Feluda Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.feluda.Feluda"><code class="docutils literal notranslate"><span class="pre">Feluda</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.feluda.Feluda.__init__"><code class="docutils literal notranslate"><span class="pre">Feluda.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/feluda.html#module-feluda.config">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters"><code class="docutils literal notranslate"><span class="pre">StoreESParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters.host_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.host_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters.image_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.image_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters.text_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.text_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters.video_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.video_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters.audio_index_name"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.audio_index_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreESParameters.__init__"><code class="docutils literal notranslate"><span class="pre">StoreESParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.StorePostgresParameters"><code class="docutils literal notranslate"><span class="pre">StorePostgresParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StorePostgresParameters.table_names"><code class="docutils literal notranslate"><span class="pre">StorePostgresParameters.table_names</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StorePostgresParameters.__init__"><code class="docutils literal notranslate"><span class="pre">StorePostgresParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreEntity"><code class="docutils literal notranslate"><span class="pre">StoreEntity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreEntity.label"><code class="docutils literal notranslate"><span class="pre">StoreEntity.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreEntity.type"><code class="docutils literal notranslate"><span class="pre">StoreEntity.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreEntity.parameters"><code class="docutils literal notranslate"><span class="pre">StoreEntity.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreEntity.__init__"><code class="docutils literal notranslate"><span class="pre">StoreEntity.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreConfig"><code class="docutils literal notranslate"><span class="pre">StoreConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreConfig.entities"><code class="docutils literal notranslate"><span class="pre">StoreConfig.entities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.StoreConfig.__init__"><code class="docutils literal notranslate"><span class="pre">StoreConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueParameters"><code class="docutils literal notranslate"><span class="pre">QueueParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueParameters.host_name"><code class="docutils literal notranslate"><span class="pre">QueueParameters.host_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueParameters.queues"><code class="docutils literal notranslate"><span class="pre">QueueParameters.queues</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueParameters.__init__"><code class="docutils literal notranslate"><span class="pre">QueueParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueConfig"><code class="docutils literal notranslate"><span class="pre">QueueConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueConfig.label"><code class="docutils literal notranslate"><span class="pre">QueueConfig.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueConfig.type"><code class="docutils literal notranslate"><span class="pre">QueueConfig.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueConfig.parameters"><code class="docutils literal notranslate"><span class="pre">QueueConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.QueueConfig.__init__"><code class="docutils literal notranslate"><span class="pre">QueueConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerParameters"><code class="docutils literal notranslate"><span class="pre">ServerParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerParameters.port"><code class="docutils literal notranslate"><span class="pre">ServerParameters.port</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerParameters.type"><code class="docutils literal notranslate"><span class="pre">ServerParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerParameters.__init__"><code class="docutils literal notranslate"><span class="pre">ServerParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerConfig"><code class="docutils literal notranslate"><span class="pre">ServerConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerConfig.label"><code class="docutils literal notranslate"><span class="pre">ServerConfig.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerConfig.parameters"><code class="docutils literal notranslate"><span class="pre">ServerConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.ServerConfig.__init__"><code class="docutils literal notranslate"><span class="pre">ServerConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorParameters"><code class="docutils literal notranslate"><span class="pre">OperatorParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorParameters.name"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorParameters.type"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorParameters.parameters"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorParameters.__init__"><code class="docutils literal notranslate"><span class="pre">OperatorParameters.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorConfig"><code class="docutils literal notranslate"><span class="pre">OperatorConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorConfig.label"><code class="docutils literal notranslate"><span class="pre">OperatorConfig.label</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorConfig.parameters"><code class="docutils literal notranslate"><span class="pre">OperatorConfig.parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.OperatorConfig.__init__"><code class="docutils literal notranslate"><span class="pre">OperatorConfig.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.Config.store"><code class="docutils literal notranslate"><span class="pre">Config.store</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.Config.queue"><code class="docutils literal notranslate"><span class="pre">Config.queue</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.Config.server"><code class="docutils literal notranslate"><span class="pre">Config.server</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.Config.operators"><code class="docutils literal notranslate"><span class="pre">Config.operators</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.config.Config.__init__"><code class="docutils literal notranslate"><span class="pre">Config.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.config.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/feluda.html#module-feluda.operator">Base Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.operator.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.operator.Operator.__init__"><code class="docutils literal notranslate"><span class="pre">Operator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.operator.Operator.run"><code class="docutils literal notranslate"><span class="pre">Operator.run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.operator.Operator.cleanup"><code class="docutils literal notranslate"><span class="pre">Operator.cleanup()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.operator.Operator.state"><code class="docutils literal notranslate"><span class="pre">Operator.state()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/feluda.html#module-feluda.logger">Logger</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger.__init__"><code class="docutils literal notranslate"><span class="pre">Logger.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger.info"><code class="docutils literal notranslate"><span class="pre">Logger.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger.debug"><code class="docutils literal notranslate"><span class="pre">Logger.debug()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger.exception"><code class="docutils literal notranslate"><span class="pre">Logger.exception()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger.prettyprint"><code class="docutils literal notranslate"><span class="pre">Logger.prettyprint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.logger.Logger.error"><code class="docutils literal notranslate"><span class="pre">Logger.error()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/feluda.html#factory-modules">Factory Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#module-feluda.factory.audio_factory">Audio Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.factory.audio_factory.AudioFactory"><code class="docutils literal notranslate"><span class="pre">AudioFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#module-feluda.factory.image_factory">Image Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.factory.image_factory.ImageFactory"><code class="docutils literal notranslate"><span class="pre">ImageFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#module-feluda.factory.s3_factory">S3 Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.factory.s3_factory.S3Factory"><code class="docutils literal notranslate"><span class="pre">S3Factory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#module-feluda.factory.text_factory">Text Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.factory.text_factory.TextFactory"><code class="docutils literal notranslate"><span class="pre">TextFactory</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/feluda.html#module-feluda.factory.video_factory">Video Factory</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/feluda.html#feluda.factory.video_factory.VideoFactory"><code class="docutils literal notranslate"><span class="pre">VideoFactory</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/operators.html">Operators API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/image_vec_rep.html">ImageVecRep-Resnet Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/image_vec_rep.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/image_vec_rep.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/image_vec_rep.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/image_vec_rep.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/image_vec_rep.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/image_vec_rep.html#operators.image_vec_rep.image_vec_rep.ImageVecRep"><code class="docutils literal notranslate"><span class="pre">ImageVecRep</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/detect_lewd_images.html">DetectLewdImages Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_lewd_images.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_lewd_images.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_lewd_images.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_lewd_images.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_lewd_images.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_lewd_images.html#output-format">Output Format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/detect_text_in_image.html">DetectTextInImage Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/detect_text_in_image.html#configuration">Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/detect_text_in_image.html#operators.detect_text_in_image.detect_text_in_image.DetectTextInImage"><code class="docutils literal notranslate"><span class="pre">DetectTextInImage</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/vid_vec_rep.html">VidVecRep Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/vid_vec_rep.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/vid_vec_rep.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/vid_vec_rep.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/vid_vec_rep.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/vid_vec_rep.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/vid_vec_rep.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/vid_vec_rep.html#operators.vid_vec_rep.vid_vec_rep.VidVecRep"><code class="docutils literal notranslate"><span class="pre">VidVecRep</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/video_hash.html">VideoHash Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/video_hash.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/video_hash.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/video_hash.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/video_hash.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/video_hash.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/video_hash.html#using-the-class-based-operator-recommended">Using the Class-based Operator (Recommended)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html">Classify Video Zero Shot Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#system-dependencies">System Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#operator-dependencies">Operator Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#usage-example">Usage Example</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/classify_video_zero_shot.html#operators.classify_video_zero_shot.classify_video_zero_shot.ClassifyVideoZeroShot"><code class="docutils literal notranslate"><span class="pre">ClassifyVideoZeroShot</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/cluster_embeddings.html">Cluster Embeddings Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/cluster_embeddings.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/cluster_embeddings.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/cluster_embeddings.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/cluster_embeddings.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/cluster_embeddings.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/cluster_embeddings.html#operators.cluster_embeddings.cluster_embeddings.ClusterEmbeddings"><code class="docutils literal notranslate"><span class="pre">ClusterEmbeddings</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/operators/dimension_reduction.html">Dimension Reduction Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/dimension_reduction.html#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/dimension_reduction.html#model-information">Model Information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/dimension_reduction.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/dimension_reduction.html#how-to-run-the-tests">How to Run the Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/operators/dimension_reduction.html#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/operators/dimension_reduction.html#operators.dimension_reduction.dimension_reduction.DimensionReduction"><code class="docutils literal notranslate"><span class="pre">DimensionReduction</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="README.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="classify_video_zero_shot.html">Zero-Shot Video Classification with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compare_video_hashes.html">Compare Perceptual Similarity between two Videos with Feluda</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Detect Lewd Content in Images with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="find_text_in_newspaper.html">Detect Text in Newspaper Images with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_cluster_images.html">Image Embedding Clustering with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_cluster_videos.html">Video Embedding Clustering with Feluda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_tsne_videos.html">Visualizing Video Embeddings with Feluda and t-SNE</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarking.html">Benchmarking</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../benchmarking.html#quick-start">Quick Start</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#run-all-benchmarks">Run All Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#run-specific-operator">Run Specific Operator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../benchmarking.html#system-components">System Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#profiler-engine">1. Profiler Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#data-generator">2. Data Generator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#operator-benchmarks">3. Operator Benchmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#report-generation">4. Report Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../benchmarking.html#example-creating-a-new-benchmark">Example: Creating a New Benchmark</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#create-benchmark-file">1. Create Benchmark File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#register-the-operator">2. Register the Operator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../benchmarking.html#performance-metrics">Performance Metrics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#execution-metrics">Execution Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#quality-metrics">Quality Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../benchmarking.html#understanding-results">Understanding Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#json-report-structure">JSON Report Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../benchmarking.html#markdown-report">Markdown Report</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../benchmarking.html#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to Feluda</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#development-setup">Development Setup</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#development-guidelines">Development Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#code-style">Code Style</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#testing">Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#adding-new-operators">Adding New Operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#updating-documentation">Updating Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#building-documentation">Building Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#pull-request-process">Pull Request Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#pull-request-guidelines">Pull Request Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#reporting-issues">Reporting Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#code-of-conduct">Code of Conduct</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#license">License</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#questions">Questions?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">Feluda Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../README.html#building-the-documentation">Building the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../README.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../README.html#build-commands">Build Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../README.html#viewing-the-documentation">Viewing the Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../README.html#documentation-structure">Documentation Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../README.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../README.html#adding-new-documentation">Adding New Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../README.html#adding-api-documentation">Adding API Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../README.html#adding-examples">Adding Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../README.html#adding-general-pages">Adding General Pages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Feluda</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="README.html">Examples</a></li>
+      <li class="breadcrumb-item active">Detect Lewd Content in Images with Feluda</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/detect_lewd_images.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="detect-lewd-content-in-images-with-feluda">
+<h1>Detect Lewd Content in Images with Feluda<a class="headerlink" href="#detect-lewd-content-in-images-with-feluda" title="Link to this heading"></a></h1>
+<p>This notebook demonstrates how to use the <code class="docutils literal notranslate"><span class="pre">DetectLewdImages</span></code> operator to analyze
+images for inappropriate content. It processes a sample image and displays the
+probability score indicating likelihood of lewd content.</p>
+<p><a class="reference external" href="https://github.com/tattle-made/feluda/blob/main/docs/examples/detect_lewd_images.ipynb"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-View%20Source-blue?logo=github" /></a>  <a class="reference external" href="https://colab.research.google.com/github/tattle-made/feluda/blob/main/docs/examples/detect_lewd_images.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p>Install dependencies conditionally based on whether the notebook is running in Colab or locally.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">&quot;google.colab&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running Notebook in Google Colab&quot;</span> <span class="k">if</span> <span class="n">IN_COLAB</span> <span class="k">else</span> <span class="s2">&quot;Running Notebook locally&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="c1"># Since Google Colab has preinstalled libraries like tensorflow and numba, we create a folder called feluda_custom_venv and isolate the environment there.</span>
+    <span class="c1"># This is done to avoid any conflicts with the preinstalled libraries.</span>
+    <span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">uv</span>
+    <span class="err">!</span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">content</span><span class="o">/</span><span class="n">feluda_custom_venv</span>
+    <span class="err">!</span><span class="n">uv</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">target</span><span class="o">=/</span><span class="n">content</span><span class="o">/</span><span class="n">feluda_custom_venv</span> <span class="o">--</span><span class="n">prerelease</span> <span class="n">allow</span> <span class="n">feluda</span> <span class="n">feluda</span><span class="o">-</span><span class="n">detect</span><span class="o">-</span><span class="n">lewd</span><span class="o">-</span><span class="n">images</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;/content/feluda_custom_venv&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="err">!</span><span class="n">uv</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">feluda</span> <span class="n">feluda</span><span class="o">-</span><span class="n">detect_lewd</span><span class="o">-</span><span class="n">images</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Running Notebook locally
+<span class=" -Color -Color-Faint">Using Python 3.10.12 environment at: /home/aatman/Aatman/Tattle/feluda/.venv</span>
+<span class=" -Color -Color-Faint">Audited </span><span class=" -Color -Color-Bold -Color-Bold-Faint">6 packages</span> <span class=" -Color -Color-Faint">in 11ms</span>
+CPU times: user 6.38 ms, sys: 4.13 ms, total: 10.5 ms
+Wall time: 138 ms
+</pre></div>
+</div>
+</div>
+</div>
+<p>We’ll use one operator for this example.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">feluda.factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">feluda.operators</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetectLewdImages</span>
+
+<span class="n">detector</span> <span class="o">=</span> <span class="n">DetectLewdImages</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "e23195e656ce427cb7e29e1258de042f", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">IMAGE_URL</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/tattle-made/feluda_datasets/blob/main/feluda-sample-media/people.jpg&quot;</span>
+
+<span class="n">raw_url</span> <span class="o">=</span> <span class="n">IMAGE_URL</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/blob/&quot;</span><span class="p">,</span> <span class="s2">&quot;/raw/&quot;</span><span class="p">)</span>
+
+<span class="c1"># Download image using ImageFactory</span>
+<span class="n">image_obj</span> <span class="o">=</span> <span class="n">ImageFactory</span><span class="o">.</span><span class="n">make_from_url_to_path</span><span class="p">(</span><span class="n">raw_url</span><span class="p">)</span>
+
+<span class="c1"># Analyze image for inappropriate content</span>
+<span class="c1"># Returns probability score (0.0 to 1.0) indicating likelihood of lewd content</span>
+<span class="n">probability</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">image_obj</span><span class="p">,</span> <span class="n">remove_after_processing</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading image from URL
+
+Image downloaded
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the below codeblock, we are predicting the probability of lewd content present in an image using the <code class="docutils literal notranslate"><span class="pre">feluda-detect-lewd-images</span></code> operator. The operator uses the Private Detector model from Bumble.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Lewd content probability: </span><span class="si">{</span><span class="n">probability</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Interpret the result</span>
+<span class="k">if</span> <span class="n">probability</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result: SAFE - Low probability of inappropriate content&quot;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">probability</span> <span class="o">&lt;</span> <span class="mf">0.7</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result: MODERATE - Medium probability of inappropriate content&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Result: UNSAFE - High probability of inappropriate content&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Lewd content probability: 0.0543
+Result: SAFE - Low probability of inappropriate content
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clean up resources when you&#39;re done</span>
+
+<span class="n">detector</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="compare_video_hashes.html" class="btn btn-neutral float-left" title="Compare Perceptual Similarity between two Videos with Feluda" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="find_text_in_newspaper.html" class="btn btn-neutral float-right" title="Detect Text in Newspaper Images with Feluda" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tattle.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
