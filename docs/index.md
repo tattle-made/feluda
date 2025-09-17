@@ -43,4 +43,5 @@ examples/README
 
 benchmarking
 contributing
+README
 ```
