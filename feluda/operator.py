@@ -1,23 +1,21 @@
-import importlib
-import logging
-
-from feluda.config import OperatorConfig
-
-log = logging.getLogger(__name__)
+from abc import ABC, abstractmethod
 
 
-class Operator:
-    def __init__(self, config: OperatorConfig):
-        self.active_operators = {}
-        self.operators = config.parameters
+class Operator(ABC):
+    """Base class for all operators in the Feluda framework."""
 
-    def setup(self):
-        for operator in self.operators:
-            log.info(operator.type)
-            module_path = f"{operator.type}"
-            module = importlib.import_module(module_path)
-            module.initialize(operator.parameters)
-            self.active_operators[operator.type] = module
+    def __init__(self) -> None:
+        """Initialize the operator."""
+        super().__init__()
 
-    def get(self):
-        return self.active_operators
+    @abstractmethod
+    def run(self, file_path: str, *args, **kwargs):
+        """Execute main logic."""
+
+    @abstractmethod
+    def cleanup(self) -> None:
+        """Clean up any resources or memory."""
+
+    @abstractmethod
+    def state(self) -> dict:
+        """Return internal state."""

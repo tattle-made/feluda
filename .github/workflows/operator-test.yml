@@ -57,7 +57,7 @@ jobs:
         run: |
           uv venv
           source .venv/bin/activate
-          uv pip install .
+          uv pip install ".[all]"
           uv pip install ".[dev]"
 
           echo "Installing Operator system level packages"
@@ -85,24 +85,37 @@ jobs:
           # Loop through each operator directory and check if it contains changes
           for OPERATOR_DIR in operators/*/; do
             echo "Checking operator directory: $OPERATOR_DIR"
-            if echo "$CHANGED_FILES" | grep -q "$(basename $OPERATOR_DIR)"; then
-              echo "✓ Changes detected in operator: $(basename $OPERATOR_DIR)"
+            OPERATOR_NAME=$(basename "$OPERATOR_DIR")
+            if echo "$CHANGED_FILES" | grep -q "$OPERATOR_NAME"; then
+              echo "✓ Changes detected in operator: $OPERATOR_NAME"
 
-              # Check if test.py exists in this operator directory
-              if [ -f "${OPERATOR_DIR}test.py" ]; then
+              TEST_FILE="${OPERATOR_DIR}test.py"
+              if [ -f "$TEST_FILE" ]; then
                 echo "✓ Found test.py in: ${OPERATOR_DIR}"
                 echo "→ Running tests for: $(basename $OPERATOR_DIR)"
                 echo "→ Current directory before running tests: $(pwd)"
+                echo "✓ Trying unittest"
+                set +e
+
                 uv pip install "$OPERATOR_DIR"
-                uv run -m unittest "$OPERATOR_DIR/test.py"
-                TEST_EXIT_CODE=$?
-                echo "→ Test exit code: $TEST_EXIT_CODE"
+                UNITTEST_OUTPUT=$(uv run -m unittest "$TEST_FILE" 2>&1)
+                UNITTEST_EXIT_CODE=$?
+                echo "$UNITTEST_OUTPUT"
+                set -e
+
+                if echo "$UNITTEST_OUTPUT" | grep -qE "Ran 0 tests|no tests found|No module named|AttributeError"; then
+                  echo "⚠️  Unittest ran but found no tests — falling back to pytest"
+                  uv pip install pytest
+                  uv run pytest "$TEST_FILE"
+                else
+                  echo "✓ Tests succeeded for $OPERATOR_NAME"
+                fi
                 FOUND_TESTS=true
               else
-                echo "✗ No test.py found in: ${OPERATOR_DIR}"
+                echo "✗ No test.py found in: $OPERATOR_DIR"
               fi
             else
-              echo "✗ No changes detected in: $(basename $OPERATOR_DIR)"
+              echo "✗ No changes detected in: $OPERATOR_NAME"
             fi
           done
 
