@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## v0.10.0 (2025-09-22)
+
+### Features
+* feat: add lazy imports (#676) (0530ea8)
+* feat: add benchmarks (#672) (c5d5073)
+* feat: refactor vid_vec_rep_clip operator to support new API (#641) (9f41931)
+* feat: refactor feluda core to support new API (#639) (33d4220)
+
+### Bug Fixes
+* fix: operator class names and imports (#677) (a304230)
+
+### Chores
+* chore: make feluda core and operators compatible for docs (#647) (11f73c5)
+* chore: updates to feluda pyproject.toml file (#628) (bf41c36)
+* chore: undo pyproject.toml versions (8831fa5)
+* chore: semantic versioning workflow and update related files (fb014a6)
+* chore: semantic versioning workflow and update related files (80dcec2)
+
+### Contributors
+* Aatman Vaidya
+* GitHub Actions [Bot]
+* bhavna3
+* omkar-334
+
+
 ## v0.9.5 (2025-05-05)
 
 ### Chores
