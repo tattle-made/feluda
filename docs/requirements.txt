@@ -86,8 +86,8 @@ mdit-py-plugins==0.4.2
     # via myst-parser
 mdurl==0.1.2
     # via markdown-it-py
-myst-nb==1.2.0
-    # via -r requirements.in
+myst-nb==1.3.0
+    # via -r docs/requirements.in
 myst-parser==4.0.1
     # via myst-nb
 nbclient==0.10.2
@@ -150,7 +150,7 @@ snowballstemmer==3.0.1
     # via sphinx
 sphinx==8.1.3
     # via
-    #   -r requirements.in
+    #   -r docs/requirements.in
     #   myst-nb
     #   myst-parser
     #   sphinx-copybutton
@@ -158,11 +158,11 @@ sphinx==8.1.3
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
 sphinx-copybutton==0.5.2
-    # via -r requirements.in
+    # via -r docs/requirements.in
 sphinx-design==0.6.1
-    # via -r requirements.in
+    # via -r docs/requirements.in
 sphinx-rtd-theme==3.0.2
-    # via -r requirements.in
+    # via -r docs/requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
 sphinxcontrib-devhelp==2.0.0
