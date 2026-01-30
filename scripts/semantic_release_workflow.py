@@ -126,10 +126,11 @@ class PackageVersionManager:
         """
         try:
             # Normalize commit message
-            message = commit_message.lower().strip()
+            message = commit_message.strip()
+            lower_message = message.lower()
 
-            # Check for BREAKING CHANGE
-            if "breaking change" in message:
+            # Check for BREAKING CHANGE in footer/body
+            if "breaking change" in lower_message or "breaking-change" in lower_message:
                 return "major"
 
             # Parse commit type
@@ -139,7 +140,8 @@ class PackageVersionManager:
             <type>(<optional scope>): <description>
             <type>[optional scope]: <description>
             """
-            match = re.match(r"^(\w+)(?:\(|\[)?[^\)\]]*(?:\)|\])?:", message)
+            # optional breaking change marker (!), and flexible spacing.
+            match = re.match(r"^(\w+)(?:\(|\[)?[^\)\]! \t:]*(?:\)|\])?(!)?\s?:", message)
             if not match:
                 # If the commit message does not match the conventional commit format
                 # and is not empty, treat it as a "chore:" and return "patch".
@@ -147,12 +149,18 @@ class PackageVersionManager:
                     return "patch"
                 return None
 
-            commit_type = match.group(1)
+            commit_type = match.group(1).lower()
+            is_breaking = bool(match.group(2))
+
+            if is_breaking:
+                return "major"
 
             # Mapping of commit types to version bump
             type_bump_map = {
                 "feat": "minor",
+                "feature": "minor",
                 "fix": "patch",
+                "bugfix": "patch",
                 "chore": "patch",
                 "docs": "patch",
                 "refactor": "patch",
@@ -239,7 +247,7 @@ class PackageVersionManager:
                 cmd = [
                     "git",
                     "log",
-                    f"{self.prev_commit}^..{self.current_commit}",
+                    f"{self.prev_commit}..{self.current_commit}",
                     "--pretty=format:%s",
                     "--",
                     path,
@@ -287,6 +295,7 @@ class PackageVersionManager:
 
             for commit in package_commits:
                 commit_bump = self._parse_conventional_commit(commit)
+                print(f"DEBUG: {package_path} commit: '{commit}' -> bump: {commit_bump}")
                 if commit_bump and bump_priority.get(
                     commit_bump, 0
                 ) > bump_priority.get(highest_bump, 0):
