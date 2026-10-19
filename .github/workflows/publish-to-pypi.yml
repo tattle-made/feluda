@@ -90,7 +90,7 @@ jobs:
               rm -rf dist/
             else
               echo "➡️ Operator package: $pkg"
-              uv pip install -r $pkg
+              uv pip install $pkg
               uv build $pkg
               uv publish --token $PYPI_PUBLISH_TOKEN
               rm -rf dist/
