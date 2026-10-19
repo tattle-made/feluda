@@ -18,4 +18,4 @@ prerelease = false
 tag_format = "{name}-{version}"
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+include = ["__init__.py", "media_hash.py"]
