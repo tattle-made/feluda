@@ -33,6 +33,7 @@ classifiers = [
 
 dependencies = [
     "dacite>=1.9.2",
+    "pre-commit>=4.6.2",
     "pytest>=9.1.1",
     "pyyaml>=6.0.2",
     "requests>=2.34.2",
@@ -108,6 +109,7 @@ members = [
     "operators/image_vec_rep",
     "operators/vid_vec_rep",
     "operators/video_hash",
+    "operators/media_hash",
 ]
 
 [tool.uv.sources]

@@ -36,6 +36,7 @@ DimensionReduction = lazy_import("dimension_reduction")
 ImageVecRep = lazy_import("image_vec_rep")
 VidVecRep = lazy_import("vid_vec_rep")
 VideoHash = lazy_import("video_hash")
+MediaHash = lazy_import("media_hash")
 
 __all__ = [
     "ClassifyVideoZeroShot",
@@ -46,4 +47,5 @@ __all__ = [
     "ImageVecRep",
     "VidVecRep",
     "VideoHash",
+    "MediaHash",
 ]

@@ -1,0 +1,21 @@
+[project]
+name = "feluda-media-hash"
+version = "0.1.0"
+description = "A Feluda operator for generating cryptographic hashes of media files (image, video, audio)"
+requires-python = ">=3.10"
+dependencies = ["feluda"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.semantic_release]
+version_variable = ["pyproject.toml:project.version"]
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+tag_format = "{name}-{version}"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
