@@ -142,6 +142,13 @@ class VidVecRep(Operator):
         inputs = {k: v.to(self.device) for k, v in inputs.items()}  # move to device
         with torch.no_grad():
             features = self.model.get_image_features(**inputs)
+            # transformers >=5.0 wraps get_image_features()'s return in a
+            # BaseModelOutputWithPooling instead of returning the tensor directly
+            # (huggingface/transformers PR #42564); .pooler_output is the documented
+            # equivalent of the old plain-tensor return. Checking the type instead of the
+            # installed version keeps this correct on both 4.x and 5.x.
+            if not isinstance(features, torch.Tensor):
+                features = features.pooler_output
             return features
 
     def gendata(self) -> Generator[dict, None, None]:

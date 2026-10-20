@@ -1,4 +1,9 @@
+import types
+from unittest.mock import patch
+
 import pytest
+import torch
+from PIL import Image
 
 from feluda.factory import VideoFactory
 
@@ -45,3 +50,25 @@ def test_run_invalid_file_object(operator: VidVecRep):
 def test_run_file_not_found(operator: VidVecRep):
     with pytest.raises(FileNotFoundError):
         operator.run({"path": "fake.mp4"})
+
+
+def test_extract_features_accepts_plain_tensor(operator: VidVecRep):
+    # transformers <5.0 behavior: get_image_features() returns the tensor directly.
+    plain_tensor = torch.randn(1, 512)
+    image = Image.new("RGB", (32, 32))
+    with patch.object(operator.model, "get_image_features", return_value=plain_tensor):
+        features = operator.extract_features([image])
+    assert features is plain_tensor
+
+
+def test_extract_features_unwraps_transformers_v5_output(operator: VidVecRep):
+    # transformers >=5.0 wraps get_image_features()'s return in a BaseModelOutputWithPooling
+    # instead of returning a plain tensor (huggingface/transformers PR #42564). Simulated
+    # via a stand-in object rather than depending on which transformers version is actually
+    # installed in CI.
+    wrapped_output = types.SimpleNamespace(pooler_output=torch.randn(1, 512))
+    image = Image.new("RGB", (32, 32))
+    with patch.object(operator.model, "get_image_features", return_value=wrapped_output):
+        features = operator.extract_features([image])
+    assert isinstance(features, torch.Tensor)
+    assert features is wrapped_output.pooler_output
